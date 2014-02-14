@@ -1,0 +1,16 @@
+diff --git a/modules/juce_audio_processors/processors/juce_AudioProcessor.h b/modules/juce_audio_processors/processors/juce_AudioProcessor.h
+index 76ac472..c014ae2 100644
+--- a/modules/juce_audio_processors/processors/juce_AudioProcessor.h
++++ b/modules/juce_audio_processors/processors/juce_AudioProcessor.h
+@@ -551,6 +551,11 @@ public:
+     virtual void numChannelsChanged();
+ 
+     //==============================================================================
++    /** LV2 specific calls, saving/restore as string. */
++    virtual String getStateInformationString () { return String::empty; }
++    virtual void setStateInformationString (const String& data) {}
++
++    //==============================================================================
+     /** Adds a listener that will be called when an aspect of this processor changes. */
+     void addListener (AudioProcessorListener* newListener);
+ 

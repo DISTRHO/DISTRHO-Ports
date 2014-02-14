@@ -1,0 +1,12 @@
+diff -U 3 -H -b -d -r -N -- public.sdk.old/source/vst2.x/audioeffect.cpp public.sdk/source/vst2.x/audioeffect.cpp
+--- public.sdk.old/source/vst2.x/audioeffect.cpp	2013-09-21 02:26:56.320006646 +0100
++++ public.sdk/source/vst2.x/audioeffect.cpp	2013-09-21 04:00:42.031675571 +0100
+@@ -509,7 +509,7 @@
+ 		value -= digit * div;
+ 		if (state || digit > 0)
+ 		{
+-			char temp[2] = {'0' + (char)digit, '\0'};
++			char temp[2] = {char('0' + (char)digit), '\0'};
+ 			vst_strncat (text, temp, maxLen);
+ 			state = true;
+ 		}

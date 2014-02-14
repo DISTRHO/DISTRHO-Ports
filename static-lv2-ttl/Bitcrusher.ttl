@@ -1,0 +1,133 @@
+@prefix doap: <http://usefulinc.com/ns/doap#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix lv2:  <http://lv2plug.in/ns/lv2core#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<urn:distrho:Bitcrusher>
+    a lv2:Plugin ;
+
+    lv2:port [
+      a lv2:InputPort, lv2:AudioPort ;
+      lv2:index 0 ;
+      lv2:symbol "lv2_audio_in_1" ;
+      lv2:name "Audio Input 1" ;
+    ],
+    [
+      a lv2:InputPort, lv2:AudioPort ;
+      lv2:index 1 ;
+      lv2:symbol "lv2_audio_in_2" ;
+      lv2:name "Audio Input 2" ;
+    ] ;
+
+    lv2:port [
+      a lv2:OutputPort, lv2:AudioPort ;
+      lv2:index 2 ;
+      lv2:symbol "lv2_audio_out_1" ;
+      lv2:name "Audio Output 1" ;
+    ],
+    [
+      a lv2:OutputPort, lv2:AudioPort ;
+      lv2:index 3 ;
+      lv2:symbol "lv2_audio_out_2" ;
+      lv2:name "Audio Output 2" ;
+    ] ;
+
+    lv2:port [
+      a lv2:InputPort, lv2:ControlPort ;
+      lv2:index 4 ;
+      lv2:symbol "dist_type" ;
+      lv2:name "Dist type" ;
+      lv2:default 0.000000 ;
+      lv2:minimum 0.000000 ;
+      lv2:maximum 1.000000 ;
+      lv2:portProperty lv2:enumeration ;
+      lv2:scalePoint [
+        rdfs:label "clipper"; rdf:value 0.00;
+      ], [
+        rdfs:label "tanh"; rdf:value 0.34;
+      ], [
+        rdfs:label "sin"; rdf:value 0.67;
+      ] ;
+    ],
+    [
+      a lv2:InputPort, lv2:ControlPort ;
+      lv2:index 5 ;
+      lv2:symbol "gain" ;
+      lv2:name "Gain" ;
+      lv2:default 0.500000 ;
+      lv2:minimum 0.000000 ;
+      lv2:maximum 1.000000 ;
+    ],
+    [
+      a lv2:InputPort, lv2:ControlPort ;
+      lv2:index 6 ;
+      lv2:symbol "bit_depth" ;
+      lv2:name "Bit-depth" ;
+      lv2:default 0.000000 ;
+      lv2:minimum 0.000000 ;
+      lv2:maximum 1.000000 ;
+      lv2:portProperty lv2:enumeration ;
+      lv2:scalePoint [
+        rdfs:label "1 Bit"; rdf:value 1.0;
+      ], [
+        rdfs:label "2 Bits"; rdf:value 0.95652173913;
+      ], [
+        rdfs:label "3 Bits"; rdf:value 0.913043478261;
+      ], [
+        rdfs:label "4 Bits"; rdf:value 0.869565217391;
+      ], [
+        rdfs:label "5 Bits"; rdf:value 0.826086956522;
+      ], [
+        rdfs:label "6 Bits"; rdf:value 0.782608695652;
+      ], [
+        rdfs:label "7 Bits"; rdf:value 0.739130434783;
+      ], [
+        rdfs:label "8 Bits"; rdf:value 0.695652173913;
+      ], [
+        rdfs:label "9 Bits"; rdf:value 0.652173913043;
+      ], [
+        rdfs:label "10 Bits"; rdf:value 0.608695652174;
+      ], [
+        rdfs:label "11 Bits"; rdf:value 0.565217391304;
+      ], [
+        rdfs:label "12 Bits"; rdf:value 0.521739130435;
+      ], [
+        rdfs:label "13 Bits"; rdf:value 0.478260869565;
+      ], [
+        rdfs:label "14 Bits"; rdf:value 0.434782608696;
+      ], [
+        rdfs:label "15 Bits"; rdf:value 0.391304347826;
+      ], [
+        rdfs:label "16 Bits"; rdf:value 0.347826086957;
+      ], [
+        rdfs:label "17 Bits"; rdf:value 0.304347826087;
+      ], [
+        rdfs:label "18 Bits"; rdf:value 0.260869565217;
+      ], [
+        rdfs:label "19 Bits"; rdf:value 0.217391304348;
+      ], [
+        rdfs:label "20 Bits"; rdf:value 0.173913043478;
+      ], [
+        rdfs:label "21 Bits"; rdf:value 0.130434782609;
+      ], [
+        rdfs:label "22 Bits"; rdf:value 0.08695652173913043;
+      ], [
+        rdfs:label "23 Bits"; rdf:value 0.043478260869565216;
+      ], [
+        rdfs:label "24 Bits"; rdf:value 0.0;
+      ] ;
+    ],
+    [
+      a lv2:InputPort, lv2:ControlPort ;
+      lv2:index 7 ;
+      lv2:symbol "downsampling" ;
+      lv2:name "Downsampling" ;
+      lv2:default 1.000000 ;
+      lv2:minimum 0.000000 ;
+      lv2:maximum 1.000000 ;
+    ] ;
+
+    doap:name "Bitcrusher" ;
+    doap:maintainer [ foaf:name "CMT" ] .
+

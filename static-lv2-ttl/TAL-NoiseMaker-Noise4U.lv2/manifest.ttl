@@ -1,0 +1,368 @@
+@prefix lv2:  <http://lv2plug.in/ns/lv2core#> .
+@prefix pset: <http://lv2plug.in/ns/ext/presets#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset01>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset02>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset03>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset04>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset05>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset06>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset07>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset08>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset09>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset10>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset11>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset12>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset13>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset14>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset15>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset16>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset17>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset18>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset19>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset20>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset21>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset22>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset23>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset24>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset25>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset26>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset27>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset28>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset29>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset30>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset31>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset32>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset33>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset34>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset35>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset36>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset37>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset38>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset39>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset40>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset41>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset42>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset43>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset44>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset45>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset46>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset47>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset48>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset49>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset50>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset51>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset52>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset53>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset54>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset55>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset56>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset57>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset58>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset59>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset60>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset61>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset62>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset63>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset64>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset65>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset66>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset67>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset68>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset69>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset70>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset71>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset72>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset73>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset74>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset75>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset76>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset77>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset78>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset79>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset80>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset81>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset82>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset83>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset84>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset85>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset86>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset87>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset88>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset89>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset90>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .
+<http://kunz.corrupt.ch/products/tal-noisemaker#Noise4Upreset91>
+    a pset:Preset ;
+    lv2:appliesTo <http://kunz.corrupt.ch/products/tal-noisemaker> ;
+    rdfs:seeAlso <presets.ttl> .

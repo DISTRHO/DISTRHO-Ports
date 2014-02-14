@@ -1,0 +1,52 @@
+diff --git a/modules/juce_graphics/contexts/juce_GraphicsContext.cpp b/modules/juce_graphics/contexts/juce_GraphicsContext.cpp
+index 9c3d248..f075073 100644
+--- a/modules/juce_graphics/contexts/juce_GraphicsContext.cpp
++++ b/modules/juce_graphics/contexts/juce_GraphicsContext.cpp
+@@ -251,6 +251,16 @@ void Graphics::drawSingleLineText (const String& text, const int startX, const i
+     }
+ }
+ 
++void Graphics::drawTextAsPath (const String& text, const AffineTransform& transform) const
++{
++    if (text.isNotEmpty())
++    {
++        GlyphArrangement arr;
++        arr.addLineOfText (context.getFont(), text, 0.0f, 0.0f);
++        arr.draw (*this, transform);
++    }
++}
++
+ void Graphics::drawMultiLineText (const String& text, const int startX,
+                                   const int baselineY, const int maximumLineWidth) const
+ {
+diff --git a/modules/juce_graphics/contexts/juce_GraphicsContext.h b/modules/juce_graphics/contexts/juce_GraphicsContext.h
+index 54e0c5e..2bd58de 100644
+--- a/modules/juce_graphics/contexts/juce_GraphicsContext.h
++++ b/modules/juce_graphics/contexts/juce_GraphicsContext.h
+@@ -115,7 +115,7 @@ public:
+         Note there's also a setFont (float, int) method to quickly change the size and
+         style of the current font.
+ 
+-        @see drawSingleLineText, drawMultiLineText, drawText, drawFittedText
++        @see drawSingleLineText, drawMultiLineText, drawTextAsPath, drawText, drawFittedText
+     */
+     void setFont (const Font& newFont);
+ 
+@@ -157,6 +157,17 @@ public:
+                             int startX, int baselineY,
+                             int maximumLineWidth) const;
+ 
++    /** Renders a string of text as a vector path.
++
++        This allows a string to be transformed with an arbitrary AffineTransform and
++        rendered using the current colour/brush. It's much slower than the normal text methods
++        but more accurate.
++
++        @see setFont
++    */
++    void drawTextAsPath (const String& text,
++                         const AffineTransform& transform) const;
++
+     /** Draws a line of text within a specified rectangle.
+ 
+         The text will be positioned within the rectangle based on the justification

@@ -1,0 +1,13 @@
+diff --git a/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp b/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
+index 029e2e2..7a98ff6 100644
+--- a/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
++++ b/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
+@@ -412,7 +412,7 @@ public:
+     //==============================================================================
+     bool getEffectName (char* name)
+     {
+-        String (JucePlugin_Name).copyToUTF8 (name, 64);
++        String (filter->getName()).copyToUTF8 (name, 64);
+         return true;
+     }
+ 

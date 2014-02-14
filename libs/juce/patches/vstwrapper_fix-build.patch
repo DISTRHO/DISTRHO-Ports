@@ -1,0 +1,12 @@
+diff --git a/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp b/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
+index 5f13613..4d4a97c 100644
+--- a/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
++++ b/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
+@@ -101,6 +101,7 @@
+ 
+ #include "../utility/juce_IncludeModuleHeaders.h"
+ #include "../utility/juce_FakeMouseMoveGenerator.h"
++#include "modules/juce_audio_processors/format_types/juce_VSTMidiEventList.h"
+ 
+ #ifdef _MSC_VER
+  #pragma pack (pop)
