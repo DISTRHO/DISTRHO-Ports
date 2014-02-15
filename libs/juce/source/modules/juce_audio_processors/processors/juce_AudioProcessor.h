@@ -580,11 +580,6 @@ public:
     virtual void numChannelsChanged();
 
     //==============================================================================
-    /** LV2 specific calls, saving/restore as string. */
-    virtual String getStateInformationString () { return String::empty; }
-    virtual void setStateInformationString (const String& data) {}
-
-    //==============================================================================
     /** Adds a listener that will be called when an aspect of this processor changes. */
     virtual void addListener (AudioProcessorListener* newListener);
 
@@ -614,6 +609,7 @@ public:
     {
         wrapperType_Undefined = 0,
         wrapperType_VST,
+        wrapperType_VST3,
         wrapperType_AudioUnit,
         wrapperType_RTAS,
         wrapperType_AAX,

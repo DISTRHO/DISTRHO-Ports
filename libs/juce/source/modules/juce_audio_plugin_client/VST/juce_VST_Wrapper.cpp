@@ -96,7 +96,6 @@
 
 #include "../utility/juce_IncludeModuleHeaders.h"
 #include "../utility/juce_FakeMouseMoveGenerator.h"
-#include "modules/juce_audio_processors/format_types/juce_VSTMidiEventList.h"
 
 #ifdef _MSC_VER
  #pragma pack (pop)
@@ -374,7 +373,7 @@ public:
     //==============================================================================
     bool getEffectName (char* name) override
     {
-        String (filter->getName()).copyToUTF8 (name, 64);
+        String (JucePlugin_Name).copyToUTF8 (name, 64);
         return true;
     }
 
@@ -1280,12 +1279,6 @@ public:
             if (ComponentPeer* peer = editorComp->getPeer())
                 peer->handleMovedOrResized();
         }
-    }
-
-    static PluginHostType& getHostType()
-    {
-        static PluginHostType hostType;
-        return hostType;
     }
 
     //==============================================================================
