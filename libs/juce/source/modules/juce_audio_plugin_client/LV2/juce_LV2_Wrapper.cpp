@@ -1496,6 +1496,9 @@ public:
                 uint32_t size, offset = 0;
                 LV2_Atom_Event* aev;
 
+                const uint32_t capacity = portMidiOut->atom.size;
+
+                portMidiOut->atom.size = 0;
                 portMidiOut->atom.type = uridAtomSequence;
                 portMidiOut->body.unit = 0;
                 portMidiOut->body.pad  = 0;
@@ -1504,7 +1507,7 @@ public:
                 {
                     jassert (midiEventPosition >= 0 && midiEventPosition < sampleCount);
 
-                    if (sizeof(LV2_Atom_Event) + midiEventSize > portMidiOut->atom.size - offset)
+                    if (sizeof(LV2_Atom_Event) + midiEventSize > capacity - offset)
                         break;
 
                     aev = (LV2_Atom_Event*)((char*)LV2_ATOM_CONTENTS(LV2_Atom_Sequence, portMidiOut) + offset);
@@ -1515,6 +1518,7 @@ public:
 
                     size    = lv2_atom_pad_size(sizeof(LV2_Atom_Event) + midiEventSize);
                     offset += size;
+                    portMidiOut->atom.size += size;
                 }
             }
 #endif
