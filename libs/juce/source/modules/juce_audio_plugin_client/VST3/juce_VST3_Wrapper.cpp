@@ -176,7 +176,9 @@ public:
             toString128 (info.title, p.getParameterName (index));
             toString128 (info.shortTitle, p.getParameterName (index, 8));
             toString128 (info.units, p.getParameterLabel (index));
-            info.stepCount = (Steinberg::int32) p.getParameterNumSteps (index);
+
+            const int numSteps = p.getParameterNumSteps (index);
+            info.stepCount = (Steinberg::int32) (numSteps > 0 && numSteps < 0x7fffffff ? numSteps - 1 : 0);
             info.defaultNormalizedValue = p.getParameterDefaultValue (index);
             info.unitId = Vst::kRootUnitId;
             info.flags = p.isParameterAutomatable (index) ? Vst::ParameterInfo::kCanAutomate : 0;
@@ -752,78 +754,72 @@ public:
     tresult PLUGIN_API setIoMode (Vst::IoMode) override { return kNotImplemented; }
     tresult PLUGIN_API getRoutingInfo (Vst::RoutingInfo&, Vst::RoutingInfo&) override { return kNotImplemented; }
 
-    tresult PLUGIN_API setState (IBStream* state) override
+    bool readFromMemoryStream (IBStream* state) const
     {
-        if (state != nullptr)
+        FUnknownPtr<MemoryStream> s (state);
+
+        if (s != nullptr
+             && s->getData() != nullptr
+             && s->getSize() > 0
+             && s->getSize() < 1024 * 1024 * 100) // (some hosts seem to return junk for the size)
         {
-            // Reset to the beginning of the stream:
-            if (state->seek (0, IBStream::kIBSeekSet, nullptr) != kResultTrue)
-                return kResultFalse;
+            // Adobe Audition CS6 hack to avoid trying to use corrupted streams:
+            if (getHostType().isAdobeAudition())
+                if (s->getSize() >= 5 && memcmp (s->getData(), "VC2!E", 5) == 0)
+                    return kResultFalse;
 
-            Steinberg::int64 end = -1;
-
-            if (end < 0)
-            {
-                FUnknownPtr<ISizeableStream> s (state);
-
-                if (s != nullptr)
-                    s->getStreamSize (end);
-            }
-
-            if (end < 0)
-            {
-                FUnknownPtr<MemoryStream> s (state);
-
-                if (s != nullptr)
-                {
-                    if (getHostType().isAdobeAudition())
-                    {
-                        // Adobe Audition CS6 hack to avoid trying to use corrupted streams:
-                        bool failed = true;
-
-                        if (const char* const data = s->getData())
-                        {
-                            if (s->getSize() >= 5 && data[0] != 'V' && data[1] != 'C'
-                                 && data[2] != '2' && data[3] != '!' && data[4] != 'E')
-                            {
-                                failed = false;
-                            }
-                        }
-                        else
-                        {
-                            jassertfalse;
-                        }
-
-                        if (failed)
-                            return kResultFalse;
-                    }
-
-                    end = (Steinberg::int64) s->getSize();
-                }
-            }
-
-            if (end <= 0)
-                return kResultFalse;
-
-            // Try reading the data, and setting the plugin state:
-            Steinberg::int32 numBytes = (Steinberg::int32) jmin ((Steinberg::int64) std::numeric_limits<Steinberg::int32>::max(), end);
-
-            Array<char> buff;
-            buff.ensureStorageAllocated ((int) numBytes);
-            void* buffer = buff.getRawDataPointer();
-
-            if (state->read (buffer, numBytes, &numBytes) == kResultTrue
-                && buffer != nullptr
-                && numBytes > 0)
-            {
-                pluginInstance->setStateInformation (buffer, (int) numBytes);
-                return kResultTrue;
-            }
-
-            return kResultFalse;
+            pluginInstance->setStateInformation (s->getData(), (int) s->getSize());
+            return true;
         }
 
-        return kInvalidArgument;
+        return false;
+    }
+
+    bool readFromUnknownStream (IBStream* state) const
+    {
+        MemoryOutputStream allData;
+
+        {
+            const size_t bytesPerBlock = 4096;
+            HeapBlock<char> buffer (bytesPerBlock);
+
+            for (;;)
+            {
+                int32 bytesRead = 0;
+
+                if (state->read (buffer, (int32) bytesPerBlock, &bytesRead) == kResultTrue && bytesRead > 0)
+                {
+                    allData.write (buffer, bytesRead);
+                    continue;
+                }
+
+                break;
+            }
+        }
+
+        const size_t dataSize = allData.getDataSize();
+
+        if (dataSize > 0 && dataSize < 0x7fffffff)
+        {
+            pluginInstance->setStateInformation (allData.getData(), (int) dataSize);
+            return true;
+        }
+
+        return false;
+    }
+
+    tresult PLUGIN_API setState (IBStream* state) override
+    {
+        if (state == nullptr)
+            return kInvalidArgument;
+
+        FUnknownPtr<IBStream> stateRefHolder (state); // just in case the caller hasn't properly ref-counted the stream object
+
+        if (state->seek (0, IBStream::kIBSeekSet, nullptr) == kResultTrue)
+            if (readFromMemoryStream (state) || readFromUnknownStream (state))
+                return kResultTrue;
+
+        return kResultFalse;
     }
 
     tresult PLUGIN_API getState (IBStream* state) override
@@ -1084,7 +1080,7 @@ public:
 
     tresult PLUGIN_API process (Vst::ProcessData& data) override
     {
-        if (pluginInstance == nullptr || processContext.sampleRate <= 0.0)
+        if (pluginInstance == nullptr)
             return kResultFalse;
 
         if (data.processContext != nullptr)
