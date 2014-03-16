@@ -263,7 +263,7 @@ void SegmentJuicePlugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.name       = "Attack";
         parameter.symbol     = "att";
         parameter.unit       = "";
-        parameter.ranges.def = 0.5f;
+        parameter.ranges.def = 0.0f;
         parameter.ranges.min = 0.0f;
         parameter.ranges.max = 1.0f;
         break;
@@ -272,7 +272,7 @@ void SegmentJuicePlugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.name       = "Decay";
         parameter.symbol     = "dec";
         parameter.unit       = "";
-        parameter.ranges.def = 0.5f;
+        parameter.ranges.def = 0.0f;
         parameter.ranges.min = 0.0f;
         parameter.ranges.max = 1.0f;
         break;
@@ -281,7 +281,7 @@ void SegmentJuicePlugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.name       = "Sustain";
         parameter.symbol     = "sus";
         parameter.unit       = "";
-        parameter.ranges.def = 0.5f;
+        parameter.ranges.def = 1.0f;
         parameter.ranges.min = 0.0f;
         parameter.ranges.max = 1.0f;
         break;
@@ -290,7 +290,7 @@ void SegmentJuicePlugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.name       = "Release";
         parameter.symbol     = "rel";
         parameter.unit       = "";
-        parameter.ranges.def = 0.5f;
+        parameter.ranges.def = 0.0f;
         parameter.ranges.min = 0.0f;
         parameter.ranges.max = 1.0f;
         break;
@@ -326,7 +326,7 @@ void SegmentJuicePlugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.name       = "Glide";
         parameter.symbol     = "gld";
         parameter.unit       = "";
-        parameter.ranges.def = 0.5f;
+        parameter.ranges.def = 0.0f;
         parameter.ranges.min = 0.0f;
         parameter.ranges.max = 1.0f;
         break;
@@ -594,8 +594,9 @@ void SegmentJuicePlugin::d_setProgram(uint32_t index)
 	FM1=FM2=FM3=FM4=FM5=FM6=0.5f;
 	pan1=pan2=pan3=pan4=pan5=pan6=0.0f;
 	amp1=amp2=amp3=amp4=amp5=amp6=0.5f;
-	attack=decay=sustain=release=volume=0.5f;
-	stereo=tune=0.0f;
+	attack=decay=release=stereo=tune=glide=0.0f;
+	sustain=1.0f;
+	volume=0.5f;
 
 	for (int i=0; i<6; i++) {
 		synthL.setFM(i, 0.5f);
@@ -621,9 +622,20 @@ void SegmentJuicePlugin::d_setProgram(uint32_t index)
 	synthL.setStereo(0.0f);
 	synthR.setStereo(0.0f);
 
-	synthL.setGlide(0.5f);
-	synthR.setGlide(0.5f);
+	synthL.setGlide(0.0f);
+	synthR.setGlide(0.0f);
+
+	synthL.setAttack(0.0f);
+	synthR.setAttack(0.0f);
 	
+	synthL.setDecay(0.0f);
+	synthR.setDecay(0.0f);
+
+	synthL.setSustain(1.0f);
+	synthR.setSustain(1.0f);
+
+	synthL.setRelease(0.0f);
+	synthR.setRelease(0.0f);
 
     /* reset filter values */
     d_activate();

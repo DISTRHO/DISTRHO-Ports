@@ -44,7 +44,7 @@ public:
 		glideDistance = 0;
 		
 		
-		attack=decay=sustain=release=0.5f;
+		attack=decay=sustain=release=0.0f;
 		mAmp = 0.5;
 		freqOffset = 0;
     }
@@ -214,7 +214,6 @@ public:
 		float out = 0;
 		
 		if (playing) {
-
 			if (freq!=tFreq) {
 				//gliding yo
 				gl+=gCoeff * ((1.0/1.0) - gl);
@@ -235,7 +234,6 @@ public:
 			} else {// if (phaseAccum<cycleSize*0.875) {
 				out += getBlendedPhase((phaseAccum/cycleSize)*(getBlendedPhase(phaseAccum/(cycleSize*8), waves[5], -1)*FMs[5])*16*(2*M_PI), waves[5], -1)*pans[5]*amps[5]*0.5*2;
 			}
-
 			phaseAccum++;
 			if (phaseAccum>cycleSize) {
 				phaseAccum = 0;
@@ -260,13 +258,11 @@ public:
 			out*=env;
 
 			//apply master volume
-			out*=mAmp*1.5;
-			
+			out*=mAmp*0.5;
 			//apply hard clipping
 			if (out>1) out=1;
 			if (out<-1) out=-1;
 		}
-
 		return out;
 	}
 	

@@ -245,7 +245,7 @@ SegmentJuiceUI::SegmentJuiceUI()
     fKnobAttack = new ImageKnob(this, knobImage2);
     fKnobAttack->setPos(34, 248);
     fKnobAttack->setRange(0.0f, 1.0f);
-    fKnobAttack->setValue(0.5f);
+    fKnobAttack->setValue(0.0f);
     fKnobAttack->setRotationAngle(270);
     fKnobAttack->setCallback(this);
 
@@ -253,7 +253,7 @@ SegmentJuiceUI::SegmentJuiceUI()
     fKnobDecay = new ImageKnob(this, knobImage2);
     fKnobDecay->setPos(132, 248);
     fKnobDecay->setRange(0.0f, 1.0f);
-    fKnobDecay->setValue(0.5f);
+    fKnobDecay->setValue(0.0f);
     fKnobDecay->setRotationAngle(270);
     fKnobDecay->setCallback(this);
 
@@ -261,7 +261,7 @@ SegmentJuiceUI::SegmentJuiceUI()
     fKnobSustain = new ImageKnob(this, knobImage2);
     fKnobSustain->setPos(232, 248);
     fKnobSustain->setRange(0.0f, 1.0f);
-    fKnobSustain->setValue(0.5f);
+    fKnobSustain->setValue(1.0f);
     fKnobSustain->setRotationAngle(270);
     fKnobSustain->setCallback(this);
 	
@@ -269,7 +269,7 @@ SegmentJuiceUI::SegmentJuiceUI()
     fKnobRelease = new ImageKnob(this, knobImage2);
     fKnobRelease->setPos(330, 248);
     fKnobRelease->setRange(0.0f, 1.0f);
-    fKnobRelease->setValue(0.5f);
+    fKnobRelease->setValue(0.0f);
     fKnobRelease->setRotationAngle(270);
     fKnobRelease->setCallback(this);
 
@@ -301,7 +301,7 @@ SegmentJuiceUI::SegmentJuiceUI()
     fKnobGlide = new ImageKnob(this, knobImage2);
     fKnobGlide->setPos(330, 339);
     fKnobGlide->setRange(0.0f, 1.0f);
-    fKnobGlide->setValue(0.5f);
+    fKnobGlide->setValue(0.0f);
     fKnobGlide->setRotationAngle(270);
     fKnobGlide->setCallback(this);
 
@@ -551,15 +551,15 @@ void SegmentJuiceUI::d_programChanged(uint32_t index)
     fKnobAmp5->setValue(0.5f);
     fKnobAmp6->setValue(0.5f);
 	
-	fKnobAttack->setValue(0.5f);
-	fKnobDecay->setValue(0.5f);
-	fKnobSustain->setValue(0.5f);
-	fKnobRelease->setValue(0.5f);
+	fKnobAttack->setValue(0.0f);
+	fKnobDecay->setValue(0.0f);
+	fKnobSustain->setValue(1.0f);
+	fKnobRelease->setValue(0.0f);
 
 	fKnobStereo->setValue(0.0f);
 	fKnobTune->setValue(0.0f);
 	fKnobVolume->setValue(0.5f);
-	fKnobGlide->setValue(0.5f);
+	fKnobGlide->setValue(0.0f);
 
 	for (int i=0; i<6; i++) {
 		synthL.setFM(i, 0.5f);
@@ -588,6 +588,10 @@ void SegmentJuiceUI::d_programChanged(uint32_t index)
 	synthR.setSustain(1);
 	synthL.setRelease(0);
 	synthR.setRelease(0);
+	synthL.setGlide(0);
+	synthR.setGlide(0);
+	synthL.setTune(0);
+	synthR.setTune(0);
 }
 
 // -----------------------------------------------------------------------
@@ -816,22 +820,24 @@ void SegmentJuiceUI::onDisplay()
 	int cY = 50;
 	int cW = 388-cX-3;
 	int cH = 216-cY;
+		
 
 
 	//draw waveform
 	synthL.play(71);
 	synthR.play(71);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable( GL_LINE_SMOOTH );
-	glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );
-	glLineWidth(0.06f); 
-
+	//glEnable(GL_BLEND);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//glEnable( GL_LINE_SMOOTH );
+	//glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );
+	glLineWidth(1.0f); 
 	//draw #left waveform
 	glColor4f(0.0f, 1.0f, 0.0f, 0.5f);	
 	glBegin(GL_LINE_STRIP);
 		for (int i = 0; i<cW; i++) {
-			glVertex2i(i+cX, synthL.run()*cH/2+cH/2+cY);
+			float out = synthL.run()*cH/2+cH/2+cY;
+			glVertex2i(i+cX, out);
+			std::cout << out << std::endl;
 		}
 	//draw #right waveform
 	glEnd();
@@ -843,8 +849,8 @@ void SegmentJuiceUI::onDisplay()
 	glEnd();
 
 	//draw 0dc line
-	glLineWidth(1.0f); 
-	glColor4f(1.0f, 1.0f, 1.0f, 0.2f);
+	
+	glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
 	glBegin(GL_LINES);
 		glVertex2i(cX, cY+cH/2);
 		glVertex2i(cX+cW, cY+cH/2);
