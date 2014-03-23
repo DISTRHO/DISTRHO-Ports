@@ -73,6 +73,7 @@ clean:
 	$(MAKE) clean -C plugins
 	$(MAKE) clean -C ports
 	rm -rf bin/lv2/*.lv2/
+	rm -rf bin/lv2-extra/
 
 distclean: clean
 	$(MAKE) distclean -C libs/dgl
