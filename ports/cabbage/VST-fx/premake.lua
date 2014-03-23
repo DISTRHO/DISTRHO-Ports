@@ -4,7 +4,7 @@ dofile("../../../scripts/make-project.lua")
 package = make_juce_vst_project("CabbagePluginEffect")
 
 project.bindir  = "../../../bin/cabbage"
-package.links   = { package.links, "csound64" }
+package.links   = { package.links, "csound64", "sndfile", "FLAC", "vorbisenc", "vorbis", "ogg", "m" }
 package.defines = { package.defines, "USE_DOUBLE=1", "CSOUND6=1" }
 
 package.includepaths = {
@@ -16,11 +16,6 @@ package.includepaths = {
 package.libpaths = {
   package.libpaths,
   "/opt/kxstudio/lib"
-}
-
-package.links = {
-  package.links,
-  "sndfile"
 }
 
 package.files = {

@@ -81,13 +81,13 @@ public:
 		if (imageType == 0) {
 			pathLine.startNewSubPath(width*0.2, height*0.8);
 			pathLine.lineTo(width*0.7, height*0.2);
-			g.strokePath(pathLine, width*0.04);
+			g.strokePath(pathLine, PathStrokeType(width*0.04));
 			pathBall.addEllipse(width*0.6, height*0.45, width*0.2, width*0.2);
 		}
 		else if (imageType == 1) {
 			pathLine.startNewSubPath(width*0.2, height*0.8);
 			pathLine.lineTo(width*0.8, height*0.2);
-			g.strokePath(pathLine, width*0.05);
+			g.strokePath(pathLine, PathStrokeType(width*0.05));
 			Point<float> pt = pathLine.getPointAlongPath(pathLine.getLength()*0.6);
 			pathBall.addEllipse(pt.getX()-(width*0.1), pt.getY()-(width*0.1), width*0.2, width*0.2);
 		}

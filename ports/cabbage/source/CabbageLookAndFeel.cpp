@@ -1300,7 +1300,7 @@ Image CabbageLookAndFeel::drawCheckMark()
 	path.lineTo(5, 10);
 	path.lineTo(10, 0);
 	g.setColour (Colours::cornflowerblue);
-	g.strokePath(path, 2.0f);
+	g.strokePath(path, PathStrokeType(2.0f));
 
 	return img;
 }
@@ -2240,7 +2240,7 @@ Image CabbageLookAndFeelBasic::drawCheckMark()
 	path.lineTo(5, 10);
 	path.lineTo(10, 0);
 	g.setColour (Colours::cornflowerblue);
-	g.strokePath(path, 2.0f);
+	g.strokePath(path, PathStrokeType(2.0f));
 
 	return img;
 }

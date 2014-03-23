@@ -264,7 +264,7 @@ void XYCanvas::paint(Graphics& g)
 			g.setColour(ballColour.withMultipliedSaturation(5));
 		
 		g.setOpacity (pathOpacity);
-		g.strokePath (path, pathThickness);
+		g.strokePath (path, PathStrokeType(pathThickness));
 	}
 
 	// Ball h and v lines

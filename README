@@ -9,7 +9,7 @@ The source repository is layered out this way:
  bin/       - directory where all the compiled binaries will be placed
  libs/      - libraries
  plugins/   - plugins developed and/or designed by the DISTRHO Team
- ports/     - all plugin ports (plugins not made by us)
+ ports/     - plugin ports (plugins not made by us)
  scripts/   - build scripts
  sdks/      - SDKs must be placed here (VST SDK)
 
