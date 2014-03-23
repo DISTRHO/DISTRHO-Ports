@@ -44,7 +44,7 @@ namespace CommandIDs
 	static const int editZoomOut		= 2017;
 	static const int whiteBackground	= 2018;
 	static const int blackBackground	= 2019;
-	static const int editToggleText		= 2020;
+	static const int editToggleComments	= 2020;
 	static const int insertFromRepo		= 2021;
 	static const int addFromRepo		= 2022;
 	static const int insertRecentEvent	= 2023;

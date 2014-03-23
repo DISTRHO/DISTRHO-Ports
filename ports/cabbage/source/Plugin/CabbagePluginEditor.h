@@ -69,7 +69,7 @@ PointData(Point<int> point, int curveType):point(point),curveType(curveType)
 class CabbagePluginAudioProcessorEditor  : public AudioProcessorEditor,
                                                                 public CabbageUtils,
                                                                 public SliderListener,
-                                                                public ComboBoxListener,
+                                                                public ComboBoxListener, 
                                                                 public ButtonListener,
                                                                 public KeyListener,
                                                                 public ChangeBroadcaster,
@@ -132,10 +132,15 @@ private:
         void InsertSnapshot(CabbageGUIClass &cAttr);
         void InsertPVSViewer(CabbageGUIClass &cAttr);
 		void InsertTransport(CabbageGUIClass &cAttr);
-        void buttonClicked (Button*);
+        void buttonClicked(Button*);
+		void buttonStateChanged(Button*);
         void showInsertControlsMenu(int x, int y);
 		void actionListenerCallbackForWidgets(const String message);
 		void insertScoreStatementText(Table *table, bool overwrite);
+		void restoreParametersFromPresets(XmlElement* xmlData);
+		void savePresetsFromParameters(File selectedFile, String mode);
+		void refreshDiskReadingGUIControls(String typeOfControl);
+		void updateGUIControls();
 
 		void timerCallback();
         bool LOCKED;

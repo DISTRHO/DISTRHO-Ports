@@ -154,8 +154,8 @@ void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandIn
 		result.setInfo (String("Paste"), String("Paste selection"), CommandCategories::edit, 0);
 		result.addDefaultKeypress ('v', ModifierKeys::commandModifier);
 		break;
-	case CommandIDs::editToggleText:
-		result.setInfo (String("Toggle output"), String("Toggle output"), CommandCategories::edit, 0);
+	case CommandIDs::editToggleComments:
+		result.setInfo (String("Toggle comments"), String("Toggle comments"), CommandCategories::edit, 0);
 		result.addDefaultKeypress ('t', ModifierKeys::commandModifier);
 		break;
 	case CommandIDs::editZoomIn:
@@ -274,7 +274,7 @@ else if(topLevelMenuIndex==1)
 	m1.addCommandItem(&commandManager, CommandIDs::editCut);
 	m1.addCommandItem(&commandManager, CommandIDs::editCopy);
 	m1.addCommandItem(&commandManager, CommandIDs::editPaste);
-	m1.addCommandItem(&commandManager, CommandIDs::editToggleText);
+	m1.addCommandItem(&commandManager, CommandIDs::editToggleComments);
 	m1.addSeparator();
 	m2.addCommandItem(&commandManager, CommandIDs::editZoomIn);
 	m2.addCommandItem(&commandManager, CommandIDs::editZoomOut);
@@ -386,9 +386,9 @@ bool CodeWindow::perform (const InvocationInfo& info)
 		{			
 			textEditor->redo();
 		}
-	else if(info.commandID==CommandIDs::editToggleText)
+	else if(info.commandID==CommandIDs::editToggleComments)
 		{			
-		toggleTextWindows();
+		textEditor->toggleComments();
 		}
 		
 	else if(info.commandID==CommandIDs::editZoomIn)
@@ -445,11 +445,15 @@ bool CodeWindow::perform (const InvocationInfo& info)
 
 	else if(info.commandID==CommandIDs::viewCsoundHelp)
 		{
+		sendActionMessage("toggleCsoundOutput");
+		sendActionMessage("hideOutputWindow");
 		toggleManuals("Csound");
 		}
 	
 	else if(info.commandID==CommandIDs::viewCabbageHelp)
 		{
+		sendActionMessage("toggleCsoundOutput");
+		sendActionMessage("hideOutputWindow");
 		toggleManuals("Cabbage");
 		}
 				
@@ -565,8 +569,10 @@ void CodeWindow::actionListenerCallback(const String &message){
 		toggleTextWindows();
 	//else if(message=="pythonFocus")
 	//	pythonEditor->textEditor->grabKeyboardFocus();
-	else if(message=="make popup invisible")
+	else if(message=="make popup invisible"){
+		popupDisplay->setTopLeftPosition(1000, 1000);
 		popupDisplay->setVisible(false);
+	}
 	else if(message=="sendPythonEvent"){
 	/*	String text = pythonEditor->textEditor->getSelectedText();
 		String event = "pyruni {{\n";
@@ -600,7 +606,7 @@ void CodeWindow::actionListenerCallback(const String &message){
 	//						this->getCaretScreenPosition().getY()+18.f,
 	//						width, 50);
 	//popupDisplay->setWantsKeyboardFocus(false);
-		popupDisplay->setText(textEditor->getOpcodeToken(2).removeCharacters("\""), 
+	popupDisplay->setText(textEditor->getOpcodeToken(2).removeCharacters("\""), 
 								   textEditor->getOpcodeToken(3).removeCharacters("\""));
 		
 	textEditor->toFront(true);
@@ -671,7 +677,7 @@ untitledCSD=
 "a2 inch 2\n"
 "\n"
 "\n"
-"outs a1, a2\n"
+";outs a1, a2\n"
 "endin\n"
 "\n"
 "</CsInstruments>  \n"

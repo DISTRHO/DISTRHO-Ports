@@ -65,7 +65,7 @@ public:
 									CommandIDs::editCut,
 									CommandIDs::editPaste,
 									CommandIDs::editRedo,
-									CommandIDs::editToggleText,
+									CommandIDs::editToggleComments,
 									CommandIDs::editZoomIn,
 									CommandIDs::editZoomOut,
 									CommandIDs::whiteBackground,
@@ -130,7 +130,7 @@ public:
 	
 	Rectangle<int> getCaretScreenPosition(){
 		Rectangle<int> rect(textEditor->getCaretPoisition());
-		rect.setLeft(rect.getX()+this->getTopLevelComponent()->getX()+10);
+		rect.setLeft(rect.getX()+this->getTopLevelComponent()->getX()+100);
 		rect.setTop(rect.getY()+this->getTopLevelComponent()->getY()+45);
 		return rect;		
 	}
@@ -444,7 +444,7 @@ class PopupDisplay : public DialogWindow,
 				g.fillAll(Colour::fromRGB(40,40,40));
 				g.setColour(Colours::yellow);
 				g.drawRect(0, 0, getWidth()-1, getHeight()-1, 1);
-				g.setFont(Font(String("Arial"), 16, 1));
+				g.setFont(Font(String("Arial"), 16, 0));
 				g.setColour(Colours::whitesmoke);
 				g.drawFittedText(syntax, 10, 10, getWidth(), getHeight(), Justification::topLeft, 100, 1);
 				g.setFont(Font(String("Arial"), 15, 0));
@@ -454,7 +454,7 @@ class PopupDisplay : public DialogWindow,
 				g.fillAll(Colour::fromRGB(20, 20, 20));
 				g.setColour(Colours::whitesmoke);
 				g.drawRect(0, 0, getWidth()-1, getHeight()-1, 1);
-				g.setFont(Font(String("Arial"), 16, 1));
+				g.setFont(Font(String("Arial"), 16, 0));
 				g.setColour(Colours::yellow);
 				g.drawFittedText(syntax, 10, 10, getWidth(), getHeight(), Justification::topLeft, 100, 1);
 				g.setFont(Font(String("Arial"), 15, 0));
