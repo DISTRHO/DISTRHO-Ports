@@ -93,7 +93,7 @@ checkbox bounds(516, 98, 12, 12), channel("Acc14"), value(0), preset("bassline")
 checkbox bounds(551, 98, 12, 12), channel("Acc15"), value(0), preset("bassline")
 checkbox bounds(586, 98, 12, 12), channel("Acc16"), value(0), preset("bassline")
 
-button   bounds( 10,120, 60, 25), colour("Green"), text("Stop", "Run"), channel("OnOff"), value(1)
+button   bounds( 10,120, 60, 25), colour("Green"), text("Run","Stop"), channel("OnOff"), value(1)
 combobox bounds( 10,150, 60, 15), channel("Waveform"), value(1), text("saw","square","triangle","PWM","noise"), preset("bassline")
 rslider  bounds( 20,170, 40, 40), text("P.W."),  channel("pw"),  range(0.01,0.99, 0.25), preset("bassline"), FontColour("black")
 rslider  bounds( 70,120, 60, 60), text("Vol."),  channel("Vol"),  range(0, 5.00, 1), preset("bassline"), FontColour("black")
@@ -111,7 +111,7 @@ button   bounds(540,140, 60, 15), text("+semi"), channel("SemiUp"), value(0)
 button   bounds(480,160, 60, 15), text("-oct"), channel("OctDn"), value(0)
 button   bounds(540,160, 60, 15), text("+oct"), channel("OctUp"), value(0)
 
-button bounds(280, 185, 80, 20), text("External", "Internal"), channel("ClockSource"), value(0)
+button bounds(280, 185, 80, 20), text("Internal","External"), channel("ClockSource"), value(0)
 label  bounds(285, 205, 80, 12), text("Clock Source"), FontColour("black")
 
 image bounds(5, 225, 330, 20), colour(75, 85, 90, 100), plant("credit"){
@@ -370,7 +370,7 @@ instr	1	;BASSLINE INSTRUMENT
 	SKIP_DISTORTION:
 		
 	kOn       port         kOn, 0.006				;SMOOTH CHANGES IN ON OFF SWITCHING
-	aAmp        interp  kAmp*kOn*((kAcc*0.7)+1)*gkVol		;COMBINE ALL FACTORS THAT CONTRIBUTE TO AMPLITUDE AND INTERPOLATE AND CREATE AN A-RATE VERSION OF THIS RESULT (TO PREVENT QUANTISATION NOISE) 
+	aAmp	interp	((kAmp*kOn)*((kAcc*0.7)+1)*gkVol)		;COMBINE ALL FACTORS THAT CONTRIBUTE TO AMPLITUDE AND INTERPOLATE AND CREATE AN A-RATE VERSION OF THIS RESULT (TO PREVENT QUANTISATION NOISE) 
 	aSig	=	aSig * aAmp					;SCALE AUDIO USING AMPLITUDE CONTROL FUNCTION
 		outs	aSig, aSig     					;AUDIO SENT TO OUTPUT, APPLY AMP. ENVELOPE, VOLUME CONTROL AND NOTE ON/OFF STATUS
 

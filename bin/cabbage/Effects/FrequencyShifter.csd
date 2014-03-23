@@ -26,17 +26,17 @@
 
 
 <Cabbage>
-form caption("Time Domain Frequency Shifter") size(500,180), pluginID("fshi")
+form caption("Frequency Shifter (time domain)") size(500,180), pluginID("fshi")
 image                               bounds( 0,  0, 500,180), colour("darkslategrey"), outline("silver"), line(6), shape("rounded")
 label    bounds(22,  7, 60, 11), text("INPUT"), fontcolour("white")
 combobox bounds(10, 18, 65, 20), channel("input"), value(1), text("Live","Tone","Noise")
 label    bounds(14, 42, 60, 11), text("POLARITY"), fontcolour("white")
 combobox bounds(10, 53, 65, 20), channel("polarity"), value(1), text("Positive","Negative","Dual")
-rslider bounds( 75, 10, 70, 70), text("Mix"),      channel("mix"),   range(0, 1.00, 0.5),        colour("darkslategrey"), fontcolour("white), tracker("yellow")
-rslider bounds(145, 10, 70, 70), text("Freq."),    channel("freq"),  range(-4000, 4000, -50), colour("darkslategrey"), fontcolour("white), tracker("yellow")
-rslider bounds(215, 10, 70, 70), text("Mult."),     channel("mult"),  range(-1, 1.00, 0.1),       colour("darkslategrey"), fontcolour("white), tracker("yellow")
-rslider bounds(285, 10, 70, 70), text("Feedback"), channel("fback"), range(0, 0.75, 0.6),     colour("darkslategrey"), fontcolour("white), tracker("yellow")
-rslider bounds(355, 10, 70, 70), text("Level"),    channel("level"), range(0, 1.00, 1),          colour("darkslategrey"), fontcolour("white), tracker("yellow")
+rslider bounds( 75, 10, 70, 70), text("Mix"),      channel("mix"),    range(0, 1.00, 0.5),     colour("darkslategrey"), fontcolour("white), trackercolour("yellow")
+rslider bounds(145, 10, 70, 70), text("Freq."),    channel("freq"),   range(-4000, 4000, -50), colour("darkslategrey"), fontcolour("white), trackercolour("yellow")
+rslider bounds(215, 10, 70, 70), text("Mult."),    channel("mult"),   range(-1, 1.00, 0.1),    colour("darkslategrey"), fontcolour("white), trackercolour("yellow")
+rslider bounds(285, 10, 70, 70), text("Feedback"), channel("fback"),  range(0, 0.75, 0.6),     colour("darkslategrey"), fontcolour("white), trackercolour("yellow")
+rslider bounds(355, 10, 70, 70), text("Level"),    channel("level"),  range(0, 1.00, 1),       colour("darkslategrey"), fontcolour("white), trackercolour("yellow")
 
 checkbox bounds(425, 20, 12, 12), channel("r1") fontcolour("white") colour(yellow) value(1)
 checkbox bounds(425, 32, 12, 12), channel("r2") fontcolour("white") colour(yellow) 
@@ -49,10 +49,10 @@ line     bounds( 10, 90, 480, 2), colour("Grey")
 checkbox bounds( 10,100,150, 20), channel("ModOnOff") text("LFO Modulate Freq."), fontcolour("white") colour(lime) value(0)
 label    bounds( 30,127, 75, 11), text("SHAPE"), fontcolour("white")
 combobox bounds( 10,138, 85, 20), channel("LFOShape"), value(7), text("Sine","Triangle","Square","Saw Up","Saw Down","Rand.S&H","Rand.Spline")
-rslider bounds( 145,100, 70, 70), text("Rate"),     channel("LFORate"),  range(0, 30,  1.5, 0.5, 0.001), colour("lightslategrey"), fontcolour("white), tracker("yellow")
-rslider bounds( 215,100, 70, 70), text("Min"),      channel("LFOMin"),   range(-2000, 2000, -600),   colour("lightslategrey"), fontcolour("white), tracker("yellow")
-rslider bounds( 285,100, 70, 70), text("Max"),      channel("LFOMax"),   range(-2000, 2000,  600),   colour("lightslategrey"), fontcolour("white), tracker("yellow")
-rslider bounds( 355,100, 70, 70), text("Pan Mod."),   channel("PanSpread"),range(0, 1.00, 1),          colour("lightslategrey"), fontcolour("white), tracker("yellow")
+rslider bounds( 145,100, 70, 70), text("Rate"),     channel("LFORate"),  range(0, 30,  1.5, 0.5, 0.001), colour("lightslategrey"), fontcolour("white), trackercolour("yellow")
+rslider bounds( 215,100, 70, 70), text("Min"),      channel("LFOMin"),   range(-2000, 2000, -600),       colour("lightslategrey"), fontcolour("white), trackercolour("yellow")
+rslider bounds( 285,100, 70, 70), text("Max"),      channel("LFOMax"),   range(-2000, 2000,  600),       colour("lightslategrey"), fontcolour("white), trackercolour("yellow")
+rslider bounds( 355,100, 70, 70), text("Pan Mod."), channel("PanSpread"),range(0, 1.00, 1),              colour("lightslategrey"), fontcolour("white), trackercolour("yellow")
 button   bounds(425,100, 65, 20), colour("Green"), text("Sync LFO", "Sync LFO"), channel("SyncLFO"), value(0)
 
 </Cabbage>

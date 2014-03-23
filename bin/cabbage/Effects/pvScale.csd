@@ -1,21 +1,21 @@
 <Cabbage>
 form caption("pvscale Pitch Shifter") size(510,  90), pluginID("scal")
-image bounds( 15,  9, 60, 60), colour(30,30,30), shape("ellipse"), line(0)
+image bounds(0, 0, 510, 90), colour("SlateGrey"), outline("silver"), line(4)
+image bounds(  6, 23,498, 30), colour("silver"), shape("ellipse"), line(3)
+image bounds( 15,  9, 60, 60), colour(30,30,30), shape("ellipse"), line(0)	; circles around rsliders
 image bounds( 85,  9, 60, 60), colour(30,30,30), shape("ellipse"), line(0)
 image bounds(155,  9, 60, 60), colour(30,30,30), shape("ellipse"), line(0)
 image bounds(295,  9, 60, 60), colour(30,30,30), shape("ellipse"), line(0)
 image bounds(365,  9, 60, 60), colour(30,30,30), shape("ellipse"), line(0)
 image bounds(435,  9, 60, 60), colour(30,30,30), shape("ellipse"), line(0)
-image bounds(6,23, 498, 30), colour("grey"), shape("ellipse")
-image bounds(0, 0, 510, 90), colour("SlateGrey"), outline("silver"), line(4)
-rslider bounds(10, 10, 70, 70), text("Semitones"), channel("semis"), range(-24, 24, 7, 1, 1),fontcolour("black"),colour("DarkSlateGrey")
-rslider bounds(80, 10, 70, 70), text("Cents"), channel("cents"), range(-100, 100, 0, 1, 1),fontcolour("black"),colour("DarkSlateGrey")
-rslider bounds(150, 10, 70, 70), text("Feedback"), channel("FB"), range(0.00, 0.99, 0),fontcolour("black"),colour("DarkSlateGrey")
+rslider bounds(10, 10, 70, 70),  text("Semitones"), channel("semis"), range(-24, 24, 7, 1, 1),   fontcolour("black"),colour("DarkSlateGrey"), trackercolour("LightBlue")
+rslider bounds(80, 10, 70, 70),  text("Cents"),     channel("cents"), range(-100, 100, 0, 1, 1), fontcolour("black"),colour("DarkSlateGrey"), trackercolour("LightBlue")
+rslider bounds(150, 10, 70, 70), text("Feedback"),  channel("FB"), range(0.00, 0.99, 0),         fontcolour("black"),colour("DarkSlateGrey"), trackercolour("LightBlue")
 combobox bounds(220, 28,  70,20), channel("FB_mode"), value(0), text("F Sig.", "Audio")
 label   bounds(220, 54, 70, 12), text("F.back Mode"), FontColour("black")
-rslider bounds(290, 10, 70, 70), text("FFT Size"), channel("att_table"), range(1, 8, 5, 1,1), fontcolour("black"),colour("DarkSlateGrey")
-rslider bounds(360, 10, 70, 70), text("Mix"), channel("mix"), range(0, 1.00, 0.5),fontcolour("black"),colour("DarkSlateGrey")
-rslider bounds(430, 10, 70, 70), text("Level"), channel("lev"), range(0, 1.00, 0.5, 0.5),fontcolour("black"),colour("DarkSlateGrey")
+rslider bounds(290, 10, 70, 70), text("FFT Size"),  channel("att_table"), range(1, 8, 5, 1,1),      fontcolour("black"),colour("DarkSlateGrey"), trackercolour("LightBlue")
+rslider bounds(360, 10, 70, 70), text("Mix"),       channel("mix"),       range(0, 1.00, 0.5),      fontcolour("black"),colour("DarkSlateGrey"), trackercolour("LightBlue")
+rslider bounds(430, 10, 70, 70), text("Level"),     channel("lev"),       range(0, 1.00, 0.5, 0.5), fontcolour("black"),colour("DarkSlateGrey"), trackercolour("LightBlue")
 </Cabbage>
 <CsoundSynthesizer>
 <CsOptions>

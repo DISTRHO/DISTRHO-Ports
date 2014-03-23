@@ -5,12 +5,12 @@ FFT feedback is disabled if amplitude smoothing is increased beyond zero. If thi
 form caption("pvSmooth") size(505, 90), pluginID("smoo")
 image bounds(0, 0, 505, 90), colour("Cream"), outline("silver"), line(5)
 label pos(-5, -30), size(815, 150), fontcolour(210,105, 30, 80), text("smooth"), shape("rounded"), outline("white"), line(4)
-rslider bounds( 10, 8, 75, 75), text("Amp.Smooth"), channel("acf"), range(0, 1.00, 0, 0.75, 0.001),fontcolour(138, 54, 15),colour("chocolate"), tracker(138, 54, 15)
-rslider bounds( 90, 8, 75, 75), text("Frq.Smooth"), channel("fcf"), range(0, 1.00, 0, 0.5, 0.0001),fontcolour(138, 54, 15),colour("chocolate"), tracker(138, 54, 15)
-rslider bounds(170, 8, 75, 75), text("Feedback"), channel("FB"), range(0, 0.999, 0, 1,0.001),fontcolour(138, 54, 15),colour("chocolate"), tracker(138, 54, 15)
-rslider bounds(250, 8, 75, 75), text("FFT Size"), channel("att_table"), range(1,10, 5, 1,1),fontcolour(138, 54, 15),colour("chocolate"), tracker(138, 54, 15)
-rslider bounds(330, 8, 75, 75), text("Mix"), channel("mix"), range(0, 1.00, 1),fontcolour(138, 54, 15),colour("chocolate"), tracker(138, 54, 15)
-rslider bounds(410, 8, 75, 75), text("Level"), channel("lev"), range(0, 1.00, 0.5),fontcolour(138, 54, 15),colour("chocolate"), tracker(138, 54, 15)
+rslider bounds( 10, 8, 75, 75), text("Amp.Smooth"), channel("acf"),       range(0, 1.00, 0, 0.75, 0.001),fontcolour(138, 54, 15), colour("chocolate"), trackercolour(138, 54, 15)
+rslider bounds( 90, 8, 75, 75), text("Frq.Smooth"), channel("fcf"),       range(0, 1.00, 0, 0.5, 0.0001),fontcolour(138, 54, 15), colour("chocolate"), trackercolour(138, 54, 15)
+rslider bounds(170, 8, 75, 75), text("Feedback"),   channel("FB"),        range(0, 0.999, 0, 1,0.001),   fontcolour(138, 54, 15), colour("chocolate"), trackercolour(138, 54, 15)
+rslider bounds(250, 8, 75, 75), text("FFT Size"),   channel("att_table"), range(1,10, 5, 1,1),           fontcolour(138, 54, 15), colour("chocolate"), trackercolour(138, 54, 15)
+rslider bounds(330, 8, 75, 75), text("Mix"),        channel("mix"),       range(0, 1.00, 1),             fontcolour(138, 54, 15), colour("chocolate"), trackercolour(138, 54, 15)
+rslider bounds(410, 8, 75, 75), text("Level"),      channel("lev"),       range(0, 1.00, 0.5),           fontcolour(138, 54, 15), colour("chocolate"), trackercolour(138, 54, 15)
 </Cabbage>
 <CsoundSynthesizer>
 <CsOptions>

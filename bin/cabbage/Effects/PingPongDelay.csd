@@ -1,11 +1,11 @@
 <Cabbage>
 form caption("Ping Pong Delay") size(350, 90), pluginID("ppdl")
 image                    bounds(0, 0,350, 90), colour("Maroon"), shape("rounded"), outline("white"), line(4) 
-rslider bounds(10, 11, 70, 70),  text("Time"),     channel("time"),     range(0.001, 10, 0.4, 0.5), colour(135, 30, 30) tracker(255,255,150) fontcolour(silver)
-rslider bounds(75, 11, 70, 70),  text("Cutoff"),   channel("cutoff"),   range(20,20000,20000,0.5),  colour(135, 30, 30) tracker(255,255,150) fontcolour(silver)
-rslider bounds(140, 11, 70, 70), text("Feedback"), channel("feedback"), range(0, 1.00, 0.5),        colour(135, 30, 30) tracker(255,255,150) fontcolour(silver)
-rslider bounds(205, 11, 70, 70), text("Mix"),      channel("mix"),      range(0, 1.00, 0.5),        colour(135, 30, 30) tracker(255,255,150) fontcolour(silver)
-rslider bounds(270, 11, 70, 70), text("Level"),    channel("level"),    range(0, 1.00, 0.7),        colour(135, 30, 30) tracker(255,255,150) fontcolour(silver)
+rslider bounds(10, 11, 70, 70),  text("Time"),     channel("time"),     range(0.001, 10, 0.4, 0.5), colour(135, 30, 30) trackercolour(255,255,150) fontcolour(silver)
+rslider bounds(75, 11, 70, 70),  text("Cutoff"),   channel("cutoff"),   range(20,20000,20000,0.5),  colour(135, 30, 30) trackercolour(255,255,150) fontcolour(silver)
+rslider bounds(140, 11, 70, 70), text("Feedback"), channel("feedback"), range(0, 1.00, 0.5),        colour(135, 30, 30) trackercolour(255,255,150) fontcolour(silver)
+rslider bounds(205, 11, 70, 70), text("Mix"),      channel("mix"),      range(0, 1.00, 0.5),        colour(135, 30, 30) trackercolour(255,255,150) fontcolour(silver)
+rslider bounds(270, 11, 70, 70), text("Level"),    channel("level"),    range(0, 1.00, 0.7),        colour(135, 30, 30) trackercolour(255,255,150) fontcolour(silver)
 
 </Cabbage>
 

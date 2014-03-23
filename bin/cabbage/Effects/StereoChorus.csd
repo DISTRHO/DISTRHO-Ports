@@ -1,10 +1,10 @@
 <Cabbage>
 form caption("Stereo Chorus") size(305, 100), pluginID("scho")
 image bounds(0, 0, 305, 100), colour("DarkSlateGrey"), shape("rounded"), outline("white"), line(6)
-rslider bounds( 10, 13, 75, 75), text("Rate"), channel("rate"), range(0.001, 7, 0.5,0.5), fontcolour("white"), colour("DarkSlateGrey"), tracker("Silver")
-rslider bounds( 80, 13, 75, 75), text("Depth"), channel("depth"), range(0, 1.00, 0.2), fontcolour("white"), colour("DarkSlateGrey"), tracker("Silver")
-rslider bounds(150, 13, 75, 75), text("Width"), channel("width"), range(0, 1.00, 0.75), fontcolour("white"), colour("DarkSlateGrey"), tracker("Silver")
-rslider bounds(220, 13, 75, 75), text("Level"), channel("level"), range(0, 1.00, .1), fontcolour("white"), colour("DarkSlateGrey"), tracker("Silver")
+rslider bounds( 10, 13, 75, 75), text("Rate"), channel("rate"), range(0.001, 7, 0.5,0.5), fontcolour("white"), colour("DarkSlateGrey"), trackercolour("Silver")
+rslider bounds( 80, 13, 75, 75), text("Depth"), channel("depth"), range(0, 1.00, 0.2),    fontcolour("white"), colour("DarkSlateGrey"), trackercolour("Silver")
+rslider bounds(150, 13, 75, 75), text("Width"), channel("width"), range(0, 1.00, 0.75),   fontcolour("white"), colour("DarkSlateGrey"), trackercolour("Silver")
+rslider bounds(220, 13, 75, 75), text("Level"), channel("level"), range(0, 1.00, .1),     fontcolour("white"), colour("DarkSlateGrey"), trackercolour("Silver")
 </Cabbage>
 <CsoundSynthesizer>
 <CsOptions>

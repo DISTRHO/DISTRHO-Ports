@@ -5,13 +5,13 @@ label    bounds(29,  8, 60, 10), text("INPUT"), fontcolour(0,10,30)
 combobox bounds(10, 18, 70, 20), channel("input"), value(1), text("Live","Tone","Noise")
 label    bounds(19, 43, 60, 10), text("LFO SHAPE"), fontcolour(0,10,30)
 combobox bounds(10, 53, 70, 20), channel("shape"), value(1), text("Triangle","Sine","Square","Saw","Saw","Rand.Int","Rand.S&H")
-rslider bounds( 85, 10, 70, 70), text("Rate"), 		channel("rate"), 	range(0,14.00,0.5,0.5, 0.0001),    colour(100,100,110), fontcolour(0,10,30), tracker(255,255,200), midiCtrl(1,1)
-rslider bounds(155, 10, 70, 70), text("Depth"), 	channel("depth"), 	range(0, 1.00, 0.5, 1, .01),       colour(100,100,110), fontcolour(0,10,30), tracker(255,255,200)
-rslider bounds(225, 10, 70, 70), text("Freq."), 	channel("freq"), 	range(0, 1.00, 0.4, 1, .01),       colour(100,100,110), fontcolour(0,10,30), tracker(255,255,200)
-rslider bounds(295, 10, 70, 70), text("Feedback"), 	channel("fback"), 	range(0, 1.00, 0.4, 1, .01),       colour(100,100,110), fontcolour(0,10,30), tracker(255,255,200)
-rslider bounds(365, 10, 70, 70), text("Stages"),	channel("stages"), 	range(1, 64,8, 1, 1),              colour(100,100,110), fontcolour(0,10,30), tracker(255,255,200)
-rslider bounds(435, 10, 70, 70), text("Mix"), 	        channel("mix"), 	range(0, 1.00,0.5, 1, .01),        colour(100,100,110), fontcolour(0,10,30), tracker(255,255,200)
-rslider bounds(505, 10, 70, 70), text("Level"), 	channel("level"), 	range(0, 1.00, 1, 1, .01),         colour(100,100,110), fontcolour(0,10,30), tracker(255,255,200)
+rslider bounds( 85, 10, 70, 70), text("Rate"), 		channel("rate"), 	range(0,14.00,0.5,0.5, 0.0001),    colour(100,100,110), fontcolour(0,10,30), trackercolour(255,255,200), midiCtrl(1,1)
+rslider bounds(155, 10, 70, 70), text("Depth"), 	channel("depth"), 	range(0, 1.00, 0.5, 1, .01),       colour(100,100,110), fontcolour(0,10,30), trackercolour(255,255,200)
+rslider bounds(225, 10, 70, 70), text("Freq."), 	channel("freq"), 	range(0, 1.00, 0.4, 1, .01),       colour(100,100,110), fontcolour(0,10,30), trackercolour(255,255,200)
+rslider bounds(295, 10, 70, 70), text("Feedback"), 	channel("fback"), 	range(0, 1.00, 0.4, 1, .01),       colour(100,100,110), fontcolour(0,10,30), trackercolour(255,255,200)
+rslider bounds(365, 10, 70, 70), text("Stages"),	channel("stages"), 	range(1, 64,8, 1, 1),              colour(100,100,110), fontcolour(0,10,30), trackercolour(255,255,200)
+rslider bounds(435, 10, 70, 70), text("Mix"), 	        channel("mix"), 	range(0, 1.00,0.5, 1, .01),        colour(100,100,110), fontcolour(0,10,30), trackercolour(255,255,200)
+rslider bounds(505, 10, 70, 70), text("Level"), 	channel("level"), 	range(0, 1.00, 1, 1, .01),         colour(100,100,110), fontcolour(0,10,30), trackercolour(255,255,200)
 </Cabbage>
 
 <CsoundSynthesizer>
@@ -90,11 +90,11 @@ kinput		chnget	"input"
 if kinput=1 then
  a1,a2		ins
 elseif kinput=2 then
- a1		vco2		0.2,200
+ a1		vco2		0.1,200
  a2		=		a1
 else
- a1		pinkish		0.2
- a2		pinkish		0.2
+ a1		pinkish		0.1
+ a2		pinkish		0.1
 endif
 
 ktrig		changed		kshape,kstages							; reinitialise for i-rate parms

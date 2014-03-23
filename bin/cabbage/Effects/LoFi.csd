@@ -7,9 +7,9 @@ image pos( 80, 20), size(300,300), colour(  0,  0,255,0), shape("ellipse"), outl
 image pos(120, 30), size(300,300), colour(  0,255,255,0), shape("ellipse"), outline(  0,255,255, 50), line(70)
 image pos(160, 40), size(300,300), colour(255,255,  0,0), shape("ellipse"), outline(255,255,  0, 50), line(70)
 image pos(0, 0), size(230, 120), colour("Chocolate"), shape("rounded"), outline("white"), line(5)
-rslider bounds(  5, 31, 80, 80), text("Bits"), channel("bits"), range(1, 16, 16), fontcolour("White"),colour("orange"), tracker("brown")
-rslider bounds( 75,  7, 80, 80), text("Foldover"), channel("fold"), range(1, 1024, 0, 0.25), fontcolour("White"),colour("orange"), tracker("brown")
-rslider bounds(145, 31, 80, 80), text("Level"), channel("level"), range(0, 1.00, 1), fontcolour("White"),colour("orange"), tracker("brown")
+rslider bounds(  5, 31, 80, 80), text("Bits"), channel("bits"), range(1, 16, 16), fontcolour("White"),colour("orange"), trackercolour("brown")
+rslider bounds( 75,  7, 80, 80), text("Foldover"), channel("fold"), range(1, 1024, 0, 0.25), fontcolour("White"),colour("orange"), trackercolour("brown")
+rslider bounds(145, 31, 80, 80), text("Level"), channel("level"), range(0, 1.00, 1), fontcolour("White"),colour("orange"), trackercolour("brown")
 }
 </Cabbage>
 <CsoundSynthesizer>
