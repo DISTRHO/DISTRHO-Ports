@@ -663,7 +663,7 @@ for(int i=0;i<getNumChildComponents();i++){
 //clear vector containing child positions before movement
 selectedCompsOrigCoordinates.clear();	
 	
-if(e.mods.isRightButtonDown()){	
+if(e.mods.isPopupMenu()){	
 	currentMouseCoors = e.getPosition();
 	//call change method in CabbagePluginEditor..
 	currentEvent = "triggerPopupMenu";

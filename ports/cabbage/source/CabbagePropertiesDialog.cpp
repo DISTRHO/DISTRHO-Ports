@@ -39,7 +39,7 @@ value(_value)
 		colourField->addActionListener(this);
 		colourField->repaint();
 	}
-	else if(name.contains("file")){
+	else if(name.contains("file") || name.contains("workingdir")){
 		addAndMakeVisible(fileBrowserField = new FileBrowserField(name, value.toString()));	
 		fileBrowserField->addActionListener(this);		
 	}

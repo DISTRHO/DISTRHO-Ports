@@ -41,11 +41,22 @@ float value;
 #endif
 	String type;
 	String fStatement;
+	String stringVal;
 
-	CabbageChannelMessage(String chan, double val, String _type):channelName(chan),
-																 value(val),
-																 type(_type)
-	{}
+	CabbageChannelMessage(String chan, double val, String _type)
+	{
+		channelName = chan;
+		value = val;
+		type = _type;		
+	}
+	
+	CabbageChannelMessage(String chan, String val, String _type)
+	{
+		channelName = chan;
+		stringVal = val;
+		type = _type;
+	}
+
 	~CabbageChannelMessage()
 	{}
 
@@ -64,6 +75,10 @@ public:
 	outgoingChannelMessages.add(CabbageChannelMessage(_chan, _val, _type));
 	}
 
+	void addOutgoingChannelMessageToQueue(String _chan, String _val, String _type){
+	outgoingChannelMessages.add(CabbageChannelMessage(_chan, _val, _type));
+	}
+	
 	void addOutgoingTableUpdateMessageToQueue(String fStatement){
 	CabbageChannelMessage tableMessage("", 0.f, "updateTable");
 	tableMessage.fStatement = fStatement;

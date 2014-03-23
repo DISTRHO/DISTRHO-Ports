@@ -102,16 +102,16 @@ public:
 		comps[i]->setPreferredHeight(22);
 		
 		
-		if(attributeNames[i].contains("type") || 
-			attributeNames[i].contains("name") ||
-			attributeNames[i].contains("caption") ||
- 			attributeNames[i].contains("kind") ||
-			attributeNames[i].contains("scaley") ||
-			attributeNames[i].contains("scalex") ||
-			attributeNames[i].contains("range") ||
-			attributeNames[i].contains("comborange") ||
-			attributeNames[i].contains("basetype") ||
-			attributeNames[i].contains("decimalplaces")){
+		if(attributeNames[i].equalsIgnoreCase("type") || 
+			attributeNames[i].equalsIgnoreCase("name") ||
+			attributeNames[i].equalsIgnoreCase("caption") ||
+ 			attributeNames[i].equalsIgnoreCase("kind") ||
+			attributeNames[i].equalsIgnoreCase("scaley") ||
+			attributeNames[i].equalsIgnoreCase("scalex") ||
+			attributeNames[i].equalsIgnoreCase("range") ||
+			attributeNames[i].equalsIgnoreCase("comborange") ||
+			attributeNames[i].equalsIgnoreCase("basetype") ||
+			attributeNames[i].equalsIgnoreCase("decimalplaces")){
 			comps[i]->setPreferredHeight(0);
 			hiddenComponents++;
 			}
@@ -453,7 +453,7 @@ public :
 	}	
 	
 	void mouseDown(const MouseEvent& e){
-	FileChooser openFC(String("Open a soundfile .csd file..."), File::nonexistent, String("*.wav;*.mp3;*.ogg"));
+	FileChooser openFC(String("Open a file..."), File::nonexistent, String("*.*"));
 	if(!e.mods.isCtrlDown())
 		if(openFC.browseForFileToOpen()){
 			value.resize(0);

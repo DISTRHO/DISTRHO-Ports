@@ -23,7 +23,7 @@
 #include <string>
 #include <time.h>
 
-#include "JuceHeader.h"
+#include "JuceHeader.h" 
 
 #ifndef Cabbage_Plugin_Host
 #include "BinaryData.h"

@@ -20,7 +20,7 @@
 #ifndef SOUNDFILEWAVEFORM_H
 #define SOUNDFILEWAVEFORM_H
 
-#include "JuceHeader.h"
+#include "JuceHeader.h" 
 #include "CabbageUtils.h"
 #include "CabbageLookAndFeel.h"
 

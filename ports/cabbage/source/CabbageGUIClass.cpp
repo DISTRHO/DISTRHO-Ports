@@ -20,8 +20,6 @@
   
 #include "CabbageGUIClass.h"
 
-
-
 CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 								debugMessage(""), 
 								plant(""), 
@@ -70,97 +68,97 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 
 	//===============sliders==================//
 	if(strTokens[0].trim() == "hslider"){
-		cabbageIdentifiers.set("basetype", "interactive");
-		cabbageIdentifiers.set("top", 10);
-		cabbageIdentifiers.set("left", 10);
-		cabbageIdentifiers.set("width", 150);
-		cabbageIdentifiers.set("height", 50);		
+		cabbageIdentifiers.set(CabbageIDs::basetype, "interactive");
+		cabbageIdentifiers.set(CabbageIDs::top, 10);
+		cabbageIdentifiers.set(CabbageIDs::left, 10);
+		cabbageIdentifiers.set(CabbageIDs::width, 150);
+		cabbageIdentifiers.set(CabbageIDs::height, 50);		
 		var channels;
 		channels.append("hslider");
-		cabbageIdentifiers.set("channel", channels);
-		cabbageIdentifiers.set("min", 0);
-		cabbageIdentifiers.set("max", 100);	
-		cabbageIdentifiers.set("value", 50);
-		cabbageIdentifiers.set("text", "");
-		cabbageIdentifiers.set("textbox", 0.f);
-		cabbageIdentifiers.set("caption", "");
-		cabbageIdentifiers.set("colour", Colours::white.toString());
-		cabbageIdentifiers.set("trackercolour", Colours::lime.toString());
-		cabbageIdentifiers.set("fontcolour", CabbageUtils::getComponentFontColour().toString());	
-		cabbageIdentifiers.set("sliderskew", 1);
-		cabbageIdentifiers.set("sliderincr", .0001);
-		cabbageIdentifiers.set("midichan", -99);
-		cabbageIdentifiers.set("midictrl", -99);
+		cabbageIdentifiers.set(CabbageIDs::channel, channels);
+		cabbageIdentifiers.set(CabbageIDs::min, 0);
+		cabbageIdentifiers.set(CabbageIDs::max, 100);	
+		cabbageIdentifiers.set(CabbageIDs::value, 50);
+		cabbageIdentifiers.set(CabbageIDs::text, "");
+		cabbageIdentifiers.set(CabbageIDs::textbox, 0.f);
+		cabbageIdentifiers.set(CabbageIDs::caption, "");
+		cabbageIdentifiers.set(CabbageIDs::colour, Colours::white.toString());
+		cabbageIdentifiers.set(CabbageIDs::trackercolour, Colours::lime.toString());
+		cabbageIdentifiers.set(CabbageIDs::fontcolour, CabbageUtils::getComponentFontColour().toString());	
+		cabbageIdentifiers.set(CabbageIDs::sliderskew, 1);
+		cabbageIdentifiers.set(CabbageIDs::sliderincr, .0001);
+		cabbageIdentifiers.set(CabbageIDs::midichan, -99);
+		cabbageIdentifiers.set(CabbageIDs::midictrl, -99);
 
 		//these don't appear in the props dialog
-		cabbageIdentifiers.set("name", "hslider");
-		cabbageIdentifiers.set("type", cabbageIdentifiers.getWithDefault("name", "").toString());
-		cabbageIdentifiers.set("name", cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
-		cabbageIdentifiers.set("kind", "horizontal");
-		cabbageIdentifiers.set("decimalplaces", 1);
+		cabbageIdentifiers.set(CabbageIDs::name, "hslider");
+		cabbageIdentifiers.set(CabbageIDs::type, cabbageIdentifiers.getWithDefault("name", "").toString());
+		cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
+		cabbageIdentifiers.set(CabbageIDs::kind, "horizontal");
+		cabbageIdentifiers.set(CabbageIDs::decimalplaces, 1);
 
 	}
     else if(strTokens[0].trim() == "vslider"){
-		cabbageIdentifiers.set("basetype", "interactive");
-		cabbageIdentifiers.set("top", 10);
-		cabbageIdentifiers.set("left", 10);
-		cabbageIdentifiers.set("width", 50);
-		cabbageIdentifiers.set("height", 150);	
+		cabbageIdentifiers.set(CabbageIDs::basetype, "interactive");
+		cabbageIdentifiers.set(CabbageIDs::top, 10);
+		cabbageIdentifiers.set(CabbageIDs::left, 10);
+		cabbageIdentifiers.set(CabbageIDs::width, 50);
+		cabbageIdentifiers.set(CabbageIDs::height, 150);	
 		var channels;
 		channels.append("vslider");
-		cabbageIdentifiers.set("channel", channels);		  
-		cabbageIdentifiers.set("min", 0);
-		cabbageIdentifiers.set("max", 100);	
-		cabbageIdentifiers.set("value", 50);
-		cabbageIdentifiers.set("text", "");
-		cabbageIdentifiers.set("textbox", 0.f);
-		cabbageIdentifiers.set("caption", "");
-		cabbageIdentifiers.set("colour", Colours::white.toString());
-		cabbageIdentifiers.set("trackercolour", Colours::lime.toString());
-		cabbageIdentifiers.set("fontcolour", CabbageUtils::getComponentFontColour().toString());	
-		cabbageIdentifiers.set("sliderskew", 1);
-		cabbageIdentifiers.set("sliderincr", .0001);
-		cabbageIdentifiers.set("midichan", -99);
-		cabbageIdentifiers.set("midiCtrl", -99);
+		cabbageIdentifiers.set(CabbageIDs::channel, channels);		  
+		cabbageIdentifiers.set(CabbageIDs::min, 0);
+		cabbageIdentifiers.set(CabbageIDs::max, 100);	
+		cabbageIdentifiers.set(CabbageIDs::value, 50);
+		cabbageIdentifiers.set(CabbageIDs::text, "");
+		cabbageIdentifiers.set(CabbageIDs::textbox, 0.f);
+		cabbageIdentifiers.set(CabbageIDs::caption, "");
+		cabbageIdentifiers.set(CabbageIDs::colour, Colours::white.toString());
+		cabbageIdentifiers.set(CabbageIDs::trackercolour, Colours::lime.toString());
+		cabbageIdentifiers.set(CabbageIDs::fontcolour, CabbageUtils::getComponentFontColour().toString());	
+		cabbageIdentifiers.set(CabbageIDs::sliderskew, 1);
+		cabbageIdentifiers.set(CabbageIDs::sliderincr, .0001);
+		cabbageIdentifiers.set(CabbageIDs::midichan, -99);
+		cabbageIdentifiers.set(CabbageIDs::midictrl, -99);
 	
 		//these don't appear in the props dialog
-		cabbageIdentifiers.set("name", "vslider");
-		cabbageIdentifiers.set("type", cabbageIdentifiers.getWithDefault("name", "").toString());
-		cabbageIdentifiers.set("name", cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
-		cabbageIdentifiers.set("kind", "vertical");
-		cabbageIdentifiers.set("decimalplaces", 1);	
+		cabbageIdentifiers.set(CabbageIDs::name, "vslider");
+		cabbageIdentifiers.set(CabbageIDs::type, cabbageIdentifiers.getWithDefault("name", "").toString());
+		cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
+		cabbageIdentifiers.set(CabbageIDs::kind, "vertical");
+		cabbageIdentifiers.set(CabbageIDs::decimalplaces, 1);	
 		
 
 	}
     else if(strTokens[0].trim() == "rslider"){
-		cabbageIdentifiers.set("basetype", "interactive");
-		cabbageIdentifiers.set("top", 10);
-		cabbageIdentifiers.set("left", 10);
-		cabbageIdentifiers.set("width", 60);
-		cabbageIdentifiers.set("height", 60);
+		cabbageIdentifiers.set(CabbageIDs::basetype, "interactive");
+		cabbageIdentifiers.set(CabbageIDs::top, 10);
+		cabbageIdentifiers.set(CabbageIDs::left, 10);
+		cabbageIdentifiers.set(CabbageIDs::width, 60);
+		cabbageIdentifiers.set(CabbageIDs::height, 60);
 		var channels;
 		channels.append("rslider");
-		cabbageIdentifiers.set("channel", channels);	
-		cabbageIdentifiers.set("min", 0);
-		cabbageIdentifiers.set("max", 100);	
-		cabbageIdentifiers.set("value", 50);
-		cabbageIdentifiers.set("text", "");
-		cabbageIdentifiers.set("textbox", 0.f);
-		cabbageIdentifiers.set("caption", "");
-		cabbageIdentifiers.set("colour", Colours::white.toString());
-		cabbageIdentifiers.set("trackercolour", Colours::lime.toString());
-		cabbageIdentifiers.set("fontcolour", CabbageUtils::getComponentFontColour().toString());	
-		cabbageIdentifiers.set("sliderskew", 1);
-		cabbageIdentifiers.set("sliderincr", .0001);
-		cabbageIdentifiers.set("midichan", -99);
-		cabbageIdentifiers.set("midictrl", -99);
+		cabbageIdentifiers.set(CabbageIDs::channel, channels);	
+		cabbageIdentifiers.set(CabbageIDs::min, 0);
+		cabbageIdentifiers.set(CabbageIDs::max, 100);	
+		cabbageIdentifiers.set(CabbageIDs::value, 50);
+		cabbageIdentifiers.set(CabbageIDs::text, "");
+		cabbageIdentifiers.set(CabbageIDs::textbox, 0.f);
+		cabbageIdentifiers.set(CabbageIDs::caption, "");
+		cabbageIdentifiers.set(CabbageIDs::colour, Colours::white.toString());
+		cabbageIdentifiers.set(CabbageIDs::trackercolour, Colours::lime.toString());
+		cabbageIdentifiers.set(CabbageIDs::fontcolour, CabbageUtils::getComponentFontColour().toString());	
+		cabbageIdentifiers.set(CabbageIDs::sliderskew, 1);
+		cabbageIdentifiers.set(CabbageIDs::sliderincr, .0001);
+		cabbageIdentifiers.set(CabbageIDs::midichan, -99);
+		cabbageIdentifiers.set(CabbageIDs::midictrl, -99);
 		
 		//these don't appear in the props dialog
-		cabbageIdentifiers.set("name", "rslider");
-		cabbageIdentifiers.set("type", cabbageIdentifiers.getWithDefault("name", "").toString());
-		cabbageIdentifiers.set("name", cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
-		cabbageIdentifiers.set("kind", "rotary");
-		cabbageIdentifiers.set("decimalplaces", 1);			
+		cabbageIdentifiers.set(CabbageIDs::name, "rslider");
+		cabbageIdentifiers.set(CabbageIDs::type, cabbageIdentifiers.getWithDefault("name", "").toString());
+		cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
+		cabbageIdentifiers.set(CabbageIDs::kind, "rotary");
+		cabbageIdentifiers.set(CabbageIDs::decimalplaces, 1);			
 		
 	}
 
@@ -189,18 +187,18 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		  caption = "";
 		  type = name;
           //name.append(String(ID), 1024);
-		cabbageIdentifiers.set("top", 10);
-		cabbageIdentifiers.set("left", 10);
-		cabbageIdentifiers.set("width", 80);
-		cabbageIdentifiers.set("height", 40);	
-
-		cabbageIdentifiers.set("text", "");
-		cabbageIdentifiers.set("caption", "");
-		cabbageIdentifiers.set("colour", Colours::black.toString());	
-		cabbageIdentifiers.set("fontcolour", Colours::white.toString());	
-		cabbageIdentifiers.set("type", "infobutton");
-		cabbageIdentifiers.set("name", "infobutton");
-		cabbageIdentifiers.set("name", cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
+		cabbageIdentifiers.set(CabbageIDs::top, 10);
+		cabbageIdentifiers.set(CabbageIDs::left, 10);
+		cabbageIdentifiers.set(CabbageIDs::width, 80);
+		cabbageIdentifiers.set(CabbageIDs::height, 40);	
+		cabbageIdentifiers.set(CabbageIDs::text, "");
+		cabbageIdentifiers.set(CabbageIDs::caption, "");
+		cabbageIdentifiers.set(CabbageIDs::colour, Colours::black.toString());	
+		cabbageIdentifiers.set(CabbageIDs::fontcolour, Colours::white.toString());	
+		cabbageIdentifiers.set(CabbageIDs::type, "infobutton");
+		cabbageIdentifiers.set(CabbageIDs::name, "infobutton");
+		cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
+		
 	}
 
 	//===============directory list==================//
@@ -254,21 +252,28 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		type = name;
 		name.append(String(ID), 1024);
 
-		cabbageIdentifiers.set("top", 10);
-		cabbageIdentifiers.set("left", 10);
-		cabbageIdentifiers.set("width", 80);
-		cabbageIdentifiers.set("height", 40);
+		cabbageIdentifiers.set(CabbageIDs::top, 10);
+		cabbageIdentifiers.set(CabbageIDs::left, 10);
+		cabbageIdentifiers.set(CabbageIDs::width, 80);
+		cabbageIdentifiers.set(CabbageIDs::height, 40);	
 		var channels;
-		channels.append("filechan");	
-		cabbageIdentifiers.set("value", 1);	
-		cabbageIdentifiers.set("channel", channels);
-		cabbageIdentifiers.set("text", array);		
-		cabbageIdentifiers.set("caption", "");
-		cabbageIdentifiers.set("colour", Colours::white.toString());	
-		cabbageIdentifiers.set("fontcolour", CabbageUtils::getComponentFontColour().toString());	
-		cabbageIdentifiers.set("type", "filebutton");
-		cabbageIdentifiers.set("name", "filebutton");
-		cabbageIdentifiers.set("name", cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));	  
+		channels.append("filebutton");
+		cabbageIdentifiers.set(CabbageIDs::channel, channels);
+		cabbageIdentifiers.set(CabbageIDs::value, 1);	
+		cabbageIdentifiers.set(CabbageIDs::text, array);
+		cabbageIdentifiers.set(CabbageIDs::caption, "");
+		cabbageIdentifiers.set(CabbageIDs::colour, Colours::black.toString());	
+		cabbageIdentifiers.set(CabbageIDs::fontcolour, Colours::white.toString());	
+		cabbageIdentifiers.set(CabbageIDs::type, "filebutton");
+		cabbageIdentifiers.set(CabbageIDs::name, "filebutton");
+		cabbageIdentifiers.set(CabbageIDs::mode, "open");
+		
+		
+		cabbageIdentifiers.set("name", cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));	
+		var populate;
+		populate.append("");
+		populate.append("");
+		cabbageIdentifiers.set("populate", populate);  
 	}
 
 	//===============button==================//
@@ -292,21 +297,22 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		array.append("Push me");
 		array.append("Push me");
 
-		cabbageIdentifiers.set("top", 10);
-		cabbageIdentifiers.set("left", 10);
-		cabbageIdentifiers.set("width", 80);
-		cabbageIdentifiers.set("height", 40);	
+		cabbageIdentifiers.set(CabbageIDs::top, 10);
+		cabbageIdentifiers.set(CabbageIDs::left, 10);
+		cabbageIdentifiers.set(CabbageIDs::width, 80);
+		cabbageIdentifiers.set(CabbageIDs::height, 40);	
 		var channels;
 		channels.append("buttonchan");
-		cabbageIdentifiers.set("channel", channels);
-		cabbageIdentifiers.set("value", 1);	
-		cabbageIdentifiers.set("text", array);
-		cabbageIdentifiers.set("caption", "");
-		cabbageIdentifiers.set("colour", Colours::black.toString());	
-		cabbageIdentifiers.set("fontcolour", Colours::white.toString());	
-		cabbageIdentifiers.set("type", "button");
-		cabbageIdentifiers.set("name", "button");
-		cabbageIdentifiers.set("name", cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
+		cabbageIdentifiers.set(CabbageIDs::channel, channels);
+		cabbageIdentifiers.set(CabbageIDs::value, 1);	
+		cabbageIdentifiers.set(CabbageIDs::text, array);
+		cabbageIdentifiers.set(CabbageIDs::caption, "");
+		cabbageIdentifiers.set(CabbageIDs::colour, Colours::black.toString());	
+		cabbageIdentifiers.set(CabbageIDs::fontcolour, Colours::white.toString());	
+		cabbageIdentifiers.set(CabbageIDs::latched, 1);
+		cabbageIdentifiers.set(CabbageIDs::type, "button");
+		cabbageIdentifiers.set(CabbageIDs::name, "button");
+		cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
 		  
 	}
 
@@ -334,23 +340,23 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		//default colour for toggles
 		colour = Colours::lime;
 
-		cabbageIdentifiers.set("top", 10);
-		cabbageIdentifiers.set("left", 10);
-		cabbageIdentifiers.set("width", 100);
-		cabbageIdentifiers.set("height", 22);	
+		cabbageIdentifiers.set(CabbageIDs::top, 10);
+		cabbageIdentifiers.set(CabbageIDs::left, 10);
+		cabbageIdentifiers.set(CabbageIDs::width, 100);
+		cabbageIdentifiers.set(CabbageIDs::height, 22);	
 		var channels;
 		channels.append("checkchan");
-		cabbageIdentifiers.set("channel", channels);
-		cabbageIdentifiers.set("text", array);
-		cabbageIdentifiers.set("value", 0);	
-		cabbageIdentifiers.set("caption", "");
-		cabbageIdentifiers.set("shape", "square");
+		cabbageIdentifiers.set(CabbageIDs::channel, channels);
+		cabbageIdentifiers.set(CabbageIDs::text, array);
+		cabbageIdentifiers.set(CabbageIDs::value, 0);	
+		cabbageIdentifiers.set(CabbageIDs::caption, "");
+		cabbageIdentifiers.set(CabbageIDs::shape, "square");
 		
-		cabbageIdentifiers.set("colour", Colours::lime.toString());	
-		cabbageIdentifiers.set("fontcolour", CabbageUtils::getComponentFontColour().toString());
-		cabbageIdentifiers.set("type", "checkbox");
-		cabbageIdentifiers.set("name", "checkbox");
-		cabbageIdentifiers.set("name", cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));		  
+		cabbageIdentifiers.set(CabbageIDs::colour, Colours::lime.toString());	
+		cabbageIdentifiers.set(CabbageIDs::fontcolour, CabbageUtils::getComponentFontColour().toString());
+		cabbageIdentifiers.set(CabbageIDs::type, "checkbox");
+		cabbageIdentifiers.set(CabbageIDs::name, "checkbox");
+		cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));		  
 		  
 	}
 	//===============combobox==================//
@@ -382,26 +388,27 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		min=1;
 		value = 1;
 
-		cabbageIdentifiers.set("top", 10);
-		cabbageIdentifiers.set("left", 10);
-		cabbageIdentifiers.set("width", 80);
-		cabbageIdentifiers.set("height", 20);	
+		cabbageIdentifiers.set(CabbageIDs::top, 10);
+		cabbageIdentifiers.set(CabbageIDs::left, 10);
+		cabbageIdentifiers.set(CabbageIDs::width, 80);
+		cabbageIdentifiers.set(CabbageIDs::height, 20);	
 		var channels;
 		channels.append("combochan");
-		cabbageIdentifiers.set("channel", channels);
-		cabbageIdentifiers.set("text", array);
-		cabbageIdentifiers.set("value", 1);	
-		cabbageIdentifiers.set("caption", "");
-		cabbageIdentifiers.set("colour", Colours::black.toString());
-		cabbageIdentifiers.set("fontcolour", CabbageUtils::getComponentFontColour().toString());
-		cabbageIdentifiers.set("type", "combobox");
-		cabbageIdentifiers.set("name", "combobox");		
-		cabbageIdentifiers.set("comborange", 4);
+		cabbageIdentifiers.set(CabbageIDs::channel, channels);
+		cabbageIdentifiers.set(CabbageIDs::channeltype, "number");
+		cabbageIdentifiers.set(CabbageIDs::text, array);
+		cabbageIdentifiers.set(CabbageIDs::value, 1);	
+		cabbageIdentifiers.set(CabbageIDs::caption, "");
+		cabbageIdentifiers.set(CabbageIDs::colour, Colours::black.toString());
+		cabbageIdentifiers.set(CabbageIDs::fontcolour, CabbageUtils::getComponentFontColour().toString());
+		cabbageIdentifiers.set(CabbageIDs::type, "combobox");
+		cabbageIdentifiers.set(CabbageIDs::name, "combobox");		
+		cabbageIdentifiers.set(CabbageIDs::comborange, 4);
 		var populate;
 		populate.append("");
 		populate.append("");
-		cabbageIdentifiers.set("populate", populate);
-		cabbageIdentifiers.set("name", cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
+		cabbageIdentifiers.set(CabbageIDs::populate, populate);
+		cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
 		 
 	} 
 	//===============label==================//
@@ -420,17 +427,17 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		type = name;
 		
 		name.append(String(ID), 1024);
-		cabbageIdentifiers.set("top", 10);
-		cabbageIdentifiers.set("left", 10);
-		cabbageIdentifiers.set("width", 80);
-		cabbageIdentifiers.set("height", 16);	
-		cabbageIdentifiers.set("text", "hello");	
-		cabbageIdentifiers.set("min", 1);
-		cabbageIdentifiers.set("name", "label");
-		cabbageIdentifiers.set("type", cabbageIdentifiers.getWithDefault("name", "").toString());
-		cabbageIdentifiers.set("name", cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
-		cabbageIdentifiers.set("colour", CabbageUtils::getComponentFontColour().toString());
-		cabbageIdentifiers.set("fontcolour", CabbageUtils::getComponentFontColour().toString());
+		cabbageIdentifiers.set(CabbageIDs::top, 10);
+		cabbageIdentifiers.set(CabbageIDs::left, 10);
+		cabbageIdentifiers.set(CabbageIDs::width, 80);
+		cabbageIdentifiers.set(CabbageIDs::height, 16);	
+		cabbageIdentifiers.set(CabbageIDs::text, "hello");	
+		cabbageIdentifiers.set(CabbageIDs::min, 1);
+		cabbageIdentifiers.set(CabbageIDs::name, "label");
+		cabbageIdentifiers.set(CabbageIDs::type, cabbageIdentifiers.getWithDefault("name", "").toString());
+		cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
+		cabbageIdentifiers.set(CabbageIDs::colour, CabbageUtils::getComponentFontColour().toString());
+		cabbageIdentifiers.set(CabbageIDs::fontcolour, CabbageUtils::getComponentFontColour().toString());
 	}
 	//===============multitab==================//	
     else if(strTokens[0].trim() == "multitab"){
@@ -462,20 +469,20 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		name.append(String(ID), 1024);
 
 
-		cabbageIdentifiers.set("top", 10);
-		cabbageIdentifiers.set("left", 10);
-		cabbageIdentifiers.set("width", 300);
-		cabbageIdentifiers.set("height", 200);	
+		cabbageIdentifiers.set(CabbageIDs::top, 10);
+		cabbageIdentifiers.set(CabbageIDs::left, 10);
+		cabbageIdentifiers.set(CabbageIDs::width, 300);
+		cabbageIdentifiers.set(CabbageIDs::height, 200);	
 		var channels;
 		channels.append("soundfiler1");
 		channels.append("soundfiler2");
-		cabbageIdentifiers.set("channel", channels);	  
-		cabbageIdentifiers.set("colour", CabbageUtils::getComponentFontColour().toString());
-		cabbageIdentifiers.set("fontcolour", CabbageUtils::getComponentFontColour().toString());
-		cabbageIdentifiers.set("type", "soundfiler");
-		cabbageIdentifiers.set("name", "soundfiler");
-		cabbageIdentifiers.set("file", "");
-		cabbageIdentifiers.set("name", cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
+		cabbageIdentifiers.set(CabbageIDs::channel, channels);	  
+		cabbageIdentifiers.set(CabbageIDs::colour, CabbageUtils::getComponentFontColour().toString());
+		cabbageIdentifiers.set(CabbageIDs::fontcolour, CabbageUtils::getComponentFontColour().toString());
+		cabbageIdentifiers.set(CabbageIDs::type, "soundfiler");
+		cabbageIdentifiers.set(CabbageIDs::name, "soundfiler");
+		cabbageIdentifiers.set(CabbageIDs::file, "");
+		cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
 	}	
 	//===============snapshot==================//	
     else if(strTokens[0].trim() == "snapshot"){
@@ -505,17 +512,17 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		val.append("Four");
 		val.append("Five");
 
-		cabbageIdentifiers.set("top", 10);
-		cabbageIdentifiers.set("left", 10);
-		cabbageIdentifiers.set("width", 200);
-		cabbageIdentifiers.set("height", 20);	
-		cabbageIdentifiers.set("text", val);
-		cabbageIdentifiers.set("value", value);
-		cabbageIdentifiers.set("fontcolour", Colours::white.toString());
-		cabbageIdentifiers.set("colour", CabbageUtils::getComponentFontColour().toString());
-		cabbageIdentifiers.set("type", "snapshot");
-		cabbageIdentifiers.set("name", "snapshot");
-		cabbageIdentifiers.set("name", cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
+		cabbageIdentifiers.set(CabbageIDs::top, 10);
+		cabbageIdentifiers.set(CabbageIDs::left, 10);
+		cabbageIdentifiers.set(CabbageIDs::width, 200);
+		cabbageIdentifiers.set(CabbageIDs::height, 20);	
+		cabbageIdentifiers.set(CabbageIDs::text, val);
+		cabbageIdentifiers.set(CabbageIDs::value, value);
+		cabbageIdentifiers.set(CabbageIDs::fontcolour, Colours::white.toString());
+		cabbageIdentifiers.set(CabbageIDs::colour, CabbageUtils::getComponentFontColour().toString());
+		cabbageIdentifiers.set(CabbageIDs::type, "snapshot");
+		cabbageIdentifiers.set(CabbageIDs::name, "snapshot");
+		cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
 
 		  
 	}
@@ -540,38 +547,38 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		plantButton = 0;
 
 
-		cabbageIdentifiers.set("top", 10);
-		cabbageIdentifiers.set("left", 10);
-		cabbageIdentifiers.set("width", 160);
-		cabbageIdentifiers.set("height", 120);	
-		cabbageIdentifiers.set("shape", "rounded");		
-		cabbageIdentifiers.set("colour", Colours::white.toString());
-		cabbageIdentifiers.set("outline", Colours::white.toString());
-		cabbageIdentifiers.set("popup", 0);
-		cabbageIdentifiers.set("plant", "");
-		cabbageIdentifiers.set("type", "image");
-		cabbageIdentifiers.set("file", "");
-		cabbageIdentifiers.set("name", "image");
-		cabbageIdentifiers.set("name", cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
+		cabbageIdentifiers.set(CabbageIDs::top, 10);
+		cabbageIdentifiers.set(CabbageIDs::left, 10);
+		cabbageIdentifiers.set(CabbageIDs::width, 160);
+		cabbageIdentifiers.set(CabbageIDs::height, 120);	
+		cabbageIdentifiers.set(CabbageIDs::shape, "rounded");		
+		cabbageIdentifiers.set(CabbageIDs::colour, Colours::white.toString());
+		cabbageIdentifiers.set(CabbageIDs::outline, Colours::white.toString());
+		cabbageIdentifiers.set(CabbageIDs::popup, 0);
+		cabbageIdentifiers.set(CabbageIDs::plant, "");
+		cabbageIdentifiers.set(CabbageIDs::type, "image");
+		cabbageIdentifiers.set(CabbageIDs::file, "");
+		cabbageIdentifiers.set(CabbageIDs::name, "image");
+		cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
 		  
 	}
 	//===============groupbox==================//
     else if(strTokens[0].trim() == "groupbox"){
 		line = 1;
 		plantButton = 0;
-		cabbageIdentifiers.set("basetype", "layout");
-		cabbageIdentifiers.set("top", 10);
-		cabbageIdentifiers.set("left", 10);
-		cabbageIdentifiers.set("width", 80);
-		cabbageIdentifiers.set("height", 22);		
-		cabbageIdentifiers.set("colour", CabbageUtils::getComponentSkin().toString());
-		cabbageIdentifiers.set("fontcolour", CabbageUtils::getComponentFontColour().toString());	
-		cabbageIdentifiers.set("popup", 0);
-		cabbageIdentifiers.set("plant", "");
-		cabbageIdentifiers.set("line", 1);
-		cabbageIdentifiers.set("type", "groupbox");
-		cabbageIdentifiers.set("name", "groupbox");
-		cabbageIdentifiers.set("name", cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));		  
+		cabbageIdentifiers.set(CabbageIDs::basetype, "layout");
+		cabbageIdentifiers.set(CabbageIDs::top, 10);
+		cabbageIdentifiers.set(CabbageIDs::left, 10);
+		cabbageIdentifiers.set(CabbageIDs::width, 80);
+		cabbageIdentifiers.set(CabbageIDs::height, 22);		
+		cabbageIdentifiers.set(CabbageIDs::colour, CabbageUtils::getComponentSkin().toString());
+		cabbageIdentifiers.set(CabbageIDs::fontcolour, CabbageUtils::getComponentFontColour().toString());	
+		cabbageIdentifiers.set(CabbageIDs::popup, 0);
+		cabbageIdentifiers.set(CabbageIDs::plant, "");
+		cabbageIdentifiers.set(CabbageIDs::line, 1);
+		cabbageIdentifiers.set(CabbageIDs::type, "groupbox");
+		cabbageIdentifiers.set(CabbageIDs::name, "groupbox");
+		cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));		  
 		  
 	}
 	//===============line==================//
@@ -585,14 +592,14 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		type = name;
 		name.append(String(ID), 1024);
 
-		cabbageIdentifiers.set("top", 10);
-		cabbageIdentifiers.set("left", 10);
-		cabbageIdentifiers.set("width", 160);
-		cabbageIdentifiers.set("height", 2);	
-		cabbageIdentifiers.set("colour", Colours::white.toString());
-		cabbageIdentifiers.set("type", "line");
-		cabbageIdentifiers.set("name", "line");
-		cabbageIdentifiers.set("name", cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
+		cabbageIdentifiers.set(CabbageIDs::top, 10);
+		cabbageIdentifiers.set(CabbageIDs::left, 10);
+		cabbageIdentifiers.set(CabbageIDs::width, 160);
+		cabbageIdentifiers.set(CabbageIDs::height, 2);	
+		cabbageIdentifiers.set(CabbageIDs::colour, Colours::white.toString());
+		cabbageIdentifiers.set(CabbageIDs::type, "line");
+		cabbageIdentifiers.set(CabbageIDs::name, "line");
+		cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
 		  
 	}
 	//===============transport==================//
@@ -618,14 +625,15 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		type = name;
 		name.append(String(ID), 1024);
 
-		cabbageIdentifiers.set("top", 10);
-		cabbageIdentifiers.set("left", 10);
-		cabbageIdentifiers.set("width", 400);
-		cabbageIdentifiers.set("height", 200);	
-		cabbageIdentifiers.set("colour", Colours::white.toString());
-		cabbageIdentifiers.set("name", "csoundoutput");
-		cabbageIdentifiers.set("type", "csoundoutput");
-		cabbageIdentifiers.set("name", cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
+		cabbageIdentifiers.set(CabbageIDs::top, 10);
+		cabbageIdentifiers.set(CabbageIDs::left, 10);
+		cabbageIdentifiers.set(CabbageIDs::width, 400);
+		cabbageIdentifiers.set(CabbageIDs::text, "Csound output");
+		cabbageIdentifiers.set(CabbageIDs::height, 200);	
+		cabbageIdentifiers.set(CabbageIDs::colour, Colours::white.toString());
+		cabbageIdentifiers.set(CabbageIDs::name, "csoundoutput");
+		cabbageIdentifiers.set(CabbageIDs::type, "csoundoutput");
+		cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
 
 	}
 	//===============vemeter==================//
@@ -655,20 +663,18 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		tableNum = 1;
 		name.append(String(ID), 1024);
 
-		cabbageIdentifiers.set("top", 10);
-		cabbageIdentifiers.set("left", 10);
-		cabbageIdentifiers.set("width", 400);
-		cabbageIdentifiers.set("height", 200);	
-		cabbageIdentifiers.set("tablenumber", 1);
-		cabbageIdentifiers.set("drawmode", 0);
-		cabbageIdentifiers.set("resizemode", 0);
-		cabbageIdentifiers.set("readonly", 0);
-		
-		cabbageIdentifiers.set("tablecolour", Colours::lime.toString());
-		cabbageIdentifiers.set("amprange", 0);
-		
-		cabbageIdentifiers.set("type", "table");
-		cabbageIdentifiers.set("name", cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
+		cabbageIdentifiers.set(CabbageIDs::top, 10);
+		cabbageIdentifiers.set(CabbageIDs::left, 10);
+		cabbageIdentifiers.set(CabbageIDs::width, 400);
+		cabbageIdentifiers.set(CabbageIDs::height, 200);	
+		cabbageIdentifiers.set(CabbageIDs::tablenumber, 1);
+		cabbageIdentifiers.set(CabbageIDs::drawmode, 0);
+		cabbageIdentifiers.set(CabbageIDs::resizemode, 0);
+		cabbageIdentifiers.set(CabbageIDs::readonly, 0);
+		cabbageIdentifiers.set(CabbageIDs::tablecolour, Colours::lime.toString());
+		cabbageIdentifiers.set(CabbageIDs::amprange, 0);
+		cabbageIdentifiers.set(CabbageIDs::type, "table");
+		cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
 		  
 	}
     else if(strTokens[0].trim() == "pvsview"){
@@ -715,29 +721,26 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		var channels;
 		channels.append("xChan");
 		channels.append("yChan");
-		cabbageIdentifiers.set("xyautoindex", 0);	
-		cabbageIdentifiers.set("xchannel", channels[0]);
-		cabbageIdentifiers.set("ychannel", channels[1]);
-		cabbageIdentifiers.set("top", 10);
-		cabbageIdentifiers.set("left", 10);
-		cabbageIdentifiers.set("caption", "");
-		cabbageIdentifiers.set("width", 200);
-		cabbageIdentifiers.set("height", 200);
-		cabbageIdentifiers.set("minx", 0);
-		cabbageIdentifiers.set("maxx", 200);	
-
-		cabbageIdentifiers.set("miny", 0);
-		cabbageIdentifiers.set("maxy", 200);	
-	
-	
-		cabbageIdentifiers.set("valuex", 0);	
-		cabbageIdentifiers.set("valuey", 0);
-	
-		cabbageIdentifiers.set("colour", Colours::lime.toString());	    
-		cabbageIdentifiers.set("fontcolour", Colours::cornflowerblue.toString());	
-		cabbageIdentifiers.set("type", "xypad");
-		cabbageIdentifiers.set("name", "xypad");
-		cabbageIdentifiers.set("name", cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));	    
+		cabbageIdentifiers.set(CabbageIDs::xyautoindex, 0);	
+		cabbageIdentifiers.set(CabbageIDs::xchannel, channels[0]);
+		cabbageIdentifiers.set(CabbageIDs::ychannel, channels[1]);
+		cabbageIdentifiers.set(CabbageIDs::top, 10);
+		cabbageIdentifiers.set(CabbageIDs::left, 10);
+		cabbageIdentifiers.set(CabbageIDs::caption, "");
+		cabbageIdentifiers.set(CabbageIDs::width, 200);
+		cabbageIdentifiers.set(CabbageIDs::height, 200);
+		cabbageIdentifiers.set(CabbageIDs::minx, 0);
+		cabbageIdentifiers.set(CabbageIDs::maxx, 200);	
+		cabbageIdentifiers.set(CabbageIDs::text, "");	
+		cabbageIdentifiers.set(CabbageIDs::miny, 0);
+		cabbageIdentifiers.set(CabbageIDs::maxy, 200);		
+		cabbageIdentifiers.set(CabbageIDs::valuex, 0);	
+		cabbageIdentifiers.set(CabbageIDs::valuey, 0);	
+		cabbageIdentifiers.set(CabbageIDs::colour, Colours::lime.toString());	    
+		cabbageIdentifiers.set(CabbageIDs::fontcolour, Colours::cornflowerblue.toString());	
+		cabbageIdentifiers.set(CabbageIDs::type, "xypad");
+		cabbageIdentifiers.set(CabbageIDs::name, "xypad");
+		cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));	    
 		  
 	}
 	//===============keyboard==================//
@@ -753,56 +756,57 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		value=60;
 
 
-		cabbageIdentifiers.set("top", 10);
-		cabbageIdentifiers.set("left", 10);
-		cabbageIdentifiers.set("width", 400);
-		cabbageIdentifiers.set("height", 100);	
-		cabbageIdentifiers.set("value", 60);	
-		cabbageIdentifiers.set("type", "keyboard");	
-		cabbageIdentifiers.set("name", "keyboard");
-		cabbageIdentifiers.set("name", cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
+		cabbageIdentifiers.set(CabbageIDs::top, 10);
+		cabbageIdentifiers.set(CabbageIDs::left, 10);
+		cabbageIdentifiers.set(CabbageIDs::width, 400);
+		cabbageIdentifiers.set(CabbageIDs::height, 100);	
+		cabbageIdentifiers.set(CabbageIDs::value, 60);	
+		cabbageIdentifiers.set(CabbageIDs::type, "keyboard");	
+		cabbageIdentifiers.set(CabbageIDs::name, "keyboard");
+		cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
 		  
 	}
 	//===============form==================//
     else if(strTokens[0].trim() == "form"){
-	    cabbageIdentifiers.set("basetype", "layout");
-		cabbageIdentifiers.set("top", 10);
-		cabbageIdentifiers.set("left", 10);
-		cabbageIdentifiers.set("width", 600);
-		cabbageIdentifiers.set("height", 300);	
-		cabbageIdentifiers.set("caption", "");
-		cabbageIdentifiers.set("name", "form");
-		cabbageIdentifiers.set("type", "form");
+	    cabbageIdentifiers.set(CabbageIDs::basetype, "layout");
+		cabbageIdentifiers.set(CabbageIDs::top, 10);
+		cabbageIdentifiers.set(CabbageIDs::left, 10);
+		cabbageIdentifiers.set(CabbageIDs::width, 600);
+		cabbageIdentifiers.set(CabbageIDs::height, 300);	
+		cabbageIdentifiers.set(CabbageIDs::caption, "");
+		cabbageIdentifiers.set(CabbageIDs::name, "form");
+		cabbageIdentifiers.set(CabbageIDs::type, "form");
+		cabbageIdentifiers.set(CabbageIDs::guirefresh, 20);
 	}
 
     else if(strTokens[0].trim() == "hostbpm"){
-		cabbageIdentifiers.set("basetype", "layout");
-          name = "hostbpm";
-		  type = "hostbpm";
+		cabbageIdentifiers.set(CabbageIDs::basetype, "layout");
+        cabbageIdentifiers.set(CabbageIDs::name, "hostbpm");
+		cabbageIdentifiers.set(CabbageIDs::type, "hostbpm");
 	}
 
     else if(strTokens[0].trim() == "hostppqpos"){
-		cabbageIdentifiers.set("basetype", "layout");
-          name = "hostppqpos";
-		  type = "hostppqpos";
+		cabbageIdentifiers.set(CabbageIDs::basetype, "layout");
+        cabbageIdentifiers.set(CabbageIDs::name, "hostppqpos");
+		cabbageIdentifiers.set(CabbageIDs::type, "hostppqpos");
 	}
 
     else if(strTokens[0].trim() == "hostplaying"){
-		cabbageIdentifiers.set("basetype", "layout");
-          name = "hostplaying";
-		  type = "hostplaying";
+		cabbageIdentifiers.set(CabbageIDs::basetype, "layout");
+        cabbageIdentifiers.set(CabbageIDs::name, "hostplaying");
+		cabbageIdentifiers.set(CabbageIDs::type, "hostplaying");
 	}
 
     else if(strTokens[0].trim() == "hostrecording"){
-		cabbageIdentifiers.set("basetype", "layout");
-          name = "hostrecording";
-		  type = "hostrecording";
+		cabbageIdentifiers.set(CabbageIDs::basetype, "layout");
+        cabbageIdentifiers.set(CabbageIDs::name, "hostrecording");
+		cabbageIdentifiers.set(CabbageIDs::type, "hostrecording");
 	}
 
     else if(strTokens[0].trim() == "hosttime"){
-		cabbageIdentifiers.set("basetype", "layout");
-          name = "hosttime";
-		  type = "hosttime";
+		cabbageIdentifiers.set(CabbageIDs::basetype, "layout");
+        cabbageIdentifiers.set(CabbageIDs::name, "hosttime");
+		cabbageIdentifiers.set(CabbageIDs::type, "hosttime");
 	}
 
 	tabpage = String("");
@@ -819,12 +823,13 @@ CabbageGUIClass::~CabbageGUIClass()
 int CabbageGUIClass::parse(String inStr)
 {
 	//Logger::writeToLog(str);
-	//remove any text after a semicolon
+	//remove any text after a semicolon and take out tabs..
 	String str = inStr.removeCharacters("\t");
 	if(str.indexOf(0, ";")!=-1)
 		str = str.substring(0, str.indexOf(0, ";"));
 
 	
+	//making this static would also speed things up!!
 	String typeOfWidget="";
 	StringArray identArray;
 	identArray.clear();
@@ -841,6 +846,7 @@ int CabbageGUIClass::parse(String inStr)
     identArray.add("max(");
     identArray.add("value(");
 	identArray.add("tabpage(");
+	identArray.add("guirefresh(");
 	identArray.add("midictrl(");
 	//check line values with spaces, otherwise
 	//it gets confused with the outline identifier
@@ -857,7 +863,8 @@ int CabbageGUIClass::parse(String inStr)
 	identArray.add("plant(");
 	identArray.add("alpha(");
     identArray.add(",channel(");
-	identArray.add(" channel(");
+	identArray.add("channel(");
+	identArray.add("channeltype(");
 	identArray.add(" chan(");
     identArray.add("channels(");
 	identArray.add(" chans(");
@@ -878,6 +885,8 @@ int CabbageGUIClass::parse(String inStr)
     identArray.add("runcsound(");
 	identArray.add("tabs(");
 	identArray.add("tab(");
+	identArray.add(" mode(");
+	identArray.add(",mode(");
 	identArray.add("tablenumber(");
 	identArray.add("tablenum(");
 	identArray.add("tablenumbers(");
@@ -906,20 +915,21 @@ int CabbageGUIClass::parse(String inStr)
 	identArray.add("drawmode(");
 	identArray.add("resizemode(");
 	identArray.add("readonly(");
+	identArray.add("latched(");
 	//add a few dummy identifiers so we can catch bogus one in the Cabbage code
 	identArray.add("");
 	identArray.add("");
 	identArray.add("");
-	Logger::writeToLog(String(identArray.size()));
+	//Logger::writeToLog(String(identArray.size()));
 	//retrieve paramters consisting of strings
 	for(int indx=0;indx<identArray.size();indx++)
 	{
 		//check to see if identifier is part of input string..turn to lowercase first..
-		//showMessage("index:"+String(indx)+" arrayItem:"+identArray.getReference(indx)+" line:\n"+str);
+		//Logger::writeToLog("index:"+String(indx)+" arrayItem:"+identArray.getReference(indx)+" line:\n"+str);
 		int identPos = str.toLowerCase().indexOf(identArray.getReference(indx));
           if(identPos!=-1){
 			StringArray strTokens, fillStrTokens;
-			fillStrTokens.addTokens(str, ", ", "\"");
+			fillStrTokens.addTokens(str, ", \t", "\"");
 			typeOfWidget = fillStrTokens[0];
 			
 			String newString = str.substring(identPos+identArray.getReference(indx).length());
@@ -935,20 +945,21 @@ int CabbageGUIClass::parse(String inStr)
 
 			if(identArray[indx].equalsIgnoreCase("name(")){
 					name = strTokens[0].trim();
-					cabbageIdentifiers.set("name", strTokens[0].trim());
+					cabbageIdentifiers.set(CabbageIDs::name, strTokens[0].trim());
 			} 
 			else if(identArray[indx].equalsIgnoreCase("plant(")){
-				cabbageIdentifiers.set("plant", strTokens[0].trim());
+				cabbageIdentifiers.set(CabbageIDs::plant, strTokens[0].trim());
 				plant = strTokens[0].trim();
 			} 
 			else if(identArray[indx].equalsIgnoreCase("caption(")){
 			caption = strTokens[0].trim();
-			cabbageIdentifiers.set("caption", strTokens[0].trim());
+			cabbageIdentifiers.set(CabbageIDs::caption, strTokens[0].trim());
 			} 
 			
-            else if(identArray[indx].equalsIgnoreCase(" channel(")||
+            else if(identArray[indx].equalsIgnoreCase("channel(")||
 				identArray[indx].equalsIgnoreCase(",channel(")||
 				identArray[indx].equalsIgnoreCase(" chans(") ||
+				identArray[indx].equalsIgnoreCase("channel(") ||
 				identArray[indx].equalsIgnoreCase(" channels("))
 				{
 					channel = strTokens[0].trim();
@@ -959,9 +970,8 @@ int CabbageGUIClass::parse(String inStr)
 					{
 					xChannel = strTokens[0].trim();
 					yChannel = strTokens[1].trim();
-					cabbageIdentifiers.set("xchannel", strTokens[0].trim());
-					cabbageIdentifiers.set("ychannel", strTokens[1].trim());
-					return 0;
+					cabbageIdentifiers.set(CabbageIDs::xchannel, strTokens[0].trim());
+					cabbageIdentifiers.set(CabbageIDs::ychannel, strTokens[1].trim());
 					}
 					else if(str.containsIgnoreCase("vumeter"))
 						{
@@ -981,7 +991,7 @@ int CabbageGUIClass::parse(String inStr)
 							array.append(strTokens[i].trim());						
 							}
 						}
-					cabbageIdentifiers.set("channel", array);	
+					cabbageIdentifiers.set(CabbageIDs::channel, array);	
 				
 				}
 
@@ -1011,7 +1021,7 @@ int CabbageGUIClass::parse(String inStr)
 					//RGBA.append(colour.getGreen());
 					//RGBA.append(colour.getBlue());
 					//RGBA.append(colour.getAlpha());
-					cabbageIdentifiers.set("colour", colour.toString());
+					cabbageIdentifiers.set(CabbageIDs::colour, colour.toString());
 									
 			}
 
@@ -1030,7 +1040,7 @@ int CabbageGUIClass::parse(String inStr)
 									strTokens[2].getIntValue(), 
 									255);
 									
-					cabbageIdentifiers.set("fontcolour", fontcolour.toString());				
+					cabbageIdentifiers.set(CabbageIDs::fontcolour, fontcolour.toString());				
 			}
 
             else if(identArray[indx].equalsIgnoreCase("tablecolour(")){
@@ -1038,7 +1048,7 @@ int CabbageGUIClass::parse(String inStr)
 					for(int i=0;i<strTokens.size();i++)
 						colours.append(strTokens[i].trim());
 						
-					cabbageIdentifiers.set("tablecolour", colours);	
+					cabbageIdentifiers.set(CabbageIDs::tablecolour, colours);	
 					}
 
             else if(identArray[indx].equalsIgnoreCase("trackercolour(")){
@@ -1059,16 +1069,16 @@ int CabbageGUIClass::parse(String inStr)
 									strTokens[1].getIntValue(), 
 									strTokens[2].getIntValue());
 									
-					cabbageIdentifiers.set("trackercolour", trackerFill.toString());					
+					cabbageIdentifiers.set(CabbageIDs::trackercolour, trackerFill.toString());					
 			}
 
 			else if(identArray[indx].equalsIgnoreCase("kind(")){
 				kind = strTokens[0].trim();
-				cabbageIdentifiers.set("kind", strTokens[0].trim());	
+				cabbageIdentifiers.set(CabbageIDs::kind, strTokens[0].trim());	
 			} 
 			else if(identArray[indx].equalsIgnoreCase("file(")){
 				file = strTokens[0].trim();
-				cabbageIdentifiers.set("file", strTokens[0].trim());	
+				cabbageIdentifiers.set(CabbageIDs::file, strTokens[0].trim());	
 			} 
 			else if(identArray[indx].equalsIgnoreCase("fill(")){
 					if(strTokens.size()<2)
@@ -1083,12 +1093,12 @@ int CabbageGUIClass::parse(String inStr)
 									strTokens[1].getIntValue(), 
 									strTokens[2].getIntValue());
 									
-					cabbageIdentifiers.set("fill", trackerFill.toString());		
+					cabbageIdentifiers.set(CabbageIDs::fill, trackerFill.toString());		
 
 			}
 			else if(identArray[indx].equalsIgnoreCase("shape(")){
 				shape = strTokens[0].trim();
-				cabbageIdentifiers.set("shape", strTokens[0].trim());	
+				cabbageIdentifiers.set(CabbageIDs::shape, strTokens[0].trim());	
 			} 
 			else if(identArray[indx].equalsIgnoreCase("outline(")){
 					if(strTokens.size()<2)
@@ -1103,7 +1113,7 @@ int CabbageGUIClass::parse(String inStr)
 									strTokens[1].getIntValue(), 
 									strTokens[2].getIntValue());
 									
-					cabbageIdentifiers.set("outline", trackerFill.toString());	
+					cabbageIdentifiers.set(CabbageIDs::outline, trackerFill.toString());	
 			}
 			else if(identArray[indx].equalsIgnoreCase("textcolour(")){
 					if(strTokens.size()<2)
@@ -1117,7 +1127,7 @@ int CabbageGUIClass::parse(String inStr)
 						textcolour = Colour::fromRGB (strTokens[0].getIntValue(),
 									strTokens[1].getIntValue(), 
 									strTokens[2].getIntValue());
-					cabbageIdentifiers.set("textcolour", textcolour.toString());	
+					cabbageIdentifiers.set(CabbageIDs::textcolour, textcolour.toString());	
 			}
 			
 			//!!! This haven't been set for the generic data system
@@ -1137,17 +1147,18 @@ int CabbageGUIClass::parse(String inStr)
 
 			else if(identArray[indx].equalsIgnoreCase("pluginid(")){
 				pluginID = strTokens[0].trim();
-				cabbageIdentifiers.set("pluginid", strTokens[0].trim());
+				cabbageIdentifiers.set(CabbageIDs::pluginid, strTokens[0].trim());
 			}
 
             else if(identArray[indx].equalsIgnoreCase("items(")||
 					identArray[indx].equalsIgnoreCase("text(")){
               items.clear();//clear any unwanted items
 			  text = strTokens[0];
-			  Logger::writeToLog(typeOfWidget+":"+text);
+			  //CabbageUtils::showMessage(typeOfWidget+":"+text);
 			  var value;
 			  for(int i= 0;i<(int)strTokens.size();i++)
 					{
+					//Logger::writeToLog(strTokens[i]);
 					String test = strTokens[i]; 
 					items.add(strTokens[i]);	
 					value.append(strTokens[i].trim());
@@ -1159,13 +1170,13 @@ int CabbageGUIClass::parse(String inStr)
 					comboRange = i+1;
 					}
 					//Logger::writeToLog(String(value.size())+typeOfWidget);
-					if((value.size()==1) && (typeOfWidget=="button")){
+					if((value.size()==1) && ((typeOfWidget=="button") || (typeOfWidget=="filebutton"))){
 						value.append(strTokens[0]);
-						Logger::writeToLog(strTokens[0].trim());
+						//Logger::writeToLog(strTokens[0].trim());
 					}
 						
-			  cabbageIdentifiers.set("text", value);
-			  cabbageIdentifiers.set("comborange", comboRange);
+			  cabbageIdentifiers.set(CabbageIDs::text, value);
+			  cabbageIdentifiers.set(CabbageIDs::comborange, comboRange);
 			}
 
 			//!!! This haven't been set for the generic data system
@@ -1178,28 +1189,36 @@ int CabbageGUIClass::parse(String inStr)
 			}
 
 			else if(identArray[indx].equalsIgnoreCase("preset(")){
-				preset = strTokens[0].trim();
-				cabbageIdentifiers.set("preset", strTokens[0].trim());	
+				//CabbageUtils::showMessage("preset is no longer supported, see docs");
 			}
 
+			else if(identArray[indx].equalsIgnoreCase(" mode(") ||
+					identArray[indx].equalsIgnoreCase(",mode(")){
+				cabbageIdentifiers.set(CabbageIDs::mode, strTokens[0].trim());	
+			}
+			
 			else if(identArray[indx].equalsIgnoreCase("native(")){
 				native = strTokens[0].trim();
 				cabbageIdentifiers.set("native", strTokens[0].trim());	
 				//Logger::writeToLog(native);
 			}
 			
+			else if(identArray[indx].equalsIgnoreCase("channeltype(")){
+				cabbageIdentifiers.set(CabbageIDs::channeltype, strTokens[0].trim());	
+			}
+			
 			else if(identArray[indx].equalsIgnoreCase("populate(")){
 				fileType = strTokens[0].trim();
-				cabbageIdentifiers.set("filetype", strTokens[0].trim());	
+				cabbageIdentifiers.set(CabbageIDs::filetype, strTokens[0].trim());	
 				if(strTokens.size()>1){
 					workingDir = strTokens[1].trim();
-					cabbageIdentifiers.set("workingdir", strTokens[1].trim());	
+					cabbageIdentifiers.set(CabbageIDs::workingdir, strTokens[1].trim());	
 				}
 			}
 
 			else if(identArray[indx].equalsIgnoreCase("author(")){
 				author = strTokens[0].trim();
-				cabbageIdentifiers.set("author", strTokens[0].trim());	
+				cabbageIdentifiers.set(CabbageIDs::author, strTokens[0].trim());	
 			}
 
 		
@@ -1210,12 +1229,12 @@ int CabbageGUIClass::parse(String inStr)
 				items.add(strTokens[i]);	
 				value.append(strTokens[i].trim());
 				}
-				cabbageIdentifiers.set("tabs", strTokens[0].trim());	
+				cabbageIdentifiers.set(CabbageIDs::tabs, strTokens[0].trim());	
 			}
 
 			else if(identArray[indx].equalsIgnoreCase("tabpage(")){
 				tabpage = strTokens[0].trim();  
-				cabbageIdentifiers.set("tabpage", strTokens[0].trim());	
+				cabbageIdentifiers.set(CabbageIDs::tabpage, strTokens[0].trim());	
 			} 
 
 			//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1230,8 +1249,8 @@ int CabbageGUIClass::parse(String inStr)
 					sizeText = identArray.getReference(indx)+tstr+")";
 					width = strTokens[0].trim().getFloatValue(); 
 					height = strTokens[1].trim().getFloatValue(); 
-					cabbageIdentifiers.set("width", strTokens[0].trim().getFloatValue());					
-					cabbageIdentifiers.set("height", strTokens[1].trim().getFloatValue());
+					cabbageIdentifiers.set(CabbageIDs::width, strTokens[0].trim().getFloatValue());					
+					cabbageIdentifiers.set(CabbageIDs::height, strTokens[1].trim().getFloatValue());
 				}
             }
 			//!!! This haven't been set for the generic data system
@@ -1256,15 +1275,15 @@ int CabbageGUIClass::parse(String inStr)
 				  width = strTokens[2].trim().getFloatValue();  
 				  if(strTokens.size()==3){
 					  height = width;
-					  cabbageIdentifiers.set("height", width);	
+					  cabbageIdentifiers.set(CabbageIDs::height, width);	
 				  }
 				  else{
 				  height = strTokens[3].trim().getFloatValue(); 
 				  boundsText = identArray.getReference(indx)+tstr+")";
-				  cabbageIdentifiers.set("left", strTokens[0].trim().getFloatValue());					
-				  cabbageIdentifiers.set("top", strTokens[1].trim().getFloatValue());
-				  cabbageIdentifiers.set("width", strTokens[2].trim().getFloatValue());					
-				  cabbageIdentifiers.set("height", strTokens[3].trim().getFloatValue());			  
+				  cabbageIdentifiers.set(CabbageIDs::left, strTokens[0].trim().getFloatValue());					
+				  cabbageIdentifiers.set(CabbageIDs::top, strTokens[1].trim().getFloatValue());
+				  cabbageIdentifiers.set(CabbageIDs::width, strTokens[2].trim().getFloatValue());					
+				  cabbageIdentifiers.set(CabbageIDs::height, strTokens[3].trim().getFloatValue());			  
 				  }
 				  
 				}
@@ -1285,8 +1304,8 @@ int CabbageGUIClass::parse(String inStr)
 				  left = strTokens[0].trim().getFloatValue(); 
 				  top = strTokens[1].trim().getFloatValue();
 				  posText = identArray.getReference(indx)+tstr+")";
-				  cabbageIdentifiers.set("left", strTokens[0].trim().getFloatValue());					
-				  cabbageIdentifiers.set("top", strTokens[1].trim().getFloatValue());
+				  cabbageIdentifiers.set(CabbageIDs::left, strTokens[0].trim().getFloatValue());					
+				  cabbageIdentifiers.set(CabbageIDs::top, strTokens[1].trim().getFloatValue());
 				}
             }
 			else if(identArray[indx].equalsIgnoreCase(" range(") ||
@@ -1300,27 +1319,27 @@ int CabbageGUIClass::parse(String inStr)
 				//showMessage(strTokens[0]);
 				min = strTokens[0].trim().getDoubleValue();// getFloatValue(); 
 				max = strTokens[1].trim().getDoubleValue();//.getFloatValue(); 
-				cabbageIdentifiers.set("min", strTokens[0].trim().getDoubleValue());	
-				cabbageIdentifiers.set("max", strTokens[1].trim().getDoubleValue());	
+				cabbageIdentifiers.set(CabbageIDs::min, strTokens[0].trim().getDoubleValue());	
+				cabbageIdentifiers.set(CabbageIDs::max, strTokens[1].trim().getDoubleValue());	
 				tempArray.add(strTokens[0].trim());
 				tempArray.add(strTokens[1].trim());
 				if(strTokens.size()>2){
 				value = strTokens[2].trim().getDoubleValue();//.getFloatValue(); 
-				cabbageIdentifiers.set("value", strTokens[2].trim().getDoubleValue());	
+				cabbageIdentifiers.set(CabbageIDs::value, strTokens[2].trim().getDoubleValue());	
 				tempArray.add(strTokens[2].trim());
 				}
 				else value = 0;				
 
 				if(strTokens.size()>3){
 				sliderSkew = strTokens[3].trim().getFloatValue();//.getFloatValue(); 
-				cabbageIdentifiers.set("sliderskew", strTokens[3].trim().getDoubleValue());
+				cabbageIdentifiers.set(CabbageIDs::sliderskew, strTokens[3].trim().getDoubleValue());
 				tempArray.add(strTokens[3].trim());
 				}
 				
 				if(strTokens.size()>4){  
 				sliderIncr = strTokens[4].trim().getDoubleValue();
 				tempArray.add(strTokens[4].trim());
-				cabbageIdentifiers.set("sliderincr", strTokens[4].trim().getDoubleValue());
+				cabbageIdentifiers.set(CabbageIDs::sliderincr, strTokens[4].trim().getDoubleValue());
 				}
 				
 				sliderRange = max-min;				
@@ -1329,8 +1348,8 @@ int CabbageGUIClass::parse(String inStr)
 					decimalPlaces = 2;
 				else
 					decimalPlaces = getNumberOfDecimalPlaces(tempArray);
-				cabbageIdentifiers.set("decimalplaces", decimalPlaces);
-				cabbageIdentifiers.set("range", sliderRange);
+				cabbageIdentifiers.set(CabbageIDs::decimalplaces, decimalPlaces);
+				cabbageIdentifiers.set(CabbageIDs::range, sliderRange);
 
 				}
 
@@ -1344,15 +1363,15 @@ int CabbageGUIClass::parse(String inStr)
 				maxX = strTokens[1].removeCharacters("()").trim().getFloatValue();  
 				valueX = strTokens[2].removeCharacters("()").trim().getFloatValue(); 
 				
-				cabbageIdentifiers.set("minx", strTokens[0].trim().getDoubleValue());			
-				cabbageIdentifiers.set("maxx", strTokens[1].getDoubleValue());
-				cabbageIdentifiers.set("valuex", strTokens[2].getDoubleValue());
-				cabbageIdentifiers.set("rangex", maxX-minX);
+				cabbageIdentifiers.set(CabbageIDs::minx, strTokens[0].trim().getDoubleValue());			
+				cabbageIdentifiers.set(CabbageIDs::maxx, strTokens[1].getDoubleValue());
+				cabbageIdentifiers.set(CabbageIDs::valuex, strTokens[2].getDoubleValue());
+				cabbageIdentifiers.set(CabbageIDs::rangex, maxX-minX);
 				
 				if(strTokens.size()==4)
 				decimalPlaces = strTokens[3].trim().getFloatValue();
 				xypadRangeX = maxX-minX;
-				cabbageIdentifiers.set("decimalplaces", strTokens[3].trim().getDoubleValue());
+				cabbageIdentifiers.set(CabbageIDs::decimalplaces, strTokens[3].trim().getDoubleValue());
 				}
 			}
 			else if(identArray[indx].equalsIgnoreCase("rangey(")){
@@ -1365,21 +1384,21 @@ int CabbageGUIClass::parse(String inStr)
 				valueY = strTokens[2].trim().getFloatValue();
 				
 
-				cabbageIdentifiers.set("miny", strTokens[0].trim().getDoubleValue());	
-				cabbageIdentifiers.set("maxy", strTokens[1].trim().getDoubleValue());
-				cabbageIdentifiers.set("valuey", strTokens[2].trim().getDoubleValue());
-				cabbageIdentifiers.set("rangey", maxY-minY);
+				cabbageIdentifiers.set(CabbageIDs::miny, strTokens[0].trim().getDoubleValue());	
+				cabbageIdentifiers.set(CabbageIDs::maxy, strTokens[1].trim().getDoubleValue());
+				cabbageIdentifiers.set(CabbageIDs::valuey, strTokens[2].trim().getDoubleValue());
+				cabbageIdentifiers.set(CabbageIDs::rangey, maxY-minY);
 				
 
 				if(strTokens.size()==4)
 				decimalPlaces = strTokens[3].trim().getFloatValue();
 				xypadRangeY = maxY-minY;
-				cabbageIdentifiers.set("decimalplaces", strTokens[3].trim().getDoubleValue());
+				cabbageIdentifiers.set(CabbageIDs::decimalplaces, strTokens[3].trim().getDoubleValue());
 				}
 			}
 			else if(identArray[indx].equalsIgnoreCase("min(")){
 				min = strTokens[0].removeCharacters("()").trim().getFloatValue();  
-				cabbageIdentifiers.set("min", strTokens[0].trim().getFloatValue());	
+				cabbageIdentifiers.set(CabbageIDs::min, strTokens[0].trim().getFloatValue());	
 			}
 			else if(identArray[indx].equalsIgnoreCase("midictrl(")){
 				if(strTokens.size()<2){
@@ -1388,33 +1407,33 @@ int CabbageGUIClass::parse(String inStr)
 				else{
 				midiChan = strTokens[0].trim().getFloatValue();  
 				midiCtrl = strTokens[1].trim().getFloatValue();  
-				cabbageIdentifiers.set("midichan", strTokens[0].trim().getFloatValue());	
-				cabbageIdentifiers.set("midictrl", strTokens[0].trim().getFloatValue());	
+				cabbageIdentifiers.set(CabbageIDs::midichan, strTokens[0].trim().getFloatValue());	
+				cabbageIdentifiers.set(CabbageIDs::midictrl, strTokens[0].trim().getFloatValue());	
 			}
 			}
             else if(identArray[indx].equalsIgnoreCase("max(")){
 				max = strTokens[0].trim().getFloatValue();  
-				cabbageIdentifiers.set("max", strTokens[0].trim().getFloatValue());	
+				cabbageIdentifiers.set(CabbageIDs::max, strTokens[0].trim().getFloatValue());	
 			}
-			else if(identArray[indx].equalsIgnoreCase("steps(")){
-				noSteps = strTokens[0].trim().getFloatValue();  
-				cabbageIdentifiers.set("teps", strTokens[0].trim().getFloatValue());	
-			}
-            else if(identArray[indx].equalsIgnoreCase("master(")){
-				masterSnap = strTokens[0].trim().getFloatValue(); 
-				cabbageIdentifiers.set("master", strTokens[0].trim().getFloatValue());	 
-			}
+
+
             else if(identArray[indx].equalsIgnoreCase("tab(")){
 				tabbed = strTokens[0].trim().getFloatValue();  
-				cabbageIdentifiers.set("tabbed", strTokens[0].trim().getFloatValue());	
+				cabbageIdentifiers.set(CabbageIDs::tabbed, strTokens[0].trim().getFloatValue());	
+			}
+            else if(identArray[indx].equalsIgnoreCase("latched(")){ 
+				cabbageIdentifiers.set(CabbageIDs::latched, strTokens[0].trim().getFloatValue());	
+			}
+            else if(identArray[indx].equalsIgnoreCase("guirefresh(")){ 
+				cabbageIdentifiers.set(CabbageIDs::guirefresh, strTokens[0].trim().getFloatValue());	
 			}
             else if(identArray[indx].equalsIgnoreCase("textbox(")){
 				textBox = strTokens[0].trim().getFloatValue();  
-				cabbageIdentifiers.set("textbox", strTokens[0].trim().getFloatValue());				
+				cabbageIdentifiers.set(CabbageIDs::textbox, strTokens[0].trim().getFloatValue());				
 			}
 			
             else if(identArray[indx].equalsIgnoreCase("readonly(")){
-				cabbageIdentifiers.set("readonly", strTokens[0].trim().getFloatValue());		
+				cabbageIdentifiers.set(CabbageIDs::readonly, strTokens[0].trim().getFloatValue());		
 			}			
 			
             else if(identArray[indx].equalsIgnoreCase("tablenum(")||
@@ -1432,12 +1451,12 @@ int CabbageGUIClass::parse(String inStr)
 						value.append(strTokens[i].trim().getFloatValue());
 						numTables++;						
 					}
-				cabbageIdentifiers.set("tablenumber", value);
+				cabbageIdentifiers.set(CabbageIDs::tablenumber, value);
 				//cabbageIdentifiers.set("tablenum", tableNum);
 			}
             else if(identArray[indx].equalsIgnoreCase("popup(")){
 				plantButton = strTokens[0].trim().getIntValue();
-				cabbageIdentifiers.set("popup", strTokens[0].trim().getIntValue());
+				cabbageIdentifiers.set(CabbageIDs::popup, strTokens[0].trim().getIntValue());
 			}
 
             else if(identArray[indx].equalsIgnoreCase("drawmode(")){
@@ -1447,7 +1466,7 @@ int CabbageGUIClass::parse(String inStr)
 						//add table modes to val array
 						value.append(strTokens[i].trim().getFloatValue());					
 					}
-				cabbageIdentifiers.set("drawmode", value);
+				cabbageIdentifiers.set(CabbageIDs::drawmode, value);
 			}
 
             else if(identArray[indx].equalsIgnoreCase("resizemode(")){
@@ -1457,7 +1476,7 @@ int CabbageGUIClass::parse(String inStr)
 						//add table modes to val array
 						value.append(strTokens[i].trim().getFloatValue());					
 					}
-				cabbageIdentifiers.set("resizemode", value);
+				cabbageIdentifiers.set(CabbageIDs::resizemode, value);
 			}			
 			
             else if(identArray[indx].equalsIgnoreCase("amprange(")){
@@ -1467,23 +1486,18 @@ int CabbageGUIClass::parse(String inStr)
 						//add table modes to val array
 						value.append(strTokens[i].trim().getFloatValue());					
 					}
-				cabbageIdentifiers.set("amprange", value);
+				cabbageIdentifiers.set(CabbageIDs::amprange, value);
 			}			
-			
-            else if(identArray[indx].equalsIgnoreCase("popup(")){
-				plantButton = strTokens[0].trim().getIntValue();
-				cabbageIdentifiers.set("popup", strTokens[0].trim().getIntValue());
-			}
 
 			else if(identArray[indx].equalsIgnoreCase(",line(")||
 					identArray[indx].equalsIgnoreCase(" line(")){
 					cabbageIdentifiers.set("line", strTokens[0].trim().getFloatValue());	
-					line = strTokens[0].trim().getFloatValue();  
+					cabbageIdentifiers.set(CabbageIDs::line, strTokens[0].trim().getFloatValue());  
 					}
 					
             else if(identArray[indx].equalsIgnoreCase("value(")){
 				value = strTokens[0].trim().getFloatValue();  
-				cabbageIdentifiers.set("value", strTokens[0].trim().getFloatValue());	
+				cabbageIdentifiers.set(CabbageIDs::value, strTokens[0].trim().getFloatValue());	
 			} 
 		
 			//!!! This haven't been set for the generic data system			
@@ -1506,25 +1520,21 @@ int CabbageGUIClass::parse(String inStr)
 }
 //=========================================================================
 //retrieve numerical attributes
-float CabbageGUIClass::getNumProp(String prop)
+float CabbageGUIClass::getNumProp(Identifier prop)
 {	
-	String str = cabbageIdentifiers.getWithDefault(prop, -9999);
-	//Logger::writeToLog(prop+":"+str);
 	return cabbageIdentifiers.getWithDefault(prop, -9999.f);
 }
 
-float CabbageGUIClass::getNumProp(String prop, int index)
+float CabbageGUIClass::getNumProp(Identifier prop, int index)
 {
-		if(prop.equalsIgnoreCase("configArray"))
-			return vuConfig[index];
-		else 
-			return 0;
+	//this method should never be called...
+	jassert(1);	
 }
 
 
 
 //set numerical attributes
-void CabbageGUIClass::setNumProp(String prop, float val)
+void CabbageGUIClass::setNumProp(Identifier prop, float val)
 {
 	cabbageIdentifiers.set(prop, val);
 }
@@ -1558,13 +1568,15 @@ String CabbageGUIClass::getPropsString()
 				<< String("), range(\"") << String(min) << String(", ") << String(max) << String(", ") << String(value) << String("\")");
 }
 
-String CabbageGUIClass::getStringProp(String prop, int index)
+String CabbageGUIClass::getStringProp(Identifier prop, int index)
 {
+	jassert(1);
+/*
 		if(prop.equalsIgnoreCase("channel"))
 			return channels[index].trim();
 		else if(prop.equalsIgnoreCase("snapshotData"))
 			return snapshotData[index].trim();
-		else	
+		else*/	
 		return "";
 }
 
@@ -1575,9 +1587,11 @@ rect.setBounds(getNumProp("left"), getNumProp("top"), getNumProp("width"), getNu
 return rect;
 }
 
-String CabbageGUIClass::getStringProp(String prop)
+String CabbageGUIClass::getStringProp(Identifier prop)
 {
-	var strings = cabbageIdentifiers.getWithDefault(prop.toLowerCase(), "");
+	var strings = cabbageIdentifiers.getWithDefault(prop, "");
+	
+
 	if(strings.size()>0){
 		//Logger::writeToLog(prop+":"+strings[0].toString());
 		return strings[0].toString();
@@ -1591,19 +1605,19 @@ String CabbageGUIClass::getStringProp(String prop)
 
 
 
-StringArray CabbageGUIClass::getStringArrayProp(String prop)
+StringArray CabbageGUIClass::getStringArrayProp(Identifier prop)
 {
 	StringArray returnArray;
-	var strings = cabbageIdentifiers.getWithDefault(prop.toLowerCase(), "");
+	var strings = cabbageIdentifiers.getWithDefault(prop, "");
 	for(int i=0;i<strings.size();i++)
 		returnArray.add(strings[i].toString());
 	return returnArray;
 }
 
-String CabbageGUIClass::getStringArrayPropValue(String prop, int index)
+String CabbageGUIClass::getStringArrayPropValue(Identifier prop, int index)
 {
 	StringArray returnArray;
-	var strings = cabbageIdentifiers.getWithDefault(prop.toLowerCase(), "");
+	var strings = cabbageIdentifiers.getWithDefault(prop, "");
 	for(int i=0;i<strings.size();i++)
 		returnArray.add(strings[i].toString());
 	if(isPositiveAndBelow(index,strings.size()))
@@ -1614,19 +1628,19 @@ String CabbageGUIClass::getStringArrayPropValue(String prop, int index)
 	
 }
 
-Array<int> CabbageGUIClass::getIntArrayProp(String prop)
+Array<int> CabbageGUIClass::getIntArrayProp(Identifier prop)
 {
 	Array<int> returnArray;
-	var ints = cabbageIdentifiers.getWithDefault(prop.toLowerCase(), "");
+	var ints = cabbageIdentifiers.getWithDefault(prop, "");
 	for(int i=0;i<ints.size();i++)
 		returnArray.add(ints[i]);
 	return returnArray;
 }
 
-int CabbageGUIClass::getIntArrayPropValue(String prop, int index)
+int CabbageGUIClass::getIntArrayPropValue(Identifier prop, int index)
 {
 	Array<int> returnArray;
-	var ints = cabbageIdentifiers.getWithDefault(prop.toLowerCase(), "");
+	var ints = cabbageIdentifiers.getWithDefault(prop, "");
 	for(int i=0;i<ints.size();i++)
 		returnArray.add(ints[i]);
 	if(isPositiveAndBelow(index,ints.size()))
@@ -1635,19 +1649,19 @@ int CabbageGUIClass::getIntArrayPropValue(String prop, int index)
 	return returnArray[ints.size()-1];
 }
 
-Array<float> CabbageGUIClass::getFloatArrayProp(String prop)
+Array<float> CabbageGUIClass::getFloatArrayProp(Identifier prop)
 {
 	Array<float> returnArray;
-	var ints = cabbageIdentifiers.getWithDefault(prop.toLowerCase(), "");
+	var ints = cabbageIdentifiers.getWithDefault(prop, "");
 	for(int i=0;i<ints.size();i++)
 		returnArray.add(ints[i]);
 	return returnArray;
 }
 
-float CabbageGUIClass::getFloatArrayPropValue(String prop, int index)
+float CabbageGUIClass::getFloatArrayPropValue(Identifier prop, int index)
 {
 	Array<float> returnArray;
-	var ints = cabbageIdentifiers.getWithDefault(prop.toLowerCase(), "");
+	var ints = cabbageIdentifiers.getWithDefault(prop, "");
 	for(int i=0;i<ints.size();i++)
 		returnArray.add(ints[i]);
 	if(isPositiveAndBelow(index,ints.size()))
@@ -1656,41 +1670,23 @@ float CabbageGUIClass::getFloatArrayPropValue(String prop, int index)
 	return returnArray[ints.size()-1];
 }
 
-void CabbageGUIClass::setStringProp(String prop, int index, String value)
+void CabbageGUIClass::setStringProp(Identifier prop, int index, String value)
 {		
-			if(prop.equalsIgnoreCase("channel")){
-				channels.set(index, value);
-			}
-			else if(prop.equalsIgnoreCase("snapshotData")){
-				snapshotData.set(index, value);
-			}
+jassert(1)
 }
 
-void CabbageGUIClass::setStringProp(String prop, String val)
+void CabbageGUIClass::setStringProp(Identifier prop, String val)
 {
 	//if(prop=="reltoplant")
 		if(val.length()>0){
-		cabbageIdentifiers.set(prop.toLowerCase(), val);
+		cabbageIdentifiers.set(prop, val);
 		//Logger::writeToLog(prop+":"+val);
 		}
 }
 
-String CabbageGUIClass::getColourProp(String prop)
+String CabbageGUIClass::getColourProp(Identifier prop)
 {
-		if(prop.equalsIgnoreCase("textcolour"))
-			return textcolour.toString();
-		else if(prop.equalsIgnoreCase("fontcolour"))
-			return fontcolour.toString();
-		else if(prop.equalsIgnoreCase("colour"))
-			return colour.toString();
-		else if(prop.equalsIgnoreCase("fill"))
-			return fill.toString();
-		else if(prop.equalsIgnoreCase("outline"))
-			return outline.toString();
-		else if(prop.equalsIgnoreCase("trackercolour"))
-			return trackerFill.toString();
-		else return "";
-
+jassert(1)
 }
 
 String CabbageGUIClass::getStringForIdentifier(var propsArray, String identifier, String type)
@@ -1714,7 +1710,7 @@ String CabbageGUIClass::getStringForIdentifier(var propsArray, String identifier
 			for(int p=0;p<propsArray.size();p++)
 			str += "\""+propsArray[p].toString()+"\",";						
 			str = identifier+str.dropLastCharacters(1)+"), ";
-			Logger::writeToLog(str);			
+			//Logger::writeToLog(str);			
 		}
 		else
 			str = identifier+String("\"")+propsArray.toString()+"\"), ";		
@@ -1757,7 +1753,8 @@ String CabbageGUIClass::getCabbageCodeFromIdentifiers(NamedValueSet props)
 					identifier=="scalex" ||
 					identifier=="scaley" ||
 					identifier=="basetype" ||
-					identifier=="kind")
+					identifier=="kind" ||
+					identifier=="comborange")
 			{
 				//none of these identifiers need to be seen...
 			}

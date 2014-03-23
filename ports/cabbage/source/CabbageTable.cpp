@@ -954,9 +954,8 @@ void CabbageTableManager::mouseDrag(const MouseEvent& e)
 
 void CabbageTableManager::mouseDown (const MouseEvent& e)
 {	
-	if(e.mods.isRightButtonDown())
+	if(e.mods.isPopupMenu())
 		{
-		
 		PopupMenu pop, subMenu1, subMenu2;
 		pop.setLookAndFeel(&getTopLevelComponent()->getLookAndFeel());
 		subMenu1.setLookAndFeel(&getTopLevelComponent()->getLookAndFeel());
@@ -975,7 +974,7 @@ void CabbageTableManager::mouseDown (const MouseEvent& e)
 
 
 		
-		for(int i=0;i<tables.size();i++){
+		for(int i=0;i<tables.size();i++)
 		subMenu2.addColouredItem(200+i, "fTable:"+String(tables[i]->tableNumber), tables[i]->currColour);
 		
 		if(!readOnly){
@@ -984,7 +983,7 @@ void CabbageTableManager::mouseDown (const MouseEvent& e)
 			pop.addItem(300, "Replace existing table");
 			pop.addItem(301, "Add table to score");
 			}
-		}
+		
 		
 		int choice = pop.show();
 		if((choice>=100) && (choice<200)){

@@ -32,6 +32,96 @@
 
 #include "CabbageUtils.h"
 
+namespace CabbageIDs
+{
+    static const Identifier top = "top";
+    static const Identifier left = "left";
+    static const Identifier width = "width";
+    static const Identifier height = "height";
+    static const Identifier min = "min";
+    static const Identifier max = "max";
+    static const Identifier value = "value";
+    static const Identifier channel = "channel";
+    static const Identifier colour = "colour";
+	static const Identifier tablecolour = "tablecolour";
+    static const Identifier fontcolour= "fontcolour";
+	static const Identifier items = "items";
+	static const Identifier text = "text";
+	static const Identifier range = "range";
+	static const Identifier sliderrange = "sliderrange";
+	static const Identifier amprange = "amprange";
+	static const Identifier caption = "caption";
+	static const Identifier basetype = "basetype";
+	static const Identifier textbox = "textbox";
+	static const Identifier name = "name";
+	static const Identifier type = "type";
+	static const Identifier trackercolour = "trackercolour";
+	static const Identifier sliderskew = "sliderskew";
+	static const Identifier sliderincr = "sliderince";
+	static const Identifier midichan = "midichan";
+	static const Identifier midictrl = "midictrl";
+	static const Identifier kind = "kind";
+	static const Identifier decimalplaces = "decimalplaces";
+	static const Identifier mode = "mode";
+	static const Identifier shape = "shape";
+	static const Identifier channeltype = "channeltype";
+	static const Identifier comborange = "comborange";
+	static const Identifier populate = "populate";
+	static const Identifier outline = "outline";
+	static const Identifier popup = "popup";
+	static const Identifier plant = "plant";
+	static const Identifier line = "line";
+	static const Identifier tablenumber = "tablenumber";
+	static const Identifier resizemode = "resizemode";
+	static const Identifier drawmode = "drawmode";
+	static const Identifier readonly = "readonly";
+	static const Identifier xyautoindex = "xyautoindex";
+	static const Identifier file = "file";
+	static const Identifier latched = "latched";
+	static const Identifier xchannel = "xchannel";
+	static const Identifier ychannel = "ychannel";
+	static const Identifier minx = "minx";
+	static const Identifier miny = "miny";
+	static const Identifier maxx = "maxx";
+	static const Identifier maxy = "maxy";
+	static const Identifier valuex = "valuex";
+	static const Identifier fill = "fill";
+	static const Identifier valuey = "valuey";
+	static const Identifier textcolour = "textcolour";
+	static const Identifier pluginid = "pluginid";
+	static const Identifier tabs = "tabs";
+	static const Identifier tabbed = "tabbed";
+	static const Identifier rangey = "rangey";
+	static const Identifier rangex = "rangex";
+	static const Identifier tabpage = "tabpage";
+	static const Identifier filetype = "filetype";
+	static const Identifier workingdir = "workingdir";
+	static const Identifier author = "author";
+	static const Identifier xychannel = "xychannel";
+	static const Identifier guirefresh = "guirefresh";
+	
+	//type of widgets/controls/messages
+	static const String combobox = "combobox";
+	static const String rslider = "rslider";
+	static const String hslider = "hslider";
+	static const String vslider = "vslider";
+	static const String checkbox = "checkbox";
+	static const String button = "button";
+	static const String filebutton = "filebutton";
+	static const String table = "table";
+	static const String groupbox = "groupbox";
+	static const String image = "image";
+	static const String form = "form";
+	static const String xypad = "xypad";
+	static const String stringchannel = "string";
+	static const String hostbpm = "HOST_BPM";
+	static const String timeinseconds = "TIME_IN_SECONDS";
+	static const String isplaying = "IS_PLAYING";
+	static const String isrecording = "IS_RECORDING";
+	static const String hostppqpos = "HOST_PPQ_POS";
+	static const String csoundoutput = "csoundoutput";
+
+};
 
 class CabbageGUIClass : public CabbageUtils
 {
@@ -58,20 +148,20 @@ public:
 	CabbageGUIClass(){};
     ~CabbageGUIClass();
 	int parse(String str);
-	float getNumProp(String prop);
-	float getNumProp(String prop, int index);
-	void setNumProp(String prop, float val);
+	float getNumProp(Identifier prop);
+	float getNumProp(Identifier prop, int index);
+	void setNumProp(Identifier prop, float val);
 	void setTableChannelValues(int index, float val);
 	float getTableChannelValues(int index);
 	void addTableChannelValues();
-	void setStringProp(String prop, String val);
-	void setStringProp(String prop, int index, String value);
-	String getStringProp(String prop);
-	String getStringProp(String prop, int index);
+	void setStringProp(Identifier prop, String val);
+	void setStringProp(Identifier prop, int index, String value);
+	String getStringProp(Identifier prop);
+	String getStringProp(Identifier prop, int index);
 	String getPropsString();
-	String getColourProp(String prop);
-	float getNumPropVal(String prop);
-	void setNumPropVal(String prop, float val);
+	String getColourProp(Identifier prop);
+	float getNumPropVal(Identifier prop);
+	void setNumPropVal(Identifier prop, float val);
 	static String getCabbageCodeFromIdentifiers(NamedValueSet props);
 	static String getStringForIdentifier(var props, String identifier, String type);
 	
@@ -95,14 +185,14 @@ public:
 	Rectangle<int> getComponentBounds();
 	
 	
-	StringArray getStringArrayProp(String prop);
-	String getStringArrayPropValue(String prop, int index);
+	StringArray getStringArrayProp(Identifier prop);
+	String getStringArrayPropValue(Identifier prop, int index);
 	
-	int getIntArrayPropValue(String prop, int index);
-	Array<int> getIntArrayProp(String prop);
+	int getIntArrayPropValue(Identifier prop, int index);
+	Array<int> getIntArrayProp(Identifier prop);
 	
-	float getFloatArrayPropValue(String prop, int index);
-	Array<float> getFloatArrayProp(String prop);
+	float getFloatArrayPropValue(Identifier prop, int index);
+	Array<float> getFloatArrayProp(Identifier prop);
 	
 	
 	
@@ -211,3 +301,4 @@ public:
 };
 
 #endif
+
