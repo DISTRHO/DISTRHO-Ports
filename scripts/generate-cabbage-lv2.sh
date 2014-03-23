@@ -27,7 +27,6 @@ FILES=`find ./cabbage -name \*.csd`
 
 for i in $FILES; do
   basename=`echo $i | awk 'sub("./cabbage/","")' | awk 'sub("/","\n")' | tail -n 1 | awk 'sub(".csd","")'`
-  #basename=`echo $i | awk 'sub("./cabbage-todo/","")' | awk 'sub("/","\n")' | tail -n 1 | awk 'sub(".csd","")'`
   basename=`echo "cabbage-$basename"`
   lv2dir=`echo "./lv2/"$basename".lv2/"`
 
@@ -47,7 +46,5 @@ done
 
 # Special files
 cp -v cabbage/Synths/bassline.snaps lv2/cabbage-bassline.lv2/
-# cp -v cabbage-todo/Synths/Clavinet.snaps lv2/cabbage-Clavinet.lv2/
-# cp -v cabbage-todo/Synths/TR-808_pattern.0.txt lv2/cabbage-TR-808.lv2/
 
 cd ..
