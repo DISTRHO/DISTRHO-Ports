@@ -20,14 +20,33 @@ all:
 # install
 
 install:
+	# make dirs
 	install -d $(DESTDIR)$(PREFIX)/lib/ladspa/
 	install -d $(DESTDIR)$(PREFIX)/lib/dssi/
 	install -d $(DESTDIR)$(PREFIX)/lib/lv2/
 	install -d $(DESTDIR)$(PREFIX)/lib/vst/
-	cp -r bin/ladspa/* $(DESTDIR)$(PREFIX)/lib/ladspa/
-	cp -r bin/dssi/*   $(DESTDIR)$(PREFIX)/lib/dssi/
-	cp -r bin/vst/*    $(DESTDIR)$(PREFIX)/lib/vst/
-	cp -r bin/lv2/*.lv2/ static-lv2-ttl/*.lv2/ $(DESTDIR)$(PREFIX)/lib/lv2/
+	install -d $(DESTDIR)/src/distrho/libs/juce/build-juce/
+	install -d $(DESTDIR)/src/distrho/libs/juce/source/
+	install -d $(DESTDIR)/src/distrho/libs/juce-plugin/
+	install -d $(DESTDIR)/src/distrho/scripts/
+
+	# install plugins
+	cp -r bin/ladspa/*          $(DESTDIR)$(PREFIX)/lib/ladspa/
+	cp -r bin/dssi/*            $(DESTDIR)$(PREFIX)/lib/dssi/
+	cp -r bin/lv2/*.lv2/        $(DESTDIR)$(PREFIX)/lib/lv2/
+	cp -r bin/vst/*             $(DESTDIR)$(PREFIX)/lib/vst/
+	cp -r static-lv2-ttl/*.lv2/ $(DESTDIR)$(PREFIX)/lib/lv2/
+
+	# install source needed for extra builds
+	install -m 644 libs/libjuce.a           $(DESTDIR)/src/distrho/libs/
+	install -m 644 libs/lv2_ttl_generator   $(DESTDIR)/src/distrho/libs/
+	install -m 644 libs/juce/build-juce/*.h $(DESTDIR)/src/distrho/libs/juce/build-juce/
+	install -m 644 libs/juce-plugin/*.cpp   $(DESTDIR)/src/distrho/libs/juce-plugin/
+	install -m 644 libs/juce-plugin/*.h     $(DESTDIR)/src/distrho/libs/juce-plugin/
+	install -m 644 scripts/*.lua            $(DESTDIR)/src/distrho/scripts/
+	install -m 644 scripts/*.sh             $(DESTDIR)/src/distrho/scripts/
+
+	find libs/juce/source/ -type f -name "*.h" -exec cp --parents {} $(DESTDIR)/src/distrho/ \;
 
 # -----------------------------------------
 # gen
