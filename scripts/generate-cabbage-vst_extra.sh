@@ -30,11 +30,11 @@ for i in $FILES; do
   basename=`echo "cabbage-$basename"`
 
   if ( echo $i | grep "./cabbage-extra/Synths/" > /dev/null ); then
-    cp -v `pwd`/cabbage/CabbagePluginSynth.so vst/$basename.$EXT
+    cp -v `pwd`/cabbage/CabbagePluginSynth.so vst-extra/$basename.$EXT
   elif ( echo $i | grep "./cabbage-extra/MIDI/" > /dev/null ); then
-    cp -v `pwd`/cabbage/CabbagePluginMidi.so vst/$basename.$EXT
+    cp -v `pwd`/cabbage/CabbagePluginMidi.so vst-extra/$basename.$EXT
   else
-    cp -v `pwd`/cabbage/CabbagePluginEffect.so vst/$basename.$EXT
+    cp -v `pwd`/cabbage/CabbagePluginEffect.so vst-extra/$basename.$EXT
   fi
 
   cp -v $i vst-extra/$basename.csd
