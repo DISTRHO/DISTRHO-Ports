@@ -32,9 +32,9 @@ for i in $FILES; do
 
   mkdir -p -v $lv2dir
 
-  if ( echo $i | grep "./cabbage/Synths/" > /dev/null ); then
+  if ( echo $i | grep "./cabbage-extra/Synths/" > /dev/null ); then
     cp -v `pwd`/cabbage/CabbagePluginSynthLv2.lv2/CabbagePluginSynthLv2.so $lv2dir/$basename.$EXT
-  elif ( echo $i | grep "./cabbage/MIDI/" > /dev/null ); then
+  elif ( echo $i | grep "./cabbage-extra/MIDI/" > /dev/null ); then
     cp -v `pwd`/cabbage/CabbagePluginMidiLv2.lv2/CabbagePluginMidiLv2.so $lv2dir/$basename.$EXT
   else
     cp -v `pwd`/cabbage/CabbagePluginEffectLv2.lv2/CabbagePluginEffectLv2.so $lv2dir/$basename.$EXT
