@@ -44,9 +44,13 @@ install:
 	install -m 644 libs/juce-plugin/*.cpp   $(DESTDIR)/src/distrho/libs/juce-plugin/
 	install -m 644 libs/juce-plugin/*.h     $(DESTDIR)/src/distrho/libs/juce-plugin/
 	install -m 644 scripts/*.lua            $(DESTDIR)/src/distrho/scripts/
-	install -m 644 scripts/*.sh             $(DESTDIR)/src/distrho/scripts/
+	install -m 755 scripts/*.sh             $(DESTDIR)/src/distrho/scripts/
 
-	find libs/juce/source/ -type f -name "*.h" -exec cp --parents {} $(DESTDIR)/src/distrho/ \;
+	find libs/juce/source/ -type f -name "*.h" -exec cp -v --parents {} $(DESTDIR)/src/distrho/ \;
+
+	cp -v --parents -r libs/juce/source/modules/juce_audio_plugin_client/LV2/*                            $(DESTDIR)/src/distrho/
+	cp -v --parents    libs/juce/source/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp         $(DESTDIR)/src/distrho/
+	cp -v --parents    libs/juce/source/modules/juce_audio_plugin_client/utility/juce_PluginUtilities.cpp $(DESTDIR)/src/distrho/
 
 # -----------------------------------------
 # gen
