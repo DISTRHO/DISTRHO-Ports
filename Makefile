@@ -39,7 +39,7 @@ install:
 
 	# install source needed for extra builds
 	install -m 644 libs/libjuce.a           $(DESTDIR)/src/distrho/libs/
-	install -m 644 libs/lv2_ttl_generator   $(DESTDIR)/src/distrho/libs/
+	install -m 755 libs/lv2_ttl_generator   $(DESTDIR)/src/distrho/libs/
 	install -m 644 libs/juce/build-juce/*.h $(DESTDIR)/src/distrho/libs/juce/build-juce/
 	install -m 644 libs/juce-plugin/*.cpp   $(DESTDIR)/src/distrho/libs/juce-plugin/
 	install -m 644 libs/juce-plugin/*.h     $(DESTDIR)/src/distrho/libs/juce-plugin/
