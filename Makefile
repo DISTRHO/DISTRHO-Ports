@@ -78,6 +78,7 @@ clean:
 	$(MAKE) clean -C ports
 	rm -rf bin/lv2/*.lv2/
 	rm -rf bin/lv2-extra/
+	rm -rf bin/vst-extra/
 
 distclean: clean
 	$(MAKE) distclean -C libs/dgl
