@@ -7,7 +7,7 @@ if [ ! -d bin ]; then
   exit
 fi
 
-DPF_SOURCE_DIR="/home/falktx/FOSS/GIT-mine/DPF"
+DPF_SOURCE_DIR="/home/falktx/Personal/FOSS/GIT/falktx/DPF"
 
 make clean -C $DPF_SOURCE_DIR/dgl
 
