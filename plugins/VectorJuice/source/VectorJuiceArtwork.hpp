@@ -6,7 +6,7 @@
 namespace VectorJuiceArtwork
 {
     extern const char* aboutData;
-    const unsigned int aboutDataSize = 240000;
+    const unsigned int aboutDataSize = 180000;
     const unsigned int aboutWidth    = 300;
     const unsigned int aboutHeight   = 200;
 
@@ -21,7 +21,7 @@ namespace VectorJuiceArtwork
     const unsigned int aboutButtonNormalHeight   = 16;
 
     extern const char* backgroundData;
-    const unsigned int backgroundDataSize = 1244576;
+    const unsigned int backgroundDataSize = 933432;
     const unsigned int backgroundWidth    = 712;
     const unsigned int backgroundHeight   = 437;
 
