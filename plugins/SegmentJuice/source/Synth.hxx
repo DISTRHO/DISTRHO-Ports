@@ -169,10 +169,6 @@ public:
 		}
 	}
 
-	void setFreqOffset(float nFreq) {
-
-	}
-	
 	void play(float note) {
 		if (!playing || (playing && notePlaying==note)) {
 			notePlaying = note;

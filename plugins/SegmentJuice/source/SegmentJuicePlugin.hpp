@@ -1,5 +1,5 @@
 /*
- * Wobble Juice Plugin
+ * Segment Juice Plugin
  * Copyright (C) 2014 Andre Sklenar <andre.sklenar@gmail.com>, www.juicelab.cz
  *
  * This program is free software; you can redistribute it and/or
@@ -37,37 +37,35 @@ public:
         paramWave4,
         paramWave5,
         paramWave6,
-		paramFM1,
+        paramFM1,
         paramFM2,
         paramFM3,
         paramFM4,
         paramFM5,
         paramFM6,
-		paramPan1,
+        paramPan1,
         paramPan2,
         paramPan3,
         paramPan4,
         paramPan5,
         paramPan6,
-		paramAmp1,
+        paramAmp1,
         paramAmp2,
         paramAmp3,
         paramAmp4,
         paramAmp5,
         paramAmp6,
-		paramAttack,
-		paramDecay,
-		paramSustain,
-		paramRelease,
-		paramStereo,
-		paramTune,
-		paramVolume,
-		paramGlide,
+        paramAttack,
+        paramDecay,
+        paramSustain,
+        paramRelease,
+        paramStereo,
+        paramTune,
+        paramVolume,
+        paramGlide,
         paramCount
     };
-	/*
-    
-	*/
+
     SegmentJuicePlugin();
     ~SegmentJuicePlugin() override;
 
@@ -123,12 +121,12 @@ protected:
     // -------------------------------------------------------------------
 
 private:
-	CSynth synthL, synthR;
+    CSynth synthL, synthR;
     float wave1, wave2, wave3, wave4, wave5, wave6;
-	float FM1, FM2, FM3, FM4, FM5, FM6;
-	float pan1, pan2, pan3, pan4, pan5, pan6;
-	float amp1, amp2, amp3, amp4, amp5, amp6;
-	float attack, decay, sustain, release, stereo, tune, volume, glide;
+    float FM1, FM2, FM3, FM4, FM5, FM6;
+    float pan1, pan2, pan3, pan4, pan5, pan6;
+    float amp1, amp2, amp3, amp4, amp5, amp6;
+    float attack, decay, sustain, release, stereo, tune, volume, glide;
 };
 
 // -----------------------------------------------------------------------

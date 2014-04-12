@@ -1,5 +1,5 @@
 /*
- * Wobble Juice Plugin
+ * Segment Juice Plugin
  * Copyright (C) 2014 Andre Sklenar <andre.sklenar@gmail.com>, www.juicelab.cz
  *
  * This program is free software; you can redistribute it and/or
@@ -40,14 +40,14 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 class SegmentJuiceUI : public UI,
-                      public ImageButton::Callback,
-                      public ImageKnob::Callback
+                       public ImageButton::Callback,
+                       public ImageKnob::Callback
 {
 public:
     SegmentJuiceUI();
     ~SegmentJuiceUI() override;
 
-	void updateSynth();
+    void updateSynth();
 
 protected:
     // -------------------------------------------------------------------
@@ -89,39 +89,39 @@ private:
     ImageKnob* fKnobWave4;
     ImageKnob* fKnobWave5;
     ImageKnob* fKnobWave6;
-	
-	ImageKnob* fKnobFM1;
+
+    ImageKnob* fKnobFM1;
     ImageKnob* fKnobFM2;
     ImageKnob* fKnobFM3;
     ImageKnob* fKnobFM4;
     ImageKnob* fKnobFM5;
     ImageKnob* fKnobFM6;
 
-	ImageKnob* fKnobPan1;
+    ImageKnob* fKnobPan1;
     ImageKnob* fKnobPan2;
     ImageKnob* fKnobPan3;
     ImageKnob* fKnobPan4;
     ImageKnob* fKnobPan5;
     ImageKnob* fKnobPan6;
 
-	ImageKnob* fKnobAmp1;
+    ImageKnob* fKnobAmp1;
     ImageKnob* fKnobAmp2;
     ImageKnob* fKnobAmp3;
     ImageKnob* fKnobAmp4;
     ImageKnob* fKnobAmp5;
     ImageKnob* fKnobAmp6;
 
-	ImageKnob* fKnobAttack;
+    ImageKnob* fKnobAttack;
     ImageKnob* fKnobDecay;
-	ImageKnob* fKnobSustain;
+    ImageKnob* fKnobSustain;
     ImageKnob* fKnobRelease;
-	ImageKnob* fKnobStereo;
+    ImageKnob* fKnobStereo;
     ImageKnob* fKnobTune;
-	ImageKnob* fKnobVolume;
-	ImageKnob* fKnobGlide;
+    ImageKnob* fKnobVolume;
+    ImageKnob* fKnobGlide;
     ImageButton* fButtonAbout;
 
-	CSynth synthL, synthR;
+    CSynth synthL, synthR;
 };
 
 // -----------------------------------------------------------------------
