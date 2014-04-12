@@ -193,9 +193,6 @@ void WobbleJuicePlugin::d_deactivate()
 
 void WobbleJuicePlugin::d_run(float** inputs, float** outputs, uint32_t frames)
 {
-    float* left[2]  = { inputs[0], outputs[0] };
-    float* right[2] = { inputs[1], outputs[1] };
-
     //fetch the timepos struct from host;
     const TimePos& time = d_getTimePos();
 
@@ -208,7 +205,7 @@ void WobbleJuicePlugin::d_run(float** inputs, float** outputs, uint32_t frames)
     {
         /* if rolling then sync to timepos */
         tickOffset = time.frame-std::floor(time.frame/tick)*tick; //how much after last tick
-        percentage; //of 2pi
+
         if (tickOffset!=0) {
             //TODO: why do we need this??
             percentage = tickOffset/tick;
