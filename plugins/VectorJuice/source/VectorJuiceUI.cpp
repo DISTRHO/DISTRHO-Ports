@@ -38,19 +38,19 @@ VectorJuiceUI::VectorJuiceUI()
     fCanvasArea.setSize(368-24, 368-24);
 
     // background
-    fImgBackground = Image(VectorJuiceArtwork::backgroundData, VectorJuiceArtwork::backgroundWidth, VectorJuiceArtwork::backgroundHeight, GL_BGRA);
+    fImgBackground = Image(VectorJuiceArtwork::backgroundData, VectorJuiceArtwork::backgroundWidth, VectorJuiceArtwork::backgroundHeight, GL_BGR);
 
-	//roundlet
-    fImgRoundlet = Image(VectorJuiceArtwork::roundletData, VectorJuiceArtwork::roundletWidth, VectorJuiceArtwork::roundletHeight, GL_BGRA);
+    //roundlet
+    fImgRoundlet = Image(VectorJuiceArtwork::roundletData, VectorJuiceArtwork::roundletWidth, VectorJuiceArtwork::roundletHeight);
 
-	//orbit
-    fImgOrbit = Image(VectorJuiceArtwork::orbitData, VectorJuiceArtwork::orbitWidth, VectorJuiceArtwork::orbitHeight, GL_BGRA);
+    //orbit
+    fImgOrbit = Image(VectorJuiceArtwork::orbitData, VectorJuiceArtwork::orbitWidth, VectorJuiceArtwork::orbitHeight);
 
-	//subOrbit
-    fImgSubOrbit = Image(VectorJuiceArtwork::subOrbitData, VectorJuiceArtwork::subOrbitWidth, VectorJuiceArtwork::subOrbitHeight, GL_BGRA);
+    //subOrbit
+    fImgSubOrbit = Image(VectorJuiceArtwork::subOrbitData, VectorJuiceArtwork::subOrbitWidth, VectorJuiceArtwork::subOrbitHeight);
 
     // about
-    Image imageAbout(VectorJuiceArtwork::aboutData, VectorJuiceArtwork::aboutWidth, VectorJuiceArtwork::aboutHeight, GL_BGRA);
+    Image imageAbout(VectorJuiceArtwork::aboutData, VectorJuiceArtwork::aboutWidth, VectorJuiceArtwork::aboutHeight, GL_BGR);
     fAboutWindow.setImage(imageAbout);
 
     // about button
@@ -60,29 +60,28 @@ VectorJuiceUI::VectorJuiceUI()
     fButtonAbout->setPos(599, 17);
     fButtonAbout->setCallback(this);
 
-
-	// knobs
+    // knobs
     Image knobImage(VectorJuiceArtwork::knobData, VectorJuiceArtwork::knobWidth, VectorJuiceArtwork::knobHeight);
 
-	// knob KnobOrbitSpeedX
+    // knob KnobOrbitSpeedX
     fKnobOrbitSpeedX = new ImageKnob(this, knobImage);
     fKnobOrbitSpeedX->setPos(423, 185);
-	fKnobOrbitSpeedX->setStep(1.0f);	
+    fKnobOrbitSpeedX->setStep(1.0f);
     fKnobOrbitSpeedX->setRange(1.0f, 128.0f);
     fKnobOrbitSpeedX->setValue(4.0f);
     fKnobOrbitSpeedX->setRotationAngle(270);
     fKnobOrbitSpeedX->setCallback(this);
 
-	// knob KnobOrbitSpeedY
+    // knob KnobOrbitSpeedY
     fKnobOrbitSpeedY = new ImageKnob(this, knobImage);
     fKnobOrbitSpeedY->setPos(516, 185);
-	fKnobOrbitSpeedY->setStep(1.0f);	
+    fKnobOrbitSpeedY->setStep(1.0f);
     fKnobOrbitSpeedY->setRange(1.0f, 128.0f);
     fKnobOrbitSpeedY->setValue(4.0f);
     fKnobOrbitSpeedY->setRotationAngle(270);
     fKnobOrbitSpeedY->setCallback(this);
 
-	// knob KnobOrbitSizeX
+    // knob KnobOrbitSizeX
     fKnobOrbitSizeX = new ImageKnob(this, knobImage);
     fKnobOrbitSizeX->setPos(423, 73);
     fKnobOrbitSizeX->setRange(0.0f, 1.0f);
@@ -90,7 +89,7 @@ VectorJuiceUI::VectorJuiceUI()
     fKnobOrbitSizeX->setRotationAngle(270);
     fKnobOrbitSizeX->setCallback(this);
 
-	// knob KnobOrbitSizeY
+    // knob KnobOrbitSizeY
     fKnobOrbitSizeY = new ImageKnob(this, knobImage);
     fKnobOrbitSizeY->setPos(516, 73);
     fKnobOrbitSizeY->setRange(0.0f, 1.0f);
@@ -98,16 +97,16 @@ VectorJuiceUI::VectorJuiceUI()
     fKnobOrbitSizeY->setRotationAngle(270);
     fKnobOrbitSizeY->setCallback(this);
 
-	// knob KnobSubOrbitSpeed
+    // knob KnobSubOrbitSpeed
     fKnobSubOrbitSpeed = new ImageKnob(this, knobImage);
     fKnobSubOrbitSpeed->setPos(620, 185);
-	fKnobSubOrbitSpeed->setStep(1.0f);	
+    fKnobSubOrbitSpeed->setStep(1.0f);
     fKnobSubOrbitSpeed->setRange(1.0f, 128.0f);
     fKnobSubOrbitSpeed->setValue(32.0f);
     fKnobSubOrbitSpeed->setRotationAngle(270);
     fKnobSubOrbitSpeed->setCallback(this);
 
-	// knob KnobSubOrbitSize
+    // knob KnobSubOrbitSize
     fKnobSubOrbitSize = new ImageKnob(this, knobImage);
     fKnobSubOrbitSize->setPos(620, 73);
     fKnobSubOrbitSize->setRange(0.0f, 1.0f);
@@ -115,7 +114,7 @@ VectorJuiceUI::VectorJuiceUI()
     fKnobSubOrbitSize->setRotationAngle(270);
     fKnobSubOrbitSize->setCallback(this);
 
-	// knob KnobSubOrbitSmooth
+    // knob KnobSubOrbitSmooth
     fKnobSubOrbitSmooth = new ImageKnob(this, knobImage);
     fKnobSubOrbitSmooth->setPos(620, 297);
     fKnobSubOrbitSmooth->setRange(0.0f, 1.0f);
@@ -123,9 +122,7 @@ VectorJuiceUI::VectorJuiceUI()
     fKnobSubOrbitSmooth->setRotationAngle(270);
     fKnobSubOrbitSmooth->setCallback(this);
 
-
-	//sliders
-	// sliders
+    // sliders
     Image sliderImage(VectorJuiceArtwork::sliderData, VectorJuiceArtwork::sliderWidth, VectorJuiceArtwork::sliderHeight);
     Point<int> sliderPosStart(410+48, 284);
     Point<int> sliderPosEnd(410, 284);
@@ -141,38 +138,37 @@ VectorJuiceUI::VectorJuiceUI()
     // slider OrbitWaveY
     sliderPosStart.setX(503+48);
     sliderPosEnd.setX(503);
-	fSliderOrbitWaveY = new ImageSlider(this, sliderImage);
+    fSliderOrbitWaveY = new ImageSlider(this, sliderImage);
     fSliderOrbitWaveY->setStartPos(sliderPosStart);
     fSliderOrbitWaveY->setEndPos(sliderPosEnd);
     fSliderOrbitWaveY->setRange(1.0f, 4.0f);
-	fSliderOrbitWaveY->setStep(1.0f);
+    fSliderOrbitWaveY->setStep(1.0f);
     fSliderOrbitWaveY->setValue(3.0f);
     fSliderOrbitWaveY->setCallback(this);
 
-	// slider OrbitPhaseX
+    // slider OrbitPhaseX
     sliderPosStart.setX(410+48);
-	sliderPosStart.setY(345);
+    sliderPosStart.setY(345);
     sliderPosEnd.setX(410);
-	sliderPosEnd.setY(345);
-	fSliderOrbitPhaseX = new ImageSlider(this, sliderImage);
+    sliderPosEnd.setY(345);
+    fSliderOrbitPhaseX = new ImageSlider(this, sliderImage);
     fSliderOrbitPhaseX->setStartPos(sliderPosStart);
     fSliderOrbitPhaseX->setEndPos(sliderPosEnd);
     fSliderOrbitPhaseX->setRange(0.0f, 1.0f);
-	fSliderOrbitPhaseX->setStep(1.0f);
+    fSliderOrbitPhaseX->setStep(1.0f);
     fSliderOrbitPhaseX->setValue(0.0f);
     fSliderOrbitPhaseX->setCallback(this);
 
-	// slider OrbitPhaseY
+    // slider OrbitPhaseY
     sliderPosStart.setX(503+48);
     sliderPosEnd.setX(503);
-	fSliderOrbitPhaseY = new ImageSlider(this, sliderImage);
+    fSliderOrbitPhaseY = new ImageSlider(this, sliderImage);
     fSliderOrbitPhaseY->setStartPos(sliderPosStart);
     fSliderOrbitPhaseY->setEndPos(sliderPosEnd);
     fSliderOrbitPhaseY->setRange(0.0f, 1.0f);
-	fSliderOrbitPhaseY->setStep(1.0f);
+    fSliderOrbitPhaseY->setStep(1.0f);
     fSliderOrbitPhaseY->setValue(0.0f);
     fSliderOrbitPhaseY->setCallback(this);
-
 }
 
 VectorJuiceUI::~VectorJuiceUI()
@@ -186,13 +182,13 @@ VectorJuiceUI::~VectorJuiceUI()
     delete fKnobOrbitSizeY;
     delete fKnobSubOrbitSpeed;
     delete fKnobSubOrbitSize;
-	delete fKnobSubOrbitSmooth;
+    delete fKnobSubOrbitSmooth;
 
-	//sliders
-	delete fSliderOrbitWaveX;
-	delete fSliderOrbitWaveY;
-	delete fSliderOrbitPhaseX;
-	delete fSliderOrbitPhaseY;
+    //sliders
+    delete fSliderOrbitWaveX;
+    delete fSliderOrbitWaveY;
+    delete fSliderOrbitPhaseX;
+    delete fSliderOrbitPhaseY;
 }
 
 // -----------------------------------------------------------------------
@@ -236,32 +232,48 @@ void VectorJuiceUI::d_parameterChanged(uint32_t index, float value)
     case VectorJuicePlugin::paramSubOrbitSpeed:
         fKnobSubOrbitSpeed->setValue(value);
         break;
-	case VectorJuicePlugin::paramSubOrbitSmooth:
+    case VectorJuicePlugin::paramSubOrbitSmooth:
         fKnobSubOrbitSmooth->setValue(value);
         break;
-	case VectorJuicePlugin::paramOrbitWaveX:
+    case VectorJuicePlugin::paramOrbitWaveX:
         fSliderOrbitWaveX->setValue(value);
         break;
-	case VectorJuicePlugin::paramOrbitWaveY:
+    case VectorJuicePlugin::paramOrbitWaveY:
         fSliderOrbitWaveY->setValue(value);
         break;
-	case VectorJuicePlugin::paramOrbitPhaseX:
+    case VectorJuicePlugin::paramOrbitPhaseX:
         fSliderOrbitPhaseX->setValue(value);
         break;
-	case VectorJuicePlugin::paramOrbitPhaseY:
+    case VectorJuicePlugin::paramOrbitPhaseY:
         fSliderOrbitPhaseY->setValue(value);
         break;
-	case VectorJuicePlugin::paramOrbitOutX:
-        if (orbitX != value) { orbitX = value; repaint(); }
+    case VectorJuicePlugin::paramOrbitOutX:
+        if (orbitX != value)
+        {
+            orbitX = value;
+            repaint();
+        }
         break;
-	case VectorJuicePlugin::paramOrbitOutY:
-        if (orbitY != value) { orbitY = value; repaint(); }
+    case VectorJuicePlugin::paramOrbitOutY:
+        if (orbitY != value)
+        {
+            orbitY = value;
+            repaint();
+        }
         break;
-	case VectorJuicePlugin::paramSubOrbitOutX:
-        if (subOrbitX != value) { subOrbitX = value; repaint(); }
+    case VectorJuicePlugin::paramSubOrbitOutX:
+        if (subOrbitX != value)
+        {
+            subOrbitX = value;
+            repaint();
+        }
         break;
-	case VectorJuicePlugin::paramSubOrbitOutY:
-        if (subOrbitY != value) { subOrbitY = value; repaint(); }
+    case VectorJuicePlugin::paramSubOrbitOutY:
+        if (subOrbitY != value)
+        {
+            subOrbitY = value;
+            repaint();
+        }
         break;
     }
 }
@@ -279,11 +291,11 @@ void VectorJuiceUI::d_programChanged(uint32_t index)
     fKnobOrbitSizeY->setValue(1.0f);
     fKnobSubOrbitSize->setValue(1.0f);
     fKnobSubOrbitSpeed->setValue(32.0f);
-	fKnobSubOrbitSmooth->setValue(0.5f);
-	fSliderOrbitWaveX->setValue(3.0f);
-	fSliderOrbitWaveY->setValue(3.0f);
-	fSliderOrbitPhaseX->setValue(0.0f);
-	fSliderOrbitPhaseY->setValue(0.0f);
+    fKnobSubOrbitSmooth->setValue(0.5f);
+    fSliderOrbitWaveX->setValue(3.0f);
+    fSliderOrbitWaveY->setValue(3.0f);
+    fSliderOrbitPhaseX->setValue(0.0f);
+    fSliderOrbitPhaseY->setValue(0.0f);
 }
 
 // -----------------------------------------------------------------------
@@ -311,7 +323,7 @@ void VectorJuiceUI::imageKnobDragStarted(ImageKnob* knob)
         d_editParameter(VectorJuicePlugin::paramSubOrbitSize, true);
     else if (knob == fKnobSubOrbitSpeed)
         d_editParameter(VectorJuicePlugin::paramSubOrbitSpeed, true);
-	else if (knob == fKnobSubOrbitSmooth)
+    else if (knob == fKnobSubOrbitSmooth)
         d_editParameter(VectorJuicePlugin::paramSubOrbitSmooth, true);
 }
 
@@ -329,7 +341,7 @@ void VectorJuiceUI::imageKnobDragFinished(ImageKnob* knob)
         d_editParameter(VectorJuicePlugin::paramSubOrbitSize, false);
     else if (knob == fKnobSubOrbitSpeed)
         d_editParameter(VectorJuicePlugin::paramSubOrbitSpeed, false);
-	else if (knob == fKnobSubOrbitSmooth)
+    else if (knob == fKnobSubOrbitSmooth)
         d_editParameter(VectorJuicePlugin::paramSubOrbitSmooth, false);
 }
 
@@ -347,7 +359,7 @@ void VectorJuiceUI::imageKnobValueChanged(ImageKnob* knob, float value)
         d_setParameterValue(VectorJuicePlugin::paramSubOrbitSize, value);
     else if (knob == fKnobSubOrbitSpeed)
         d_setParameterValue(VectorJuicePlugin::paramSubOrbitSpeed, value);
-	else if (knob == fKnobSubOrbitSmooth)
+    else if (knob == fKnobSubOrbitSmooth)
         d_setParameterValue(VectorJuicePlugin::paramSubOrbitSmooth, value);
 }
 
@@ -391,8 +403,7 @@ void VectorJuiceUI::onDisplay()
 {
     fImgBackground.draw();
 
-
-	/*
+    /*
     // TESTING - remove later
     // this paints the 'fCanvasArea' so we can clearly see its bounds
     {
@@ -420,32 +431,32 @@ void VectorJuiceUI::onDisplay()
         // reset color
         glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
     }
-	*/
+    */
 
     // get x, y mapped to XY area
     int x = fCanvasArea.getX() + paramX*fCanvasArea.getWidth() - fImgRoundlet.getWidth()/2;
     int y = fCanvasArea.getY() + paramY*fCanvasArea.getHeight() - fImgRoundlet.getHeight()/2;
-	int nOrbitX = fCanvasArea.getX()+((orbitX)*fCanvasArea.getWidth())-15;
-	int nOrbitY = fCanvasArea.getY()+((orbitY)*fCanvasArea.getWidth())-15;
-	int nSubOrbitX = fCanvasArea.getX()+(subOrbitX*fCanvasArea.getWidth())-15;
-	int nSubOrbitY = fCanvasArea.getY()+(subOrbitY*fCanvasArea.getWidth())-14;
+    int nOrbitX = fCanvasArea.getX()+((orbitX)*fCanvasArea.getWidth())-15;
+    int nOrbitY = fCanvasArea.getY()+((orbitY)*fCanvasArea.getWidth())-15;
+    int nSubOrbitX = fCanvasArea.getX()+(subOrbitX*fCanvasArea.getWidth())-15;
+    int nSubOrbitY = fCanvasArea.getY()+(subOrbitY*fCanvasArea.getWidth())-14;
 
-	//draw lines, just for fun
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glColor4f(0.0f, 1.0f, 0.0f, 0.05f);
-	glLineWidth(4); 
-	glBegin(GL_LINES);
-		glVertex2i(x+ fImgRoundlet.getWidth()/2, y+ fImgRoundlet.getHeight()/2);
-		glVertex2i(nOrbitX+15, nOrbitY+15);
-	glEnd();
-	glBegin(GL_LINES);
-		glVertex2i(nOrbitX+15, nOrbitY+15);
-		glVertex2i(nSubOrbitX+15, nSubOrbitY+14);
-	glEnd();
-	// reset color
+    //draw lines, just for fun
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glColor4f(0.0f, 1.0f, 0.0f, 0.05f);
+    glLineWidth(4);
+    glBegin(GL_LINES);
+        glVertex2i(x+ fImgRoundlet.getWidth()/2, y+ fImgRoundlet.getHeight()/2);
+        glVertex2i(nOrbitX+15, nOrbitY+15);
+    glEnd();
+    glBegin(GL_LINES);
+        glVertex2i(nOrbitX+15, nOrbitY+15);
+        glVertex2i(nSubOrbitX+15, nSubOrbitY+14);
+    glEnd();
+
+    // reset color
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-	
 
     // draw roundlet and orbits
     fImgRoundlet.draw(x, y);

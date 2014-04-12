@@ -37,23 +37,24 @@ public:
         paramOrbitSpeedY,
         paramSubOrbitSpeed,
         paramSubOrbitSize,
-		paramOrbitWaveX,
-		paramOrbitWaveY,
-		paramOrbitPhaseX,
-		paramOrbitPhaseY,
-		paramSubOrbitSmooth,
-		paramOrbitOutX,
-		paramOrbitOutY,
-		paramSubOrbitOutX,
-		paramSubOrbitOutY,
+        paramOrbitWaveX,
+        paramOrbitWaveY,
+        paramOrbitPhaseX,
+        paramOrbitPhaseY,
+        paramSubOrbitSmooth,
+        paramOrbitOutX,
+        paramOrbitOutY,
+        paramSubOrbitOutX,
+        paramSubOrbitOutY,
         paramCount
     };
 
-	inline float smoothParameter(float in, int axis) {
-		sZ[axis] = (in * sB[axis]) + (sZ[axis] * sA[axis]); return sZ[axis];
-	}
+    inline float smoothParameter(float in, int axis) {
+            sZ[axis] = (in * sB[axis]) + (sZ[axis] * sA[axis]);
+            return sZ[axis];
+    }
 
-	float getSinePhase(float x) {
+    float getSinePhase(float x) {
         return (-std::sin(x));
     }
     float getSawPhase(float x) {
@@ -66,7 +67,7 @@ public:
         return (std::round((std::sin(x)+1)/2)-0.5)*2;
     }
 
-	//saw, sqr, sin, revSaw
+    //saw, sqr, sin, revSaw
     float getBlendedPhase(float x, float wave)
     {
         //wave = 2;
@@ -87,90 +88,87 @@ public:
         }
     }
 
-	void resetPhase() {
-		const TimePos& time = d_getTimePos();
-		if (!time.playing)
-    	{
-			sinePosX = 0;
-			sinePosY = 0;
-			sinePos = 0;
-		}
-	}
+    void resetPhase()
+    {
+        const TimePos& time = d_getTimePos();
+        if (!time.playing)
+        {
+            sinePosX = 0;
+            sinePosY = 0;
+            sinePos = 0;
+        }
+    }
 
-	float tN (float x) {
-		if (x>0) return x;
-			else return 0;
-	}
+    float tN (float x)
+    {
+        if (x>0) return x;
+        else return 0;
+    }
 
+    void animate()
+    {
+        //sync orbit with frame, bpm
+        const TimePos& time = d_getTimePos();
+        bar = ((120.0/(time.bbt.valid ? time.bbt.beatsPerMinute : 120.0))*(d_getSampleRate()));
 
-	void animate() {
+        int multiplier = 16;//2000*4;
+        tickX = bar/(std::round(orbitSpeedX))*multiplier;
+        tickY = bar/(std::round(orbitSpeedY))*multiplier;
+        tick = bar/(std::round(subOrbitSpeed))*multiplier;
 
-		//sync orbit with frame, bpm
-		const TimePos& time = d_getTimePos();
-		bar = ((120.0/(time.bbt.valid ? time.bbt.beatsPerMinute : 120.0))*(d_getSampleRate()));
+        if (time.playing)
+        {
+            /* if rolling then sync to timepos */
+            tickOffsetX = time.frame-std::floor(time.frame/tickX)*tickX;
+            tickOffsetY = time.frame-std::floor(time.frame/tickY)*tickY;
+            tickOffset = time.frame-std::floor(time.frame/tick)*tick;
+            percentageX = tickOffsetX/tickX;
+            percentageY = tickOffsetY/tickY;
+            percentage = tickOffset/tick;
+            sinePosX = (M_PI*2)*percentageX;
+            sinePosY = (M_PI*2)*percentageY;
+            sinePos = (M_PI*2)*percentage;
+        } else {
+            /* else just keep on wobblin' */
+            sinePosX += (2*M_PI)/(tickX);
+            sinePosY += (2*M_PI)/(tickY);
+            sinePos += (M_PI)/(tick);
+            if (sinePosX>2*M_PI) {
+                sinePosX = 0;
+            }
+            if (sinePosY>2*M_PI) {
+                sinePosY = 0;
+            }
+            if (sinePos>2*M_PI) {
+                sinePos = 0;
+            }
+        }
 
-		int multiplier = 16;//2000*4;
-		tickX = bar/(std::round(orbitSpeedX))*multiplier;
-		tickY = bar/(std::round(orbitSpeedY))*multiplier;
-		tick = bar/(std::round(subOrbitSpeed))*multiplier;
+        //0..1
+        //0..3
+        //0, 1, 2, 3
+        //* 0.25
+        //0, 0.25, 0.5, 0.75
 
-		if (time.playing)
-    	{
-			/* if rolling then sync to timepos */
-		    tickOffsetX = time.frame-std::floor(time.frame/tickX)*tickX;
-			tickOffsetY = time.frame-std::floor(time.frame/tickY)*tickY;
-			tickOffset = time.frame-std::floor(time.frame/tick)*tick;
-		    percentageX = tickOffsetX/tickX;
-			percentageY = tickOffsetY/tickY;
-			percentage = tickOffset/tick;
-		    sinePosX = (M_PI*2)*percentageX;
-			sinePosY = (M_PI*2)*percentageY;
-			sinePos = (M_PI*2)*percentage;
-		} else {
-			/* else just keep on wobblin' */
-			sinePosX += (2*M_PI)/(tickX);
-			sinePosY += (2*M_PI)/(tickY);
-			sinePos += (M_PI)/(tick);
-			if (sinePosX>2*M_PI) {
-		        sinePosX = 0;
-		    }
-			if (sinePosY>2*M_PI) {
-		        sinePosY = 0;
-		    }
-			if (sinePos>2*M_PI) {
-		        sinePos = 0;
-		    }
-		}
-		
-		//0..1
-		//0..3
-		//0, 1, 2, 3
-		//* 0.25
-		//0, 0.25, 0.5, 0.75
-		
-		float tempPhaseX = round(orbitPhaseX*3)*0.25;
-		float tempPhaseY = round(orbitPhaseY*3)*0.25;
+        float tempPhaseX = std::round(orbitPhaseX*3)*0.25;
+        float tempPhaseY = std::round(orbitPhaseY*3)*0.25;
 
-		orbitX = x+getBlendedPhase(sinePosX + tempPhaseX*(2*M_PI), std::round(orbitWaveX))*(orbitSizeX/2);
-		orbitY = y+getBlendedPhase(sinePosY+M_PI/2 + tempPhaseY*(2*M_PI), std::round(orbitWaveY))*(orbitSizeY/2);
-		subOrbitX = smoothParameter(orbitX+getBlendedPhase(sinePos, 3)*(subOrbitSize/3), 0);
-		subOrbitY = smoothParameter(orbitY+getBlendedPhase(sinePos+M_PI/2, 3)*(subOrbitSize/3), 1);
-		if (orbitX<0) orbitX=0;
-		if (orbitX>1) orbitX=1;
-		if (orbitY<0) orbitY=0;
-		if (orbitY>1) orbitY=1;
-		
-		if (subOrbitX<0) subOrbitX=0;
-		if (subOrbitX>1) subOrbitX=1;
-		if (subOrbitY<0) subOrbitY=0;
-		if (subOrbitY>1) subOrbitY=1;
+        orbitX = x+getBlendedPhase(sinePosX + tempPhaseX*(2*M_PI), std::round(orbitWaveX))*(orbitSizeX/2);
+        orbitY = y+getBlendedPhase(sinePosY+M_PI/2 + tempPhaseY*(2*M_PI), std::round(orbitWaveY))*(orbitSizeY/2);
+        subOrbitX = smoothParameter(orbitX+getBlendedPhase(sinePos, 3)*(subOrbitSize/3), 0);
+        subOrbitY = smoothParameter(orbitY+getBlendedPhase(sinePos+M_PI/2, 3)*(subOrbitSize/3), 1);
+        if (orbitX<0) orbitX=0;
+        if (orbitX>1) orbitX=1;
+        if (orbitY<0) orbitY=0;
+        if (orbitY>1) orbitY=1;
 
-	}
-
-
+        if (subOrbitX<0) subOrbitX=0;
+        if (subOrbitX>1) subOrbitX=1;
+        if (subOrbitY<0) subOrbitY=0;
+        if (subOrbitY>1) subOrbitY=1;
+    }
 
     VectorJuicePlugin();
-    ~VectorJuicePlugin() override;
 
 protected:
     // -------------------------------------------------------------------
@@ -224,8 +222,6 @@ protected:
     // -------------------------------------------------------------------
 
 private:
-	
-	
     float x, y;
     float orbitX, orbitY;
     float orbitTX, orbitTY; //targetX and targetY for interpolation
@@ -235,14 +231,14 @@ private:
     float orbitSizeX, orbitSizeY;
     float interpolationDivider;
 
-	float bar, tickX, tickY, percentageX, percentageY, tickOffsetX, tickOffsetY;
-	float sinePosX, sinePosY, tick, percentage, tickOffset, sinePos;
+    float bar, tickX, tickY, percentageX, percentageY, tickOffsetX, tickOffsetY;
+    float sinePosX, sinePosY, tick, percentage, tickOffset, sinePos;
 
-	float orbitWaveX, orbitWaveY, subOrbitSmooth, waveBlend;
-	float orbitPhaseX, orbitPhaseY;
+    float orbitWaveX, orbitWaveY, subOrbitSmooth, waveBlend;
+    float orbitPhaseX, orbitPhaseY;
 
-	//parameter smoothing, for subOrbitX and subOrbitY
-	float sA[2], sB[2], sZ[2];
+    //parameter smoothing, for subOrbitX and subOrbitY
+    float sA[2], sB[2], sZ[2];
 };
 
 // -----------------------------------------------------------------------

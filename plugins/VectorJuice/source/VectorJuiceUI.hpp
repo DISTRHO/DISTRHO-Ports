@@ -43,7 +43,7 @@ START_NAMESPACE_DISTRHO
 class VectorJuiceUI : public UI,
                       public ImageButton::Callback,
                       public ImageKnob::Callback,
-					  public ImageSlider::Callback
+                      public ImageSlider::Callback
 {
 public:
     VectorJuiceUI();
@@ -76,7 +76,7 @@ protected:
     void imageKnobDragStarted(ImageKnob* knob) override;
     void imageKnobDragFinished(ImageKnob* knob) override;
     void imageKnobValueChanged(ImageKnob* knob, float value) override;
-	void imageSliderDragStarted(ImageSlider* slider) override;
+    void imageSliderDragStarted(ImageSlider* slider) override;
     void imageSliderDragFinished(ImageSlider* slider) override;
     void imageSliderValueChanged(ImageSlider* slider, float value) override;
 
@@ -100,14 +100,13 @@ private:
     ImageKnob* fKnobOrbitSizeY;
     ImageKnob* fKnobSubOrbitSpeed;
     ImageKnob* fKnobSubOrbitSize;
-	ImageKnob* fKnobSubOrbitSmooth;
+    ImageKnob* fKnobSubOrbitSmooth;
 
-	//sliders
-	ImageSlider* fSliderOrbitWaveX;
-	ImageSlider* fSliderOrbitWaveY;
-	ImageSlider* fSliderOrbitPhaseX;
-	ImageSlider* fSliderOrbitPhaseY;
-	
+    //sliders
+    ImageSlider* fSliderOrbitWaveX;
+    ImageSlider* fSliderOrbitWaveY;
+    ImageSlider* fSliderOrbitPhaseX;
+    ImageSlider* fSliderOrbitPhaseY;
 
     ImageButton* fButtonAbout;
 
@@ -117,7 +116,7 @@ private:
     int  fLastX;
     int  fLastY;
     Rectangle<int> fCanvasArea;
-	float orbitX, orbitY, subOrbitX, subOrbitY;
+    float orbitX, orbitY, subOrbitX, subOrbitY;
 };
 
 // -----------------------------------------------------------------------
