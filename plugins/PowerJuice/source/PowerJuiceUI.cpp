@@ -219,6 +219,10 @@ void PowerJuiceUI::imageKnobValueChanged(ImageKnob* knob, float value)
 
 }
 
+void PowerJuiceUI::d_uiIdle() {
+	repaint();
+}
+
 void PowerJuiceUI::onDisplay()
 {
     fImgBackground.draw();

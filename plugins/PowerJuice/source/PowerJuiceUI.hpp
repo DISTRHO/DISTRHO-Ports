@@ -76,7 +76,7 @@ protected:
     void imageKnobDragStarted(ImageKnob* knob) override;
     void imageKnobDragFinished(ImageKnob* knob) override;
     void imageKnobValueChanged(ImageKnob* knob, float value) override;
-
+	void d_uiIdle() override;
     void onDisplay() override;
 
 private:
