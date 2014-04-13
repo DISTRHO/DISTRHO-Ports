@@ -95,14 +95,13 @@ PowerJuiceUI::PowerJuiceUI()
     fButtonAbout->setPos(502, 17);
     fButtonAbout->setCallback(this);
 
-	for (int i=0; i<563; i++) {
+	for (int i=0; i<1126; i++) {
 		input.push_back(0.0f);
 	}
 
 	shm_obj = new boost::interprocess::shared_memory_object(boost::interprocess::open_only,
 													"sharedmemory",
 													boost::interprocess::read_only);
-	//shm_obj->truncate(sizeof(float)*563);
 	region = new boost::interprocess::mapped_region(*shm_obj, boost::interprocess::read_only);
 }
 
@@ -227,31 +226,31 @@ void PowerJuiceUI::onDisplay()
 {
     fImgBackground.draw();
 
-	int w = 563; //waveform array size, size of the plane in pixels;
+	int w = 563; //waveform plane size, size of the plane in pixels;
+	int w2 = 1126; //wavefowm array
 	int h = 60; //waveform plane height
 	int x = 28; //waveform plane positions
 	int y = 51;
 	int dc = 113; //0DC line y position
-	printf("boo\n");
 	//std::memcpy(&input, region->get_address(), sizeof(float)*100);
 	std::deque<float> *mem = static_cast<std::deque<float>*>(region->get_address());
 	input = *mem;
-	printf("la\n");
 	//draw waveform
-	for (int i=1; i<w; i++) {
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glColor4f(0.0f, 1.0f, 0.0f, 0.5f);
+	for (int i=0; i<w2; i+=2) {
+	//glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//glEnable(GL_LINE_SMOOTH);
+	//glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+		glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
 		glLineWidth(1.0f); 
 		glBegin(GL_LINES);
-			glVertex2i(x+(i-1), input[i-1]*h+dc);
-			glVertex2i(x+i, input[i]*h+dc);
+			glVertex2i(x+(i/2), input[i]*h+dc);
+			glVertex2i(x+(i/2), input[i+1]*h+dc);
 		glEnd();
 		// reset color
 		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	
 	}
-	printf("na\n");
 	//draw shits
 }
 

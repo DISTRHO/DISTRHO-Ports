@@ -105,6 +105,7 @@ private:
 	std::deque<float> input, output, gainReduction;
 	float averageInputs[150];
 	int averageCounter;
+	float inputMin, inputMax;
 
 	boost::interprocess::shared_memory_object* shm_obj;
 	boost::interprocess::mapped_region* region;

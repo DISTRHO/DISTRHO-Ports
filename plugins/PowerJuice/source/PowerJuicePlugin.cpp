@@ -29,13 +29,13 @@ PowerJuicePlugin::PowerJuicePlugin()
     // set default values
     d_setProgram(0);
 
-	for (int i=0; i<563; i++) {
+	for (int i=0; i<1126; i++) {
 		input.push_back(0.0f);
 	}
 
 
 	shm_obj = new boost::interprocess::shared_memory_object(boost::interprocess::open_or_create,"sharedmemory",boost::interprocess::read_write);
-	shm_obj->truncate(sizeof(float)*563);
+	shm_obj->truncate(sizeof(float)*1126);
 	region = new boost::interprocess::mapped_region(*shm_obj, boost::interprocess::read_write);
 
 	
@@ -182,6 +182,8 @@ void PowerJuicePlugin::d_setProgram(uint32_t index)
 	makeup = 0.0f;
 	mix = 1.0f;
 	averageCounter = 0;
+	inputMin = 0.0f;
+	inputMax = 0.0f;
 
     /* Default variable values */
 
@@ -209,21 +211,26 @@ void PowerJuicePlugin::d_run(float** inputs, float** outputs, uint32_t frames)
 	for (uint32_t i=0; i < frames; i++) {
 		//for every sample
 		//printf("av");
-		averageInputs[averageCounter] = in[i];
+		//averageInputs[averageCounter] = in[i];
+		if (in[i]<inputMin) {
+			inputMin = in[i];
+		}
+		if (in[i]>inputMax) {
+			inputMax = in[i];
+		}
 		averageCounter++;
-		if (averageCounter==151) {
+		if (averageCounter==300) {
 			//output waveform parameter
-			averageCounter = 0;
-			float average = 0;
-			for (int a=0; a<150; a++) {
-				
-				average+=averageInputs[a];
-			}
-			average/=150;
-			input.push_back(average);
+			input.push_back(inputMin);
+			input.push_back(inputMax);
+			input.pop_front();
 			input.pop_front();
 
-			std::memcpy(region->get_address(), &input, sizeof(float)*563);
+			std::memcpy(region->get_address(), &input, sizeof(float)*1126);
+
+			averageCounter = 0;
+			inputMin = 0.0f;
+			inputMax = 0.0f;
 		}
 	} 
 
