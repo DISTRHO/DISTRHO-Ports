@@ -19,9 +19,20 @@
 #define POWERJUICEPLUGIN_HPP_INCLUDED
 
 #include "DistrhoPlugin.hpp"
-#include <deque>
-#include <boost/interprocess/shared_memory_object.hpp>
-#include <boost/interprocess/mapped_region.hpp>
+#include "carla/CarlaShmUtils.hpp"
+
+static const int kFloatStackCount = 1126;
+
+struct FloatStack {
+    int32_t start;
+    float data[kFloatStackCount];
+};
+
+struct SharedMemData {
+    float input[kFloatStackCount];
+    float output[kFloatStackCount];
+    float gainReduction[kFloatStackCount];
+};
 
 START_NAMESPACE_DISTRHO
 
@@ -37,14 +48,12 @@ public:
         paramThreshold,
         paramRatio,
         paramMakeup,
-        paramMix,	
-		paramInput,
-		paramOutput,
-		paramGainReduction,
+        paramMix,
+        paramInput,
+        paramOutput,
+        paramGainReduction,
         paramCount
     };
-
-    //DSP functions
 
     PowerJuicePlugin();
     ~PowerJuicePlugin() override;
@@ -83,6 +92,7 @@ protected:
 
     void d_initParameter(uint32_t index, Parameter& parameter) override;
     void d_initProgramName(uint32_t index, d_string& programName) override;
+    void d_initStateKey(uint32_t, d_string&) override;
 
     // -------------------------------------------------------------------
     // Internal data
@@ -90,6 +100,7 @@ protected:
     float d_getParameterValue(uint32_t index) const override;
     void  d_setParameterValue(uint32_t index, float value) override;
     void  d_setProgram(uint32_t index) override;
+    void  d_setState(const char* key, const char* value) override;
 
     // -------------------------------------------------------------------
     // Process
@@ -101,15 +112,22 @@ protected:
     // -------------------------------------------------------------------
 
 private:
+    // params
     float attack, release, threshold, ratio, makeup, mix;
-	std::deque<float> input, output, gainReduction;
-	float averageInputs[150];
-	int averageCounter;
-	float inputMin, inputMax;
 
-	boost::interprocess::shared_memory_object* shm_obj;
-	boost::interprocess::mapped_region* region;
-	
+    int averageCounter;
+    float inputMin, inputMax;
+
+    // this was unused
+    // float averageInputs[150];
+
+    FloatStack input, output, gainReduction;
+
+    shm_t shm;
+    SharedMemData* shmData;
+
+    void initShm(const char* shmKey);
+    void closeShm();
 };
 
 // -----------------------------------------------------------------------

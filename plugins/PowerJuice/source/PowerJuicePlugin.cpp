@@ -29,22 +29,17 @@ PowerJuicePlugin::PowerJuicePlugin()
     // set default values
     d_setProgram(0);
 
-	for (int i=0; i<1126; i++) {
-		input.push_back(0.0f);
-	}
+    // init shm vars
+    carla_shm_init(shm);
+    shmData = nullptr;
 
-
-	shm_obj = new boost::interprocess::shared_memory_object(boost::interprocess::open_or_create,"sharedmemory",boost::interprocess::read_write);
-	shm_obj->truncate(sizeof(float)*1126);
-	region = new boost::interprocess::mapped_region(*shm_obj, boost::interprocess::read_write);
-
-	
     // reset
     d_deactivate();
 }
 
 PowerJuicePlugin::~PowerJuicePlugin()
 {
+    closeShm();
 }
 
 // -----------------------------------------------------------------------
@@ -109,7 +104,7 @@ void PowerJuicePlugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 1.0f;
         break;
 
-	}
+    }
 }
 
 void PowerJuicePlugin::d_initProgramName(uint32_t index, d_string& programName)
@@ -118,6 +113,16 @@ void PowerJuicePlugin::d_initProgramName(uint32_t index, d_string& programName)
         return;
 
     programName = "Default";
+}
+
+void PowerJuicePlugin::d_initStateKey(uint32_t /*index*/, d_string& /*key*/)
+{
+/*
+    if (index != 0)
+        return;
+
+    key = "shmKey";
+*/
 }
 
 // -----------------------------------------------------------------------
@@ -176,18 +181,40 @@ void PowerJuicePlugin::d_setProgram(uint32_t index)
 
     /* Default parameter values */
     attack = 20.0f;
-	release = 200.0f;
-	threshold = 0.0f;
-	ratio = 1.0f;
-	makeup = 0.0f;
-	mix = 1.0f;
-	averageCounter = 0;
-	inputMin = 0.0f;
-	inputMax = 0.0f;
+    release = 200.0f;
+    threshold = 0.0f;
+    ratio = 1.0f;
+    makeup = 0.0f;
+    mix = 1.0f;
 
     /* Default variable values */
+    averageCounter = 0;
+    inputMin = 0.0f;
+    inputMax = 0.0f;
+
+    input.start = 0;
+    output.start = 0;
+    gainReduction.start = 0;
+    std::memset(input.data, 0, sizeof(float)*kFloatStackCount);
+    std::memset(output.data, 0, sizeof(float)*kFloatStackCount);
+    std::memset(gainReduction.data, 0, sizeof(float)*kFloatStackCount);
 
     d_activate();
+}
+
+void PowerJuicePlugin::d_setState(const char* key, const char* value)
+{
+    if (std::strcmp(key, "shmKey") != 0)
+        return;
+
+    if (value[0] == '\0')
+    {
+        carla_stdout("Shm closed");
+        return closeShm();
+    }
+
+    carla_stdout("Got shmKey => %s", value);
+    initShm(value);
 }
 
 // -----------------------------------------------------------------------
@@ -195,7 +222,6 @@ void PowerJuicePlugin::d_setProgram(uint32_t index)
 
 void PowerJuicePlugin::d_activate()
 {
-
 }
 
 void PowerJuicePlugin::d_deactivate()
@@ -203,37 +229,71 @@ void PowerJuicePlugin::d_deactivate()
     // all values to zero
 }
 
-void PowerJuicePlugin::d_run(float** inputs, float** outputs, uint32_t frames)
+void PowerJuicePlugin::d_run(float** inputs, float** /*outputs*/, uint32_t frames)
 {
-	float* in = inputs[0];
-	float* out = outputs[0];
+    float* in = inputs[0];
+    //float* out = outputs[0];
 
-	for (uint32_t i=0; i < frames; i++) {
-		//for every sample
-		//printf("av");
-		//averageInputs[averageCounter] = in[i];
-		if (in[i]<inputMin) {
-			inputMin = in[i];
-		}
-		if (in[i]>inputMax) {
-			inputMax = in[i];
-		}
-		averageCounter++;
-		if (averageCounter==300) {
-			//output waveform parameter
-			input.push_back(inputMin);
-			input.push_back(inputMax);
-			input.pop_front();
-			input.pop_front();
+    for (uint32_t i=0; i < frames; i++) {
+        //for every sample
+        //printf("av");
+        //averageInputs[averageCounter] = in[i];
+        if (in[i]<inputMin) {
+            inputMin = in[i];
+        }
+        if (in[i]>inputMax) {
+            inputMax = in[i];
+        }
+        if (++averageCounter == 300) {
+            //output waveform parameter
+            input.data[input.start++] = inputMin;
+            input.data[input.start++] = inputMax;
 
-			std::memcpy(region->get_address(), &input, sizeof(float)*1126);
+            if (input.start == kFloatStackCount)
+                input.start = 0;
 
-			averageCounter = 0;
-			inputMin = 0.0f;
-			inputMax = 0.0f;
-		}
-	} 
+            if (shmData != nullptr)
+            {
+                for (int j=0; j < kFloatStackCount; ++j)
+                    shmData->input[j] = input.data[(input.start+j) % kFloatStackCount];
+            }
 
+            averageCounter = 0;
+            inputMin = 0.0f;
+            inputMax = 0.0f;
+        }
+    }
+}
+
+void PowerJuicePlugin::initShm(const char* shmKey)
+{
+    shm = carla_shm_attach(shmKey);
+
+    if (! carla_is_shm_valid(shm))
+    {
+        carla_stderr2("Failed to created shared memory!");
+        return;
+    }
+
+    if (! carla_shm_map<SharedMemData>(shm, shmData))
+    {
+        carla_stderr2("Failed to map shared memory!");
+        return;
+    }
+}
+
+void PowerJuicePlugin::closeShm()
+{
+    if (! carla_is_shm_valid(shm))
+        return;
+
+    if (shmData != nullptr)
+    {
+        carla_shm_unmap<SharedMemData>(shm, shmData);
+        shmData = nullptr;
+    }
+
+    carla_shm_close(shm);
 }
 
 // -----------------------------------------------------------------------

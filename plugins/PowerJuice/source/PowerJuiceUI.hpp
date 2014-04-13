@@ -27,10 +27,6 @@
 
 #include "PowerJuiceArtwork.hpp"
 #include "PowerJuicePlugin.hpp"
-#include <deque>
-#include <boost/interprocess/shared_memory_object.hpp>
-#include <boost/interprocess/mapped_region.hpp>
-#include <cstdlib>
 
 using DGL::Image;
 using DGL::ImageAboutWindow;
@@ -42,8 +38,8 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 class PowerJuiceUI : public UI,
-                      public ImageButton::Callback,
-                      public ImageKnob::Callback
+                     public ImageButton::Callback,
+                     public ImageKnob::Callback
 {
 public:
     PowerJuiceUI();
@@ -68,6 +64,12 @@ protected:
 
     void d_parameterChanged(uint32_t index, float value) override;
     void d_programChanged(uint32_t index) override;
+    void d_stateChanged(const char*, const char*) override;
+
+    // -------------------------------------------------------------------
+    // UI Callbacks
+
+    void d_uiIdle() override;
 
     // -------------------------------------------------------------------
     // Widget Callbacks
@@ -76,8 +78,8 @@ protected:
     void imageKnobDragStarted(ImageKnob* knob) override;
     void imageKnobDragFinished(ImageKnob* knob) override;
     void imageKnobValueChanged(ImageKnob* knob, float value) override;
-	void d_uiIdle() override;
     void onDisplay() override;
+    void onClose() override;
 
 private:
     Image fImgBackground;
@@ -91,13 +93,12 @@ private:
     ImageKnob* fKnobMix;
     ImageButton* fButtonAbout;
 
-	std::deque<float> input, output, gainReduction;
+    shm_t shm;
+    SharedMemData* shmData;
 
-
-	boost::interprocess::shared_memory_object* shm_obj;
-	boost::interprocess::mapped_region* region;
-
-
+    bool fFirstDisplay;
+    void initShm();
+    void closeShm();
 };
 
 // -----------------------------------------------------------------------

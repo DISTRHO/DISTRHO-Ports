@@ -17,7 +17,8 @@
 
 #include "PowerJuiceUI.hpp"
 
-
+#include <cstdlib>
+#include <ctime>
 
 using DGL::Point;
 
@@ -27,7 +28,8 @@ START_NAMESPACE_DISTRHO
 
 PowerJuiceUI::PowerJuiceUI()
     : UI(),
-      fAboutWindow(this)
+      fAboutWindow(this),
+      shmData(nullptr)
 {
     // background
     fImgBackground = Image(PowerJuiceArtwork::backgroundData, PowerJuiceArtwork::backgroundWidth, PowerJuiceArtwork::backgroundHeight, GL_BGR);
@@ -95,14 +97,11 @@ PowerJuiceUI::PowerJuiceUI()
     fButtonAbout->setPos(502, 17);
     fButtonAbout->setCallback(this);
 
-	for (int i=0; i<1126; i++) {
-		input.push_back(0.0f);
-	}
+    // init shm vars
+    carla_shm_init(shm);
+    shmData = nullptr;
 
-	shm_obj = new boost::interprocess::shared_memory_object(boost::interprocess::open_only,
-													"sharedmemory",
-													boost::interprocess::read_only);
-	region = new boost::interprocess::mapped_region(*shm_obj, boost::interprocess::read_only);
+    fFirstDisplay = true;
 }
 
 PowerJuiceUI::~PowerJuiceUI()
@@ -114,6 +113,8 @@ PowerJuiceUI::~PowerJuiceUI()
     delete fKnobMakeup;
     delete fKnobMix;
     delete fButtonAbout;
+
+    closeShm();
 }
 
 // -----------------------------------------------------------------------
@@ -156,6 +157,10 @@ void PowerJuiceUI::d_programChanged(uint32_t index)
     fKnobRatio->setValue(1.0f);
     fKnobMakeup->setValue(0.0f);
     fKnobMix->setValue(1.0f);
+}
+
+void PowerJuiceUI::d_stateChanged(const char*, const char*)
+{
 }
 
 // -----------------------------------------------------------------------
@@ -203,7 +208,7 @@ void PowerJuiceUI::imageKnobDragFinished(ImageKnob* knob)
 
 void PowerJuiceUI::imageKnobValueChanged(ImageKnob* knob, float value)
 {
-	if (knob == fKnobAttack)
+    if (knob == fKnobAttack)
         d_setParameterValue(PowerJuicePlugin::paramAttack, value);
     else if (knob == fKnobRelease)
         d_setParameterValue(PowerJuicePlugin::paramRelease, value);
@@ -219,39 +224,106 @@ void PowerJuiceUI::imageKnobValueChanged(ImageKnob* knob, float value)
 }
 
 void PowerJuiceUI::d_uiIdle() {
-	repaint();
+    repaint();
 }
 
 void PowerJuiceUI::onDisplay()
 {
+    if (fFirstDisplay)
+    {
+        initShm();
+        fFirstDisplay = false;
+    }
+
     fImgBackground.draw();
 
-	int w = 563; //waveform plane size, size of the plane in pixels;
-	int w2 = 1126; //wavefowm array
-	int h = 60; //waveform plane height
-	int x = 28; //waveform plane positions
-	int y = 51;
-	int dc = 113; //0DC line y position
-	//std::memcpy(&input, region->get_address(), sizeof(float)*100);
-	std::deque<float> *mem = static_cast<std::deque<float>*>(region->get_address());
-	input = *mem;
-	//draw waveform
-	for (int i=0; i<w2; i+=2) {
-	//glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	//glEnable(GL_LINE_SMOOTH);
-	//glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-		glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-		glLineWidth(1.0f); 
-		glBegin(GL_LINES);
-			glVertex2i(x+(i/2), input[i]*h+dc);
-			glVertex2i(x+(i/2), input[i+1]*h+dc);
-		glEnd();
-		// reset color
-		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-	
-	}
-	//draw shits
+    if (shmData == nullptr)
+        return;
+
+    int w = 563; //waveform plane size, size of the plane in pixels;
+    int w2 = 1126; //wavefowm array
+    int h = 60; //waveform plane height
+    int x = 28; //waveform plane positions
+    int y = 51;
+    int dc = 113; //0DC line y position
+
+    //draw waveform
+    for (int i=0; i<w2; i+=2) {
+        //glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        //glEnable(GL_LINE_SMOOTH);
+        //glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+
+        glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
+        glLineWidth(1.0f);
+        glBegin(GL_LINES);
+            glVertex2i(x+(i/2), shmData->input[i]*h+dc);
+            glVertex2i(x+(i/2), shmData->input[i+1]*h+dc);
+        glEnd();
+
+        // reset color
+        glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+    }
+
+    //draw shits
+}
+
+void PowerJuiceUI::onClose()
+{
+    // tell DSP to stop sending SHM data
+    d_setState("shmKey", "");
+}
+
+void PowerJuiceUI::initShm()
+{
+    // generate a random key
+    static const char charSet[]  = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    static const int  charSetLen = sizeof(charSet) - 1; // -1 to avoid trailing '\0'
+
+    char shmKey[24+1];
+    shmKey[24] = '\0';
+
+    std::srand(std::time(nullptr));
+
+    for (int i=0; i<24; ++i)
+        shmKey[i] = charSet[std::rand() % charSetLen];
+
+    // create shared memory
+    shm = carla_shm_create(shmKey);
+
+    if (! carla_is_shm_valid(shm))
+    {
+        carla_stderr2("Failed to created shared memory!");
+        return;
+    }
+
+    if (! carla_shm_map<SharedMemData>(shm, shmData))
+    {
+        carla_stderr2("Failed to map shared memory!");
+        return;
+    }
+
+    std::memset(shmData, 0, sizeof(SharedMemData));
+
+    // tell DSP to use this key for SHM
+    carla_stdout("Sending shmKey %s", shmKey);
+    d_setState("shmKey", shmKey);
+}
+
+void PowerJuiceUI::closeShm()
+{
+    fFirstDisplay = true;
+
+    if (! carla_is_shm_valid(shm))
+        return;
+
+    if (shmData != nullptr)
+    {
+        carla_shm_unmap<SharedMemData>(shm, shmData);
+        shmData = nullptr;
+    }
+
+    carla_shm_close(shm);
 }
 
 // -----------------------------------------------------------------------
