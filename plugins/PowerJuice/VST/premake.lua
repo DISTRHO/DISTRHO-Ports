@@ -12,3 +12,8 @@ package.files = {
     "../../../libs/distrho/DistrhoUIMain.cpp"
   )
 }
+
+package.links = {
+  package.links,
+  "rt"
+}

@@ -9,3 +9,8 @@ package.files = {
     "../../../libs/distrho/DistrhoPluginMain.cpp"
   )
 }
+
+package.links = {
+  package.links,
+  "rt"
+}
