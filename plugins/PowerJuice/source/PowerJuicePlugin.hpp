@@ -21,16 +21,28 @@
 #include "DistrhoPlugin.hpp"
 #include "carla/CarlaShmUtils.hpp"
 
-static const int kFloatStackCount = 1126;
+static const int kFloatStackCount = 563;
+static const int kFloatRMSStackCount = 1000;
+static const int kFloatLookaheadStackCount = 500;
 
 struct FloatStack {
     int32_t start;
     float data[kFloatStackCount];
 };
 
+struct FloatRMSStack {
+    int32_t start;
+    float data[kFloatRMSStackCount];
+};
+
+struct LookaheadStack {
+    int32_t start;
+    float data[kFloatLookaheadStackCount];
+};
+
 struct SharedMemData {
     float input[kFloatStackCount];
-    float output[kFloatStackCount];
+    float rms[kFloatStackCount];
     float gainReduction[kFloatStackCount];
 };
 
@@ -114,20 +126,76 @@ protected:
 private:
     // params
     float attack, release, threshold, ratio, makeup, mix;
+	float attackSamples, releaseSamples;
+	float balancer;
+	float targetGR;
+	float GR;
 
     int averageCounter;
-    float inputMin, inputMax;
+    float inputMax;
 
     // this was unused
     // float averageInputs[150];
 
-    FloatStack input, output, gainReduction;
+    FloatStack input, rms, gainReduction;
+	FloatRMSStack RMSStack;
+	LookaheadStack lookaheadStack;
 
     shm_t shm;
     SharedMemData* shmData;
 
     void initShm(const char* shmKey);
     void closeShm();
+
+	double computeRMS()
+	{
+	  	float sum = 0.0;
+
+		for (int j=0; j < kFloatRMSStackCount; ++j)
+        	sum += RMSStack.data[(RMSStack.start+j) % kFloatRMSStackCount];
+	  	return sqrt(sum / kFloatRMSStackCount);
+	}
+	
+	float fromDB(float gdb) {
+		return (exp(gdb*(log(10.f)*0.05)));
+	};
+
+	float toDB(float g) {
+		return (20.f*log10(g));
+	}
+
+	float cosineInterpolate(float y1, float y2, float mu)
+	{
+	   float mu2;
+
+	   mu2 = (1-cos(mu*M_PI))/2;
+	   return(y1*(1-mu2)+y2*mu2);
+	}
+
+	float toIEC(float db) {
+         float def = 0.0f; /* Meter deflection %age */
+ 
+         if (db < -70.0f) {
+                 def = 0.0f;
+         } else if (db < -60.0f) {
+                 def = (db + 70.0f) * 0.25f;
+         } else if (db < -50.0f) {
+                 def = (db + 60.0f) * 0.5f + 5.0f;
+         } else if (db < -40.0f) {
+                 def = (db + 50.0f) * 0.75f + 7.5;
+         } else if (db < -30.0f) {
+                 def = (db + 40.0f) * 1.5f + 15.0f;
+         } else if (db < -20.0f) {
+                 def = (db + 30.0f) * 2.0f + 30.0f;
+         } else if (db < 0.0f) {
+                 def = (db + 20.0f) * 2.5f + 50.0f;
+         } else {
+                 def = 100.0f;
+         }
+ 
+         return (def * 2.0f);
+	}
+
 };
 
 // -----------------------------------------------------------------------

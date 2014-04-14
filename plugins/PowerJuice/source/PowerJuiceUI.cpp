@@ -242,30 +242,73 @@ void PowerJuiceUI::onDisplay()
 
     int w = 563; //waveform plane size, size of the plane in pixels;
     int w2 = 1126; //wavefowm array
-    int h = 60; //waveform plane height
-    int x = 28; //waveform plane positions
-    int y = 51;
+    int h = 121; //waveform plane height
+    int x = 27; //waveform plane positions
+    int y = 53;
     int dc = 113; //0DC line y position
 
-    //draw waveform
-    for (int i=0; i<w2; i+=2) {
-        //glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        //glEnable(GL_LINE_SMOOTH);
-        //glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+    
+	glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_LINE_SMOOTH);
+    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
-        glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-        glLineWidth(1.0f);
+
+
+	float thresholdPosition = (-toIEC(fKnobThreshold->getValue()))/200*h+h+y;     
+	/*
+    glLineWidth(1.2f);
+	//draw waveform
+	glColor4f(0.0f, 1.0f, 0.0f, 0.4f);
+    for (int i=0; i<w; i++) {
+        
         glBegin(GL_LINES);
-            glVertex2i(x+(i/2), shmData->input[i]*h+dc);
-            glVertex2i(x+(i/2), shmData->input[i+1]*h+dc);
+            glVertex2i(x+i, -toIEC(shmData->input[i])/200*h+h+y);
+            glVertex2i(x+i, y+h);
         glEnd();
-
-        // reset color
-        glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
     }
+	*/
+	//draw RMS
+	glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
+	glLineWidth(2.0f);
+	glBegin(GL_LINE_STRIP);
+    for (int i=0; i<w; i++) {
+			float value = shmData->rms[i];
+			if (value<thresholdPosition) {
+				glColor4f(0.5f, 0.5f, 1.0f, 1.0f);
+			} else {
+				glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
+			}
+            glVertex2i(x+i, value);
+    }
+	glEnd();
 
-    //draw shits
+	//draw gain reduction
+	glColor4f(1.0f, 1.0f, 1.0f, 0.8f);
+	glLineWidth(3.0f);
+	glBegin(GL_LINE_STRIP);
+    for (int i=0; i<w; i++) {
+			float value = shmData->gainReduction[i];
+            glVertex2i(x+i, value);
+    }
+	glEnd();
+
+
+	//draw Threshold 
+	glLineWidth(2.0f);
+	glColor4f(0.4f, 0.4f, 1.0f, 0.8f);
+	//float thresholdPosition = ((60-fKnobThreshold->getValue())/60);
+	glBegin(GL_LINES);
+            glVertex2i(x, thresholdPosition);
+            glVertex2i(x+w, thresholdPosition);
+    glEnd();
+
+	
+	
+	//printf("meter: %f\n", fromDB(fKnobThreshold->getValue()));
+	//printf("threshold dB: %f\n", fKnobThreshold->getValue());
+	// reset color
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 void PowerJuiceUI::onClose()

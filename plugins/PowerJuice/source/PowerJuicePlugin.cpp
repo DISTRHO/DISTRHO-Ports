@@ -189,15 +189,21 @@ void PowerJuicePlugin::d_setProgram(uint32_t index)
 
     /* Default variable values */
     averageCounter = 0;
-    inputMin = 0.0f;
     inputMax = 0.0f;
 
+	balancer = 1.0f;
+	GR = 1.0f;
+
     input.start = 0;
-    output.start = 0;
+    rms.start = 0;
     gainReduction.start = 0;
+	RMSStack.start = 0;
+	lookaheadStack.start = 0;
     std::memset(input.data, 0, sizeof(float)*kFloatStackCount);
-    std::memset(output.data, 0, sizeof(float)*kFloatStackCount);
+    std::memset(rms.data, 0, sizeof(float)*kFloatStackCount);
     std::memset(gainReduction.data, 0, sizeof(float)*kFloatStackCount);
+	std::memset(RMSStack.data, 0, sizeof(float)*kFloatRMSStackCount);
+	std::memset(lookaheadStack.data, 0, sizeof(float)*kFloatLookaheadStackCount);
 
     d_activate();
 }
@@ -229,39 +235,96 @@ void PowerJuicePlugin::d_deactivate()
     // all values to zero
 }
 
-void PowerJuicePlugin::d_run(float** inputs, float** /*outputs*/, uint32_t frames)
+void PowerJuicePlugin::d_run(float** inputs, float** outputs, uint32_t frames)
 {
     float* in = inputs[0];
-    //float* out = outputs[0];
+    float* out = outputs[0];
+
+	
 
     for (uint32_t i=0; i < frames; i++) {
-        //for every sample
-        //printf("av");
-        //averageInputs[averageCounter] = in[i];
-        if (in[i]<inputMin) {
-            inputMin = in[i];
-        }
-        if (in[i]>inputMax) {
-            inputMax = in[i];
+        
+		
+		/*   compute last RMS   */
+		
+		//store in a buffer line
+		RMSStack.data[RMSStack.start++] = in[i];
+		if (RMSStack.start == kFloatRMSStackCount)
+                RMSStack.start = 0;
+		//compute over last n samples
+		float sum = 0.0f;
+		float data = 0.0f;
+		for (int j=0; j < kFloatRMSStackCount; ++j) {
+			data = RMSStack.data[(RMSStack.start+j) % kFloatRMSStackCount];
+        	sum += data * data;
+		}
+	  	float RMS = sqrt(sum / kFloatRMSStackCount);
+
+		/*   compute gain reduction if needed   */
+		float difference = 0;
+		float RMSDB = toDB(RMS);
+		if (RMSDB>threshold) {
+			//attack
+			if (balancer<1) {
+				balancer = 1;
+			}
+			float difference = (RMSDB-threshold);
+			targetGR = difference - difference/ratio;
+			attackSamples = d_getSampleRate()*(attack/1000);
+			GR = GR+(targetGR-GR)/attackSamples;
+			//printf("gr: %f   \n", targetGR);
+		} else {
+			//release
+			releaseSamples = d_getSampleRate()*(release/1000);
+			targetGR = 0.0f;
+			GR = GR-(GR-targetGR)/releaseSamples;
+		}
+
+		//store in lookahead buffer
+		lookaheadStack.data[lookaheadStack.start++] = in[i];
+		if (lookaheadStack.start == kFloatLookaheadStackCount)
+                lookaheadStack.start = 0;
+
+		//gui data save to shared memory
+		if (lookaheadStack.data[lookaheadStack.start]>inputMax) {
+            inputMax = lookaheadStack.data[lookaheadStack.start];
         }
         if (++averageCounter == 300) {
             //output waveform parameter
-            input.data[input.start++] = inputMin;
-            input.data[input.start++] = inputMax;
-
+            input.data[input.start++] = toDB(inputMax);
+			rms.data[rms.start++] = RMSDB;
+			gainReduction.data[gainReduction.start++] = GR;
             if (input.start == kFloatStackCount)
                 input.start = 0;
+			if (rms.start == kFloatStackCount)
+                rms.start = 0;
+			if (gainReduction.start == kFloatStackCount)
+                gainReduction.start = 0;
+
+			int w = 563; //waveform plane size, size of the plane in pixels;
+			int w2 = 1126; //wavefowm array
+			int h = 121; //waveform plane height
+			int x = 27; //waveform plane positions
+			int y = 53;
+			int dc = 113; //0DC line y position
+
 
             if (shmData != nullptr)
             {
                 for (int j=0; j < kFloatStackCount; ++j)
                     shmData->input[j] = input.data[(input.start+j) % kFloatStackCount];
+				for (int j=0; j < kFloatStackCount; ++j)
+                    shmData->rms[j] = -toIEC(rms.data[(rms.start+j) % kFloatStackCount])/200*h +h +y;
+				for (int j=0; j < kFloatStackCount; ++j)
+                    shmData->gainReduction[j] = -toIEC(-gainReduction.data[(gainReduction.start+j) % kFloatStackCount])/200*h +h +y;
             }
-
             averageCounter = 0;
-            inputMin = 0.0f;
             inputMax = 0.0f;
         }
+
+		float compressedSignal = lookaheadStack.data[lookaheadStack.start]*fromDB(-GR);
+		out[i] = (compressedSignal*fromDB(makeup)*mix)+lookaheadStack.data[lookaheadStack.start]*(1-mix);
+
     }
 }
 
@@ -271,7 +334,7 @@ void PowerJuicePlugin::initShm(const char* shmKey)
 
     if (! carla_is_shm_valid(shm))
     {
-        carla_stderr2("Failed to created shared memory!");
+        carla_stderr2("Failed to create shared memory!");
         return;
     }
 
