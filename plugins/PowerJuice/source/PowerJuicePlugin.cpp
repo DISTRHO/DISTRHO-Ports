@@ -269,15 +269,24 @@ void PowerJuicePlugin::d_run(float** inputs, float** outputs, uint32_t frames)
 				balancer = 1;
 			}
 			float difference = (RMSDB-threshold);
+			
 			targetGR = difference - difference/ratio;
-			attackSamples = d_getSampleRate()*(attack/1000);
-			GR = GR+(targetGR-GR)/attackSamples;
-			//printf("gr: %f   \n", targetGR);
+			//targetGR+=((difference-targetGR)/0.5)*(ratio-1);
+			attackSamples = d_getSampleRate()*(attack/1000.0f);
+			//printf("diff: %f\n", targetGR);
+
+			//GR += (targetGR-GR)/(attackSamples*2);
+			if (GR<targetGR) {
+					GR -= (GR-targetGR)/(attackSamples);
+			} else {
+				GR -= (GR-targetGR)/releaseSamples;
+			}
+			//printf("gr: %f   \n", (targetGR-GR)/(attackSamples*((GR-targetGR)/-100.0f)));
 		} else {
 			//release
 			releaseSamples = d_getSampleRate()*(release/1000);
 			targetGR = 0.0f;
-			GR = GR-(GR-targetGR)/releaseSamples;
+			GR -= (GR-targetGR)/releaseSamples;
 		}
 
 		//store in lookahead buffer

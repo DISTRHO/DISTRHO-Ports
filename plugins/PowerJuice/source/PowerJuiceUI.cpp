@@ -256,9 +256,10 @@ void PowerJuiceUI::onDisplay()
 
 
 	float thresholdPosition = (-toIEC(fKnobThreshold->getValue()))/200*h+h+y;     
-	/*
+	
     glLineWidth(1.2f);
 	//draw waveform
+	/*
 	glColor4f(0.0f, 1.0f, 0.0f, 0.4f);
     for (int i=0; i<w; i++) {
         
