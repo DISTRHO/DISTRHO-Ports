@@ -23,7 +23,7 @@
 
 static const int kFloatStackCount = 563;
 static const int kFloatRMSStackCount = 1000;
-static const int kFloatLookaheadStackCount = 500;
+static const int kFloatLookaheadStackCount = 800;
 
 struct FloatStack {
     int32_t start;
@@ -131,11 +131,12 @@ private:
 	float targetGR;
 	float GR;
 
+	float sum;
+	float data;	
+	float difference;
+
     int averageCounter;
     float inputMax;
-
-    // this was unused
-    // float averageInputs[150];
 
     FloatStack input, rms, gainReduction;
 	FloatRMSStack RMSStack;
@@ -146,15 +147,6 @@ private:
 
     void initShm(const char* shmKey);
     void closeShm();
-
-	double computeRMS()
-	{
-	  	float sum = 0.0;
-
-		for (int j=0; j < kFloatRMSStackCount; ++j)
-        	sum += RMSStack.data[(RMSStack.start+j) % kFloatRMSStackCount];
-	  	return sqrt(sum / kFloatRMSStackCount);
-	}
 	
 	float fromDB(float gdb) {
 		return (exp(gdb*(log(10.f)*0.05)));

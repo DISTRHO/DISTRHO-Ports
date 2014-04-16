@@ -257,10 +257,10 @@ void PowerJuiceUI::onDisplay()
 
 	float thresholdPosition = (-toIEC(fKnobThreshold->getValue()))/200*h+h+y;     
 	
-    glLineWidth(1.2f);
 	//draw waveform
 	/*
 	glColor4f(0.0f, 1.0f, 0.0f, 0.4f);
+	glLineWidth(1.2f);
     for (int i=0; i<w; i++) {
         
         glBegin(GL_LINES);
@@ -270,31 +270,39 @@ void PowerJuiceUI::onDisplay()
     }
 	*/
 	//draw RMS
+	/*
 	glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
 	glLineWidth(2.0f);
 	glBegin(GL_LINE_STRIP);
-    for (int i=0; i<w; i++) {
+    for (int i=2; i<w; i++) {
 			float value = shmData->rms[i];
 			if (value<thresholdPosition) {
-				glColor4f(0.5f, 0.5f, 1.0f, 1.0f);
+				glColor4f(1.0f, 0.5f, 1.0f, 1.0f);
 			} else {
-				glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
+				glColor4f(0.0f, 0.5f, 0.2f, 1.0f);
 			}
             glVertex2i(x+i, value);
     }
 	glEnd();
 
 	//draw gain reduction
-	glColor4f(1.0f, 1.0f, 1.0f, 0.8f);
+	glColor4f(1.0f, 1.0f, 1.0f, 0.3f);
 	glLineWidth(3.0f);
-	glBegin(GL_LINE_STRIP);
-    for (int i=0; i<w; i++) {
+	glBegin(GL_LINES);
+    for (int i=2; i<w; i++) {
+			glColor4f(1.0f, 1.0f, 1.0f, 0.3f);
 			float value = shmData->gainReduction[i];
             glVertex2i(x+i, value);
+			glVertex2i(x+i, y);
+
+			value = shmData->rms[i];
+			glColor4f(0.0f, 0.5f, 0.2f, 0.1f);
+            glVertex2i(x+i, value);
+			glVertex2i(x+i, y+h);
     }
 	glEnd();
-
-
+	*/
+	
 	//draw Threshold 
 	glLineWidth(2.0f);
 	glColor4f(0.4f, 0.4f, 1.0f, 0.8f);
@@ -304,10 +312,6 @@ void PowerJuiceUI::onDisplay()
             glVertex2i(x+w, thresholdPosition);
     glEnd();
 
-	
-	
-	//printf("meter: %f\n", fromDB(fKnobThreshold->getValue()));
-	//printf("threshold dB: %f\n", fKnobThreshold->getValue());
 	// reset color
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 }

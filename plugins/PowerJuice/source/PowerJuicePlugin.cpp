@@ -240,75 +240,79 @@ void PowerJuicePlugin::d_run(float** inputs, float** outputs, uint32_t frames)
     float* in = inputs[0];
     float* out = outputs[0];
 
-	
 
     for (uint32_t i=0; i < frames; i++) {
         
+		float sum = 0.0f;
+		float data = 0.0f;	
+		float difference = 0;
 		
 		/*   compute last RMS   */
 		
-		//store in a buffer line
+		//store audio samples in an RMS buffer line
 		RMSStack.data[RMSStack.start++] = in[i];
 		if (RMSStack.start == kFloatRMSStackCount)
                 RMSStack.start = 0;
-		//compute over last n samples
-		float sum = 0.0f;
-		float data = 0.0f;
+		//compute RMS over last kFloatRMSStackCount samples
 		for (int j=0; j < kFloatRMSStackCount; ++j) {
 			data = RMSStack.data[(RMSStack.start+j) % kFloatRMSStackCount];
         	sum += data * data;
 		}
+		//root mean SQUARE
 	  	float RMS = sqrt(sum / kFloatRMSStackCount);
 
+
+
 		/*   compute gain reduction if needed   */
-		float difference = 0;
+		
 		float RMSDB = toDB(RMS);
 		if (RMSDB>threshold) {
-			//attack
-			if (balancer<1) {
-				balancer = 1;
-			}
+			//attack stage
 			float difference = (RMSDB-threshold);
-			
 			targetGR = difference - difference/ratio;
-			//targetGR+=((difference-targetGR)/0.5)*(ratio-1);
 			attackSamples = d_getSampleRate()*(attack/1000.0f);
-			//printf("diff: %f\n", targetGR);
-
-			//GR += (targetGR-GR)/(attackSamples*2);
 			if (GR<targetGR) {
-					GR -= (GR-targetGR)/(attackSamples);
+				//approach targetGR at attackSamples rate
+				GR -= (GR-targetGR)/(attackSamples);
 			} else {
+				//approach targetGR at releaseSamples rate
 				GR -= (GR-targetGR)/releaseSamples;
 			}
-			//printf("gr: %f   \n", (targetGR-GR)/(attackSamples*((GR-targetGR)/-100.0f)));
 		} else {
-			//release
-			releaseSamples = d_getSampleRate()*(release/1000);
+			//release stage
+			releaseSamples = d_getSampleRate()*(release/1000.0f);
 			targetGR = 0.0f;
+			//approach targetGR at releaseSamples rate
 			GR -= (GR-targetGR)/releaseSamples;
 		}
 
-		//store in lookahead buffer
+		//store audio in lookahead buffer
 		lookaheadStack.data[lookaheadStack.start++] = in[i];
 		if (lookaheadStack.start == kFloatLookaheadStackCount)
                 lookaheadStack.start = 0;
 
-		//gui data save to shared memory
+		//gui data save via shared memory
 		if (lookaheadStack.data[lookaheadStack.start]>inputMax) {
+			//capture peaks
             inputMax = lookaheadStack.data[lookaheadStack.start];
         }
         if (++averageCounter == 300) {
-            //output waveform parameter
+            //add relevant values to the shared memory
             input.data[input.start++] = toDB(inputMax);
 			rms.data[rms.start++] = RMSDB;
 			gainReduction.data[gainReduction.start++] = GR;
+
+			//rewind stack reading heads if needed
             if (input.start == kFloatStackCount)
                 input.start = 0;
 			if (rms.start == kFloatStackCount)
                 rms.start = 0;
 			if (gainReduction.start == kFloatStackCount)
                 gainReduction.start = 0;
+
+
+			//saving in gfx format, for speed
+
 
 			int w = 563; //waveform plane size, size of the plane in pixels;
 			int w2 = 1126; //wavefowm array
@@ -317,7 +321,7 @@ void PowerJuicePlugin::d_run(float** inputs, float** outputs, uint32_t frames)
 			int y = 53;
 			int dc = 113; //0DC line y position
 
-
+			//share memory
             if (shmData != nullptr)
             {
                 for (int j=0; j < kFloatStackCount; ++j)
@@ -331,8 +335,8 @@ void PowerJuicePlugin::d_run(float** inputs, float** outputs, uint32_t frames)
             inputMax = 0.0f;
         }
 
-		float compressedSignal = lookaheadStack.data[lookaheadStack.start]*fromDB(-GR);
-		out[i] = (compressedSignal*fromDB(makeup)*mix)+lookaheadStack.data[lookaheadStack.start]*(1-mix);
+		float compressedSignal = in[i]*fromDB(-GR);
+		out[i] = (compressedSignal*fromDB(makeup)*mix)+in[i]*(1-mix);
 
     }
 }
