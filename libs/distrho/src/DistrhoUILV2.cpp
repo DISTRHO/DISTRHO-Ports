@@ -18,6 +18,7 @@
 
 #include "lv2/atom.h"
 #include "lv2/atom-util.h"
+#include "lv2/instance-access.h"
 #include "lv2/options.h"
 #include "lv2/ui.h"
 #include "lv2/urid.h"
@@ -32,8 +33,8 @@ START_NAMESPACE_DISTRHO
 class UiLv2
 {
 public:
-    UiLv2(const intptr_t winId, const LV2_URID_Map* const uridMap, const LV2UI_Resize* const uiResz, const LV2UI_Touch* uiTouch, const LV2UI_Controller controller, const LV2UI_Write_Function writeFunc)
-        : fUI(this, winId, editParameterCallback, setParameterCallback, setStateCallback, sendNoteCallback, uiResizeCallback),
+    UiLv2(const intptr_t winId, const LV2_URID_Map* const uridMap, const LV2UI_Resize* const uiResz, const LV2UI_Touch* uiTouch, const LV2UI_Controller controller, const LV2UI_Write_Function writeFunc, void* const dspPtr)
+        : fUI(this, winId, editParameterCallback, setParameterCallback, setStateCallback, sendNoteCallback, uiResizeCallback, dspPtr),
           fUridMap(uridMap),
           fUiResize(uiResz),
           fUiTouch(uiTouch),
@@ -202,6 +203,7 @@ static LV2UI_Handle lv2ui_instantiate(const LV2UI_Descriptor*, const char* uri, 
     const LV2UI_Resize*      uiResize = nullptr;
     const LV2UI_Touch*       uiTouch  = nullptr;
     void*                    parentId = nullptr;
+    void*                    instance = nullptr;
 
     for (int i=0; features[i] != nullptr; ++i)
     {
@@ -213,6 +215,10 @@ static LV2UI_Handle lv2ui_instantiate(const LV2UI_Descriptor*, const char* uri, 
             uiResize = (const LV2UI_Resize*)features[i]->data;
         else if (std::strcmp(features[i]->URI, LV2_UI__parent) == 0)
             parentId = features[i]->data;
+#if DISTRHO_PLUGIN_WANT_DIRECT_ACCESS
+        else if (std::strcmp(features[i]->URI, LV2_INSTANCE_ACCESS_URI) == 0)
+            instance = features[i]->data;
+#endif
     }
 
     if (options == nullptr)
@@ -239,6 +245,14 @@ static LV2UI_Handle lv2ui_instantiate(const LV2UI_Descriptor*, const char* uri, 
         return nullptr;
     }
 
+#if DISTRHO_PLUGIN_WANT_DIRECT_ACCESS
+    if (instance == nullptr)
+    {
+        d_stderr("Instance-access missing, cannot continue!");
+        return nullptr;
+    }
+#endif
+
     *widget = parentId;
 
     const intptr_t winId(*((intptr_t*)&parentId));
@@ -259,7 +273,7 @@ static LV2UI_Handle lv2ui_instantiate(const LV2UI_Descriptor*, const char* uri, 
     if (d_lastUiSampleRate == 0.0)
         d_lastUiSampleRate = 44100.0;
 
-    return new UiLv2(winId, uridMap, uiResize, uiTouch, controller, writeFunction);
+    return new UiLv2(winId, uridMap, uiResize, uiTouch, controller, writeFunction, instance);
 }
 
 #define uiPtr ((UiLv2*)ui)

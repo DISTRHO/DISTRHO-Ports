@@ -33,6 +33,8 @@ dssi: libs
 	$(MAKE) -C Nekobi/DSSI-UI
 	$(MAKE) -C PingPongPan/DSSI
 	$(MAKE) -C PingPongPan/DSSI-UI
+	$(MAKE) -C SegmentJuice/DSSI
+	$(MAKE) -C SegmentJuice/DSSI-UI
 
 # -----------------------------------------
 # lv2
@@ -47,10 +49,14 @@ lv2: libs
 	$(MAKE) -C Nekobi/LV2-UI
 	$(MAKE) -C PingPongPan/LV2
 	$(MAKE) -C PingPongPan/LV2-UI
-	$(MAKE) -C WobbleJuice/LV2
-	$(MAKE) -C WobbleJuice/LV2-UI
+	$(MAKE) -C PowerJuice/LV2
+	$(MAKE) -C PowerJuice/LV2-UI
+	$(MAKE) -C SegmentJuice/LV2
+	$(MAKE) -C SegmentJuice/LV2-UI
 	$(MAKE) -C VectorJuice/LV2
 	$(MAKE) -C VectorJuice/LV2-UI
+	$(MAKE) -C WobbleJuice/LV2
+	$(MAKE) -C WobbleJuice/LV2-UI
 
 # -----------------------------------------
 # vst
@@ -61,8 +67,10 @@ vst: libs
 	$(MAKE) -C 3BandSplitter/VST
 	$(MAKE) -C Nekobi/VST
 	$(MAKE) -C PingPongPan/VST
-	$(MAKE) -C WobbleJuice/VST
+	$(MAKE) -C PowerJuice/VST
+	$(MAKE) -C SegmentJuice/VST
 	$(MAKE) -C VectorJuice/VST
+	$(MAKE) -C WobbleJuice/VST
 
 # -----------------------------------------
 # clean
@@ -82,6 +90,8 @@ clean:
 	$(MAKE) clean -C Nekobi/DSSI-UI
 	$(MAKE) clean -C PingPongPan/DSSI
 	$(MAKE) clean -C PingPongPan/DSSI-UI
+	$(MAKE) clean -C SegmentJuice/DSSI
+	$(MAKE) clean -C SegmentJuice/DSSI-UI
 
 	# LV2
 	$(MAKE) clean -C 3BandEQ/LV2
@@ -92,18 +102,24 @@ clean:
 	$(MAKE) clean -C Nekobi/LV2-UI
 	$(MAKE) clean -C PingPongPan/LV2
 	$(MAKE) clean -C PingPongPan/LV2-UI
-	$(MAKE) clean -C WobbleJuice/LV2
-	$(MAKE) clean -C WobbleJuice/LV2-UI
+	$(MAKE) clean -C PowerJuice/LV2
+	$(MAKE) clean -C PowerJuice/LV2-UI
+	$(MAKE) clean -C SegmentJuice/LV2
+	$(MAKE) clean -C SegmentJuice/LV2-UI
 	$(MAKE) clean -C VectorJuice/LV2
 	$(MAKE) clean -C VectorJuice/LV2-UI
+	$(MAKE) clean -C WobbleJuice/LV2
+	$(MAKE) clean -C WobbleJuice/LV2-UI
 
 	# VST
 	$(MAKE) clean -C 3BandEQ/VST
 	$(MAKE) clean -C 3BandSplitter/VST
 	$(MAKE) clean -C Nekobi/VST
 	$(MAKE) clean -C PingPongPan/VST
-	$(MAKE) clean -C WobbleJuice/VST
+	$(MAKE) clean -C PowerJuice/VST
+	$(MAKE) clean -C SegmentJuice/VST
 	$(MAKE) clean -C VectorJuice/VST
+	$(MAKE) clean -C WobbleJuice/VST
 
 	rm -rf */LADSPA/intermediate
 	rm -rf */DSSI/intermediate

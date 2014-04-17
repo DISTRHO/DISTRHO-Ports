@@ -31,6 +31,9 @@
 #define DISTRHO_PLUGIN_WANT_STATE    1
 #define DISTRHO_PLUGIN_WANT_TIMEPOS  0
 
+// needed for spectrum
+#define DISTRHO_PLUGIN_WANT_DIRECT_ACCESS 1
+
 #define DISTRHO_PLUGIN_URI "urn:distrho:PowerJuice"
 
 #endif // DISTRHO_PLUGIN_INFO_H_INCLUDED
