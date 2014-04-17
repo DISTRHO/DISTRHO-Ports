@@ -18,6 +18,7 @@
 
 #include "lv2/atom.h"
 #include "lv2/atom-util.h"
+#include "lv2/data-access.h"
 #include "lv2/instance-access.h"
 #include "lv2/options.h"
 #include "lv2/ui.h"
@@ -205,6 +206,15 @@ static LV2UI_Handle lv2ui_instantiate(const LV2UI_Descriptor*, const char* uri, 
     void*                    parentId = nullptr;
     void*                    instance = nullptr;
 
+#if DISTRHO_PLUGIN_WANT_DIRECT_ACCESS
+# define DISTRHO_DIRECT_ACCESS_URI "urn:distrho:direct-access"
+
+    struct LV2_DirectAccess_Interface {
+        void* (*get_instance_pointer)(LV2_Handle handle);
+    };
+    const LV2_Extension_Data_Feature* extData = nullptr;
+#endif
+
     for (int i=0; features[i] != nullptr; ++i)
     {
         if (std::strcmp(features[i]->URI, LV2_OPTIONS__options) == 0)
@@ -216,6 +226,8 @@ static LV2UI_Handle lv2ui_instantiate(const LV2UI_Descriptor*, const char* uri, 
         else if (std::strcmp(features[i]->URI, LV2_UI__parent) == 0)
             parentId = features[i]->data;
 #if DISTRHO_PLUGIN_WANT_DIRECT_ACCESS
+        else if (std::strcmp(features[i]->URI, LV2_DATA_ACCESS_URI) == 0)
+            extData = (const LV2_Extension_Data_Feature*)features[i]->data;
         else if (std::strcmp(features[i]->URI, LV2_INSTANCE_ACCESS_URI) == 0)
             instance = features[i]->data;
 #endif
@@ -246,9 +258,19 @@ static LV2UI_Handle lv2ui_instantiate(const LV2UI_Descriptor*, const char* uri, 
     }
 
 #if DISTRHO_PLUGIN_WANT_DIRECT_ACCESS
-    if (instance == nullptr)
+    if (extData == nullptr || instance == nullptr)
     {
-        d_stderr("Instance-access missing, cannot continue!");
+        d_stderr("Data or instance access missing, cannot continue!");
+        return nullptr;
+    }
+
+    if (const LV2_DirectAccess_Interface* const directAccess = (const LV2_DirectAccess_Interface*)extData->data_access(DISTRHO_DIRECT_ACCESS_URI))
+    {
+        instance = directAccess->get_instance_pointer(instance);
+    }
+    else
+    {
+        d_stderr("Failed to get direct access, cannot continue!");
         return nullptr;
     }
 #endif

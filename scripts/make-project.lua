@@ -221,6 +221,29 @@ function make_distrho_lv2_ui_project(name)
   return package
 end
 
+function make_distrho_lv2_combined_project(name)
+  package = make_plugin_project(name, "LV2")
+
+  package.config["Release"].links = { "dgl" }
+  package.config["Debug"].links   = { "dgl_debug" }
+
+  package.includepaths = {
+    package.includepaths,
+    "../../../libs/distrho",
+    "../../../libs/dgl"
+  }
+
+  if (windows) then
+    package.links       = { "opengl32", "gdi32" }
+  elseif (macosx) then
+    package.linkoptions = { package.linkoptions, "-framework OpenGL", "-framework Cocoa" }
+  else
+    package.linkoptions = { package.linkoptions, "`pkg-config --libs gl x11`" }
+  end
+
+  return package
+end
+
 function make_distrho_vst_project(name)
   package = make_plugin_project(name, "VST")
 

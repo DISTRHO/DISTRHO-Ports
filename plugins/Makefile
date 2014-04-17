@@ -50,7 +50,6 @@ lv2: libs
 	$(MAKE) -C PingPongPan/LV2
 	$(MAKE) -C PingPongPan/LV2-UI
 	$(MAKE) -C PowerJuice/LV2
-	$(MAKE) -C PowerJuice/LV2-UI
 	$(MAKE) -C SegmentJuice/LV2
 	$(MAKE) -C SegmentJuice/LV2-UI
 	$(MAKE) -C VectorJuice/LV2
@@ -103,7 +102,6 @@ clean:
 	$(MAKE) clean -C PingPongPan/LV2
 	$(MAKE) clean -C PingPongPan/LV2-UI
 	$(MAKE) clean -C PowerJuice/LV2
-	$(MAKE) clean -C PowerJuice/LV2-UI
 	$(MAKE) clean -C SegmentJuice/LV2
 	$(MAKE) clean -C SegmentJuice/LV2-UI
 	$(MAKE) clean -C VectorJuice/LV2
