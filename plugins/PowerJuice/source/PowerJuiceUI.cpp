@@ -20,6 +20,7 @@
 #include <cstdlib>
 #include <ctime>
 
+
 using DGL::Point;
 
 START_NAMESPACE_DISTRHO
@@ -229,6 +230,7 @@ void PowerJuiceUI::d_uiIdle() {
 
 void PowerJuiceUI::onDisplay()
 {
+
     if (fFirstDisplay)
     {
         initShm();
@@ -248,7 +250,7 @@ void PowerJuiceUI::onDisplay()
     int dc = 113; //0DC line y position
 
     
-	glEnable(GL_BLEND);
+	 glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_LINE_SMOOTH);
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
@@ -270,38 +272,38 @@ void PowerJuiceUI::onDisplay()
     }
 	*/
 	//draw RMS
-	/*
+	
 	glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
 	glLineWidth(2.0f);
 	glBegin(GL_LINE_STRIP);
-    for (int i=2; i<w; i++) {
+	for (int i=2; i<w; i++) {
 			float value = shmData->rms[i];
 			if (value<thresholdPosition) {
-				glColor4f(1.0f, 0.5f, 1.0f, 1.0f);
+				glColor4f(0.0f, 0.2f, 0.0f, 1.0f);
 			} else {
 				glColor4f(0.0f, 0.5f, 0.2f, 1.0f);
 			}
             glVertex2i(x+i, value);
-    }
+	}
 	glEnd();
 
 	//draw gain reduction
 	glColor4f(1.0f, 1.0f, 1.0f, 0.3f);
 	glLineWidth(3.0f);
 	glBegin(GL_LINES);
-    for (int i=2; i<w; i++) {
-			glColor4f(1.0f, 1.0f, 1.0f, 0.3f);
-			float value = shmData->gainReduction[i];
-            glVertex2i(x+i, value);
-			glVertex2i(x+i, y);
+	for (int i=2; i<w; i++) {
+		glColor4f(1.0f, 1.0f, 1.0f, 0.3f);
+		float value = shmData->gainReduction[i];
+          glVertex2i(x+i, value);
+		glVertex2i(x+i, y);
 
-			value = shmData->rms[i];
-			glColor4f(0.0f, 0.5f, 0.2f, 0.1f);
-            glVertex2i(x+i, value);
-			glVertex2i(x+i, y+h);
-    }
+		value = shmData->rms[i];
+		glColor4f(0.0f, 0.5f, 0.2f, 0.1f);
+          glVertex2i(x+i, value);
+		glVertex2i(x+i, y+h);
+	}
 	glEnd();
-	*/
+	
 	
 	//draw Threshold 
 	glLineWidth(2.0f);
@@ -310,7 +312,7 @@ void PowerJuiceUI::onDisplay()
 	glBegin(GL_LINES);
             glVertex2i(x, thresholdPosition);
             glVertex2i(x+w, thresholdPosition);
-    glEnd();
+	glEnd();
 
 	// reset color
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);

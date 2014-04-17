@@ -22,7 +22,7 @@
 #include "carla/CarlaShmUtils.hpp"
 
 static const int kFloatStackCount = 563;
-static const int kFloatRMSStackCount = 1000;
+static const int kFloatRMSStackCount = 400;
 static const int kFloatLookaheadStackCount = 800;
 
 struct FloatStack {
@@ -61,9 +61,6 @@ public:
         paramRatio,
         paramMakeup,
         paramMix,
-        paramInput,
-        paramOutput,
-        paramGainReduction,
         paramCount
     };
 
@@ -124,9 +121,9 @@ protected:
     // -------------------------------------------------------------------
 
 private:
-    // params
-    float attack, release, threshold, ratio, makeup, mix;
-	float attackSamples, releaseSamples;
+   // params
+   float attack, release, threshold, ratio, makeup, mix;
+	float attackSamples, releaseSamples, makeupFloat;
 	float balancer;
 	float targetGR;
 	float GR;
@@ -135,57 +132,70 @@ private:
 	float data;	
 	float difference;
 
-    int averageCounter;
-    float inputMax;
+	int w; //waveform plane size, size of the plane in pixels;
+	int w2; //wavefowm array
+	int h; //waveform plane height
+	int x; //waveform plane positions
+	int y;
+	int dc; //0DC line y position
 
-    FloatStack input, rms, gainReduction;
+   int averageCounter;
+   float inputMax;
+
+   FloatStack input, rms, gainReduction;
 	FloatRMSStack RMSStack;
 	LookaheadStack lookaheadStack;
 
-    shm_t shm;
-    SharedMemData* shmData;
+   shm_t shm;
+   SharedMemData* shmData;
 
-    void initShm(const char* shmKey);
-    void closeShm();
-	
+   void initShm(const char* shmKey);
+   void closeShm();
+
 	float fromDB(float gdb) {
-		return (exp(gdb*(log(10.f)*0.05)));
+		return (exp(gdb/20.f*log(10.f)));
 	};
 
 	float toDB(float g) {
 		return (20.f*log10(g));
 	}
 
-	float cosineInterpolate(float y1, float y2, float mu)
-	{
-	   float mu2;
+	float toIEC(float db) {
+	 float def = 0.0f; /* Meter deflection %age */
 
-	   mu2 = (1-cos(mu*M_PI))/2;
-	   return(y1*(1-mu2)+y2*mu2);
+	 if (db < -70.0f) {
+		       def = 0.0f;
+	 } else if (db < -60.0f) {
+		       def = (db + 70.0f) * 0.25f;
+	 } else if (db < -50.0f) {
+		       def = (db + 60.0f) * 0.5f + 5.0f;
+	 } else if (db < -40.0f) {
+		       def = (db + 50.0f) * 0.75f + 7.5;
+	 } else if (db < -30.0f) {
+		       def = (db + 40.0f) * 1.5f + 15.0f;
+	 } else if (db < -20.0f) {
+		       def = (db + 30.0f) * 2.0f + 30.0f;
+	 } else if (db < 0.0f) {
+		       def = (db + 20.0f) * 2.5f + 50.0f;
+	 } else {
+		       def = 100.0f;
+	 }
+
+	 return (def * 2.0f);
+	}
+	
+	bool isNan(float& value ) {
+		if (((*(uint32_t *) &value) & 0x7fffffff) > 0x7f800000) {
+			return true;
+		}
+		return false;
 	}
 
-	float toIEC(float db) {
-         float def = 0.0f; /* Meter deflection %age */
- 
-         if (db < -70.0f) {
-                 def = 0.0f;
-         } else if (db < -60.0f) {
-                 def = (db + 70.0f) * 0.25f;
-         } else if (db < -50.0f) {
-                 def = (db + 60.0f) * 0.5f + 5.0f;
-         } else if (db < -40.0f) {
-                 def = (db + 50.0f) * 0.75f + 7.5;
-         } else if (db < -30.0f) {
-                 def = (db + 40.0f) * 1.5f + 15.0f;
-         } else if (db < -20.0f) {
-                 def = (db + 30.0f) * 2.0f + 30.0f;
-         } else if (db < 0.0f) {
-                 def = (db + 20.0f) * 2.5f + 50.0f;
-         } else {
-                 def = 100.0f;
-         }
- 
-         return (def * 2.0f);
+	void sanitizeDenormal(float& value) {
+		if (isNan(value)) {
+			printf("Booo!\n");
+			value = 0.f;
+		}
 	}
 
 };

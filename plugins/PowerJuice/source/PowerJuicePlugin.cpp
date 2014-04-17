@@ -155,9 +155,11 @@ void PowerJuicePlugin::d_setParameterValue(uint32_t index, float value)
     {
     case paramAttack:
         attack = value;
+		  attackSamples = d_getSampleRate()*(attack/1000.0f);
         break;
     case paramRelease:
         release = value;
+		  releaseSamples = d_getSampleRate()*(release/1000.0f);
         break;
     case paramThreshold:
         threshold = value;
@@ -167,6 +169,7 @@ void PowerJuicePlugin::d_setParameterValue(uint32_t index, float value)
         break;
     case paramMakeup:
         makeup = value;
+		  makeupFloat = fromDB(makeup);
         break;
     case paramMix:
         mix = value;
@@ -179,33 +182,44 @@ void PowerJuicePlugin::d_setProgram(uint32_t index)
     if (index != 0)
         return;
 
-    /* Default parameter values */
-    attack = 20.0f;
-    release = 200.0f;
-    threshold = 0.0f;
-    ratio = 1.0f;
-    makeup = 0.0f;
-    mix = 1.0f;
+	/* Default parameter values */
+	attack = 20.0f;
+	release = 200.0f;
+	threshold = 0.0f;
+	ratio = 1.0f;
+	makeup = 0.0f;
+	mix = 1.0f;
 
-    /* Default variable values */
-    averageCounter = 0;
-    inputMax = 0.0f;
+	makeupFloat = fromDB(makeup);
+	attackSamples = d_getSampleRate()*(attack/1000.0f);
+	releaseSamples = d_getSampleRate()*(release/1000.0f);
+	 
+	w = 563; //waveform plane size, size of the plane in pixels;
+	w2 = 1126; //wavefowm array
+	h = 121; //waveform plane height
+	x = 27; //waveform plane positions
+	y = 53;
+	dc = 113; //0DC line y position
+
+	/* Default variable values */
+	averageCounter = 0;
+	inputMax = 0.0f;
 
 	balancer = 1.0f;
 	GR = 1.0f;
 
-    input.start = 0;
-    rms.start = 0;
-    gainReduction.start = 0;
+	input.start = 0;
+	rms.start = 0;
+	gainReduction.start = 0;
 	RMSStack.start = 0;
 	lookaheadStack.start = 0;
-    std::memset(input.data, 0, sizeof(float)*kFloatStackCount);
-    std::memset(rms.data, 0, sizeof(float)*kFloatStackCount);
-    std::memset(gainReduction.data, 0, sizeof(float)*kFloatStackCount);
+	std::memset(input.data, 0, sizeof(float)*kFloatStackCount);
+	std::memset(rms.data, 0, sizeof(float)*kFloatStackCount);
+	std::memset(gainReduction.data, 0, sizeof(float)*kFloatStackCount);
 	std::memset(RMSStack.data, 0, sizeof(float)*kFloatRMSStackCount);
 	std::memset(lookaheadStack.data, 0, sizeof(float)*kFloatLookaheadStackCount);
 
-    d_activate();
+	d_activate();
 }
 
 void PowerJuicePlugin::d_setState(const char* key, const char* value)
@@ -237,15 +251,18 @@ void PowerJuicePlugin::d_deactivate()
 
 void PowerJuicePlugin::d_run(float** inputs, float** outputs, uint32_t frames)
 {
-    float* in = inputs[0];
-    float* out = outputs[0];
+	float* in = inputs[0];
+	float* out = outputs[0];
+	float sum;
+	float data;	
+	float difference;
 
-
-    for (uint32_t i=0; i < frames; i++) {
+	for (uint32_t i=0; i < frames; i++) {
         
-		float sum = 0.0f;
-		float data = 0.0f;	
-		float difference = 0;
+		sum = 0.0f;
+		data = 0.0f;	
+		difference = 0;
+		sanitizeDenormal(in[i]);
 		
 		/*   compute last RMS   */
 		
@@ -260,17 +277,20 @@ void PowerJuicePlugin::d_run(float** inputs, float** outputs, uint32_t frames)
 		}
 		//root mean SQUARE
 	  	float RMS = sqrt(sum / kFloatRMSStackCount);
-
+		sanitizeDenormal(RMS);
 
 
 		/*   compute gain reduction if needed   */
-		
-		float RMSDB = toDB(RMS);
+		float RMSDB = toDB(RMS);		
 		if (RMSDB>threshold) {
 			//attack stage
 			float difference = (RMSDB-threshold);
+			sanitizeDenormal(difference);
 			targetGR = difference - difference/ratio;
-			attackSamples = d_getSampleRate()*(attack/1000.0f);
+			if (targetGR>difference/(ratio/4)) {
+				targetGR = difference - difference/(ratio*2);
+				//double power!		
+			}
 			if (GR<targetGR) {
 				//approach targetGR at attackSamples rate
 				GR -= (GR-targetGR)/(attackSamples);
@@ -278,12 +298,11 @@ void PowerJuicePlugin::d_run(float** inputs, float** outputs, uint32_t frames)
 				//approach targetGR at releaseSamples rate
 				GR -= (GR-targetGR)/releaseSamples;
 			}
+			sanitizeDenormal(GR);
 		} else {
 			//release stage
-			releaseSamples = d_getSampleRate()*(release/1000.0f);
-			targetGR = 0.0f;
-			//approach targetGR at releaseSamples rate
-			GR -= (GR-targetGR)/releaseSamples;
+			//approach targetGR at releaseSamples rate, targetGR = 0.0f
+			GR -= GR/releaseSamples;
 		}
 
 		//store audio in lookahead buffer
@@ -291,54 +310,46 @@ void PowerJuicePlugin::d_run(float** inputs, float** outputs, uint32_t frames)
 		if (lookaheadStack.start == kFloatLookaheadStackCount)
                 lookaheadStack.start = 0;
 
-		//gui data save via shared memory
+		/* gui data save via shared memory */
 		if (lookaheadStack.data[lookaheadStack.start]>inputMax) {
 			//capture peaks
-            inputMax = lookaheadStack.data[lookaheadStack.start];
-        }
-        if (++averageCounter == 300) {
-            //add relevant values to the shared memory
-            input.data[input.start++] = toDB(inputMax);
+			inputMax = lookaheadStack.data[lookaheadStack.start];
+		}
+		if (++averageCounter == 300) {
+			//add relevant values to the shared memory
+			input.data[input.start++] = toDB(inputMax);
 			rms.data[rms.start++] = RMSDB;
 			gainReduction.data[gainReduction.start++] = GR;
 
 			//rewind stack reading heads if needed
-            if (input.start == kFloatStackCount)
-                input.start = 0;
+			if (input.start == kFloatStackCount)
+				input.start = 0;
 			if (rms.start == kFloatStackCount)
-                rms.start = 0;
+				rms.start = 0;
 			if (gainReduction.start == kFloatStackCount)
-                gainReduction.start = 0;
-
+				gainReduction.start = 0;
+	
 
 			//saving in gfx format, for speed
-
-
-			int w = 563; //waveform plane size, size of the plane in pixels;
-			int w2 = 1126; //wavefowm array
-			int h = 121; //waveform plane height
-			int x = 27; //waveform plane positions
-			int y = 53;
-			int dc = 113; //0DC line y position
-
 			//share memory
-            if (shmData != nullptr)
-            {
-                for (int j=0; j < kFloatStackCount; ++j)
-                    shmData->input[j] = input.data[(input.start+j) % kFloatStackCount];
+			if (shmData != nullptr) {
 				for (int j=0; j < kFloatStackCount; ++j)
-                    shmData->rms[j] = -toIEC(rms.data[(rms.start+j) % kFloatStackCount])/200*h +h +y;
+					shmData->input[j] = input.data[(input.start+j) % kFloatStackCount];
 				for (int j=0; j < kFloatStackCount; ++j)
-                    shmData->gainReduction[j] = -toIEC(-gainReduction.data[(gainReduction.start+j) % kFloatStackCount])/200*h +h +y;
-            }
-            averageCounter = 0;
-            inputMax = 0.0f;
-        }
+					shmData->rms[j] = -toIEC(rms.data[(rms.start+j) % kFloatStackCount])/200*h +h +y;
+				for (int j=0; j < kFloatStackCount; ++j)
+					shmData->gainReduction[j] = -toIEC(-gainReduction.data[(gainReduction.start+j) % kFloatStackCount])/200*h +h +y;
+			}
+			averageCounter = 0;
+			inputMax = 0.0f;
+		}
 
+		/* compress, mix, done. */
+		
 		float compressedSignal = in[i]*fromDB(-GR);
-		out[i] = (compressedSignal*fromDB(makeup)*mix)+in[i]*(1-mix);
+		out[i] = (compressedSignal*makeupFloat*mix)+in[i]*(1-mix);
 
-    }
+	}
 }
 
 void PowerJuicePlugin::initShm(const char* shmKey)
