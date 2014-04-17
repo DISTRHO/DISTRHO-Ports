@@ -20,7 +20,6 @@
 #include <cstdlib>
 #include <ctime>
 
-
 using DGL::Point;
 
 START_NAMESPACE_DISTRHO
@@ -110,7 +109,6 @@ PowerJuiceUI::~PowerJuiceUI()
     delete fKnobMakeup;
     delete fKnobMix;
     delete fButtonAbout;
-
 }
 
 // -----------------------------------------------------------------------
@@ -153,10 +151,6 @@ void PowerJuiceUI::d_programChanged(uint32_t index)
     fKnobRatio->setValue(1.0f);
     fKnobMakeup->setValue(0.0f);
     fKnobMix->setValue(1.0f);
-}
-
-void PowerJuiceUI::d_stateChanged(const char*, const char*)
-{
 }
 
 // -----------------------------------------------------------------------
@@ -225,10 +219,9 @@ void PowerJuiceUI::d_uiIdle() {
 
 void PowerJuiceUI::onDisplay()
 {
-
     fImgBackground.draw();
 
-    if (shmData == nullptr)
+    if (dsp == nullptr)
         return;
 
     int w = 563; //waveform plane size, size of the plane in pixels;
@@ -238,80 +231,74 @@ void PowerJuiceUI::onDisplay()
     int y = 53;
     int dc = 113; //0DC line y position
 
-    
-	 glEnable(GL_BLEND);
+
+    glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_LINE_SMOOTH);
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
 
 
-	float thresholdPosition = (-toIEC(fKnobThreshold->getValue()))/200*h+h+y;     
-	
-	//draw waveform
-	/*
-	glColor4f(0.0f, 1.0f, 0.0f, 0.4f);
-	glLineWidth(1.2f);
+    float thresholdPosition = (-toIEC(fKnobThreshold->getValue()))/200*h+h+y;
+
+    //draw waveform
+    /*
+    glColor4f(0.0f, 1.0f, 0.0f, 0.4f);
+    glLineWidth(1.2f);
     for (int i=0; i<w; i++) {
-        
+
         glBegin(GL_LINES);
             glVertex2i(x+i, -toIEC(shmData->input[i])/200*h+h+y);
             glVertex2i(x+i, y+h);
         glEnd();
     }
-	*/
-	//draw RMS
-	
-	glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-	glLineWidth(2.0f);
-	glBegin(GL_LINE_STRIP);
-	for (int i=2; i<w; i++) {
-			float value = dsp->getRMSHistory()[i];
-			if (value<thresholdPosition) {
-				glColor4f(0.0f, 0.5f, 0.0f, 1.0f);
-			} else {
-				glColor4f(0.0f, 0.5f, 0.2f, 1.0f);
-			}
+    */
+    //draw RMS
+
+    glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
+    glLineWidth(2.0f);
+    glBegin(GL_LINE_STRIP);
+    for (int i=2; i<w; i++) {
+            float value = dsp->getRMSHistory()[i];
+            if (value<thresholdPosition) {
+                glColor4f(0.0f, 0.5f, 0.0f, 1.0f);
+            } else {
+                glColor4f(0.0f, 0.5f, 0.2f, 1.0f);
+            }
             glVertex2i(x+i, value);
-	}
-	glEnd();
+    }
+    glEnd();
 
-	//draw gain reduction
-	glColor4f(1.0f, 1.0f, 1.0f, 0.3f);
-	glLineWidth(3.0f);
-	glBegin(GL_LINES);
-	for (int i=2; i<w; i++) {
-		glColor4f(1.0f, 1.0f, 1.0f, 0.3f);
-		float value = dsp->getGainReductionHistory()[i];
+    //draw gain reduction
+    glColor4f(1.0f, 1.0f, 1.0f, 0.3f);
+    glLineWidth(3.0f);
+    glBegin(GL_LINES);
+    for (int i=2; i<w; i++) {
+        glColor4f(1.0f, 1.0f, 1.0f, 0.3f);
+        float value = dsp->getGainReductionHistory()[i];
           glVertex2i(x+i, value);
-		glVertex2i(x+i, y);
+        glVertex2i(x+i, y);
 
-		value = dsp->getRMSHistory()[i];
-		glColor4f(0.0f, 0.5f, 0.2f, 0.1f);
+        value = dsp->getRMSHistory()[i];
+        glColor4f(0.0f, 0.5f, 0.2f, 0.1f);
           glVertex2i(x+i, value);
-		glVertex2i(x+i, y+h);
-	}
-	glEnd();
-	
-	
-	//draw Threshold 
-	glLineWidth(2.0f);
-	glColor4f(0.4f, 0.4f, 1.0f, 0.8f);
-	//float thresholdPosition = ((60-fKnobThreshold->getValue())/60);
-	glBegin(GL_LINES);
+        glVertex2i(x+i, y+h);
+    }
+    glEnd();
+
+
+    //draw Threshold
+    glLineWidth(2.0f);
+    glColor4f(0.4f, 0.4f, 1.0f, 0.8f);
+    //float thresholdPosition = ((60-fKnobThreshold->getValue())/60);
+    glBegin(GL_LINES);
             glVertex2i(x, thresholdPosition);
             glVertex2i(x+w, thresholdPosition);
-	glEnd();
+    glEnd();
 
-	// reset color
-	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+    // reset color
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 }
-
-void PowerJuiceUI::onClose()
-{
-    
-}
-
 
 // -----------------------------------------------------------------------
 

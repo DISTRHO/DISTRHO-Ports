@@ -35,7 +35,7 @@ PowerJuicePlugin::PowerJuicePlugin()
 
 PowerJuicePlugin::~PowerJuicePlugin()
 {
-    
+
 }
 
 // -----------------------------------------------------------------------
@@ -141,11 +141,11 @@ void PowerJuicePlugin::d_setParameterValue(uint32_t index, float value)
     {
     case paramAttack:
         attack = value;
-		  attackSamples = d_getSampleRate()*(attack/1000.0f);
+        attackSamples = d_getSampleRate()*(attack/1000.0f);
         break;
     case paramRelease:
         release = value;
-		  releaseSamples = d_getSampleRate()*(release/1000.0f);
+        releaseSamples = d_getSampleRate()*(release/1000.0f);
         break;
     case paramThreshold:
         threshold = value;
@@ -155,7 +155,7 @@ void PowerJuicePlugin::d_setParameterValue(uint32_t index, float value)
         break;
     case paramMakeup:
         makeup = value;
-		  makeupFloat = fromDB(makeup);
+        makeupFloat = fromDB(makeup);
         break;
     case paramMix:
         mix = value;
@@ -168,52 +168,52 @@ void PowerJuicePlugin::d_setProgram(uint32_t index)
     if (index != 0)
         return;
 
-	/* Default parameter values */
-	attack = 20.0f;
-	release = 200.0f;
-	threshold = 0.0f;
-	ratio = 1.0f;
-	makeup = 0.0f;
-	mix = 1.0f;
+    /* Default parameter values */
+    attack = 20.0f;
+    release = 200.0f;
+    threshold = 0.0f;
+    ratio = 1.0f;
+    makeup = 0.0f;
+    mix = 1.0f;
 
-	makeupFloat = fromDB(makeup);
-	attackSamples = d_getSampleRate()*(attack/1000.0f);
-	releaseSamples = d_getSampleRate()*(release/1000.0f);
-	 
-	w = 563; //waveform plane size, size of the plane in pixels;
-	w2 = 1126; //wavefowm array
-	h = 121; //waveform plane height
-	x = 27; //waveform plane positions
-	y = 53;
-	dc = 113; //0DC line y position
+    makeupFloat = fromDB(makeup);
+    attackSamples = d_getSampleRate()*(attack/1000.0f);
+    releaseSamples = d_getSampleRate()*(release/1000.0f);
 
-	/* Default variable values */
-	averageCounter = 0;
-	inputMax = 0.0f;
+    w = 563; //waveform plane size, size of the plane in pixels;
+    w2 = 1126; //wavefowm array
+    h = 121; //waveform plane height
+    x = 27; //waveform plane positions
+    y = 53;
+    dc = 113; //0DC line y position
 
-	balancer = 1.0f;
-	GR = 1.0f;
+    /* Default variable values */
+    averageCounter = 0;
+    inputMax = 0.0f;
 
-	input.start = 0;
-	rms.start = 0;
-	gainReduction.start = 0;
-	RMSStack.start = 0;
-	lookaheadStack.start = 0;
-	std::memset(input.data, 0, sizeof(float)*kFloatStackCount);
-	std::memset(rms.data, 0, sizeof(float)*kFloatStackCount);
-	std::memset(gainReduction.data, 0, sizeof(float)*kFloatStackCount);
-	std::memset(RMSStack.data, 0, sizeof(float)*kFloatRMSStackCount);
-	std::memset(lookaheadStack.data, 0, sizeof(float)*kFloatLookaheadStackCount);
+    balancer = 1.0f;
+    GR = 1.0f;
 
-	d_activate();
+    input.start = 0;
+    rms.start = 0;
+    gainReduction.start = 0;
+    RMSStack.start = 0;
+    lookaheadStack.start = 0;
+    std::memset(input.data, 0, sizeof(float)*kFloatStackCount);
+    std::memset(rms.data, 0, sizeof(float)*kFloatStackCount);
+    std::memset(gainReduction.data, 0, sizeof(float)*kFloatStackCount);
+    std::memset(RMSStack.data, 0, sizeof(float)*kFloatRMSStackCount);
+    std::memset(lookaheadStack.data, 0, sizeof(float)*kFloatLookaheadStackCount);
+
+    d_activate();
 }
 
 float* PowerJuicePlugin::getRMSHistory() {
-	return history.rms;
+    return history.rms;
 }
 
 float* PowerJuicePlugin::getGainReductionHistory() {
-	return history.gainReduction;
+    return history.gainReduction;
 }
 
 // -----------------------------------------------------------------------
@@ -230,103 +230,102 @@ void PowerJuicePlugin::d_deactivate()
 
 void PowerJuicePlugin::d_run(float** inputs, float** outputs, uint32_t frames)
 {
-	float* in = inputs[0];
-	float* out = outputs[0];
-	float sum;
-	float data;	
-	float difference;
+    float* in = inputs[0];
+    float* out = outputs[0];
+    float sum;
+    float data;
+    float difference;
 
-	for (uint32_t i=0; i < frames; i++) {
-        
-		sum = 0.0f;
-		data = 0.0f;	
-		difference = 0;
-		sanitizeDenormal(in[i]);
-		
-		/*   compute last RMS   */
-		
-		//store audio samples in an RMS buffer line
-		RMSStack.data[RMSStack.start++] = in[i];
-		if (RMSStack.start == kFloatRMSStackCount)
+    for (uint32_t i=0; i < frames; i++) {
+
+        sum = 0.0f;
+        data = 0.0f;
+        difference = 0;
+        sanitizeDenormal(in[i]);
+
+        /*   compute last RMS   */
+
+        //store audio samples in an RMS buffer line
+        RMSStack.data[RMSStack.start++] = in[i];
+        if (RMSStack.start == kFloatRMSStackCount)
                 RMSStack.start = 0;
-		//compute RMS over last kFloatRMSStackCount samples
-		for (int j=0; j < kFloatRMSStackCount; ++j) {
-			data = RMSStack.data[(RMSStack.start+j) % kFloatRMSStackCount];
-        	sum += data * data;
-		}
-		//root mean SQUARE
-	  	float RMS = sqrt(sum / kFloatRMSStackCount);
-		sanitizeDenormal(RMS);
+        //compute RMS over last kFloatRMSStackCount samples
+        for (int j=0; j < kFloatRMSStackCount; ++j) {
+            data = RMSStack.data[(RMSStack.start+j) % kFloatRMSStackCount];
+            sum += data * data;
+        }
+        //root mean SQUARE
+          float RMS = sqrt(sum / kFloatRMSStackCount);
+        sanitizeDenormal(RMS);
 
 
-		/*   compute gain reduction if needed   */
-		float RMSDB = toDB(RMS);		
-		if (RMSDB>threshold) {
-			//attack stage
-			float difference = (RMSDB-threshold);
-			sanitizeDenormal(difference);
-			targetGR = difference - difference/ratio;
-			if (targetGR>difference/(ratio/4)) {
-				targetGR = difference - difference/(ratio*2);
-				//double power!		
-			}
-			if (GR<targetGR) {
-				//approach targetGR at attackSamples rate
-				GR -= (GR-targetGR)/(attackSamples);
-			} else {
-				//approach targetGR at releaseSamples rate
-				GR -= (GR-targetGR)/releaseSamples;
-			}
-			sanitizeDenormal(GR);
-		} else {
-			//release stage
-			//approach targetGR at releaseSamples rate, targetGR = 0.0f
-			GR -= GR/releaseSamples;
-		}
+        /*   compute gain reduction if needed   */
+        float RMSDB = toDB(RMS);
+        if (RMSDB>threshold) {
+            //attack stage
+            float difference = (RMSDB-threshold);
+            sanitizeDenormal(difference);
+            targetGR = difference - difference/ratio;
+            if (targetGR>difference/(ratio/4)) {
+                targetGR = difference - difference/(ratio*2);
+                //double power!
+            }
+            if (GR<targetGR) {
+                //approach targetGR at attackSamples rate
+                GR -= (GR-targetGR)/(attackSamples);
+            } else {
+                //approach targetGR at releaseSamples rate
+                GR -= (GR-targetGR)/releaseSamples;
+            }
+            sanitizeDenormal(GR);
+        } else {
+            //release stage
+            //approach targetGR at releaseSamples rate, targetGR = 0.0f
+            GR -= GR/releaseSamples;
+        }
 
-		//store audio in lookahead buffer
-		lookaheadStack.data[lookaheadStack.start++] = in[i];
-		if (lookaheadStack.start == kFloatLookaheadStackCount)
+        //store audio in lookahead buffer
+        lookaheadStack.data[lookaheadStack.start++] = in[i];
+        if (lookaheadStack.start == kFloatLookaheadStackCount)
                 lookaheadStack.start = 0;
 
-		/* gui data save via shared memory */
-		if (lookaheadStack.data[lookaheadStack.start]>inputMax) {
-			//capture peaks
-			inputMax = lookaheadStack.data[lookaheadStack.start];
-		}
-		if (++averageCounter == 300) {
-			//add relevant values to the shared memory
-			input.data[input.start++] = toDB(inputMax);
-			rms.data[rms.start++] = RMSDB;
-			gainReduction.data[gainReduction.start++] = GR;
+        /* gui data save via shared memory */
+        if (lookaheadStack.data[lookaheadStack.start]>inputMax) {
+            //capture peaks
+            inputMax = lookaheadStack.data[lookaheadStack.start];
+        }
+        if (++averageCounter == 300) {
+            //add relevant values to the shared memory
+            input.data[input.start++] = toDB(inputMax);
+            rms.data[rms.start++] = RMSDB;
+            gainReduction.data[gainReduction.start++] = GR;
 
-			//rewind stack reading heads if needed
-			if (input.start == kFloatStackCount)
-				input.start = 0;
-			if (rms.start == kFloatStackCount)
-				rms.start = 0;
-			if (gainReduction.start == kFloatStackCount)
-				gainReduction.start = 0;
-	
+            //rewind stack reading heads if needed
+            if (input.start == kFloatStackCount)
+                input.start = 0;
+            if (rms.start == kFloatStackCount)
+                rms.start = 0;
+            if (gainReduction.start == kFloatStackCount)
+                gainReduction.start = 0;
 
-			//saving in gfx format, for speed
-			//share memory
-			
-			for (int j=0; j < kFloatStackCount; ++j)
-				history.rms[j] = -toIEC(rms.data[(rms.start+j) % kFloatStackCount])/200*h +h +y;
-			for (int j=0; j < kFloatStackCount; ++j)
-				history.gainReduction[j] = -toIEC(-gainReduction.data[(gainReduction.start+j) % kFloatStackCount])/200*h +h +y;
-			
-			averageCounter = 0;
-			inputMax = 0.0f;
-		}
 
-		/* compress, mix, done. */
-		
-		float compressedSignal = in[i]*fromDB(-GR);
-		out[i] = (compressedSignal*makeupFloat*mix)+in[i]*(1-mix);
+            //saving in gfx format, for speed
+            //share memory
 
-	}
+            for (int j=0; j < kFloatStackCount; ++j)
+                history.rms[j] = -toIEC(rms.data[(rms.start+j) % kFloatStackCount])/200*h +h +y;
+            for (int j=0; j < kFloatStackCount; ++j)
+                history.gainReduction[j] = -toIEC(-gainReduction.data[(gainReduction.start+j) % kFloatStackCount])/200*h +h +y;
+
+            averageCounter = 0;
+            inputMax = 0.0f;
+        }
+
+        /* compress, mix, done. */
+
+        float compressedSignal = in[i]*fromDB(-GR);
+        out[i] = (compressedSignal*makeupFloat*mix)+in[i]*(1-mix);
+    }
 }
 
 // -----------------------------------------------------------------------

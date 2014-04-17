@@ -28,6 +28,8 @@
 #include "PowerJuiceArtwork.hpp"
 #include "PowerJuicePlugin.hpp"
 
+#include <cmath>
+
 using DGL::Image;
 using DGL::ImageAboutWindow;
 using DGL::ImageButton;
@@ -64,7 +66,6 @@ protected:
 
     void d_parameterChanged(uint32_t index, float value) override;
     void d_programChanged(uint32_t index) override;
-    void d_stateChanged(const char*, const char*) override;
 
     // -------------------------------------------------------------------
     // UI Callbacks
@@ -79,7 +80,6 @@ protected:
     void imageKnobDragFinished(ImageKnob* knob) override;
     void imageKnobValueChanged(ImageKnob* knob, float value) override;
     void onDisplay() override;
-    void onClose() override;
 
 private:
     Image fImgBackground;
@@ -93,22 +93,19 @@ private:
     ImageKnob* fKnobMix;
     ImageButton* fButtonAbout;
 
-	PowerJuicePlugin *dsp;
+    PowerJuicePlugin* dsp;
 
+    float fromDB(float gdb) {
+        return (std::exp(gdb/20.f*std::log(10.f)));
+    };
 
+    float toDB(float g) {
+        return (20.f*std::log10(g));
+    }
 
-
-	float fromDB(float gdb) {
-		return (exp(gdb/20.f*log(10.f)));
-	};
-
-	float toDB(float g) {
-		return (20.f*log10(g));
-	}
-	
-	float toIEC(float db) {
+    float toIEC(float db) {
          float def = 0.0f; /* Meter deflection %age */
- 
+
          if (db < -70.0f) {
                  def = 0.0f;
          } else if (db < -60.0f) {
@@ -126,9 +123,9 @@ private:
          } else {
                  def = 100.0f;
          }
- 
+
          return (def * 2.0f);
-	}
+    }
 };
 
 // -----------------------------------------------------------------------
