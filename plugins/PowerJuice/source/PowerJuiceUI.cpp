@@ -29,8 +29,7 @@ START_NAMESPACE_DISTRHO
 
 PowerJuiceUI::PowerJuiceUI()
     : UI(),
-      fAboutWindow(this),
-      shmData(nullptr)
+      fAboutWindow(this)
 {
     // background
     fImgBackground = Image(PowerJuiceArtwork::backgroundData, PowerJuiceArtwork::backgroundWidth, PowerJuiceArtwork::backgroundHeight, GL_BGR);
@@ -98,11 +97,8 @@ PowerJuiceUI::PowerJuiceUI()
     fButtonAbout->setPos(502, 17);
     fButtonAbout->setCallback(this);
 
-    // init shm vars
-    carla_shm_init(shm);
-    shmData = nullptr;
-
-    fFirstDisplay = true;
+    //dsp side connection
+    dsp = (PowerJuicePlugin*)d_getPluginInstancePointer();
 }
 
 PowerJuiceUI::~PowerJuiceUI()
@@ -115,7 +111,6 @@ PowerJuiceUI::~PowerJuiceUI()
     delete fKnobMix;
     delete fButtonAbout;
 
-    closeShm();
 }
 
 // -----------------------------------------------------------------------
@@ -231,12 +226,6 @@ void PowerJuiceUI::d_uiIdle() {
 void PowerJuiceUI::onDisplay()
 {
 
-    if (fFirstDisplay)
-    {
-        initShm();
-        fFirstDisplay = false;
-    }
-
     fImgBackground.draw();
 
     if (shmData == nullptr)
@@ -277,9 +266,9 @@ void PowerJuiceUI::onDisplay()
 	glLineWidth(2.0f);
 	glBegin(GL_LINE_STRIP);
 	for (int i=2; i<w; i++) {
-			float value = shmData->rms[i];
+			float value = dsp->getRMSHistory()[i];
 			if (value<thresholdPosition) {
-				glColor4f(0.0f, 0.2f, 0.0f, 1.0f);
+				glColor4f(0.0f, 0.5f, 0.0f, 1.0f);
 			} else {
 				glColor4f(0.0f, 0.5f, 0.2f, 1.0f);
 			}
@@ -293,11 +282,11 @@ void PowerJuiceUI::onDisplay()
 	glBegin(GL_LINES);
 	for (int i=2; i<w; i++) {
 		glColor4f(1.0f, 1.0f, 1.0f, 0.3f);
-		float value = shmData->gainReduction[i];
+		float value = dsp->getGainReductionHistory()[i];
           glVertex2i(x+i, value);
 		glVertex2i(x+i, y);
 
-		value = shmData->rms[i];
+		value = dsp->getRMSHistory()[i];
 		glColor4f(0.0f, 0.5f, 0.2f, 0.1f);
           glVertex2i(x+i, value);
 		glVertex2i(x+i, y+h);
@@ -320,61 +309,9 @@ void PowerJuiceUI::onDisplay()
 
 void PowerJuiceUI::onClose()
 {
-    // tell DSP to stop sending SHM data
-    d_setState("shmKey", "");
+    
 }
 
-void PowerJuiceUI::initShm()
-{
-    // generate a random key
-    static const char charSet[]  = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    static const int  charSetLen = sizeof(charSet) - 1; // -1 to avoid trailing '\0'
-
-    char shmKey[24+1];
-    shmKey[24] = '\0';
-
-    std::srand(std::time(nullptr));
-
-    for (int i=0; i<24; ++i)
-        shmKey[i] = charSet[std::rand() % charSetLen];
-
-    // create shared memory
-    shm = carla_shm_create(shmKey);
-
-    if (! carla_is_shm_valid(shm))
-    {
-        carla_stderr2("Failed to created shared memory!");
-        return;
-    }
-
-    if (! carla_shm_map<SharedMemData>(shm, shmData))
-    {
-        carla_stderr2("Failed to map shared memory!");
-        return;
-    }
-
-    std::memset(shmData, 0, sizeof(SharedMemData));
-
-    // tell DSP to use this key for SHM
-    carla_stdout("Sending shmKey %s", shmKey);
-    d_setState("shmKey", shmKey);
-}
-
-void PowerJuiceUI::closeShm()
-{
-    fFirstDisplay = true;
-
-    if (! carla_is_shm_valid(shm))
-        return;
-
-    if (shmData != nullptr)
-    {
-        carla_shm_unmap<SharedMemData>(shm, shmData);
-        shmData = nullptr;
-    }
-
-    carla_shm_close(shm);
-}
 
 // -----------------------------------------------------------------------
 

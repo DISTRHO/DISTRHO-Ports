@@ -19,7 +19,6 @@
 #define POWERJUICEPLUGIN_HPP_INCLUDED
 
 #include "DistrhoPlugin.hpp"
-#include "carla/CarlaShmUtils.hpp"
 
 static const int kFloatStackCount = 563;
 static const int kFloatRMSStackCount = 400;
@@ -41,7 +40,6 @@ struct LookaheadStack {
 };
 
 struct SharedMemData {
-    float input[kFloatStackCount];
     float rms[kFloatStackCount];
     float gainReduction[kFloatStackCount];
 };
@@ -101,7 +99,6 @@ protected:
 
     void d_initParameter(uint32_t index, Parameter& parameter) override;
     void d_initProgramName(uint32_t index, d_string& programName) override;
-    void d_initStateKey(uint32_t, d_string&) override;
 
     // -------------------------------------------------------------------
     // Internal data
@@ -109,7 +106,6 @@ protected:
     float d_getParameterValue(uint32_t index) const override;
     void  d_setParameterValue(uint32_t index, float value) override;
     void  d_setProgram(uint32_t index) override;
-    void  d_setState(const char* key, const char* value) override;
 
     // -------------------------------------------------------------------
     // Process
@@ -119,14 +115,18 @@ protected:
     void d_run(float** inputs, float** outputs, uint32_t frames) override;
 
     // -------------------------------------------------------------------
+    
+    
 
 private:
-   // params
-   float attack, release, threshold, ratio, makeup, mix;
+	// params
+	float attack, release, threshold, ratio, makeup, mix;
 	float attackSamples, releaseSamples, makeupFloat;
 	float balancer;
 	float targetGR;
 	float GR;
+	
+	SharedMemData history;
 
 	float sum;
 	float data;	
@@ -139,18 +139,13 @@ private:
 	int y;
 	int dc; //0DC line y position
 
-   int averageCounter;
-   float inputMax;
+	int averageCounter;
+	float inputMax;
 
-   FloatStack input, rms, gainReduction;
+	FloatStack input, rms, gainReduction;
 	FloatRMSStack RMSStack;
 	LookaheadStack lookaheadStack;
 
-   shm_t shm;
-   SharedMemData* shmData;
-
-   void initShm(const char* shmKey);
-   void closeShm();
 
 	float fromDB(float gdb) {
 		return (exp(gdb/20.f*log(10.f)));
@@ -197,6 +192,12 @@ private:
 			value = 0.f;
 		}
 	}
+
+public:
+
+	//methods
+	float* getRMSHistory();
+	float* getGainReductionHistory();
 
 };
 

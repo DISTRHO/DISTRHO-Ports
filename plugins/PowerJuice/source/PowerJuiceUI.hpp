@@ -93,12 +93,9 @@ private:
     ImageKnob* fKnobMix;
     ImageButton* fButtonAbout;
 
-    shm_t shm;
-    SharedMemData* shmData;
+	PowerJuicePlugin *dsp;
 
-    bool fFirstDisplay;
-    void initShm();
-    void closeShm();
+
 
 
 	float fromDB(float gdb) {

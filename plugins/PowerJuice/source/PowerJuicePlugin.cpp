@@ -29,17 +29,13 @@ PowerJuicePlugin::PowerJuicePlugin()
     // set default values
     d_setProgram(0);
 
-    // init shm vars
-    carla_shm_init(shm);
-    shmData = nullptr;
-
     // reset
     d_deactivate();
 }
 
 PowerJuicePlugin::~PowerJuicePlugin()
 {
-    closeShm();
+    
 }
 
 // -----------------------------------------------------------------------
@@ -113,16 +109,6 @@ void PowerJuicePlugin::d_initProgramName(uint32_t index, d_string& programName)
         return;
 
     programName = "Default";
-}
-
-void PowerJuicePlugin::d_initStateKey(uint32_t /*index*/, d_string& /*key*/)
-{
-/*
-    if (index != 0)
-        return;
-
-    key = "shmKey";
-*/
 }
 
 // -----------------------------------------------------------------------
@@ -222,19 +208,12 @@ void PowerJuicePlugin::d_setProgram(uint32_t index)
 	d_activate();
 }
 
-void PowerJuicePlugin::d_setState(const char* key, const char* value)
-{
-    if (std::strcmp(key, "shmKey") != 0)
-        return;
+float* PowerJuicePlugin::getRMSHistory() {
+	return history.rms;
+}
 
-    if (value[0] == '\0')
-    {
-        carla_stdout("Shm closed");
-        return closeShm();
-    }
-
-    carla_stdout("Got shmKey => %s", value);
-    initShm(value);
+float* PowerJuicePlugin::getGainReductionHistory() {
+	return history.gainReduction;
 }
 
 // -----------------------------------------------------------------------
@@ -332,14 +311,12 @@ void PowerJuicePlugin::d_run(float** inputs, float** outputs, uint32_t frames)
 
 			//saving in gfx format, for speed
 			//share memory
-			if (shmData != nullptr) {
-				for (int j=0; j < kFloatStackCount; ++j)
-					shmData->input[j] = input.data[(input.start+j) % kFloatStackCount];
-				for (int j=0; j < kFloatStackCount; ++j)
-					shmData->rms[j] = -toIEC(rms.data[(rms.start+j) % kFloatStackCount])/200*h +h +y;
-				for (int j=0; j < kFloatStackCount; ++j)
-					shmData->gainReduction[j] = -toIEC(-gainReduction.data[(gainReduction.start+j) % kFloatStackCount])/200*h +h +y;
-			}
+			
+			for (int j=0; j < kFloatStackCount; ++j)
+				history.rms[j] = -toIEC(rms.data[(rms.start+j) % kFloatStackCount])/200*h +h +y;
+			for (int j=0; j < kFloatStackCount; ++j)
+				history.gainReduction[j] = -toIEC(-gainReduction.data[(gainReduction.start+j) % kFloatStackCount])/200*h +h +y;
+			
 			averageCounter = 0;
 			inputMax = 0.0f;
 		}
@@ -350,37 +327,6 @@ void PowerJuicePlugin::d_run(float** inputs, float** outputs, uint32_t frames)
 		out[i] = (compressedSignal*makeupFloat*mix)+in[i]*(1-mix);
 
 	}
-}
-
-void PowerJuicePlugin::initShm(const char* shmKey)
-{
-    shm = carla_shm_attach(shmKey);
-
-    if (! carla_is_shm_valid(shm))
-    {
-        carla_stderr2("Failed to create shared memory!");
-        return;
-    }
-
-    if (! carla_shm_map<SharedMemData>(shm, shmData))
-    {
-        carla_stderr2("Failed to map shared memory!");
-        return;
-    }
-}
-
-void PowerJuicePlugin::closeShm()
-{
-    if (! carla_is_shm_valid(shm))
-        return;
-
-    if (shmData != nullptr)
-    {
-        carla_shm_unmap<SharedMemData>(shm, shmData);
-        shmData = nullptr;
-    }
-
-    carla_shm_close(shm);
 }
 
 // -----------------------------------------------------------------------
