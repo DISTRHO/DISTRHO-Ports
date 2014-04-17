@@ -207,9 +207,9 @@ void PowerJuicePlugin::d_setProgram(uint32_t index)
     std::memset(lookaheadStack.data, 0, sizeof(float)*kFloatLookaheadStackCount);
 
 	for (int j=0; j < kFloatStackCount; ++j)
-		history.rms[j] = -toIEC(rms.data[(rms.start+j) % kFloatStackCount])/200*h +h +y;
+		history.rms[j] = h +y;
 	for (int j=0; j < kFloatStackCount; ++j) 
-		history.gainReduction[j] = -toIEC(-gainReduction.data[(gainReduction.start+j) % kFloatStackCount])/200*h +h +y;
+		history.gainReduction[j] = h +y;
 
     d_activate();
 }
@@ -300,21 +300,13 @@ void PowerJuicePlugin::d_run(float** inputs, float** outputs, uint32_t frames)
         if (lookaheadStack.start == kFloatLookaheadStackCount)
                 lookaheadStack.start = 0;
 
-        /* gui data save via shared memory */
-        if (lookaheadStack.data[lookaheadStack.start]>inputMax) {
-            //capture peaks
-            inputMax = lookaheadStack.data[lookaheadStack.start];
-        }
         if (++averageCounter == 300) {
             //add relevant values to the shared memory
-            input.data[input.start++] = toDB(inputMax);
             rms.data[rms.start++] = RMSDB;
             gainReduction.data[gainReduction.start++] = GR;
 		  
 
             //rewind stack reading heads if needed
-            if (input.start == kFloatStackCount)
-                input.start = 0;
             if (rms.start == kFloatStackCount)
                 rms.start = 0;
             if (gainReduction.start == kFloatStackCount)

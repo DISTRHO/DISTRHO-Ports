@@ -259,9 +259,8 @@ void PowerJuiceUI::onDisplay()
     glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
     glLineWidth(2.0f);
     glBegin(GL_LINE_STRIP);
-    for (int i=0; i<w; i++) {
+    for (int i=10; i<w; i++) {
             float value = dsp->getRMSHistory(i);
-		 // printf("gr: %f\n", value);
             if (value<thresholdPosition) {
                 glColor4f(0.0f, 0.5f, 0.0f, 1.0f);
             } else {
