@@ -180,13 +180,15 @@ void PowerJuicePlugin::d_setProgram(uint32_t index)
     attackSamples = d_getSampleRate()*(attack/1000.0f);
     releaseSamples = d_getSampleRate()*(release/1000.0f);
 
+	
+
     w = 563; //waveform plane size, size of the plane in pixels;
     w2 = 1126; //wavefowm array
     h = 121; //waveform plane height
     x = 27; //waveform plane positions
     y = 53;
     dc = 113; //0DC line y position
-
+	
     /* Default variable values */
     averageCounter = 0;
     inputMax = 0.0f;
@@ -199,21 +201,25 @@ void PowerJuicePlugin::d_setProgram(uint32_t index)
     gainReduction.start = 0;
     RMSStack.start = 0;
     lookaheadStack.start = 0;
-    std::memset(input.data, 0, sizeof(float)*kFloatStackCount);
     std::memset(rms.data, 0, sizeof(float)*kFloatStackCount);
     std::memset(gainReduction.data, 0, sizeof(float)*kFloatStackCount);
     std::memset(RMSStack.data, 0, sizeof(float)*kFloatRMSStackCount);
     std::memset(lookaheadStack.data, 0, sizeof(float)*kFloatLookaheadStackCount);
 
+	for (int j=0; j < kFloatStackCount; ++j)
+		history.rms[j] = -toIEC(rms.data[(rms.start+j) % kFloatStackCount])/200*h +h +y;
+	for (int j=0; j < kFloatStackCount; ++j) 
+		history.gainReduction[j] = -toIEC(-gainReduction.data[(gainReduction.start+j) % kFloatStackCount])/200*h +h +y;
+
     d_activate();
 }
 
-float* PowerJuicePlugin::getRMSHistory() {
-    return history.rms;
+float PowerJuicePlugin::getRMSHistory(int n) {
+    return history.rms[n];
 }
 
-float* PowerJuicePlugin::getGainReductionHistory() {
-    return history.gainReduction;
+float PowerJuicePlugin::getGainReductionHistory(int n) {
+    return history.gainReduction[n];
 }
 
 // -----------------------------------------------------------------------
@@ -236,6 +242,7 @@ void PowerJuicePlugin::d_run(float** inputs, float** outputs, uint32_t frames)
     float data;
     float difference;
 
+
     for (uint32_t i=0; i < frames; i++) {
 
         sum = 0.0f;
@@ -257,19 +264,22 @@ void PowerJuicePlugin::d_run(float** inputs, float** outputs, uint32_t frames)
         //root mean SQUARE
           float RMS = sqrt(sum / kFloatRMSStackCount);
         sanitizeDenormal(RMS);
-
+		
 
         /*   compute gain reduction if needed   */
         float RMSDB = toDB(RMS);
+	   
         if (RMSDB>threshold) {
             //attack stage
             float difference = (RMSDB-threshold);
-            sanitizeDenormal(difference);
+		  
+            //sanitizeDenormal(difference);
             targetGR = difference - difference/ratio;
             if (targetGR>difference/(ratio/4)) {
                 targetGR = difference - difference/(ratio*2);
                 //double power!
             }
+		  //
             if (GR<targetGR) {
                 //approach targetGR at attackSamples rate
                 GR -= (GR-targetGR)/(attackSamples);
@@ -277,6 +287,7 @@ void PowerJuicePlugin::d_run(float** inputs, float** outputs, uint32_t frames)
                 //approach targetGR at releaseSamples rate
                 GR -= (GR-targetGR)/releaseSamples;
             }
+		  
             sanitizeDenormal(GR);
         } else {
             //release stage
@@ -299,6 +310,7 @@ void PowerJuicePlugin::d_run(float** inputs, float** outputs, uint32_t frames)
             input.data[input.start++] = toDB(inputMax);
             rms.data[rms.start++] = RMSDB;
             gainReduction.data[gainReduction.start++] = GR;
+		  
 
             //rewind stack reading heads if needed
             if (input.start == kFloatStackCount)
@@ -314,9 +326,11 @@ void PowerJuicePlugin::d_run(float** inputs, float** outputs, uint32_t frames)
 
             for (int j=0; j < kFloatStackCount; ++j)
                 history.rms[j] = -toIEC(rms.data[(rms.start+j) % kFloatStackCount])/200*h +h +y;
-            for (int j=0; j < kFloatStackCount; ++j)
+            for (int j=0; j < kFloatStackCount; ++j) {
                 history.gainReduction[j] = -toIEC(-gainReduction.data[(gainReduction.start+j) % kFloatStackCount])/200*h +h +y;
-
+			
+		  }
+	
             averageCounter = 0;
             inputMax = 0.0f;
         }

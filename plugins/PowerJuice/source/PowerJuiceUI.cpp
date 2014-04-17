@@ -96,8 +96,7 @@ PowerJuiceUI::PowerJuiceUI()
     fButtonAbout->setPos(502, 17);
     fButtonAbout->setCallback(this);
 
-    //dsp side connection
-    dsp = (PowerJuicePlugin*)d_getPluginInstancePointer();
+    
 }
 
 PowerJuiceUI::~PowerJuiceUI()
@@ -198,7 +197,7 @@ void PowerJuiceUI::imageKnobDragFinished(ImageKnob* knob)
 
 void PowerJuiceUI::imageKnobValueChanged(ImageKnob* knob, float value)
 {
-    if (knob == fKnobAttack)
+    if (knob == fKnobAttack) 
         d_setParameterValue(PowerJuicePlugin::paramAttack, value);
     else if (knob == fKnobRelease)
         d_setParameterValue(PowerJuicePlugin::paramRelease, value);
@@ -219,8 +218,10 @@ void PowerJuiceUI::d_uiIdle() {
 
 void PowerJuiceUI::onDisplay()
 {
+	
     fImgBackground.draw();
-
+    //dsp side connection
+    dsp = (PowerJuicePlugin*)d_getPluginInstancePointer();
     if (dsp == nullptr)
         return;
 
@@ -258,8 +259,9 @@ void PowerJuiceUI::onDisplay()
     glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
     glLineWidth(2.0f);
     glBegin(GL_LINE_STRIP);
-    for (int i=2; i<w; i++) {
-            float value = dsp->getRMSHistory()[i];
+    for (int i=0; i<w; i++) {
+            float value = dsp->getRMSHistory(i);
+		 // printf("gr: %f\n", value);
             if (value<thresholdPosition) {
                 glColor4f(0.0f, 0.5f, 0.0f, 1.0f);
             } else {
@@ -268,24 +270,25 @@ void PowerJuiceUI::onDisplay()
             glVertex2i(x+i, value);
     }
     glEnd();
-
+	/*
     //draw gain reduction
     glColor4f(1.0f, 1.0f, 1.0f, 0.3f);
     glLineWidth(3.0f);
     glBegin(GL_LINES);
     for (int i=2; i<w; i++) {
         glColor4f(1.0f, 1.0f, 1.0f, 0.3f);
-        float value = dsp->getGainReductionHistory()[i];
+        float value = dsp->getGainReductionHistory(i);
+	   
           glVertex2i(x+i, value);
         glVertex2i(x+i, y);
 
-        value = dsp->getRMSHistory()[i];
+        value = dsp->getRMSHistory(i);
         glColor4f(0.0f, 0.5f, 0.2f, 0.1f);
           glVertex2i(x+i, value);
         glVertex2i(x+i, y+h);
     }
     glEnd();
-
+	*/
 
     //draw Threshold
     glLineWidth(2.0f);

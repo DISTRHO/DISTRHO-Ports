@@ -187,15 +187,15 @@ private:
 
     void sanitizeDenormal(float& value) {
         if (isNan(value)) {
-            std::printf("Booo!\n");
+            //std::printf("Booo!\n");
             value = 0.f;
         }
     }
 
 public:
     //methods
-    float* getRMSHistory();
-    float* getGainReductionHistory();
+    float getRMSHistory(int n);
+    float getGainReductionHistory(int n);
 };
 
 // -----------------------------------------------------------------------
