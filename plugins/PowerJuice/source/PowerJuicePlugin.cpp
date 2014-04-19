@@ -177,8 +177,8 @@ void PowerJuicePlugin::d_setProgram(uint32_t index)
     mix = 1.0f;
 
     makeupFloat = fromDB(makeup);
-    attackSamples = d_getSampleRate()*(attack/1000.0f);
-    releaseSamples = d_getSampleRate()*(release/1000.0f);
+    attackSamples = d_getSampleRate()*(attack/100000.0f);
+    releaseSamples = d_getSampleRate()*(release/100000.0f);
 
 	
 
@@ -275,8 +275,8 @@ void PowerJuicePlugin::d_run(float** inputs, float** outputs, uint32_t frames)
 		  
             //sanitizeDenormal(difference);
             targetGR = difference - difference/ratio;
-            if (targetGR>difference/(ratio/4)) {
-                targetGR = difference - difference/(ratio*2);
+            if (targetGR>difference/(ratio/4.0f)) {
+                targetGR = difference - difference/(ratio*1.5f);
                 //double power!
             }
 		  //

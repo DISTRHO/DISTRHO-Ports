@@ -269,7 +269,7 @@ void PowerJuiceUI::onDisplay()
             glVertex2i(x+i, value);
     }
     glEnd();
-	/*
+	
     //draw gain reduction
     glColor4f(1.0f, 1.0f, 1.0f, 0.3f);
     glLineWidth(3.0f);
@@ -287,7 +287,7 @@ void PowerJuiceUI::onDisplay()
         glVertex2i(x+i, y+h);
     }
     glEnd();
-	*/
+	
 
     //draw Threshold
     glLineWidth(2.0f);
