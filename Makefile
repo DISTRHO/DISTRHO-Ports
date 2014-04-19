@@ -25,10 +25,10 @@ install:
 	install -d $(DESTDIR)$(PREFIX)/lib/dssi/
 	install -d $(DESTDIR)$(PREFIX)/lib/lv2/
 	install -d $(DESTDIR)$(PREFIX)/lib/vst/
-	install -d $(DESTDIR)/src/distrho/libs/juce/build-juce/
-	install -d $(DESTDIR)/src/distrho/libs/juce/source/
-	install -d $(DESTDIR)/src/distrho/libs/juce-plugin/
-	install -d $(DESTDIR)/src/distrho/scripts/
+	install -d $(DESTDIR)/usr/src/distrho/libs/juce/build-juce/
+	install -d $(DESTDIR)/usr/src/distrho/libs/juce/source/
+	install -d $(DESTDIR)/usr/src/distrho/libs/juce-plugin/
+	install -d $(DESTDIR)/usr/src/distrho/scripts/
 
 	# install plugins
 	cp -r bin/ladspa/*          $(DESTDIR)$(PREFIX)/lib/ladspa/
@@ -38,19 +38,19 @@ install:
 	cp -r static-lv2-ttl/*.lv2/ $(DESTDIR)$(PREFIX)/lib/lv2/
 
 	# install source needed for extra builds
-	install -m 644 libs/libjuce.a           $(DESTDIR)/src/distrho/libs/
-	install -m 755 libs/lv2_ttl_generator   $(DESTDIR)/src/distrho/libs/
-	install -m 644 libs/juce/build-juce/*.h $(DESTDIR)/src/distrho/libs/juce/build-juce/
-	install -m 644 libs/juce-plugin/*.cpp   $(DESTDIR)/src/distrho/libs/juce-plugin/
-	install -m 644 libs/juce-plugin/*.h     $(DESTDIR)/src/distrho/libs/juce-plugin/
-	install -m 644 scripts/*.lua            $(DESTDIR)/src/distrho/scripts/
-	install -m 755 scripts/*.sh             $(DESTDIR)/src/distrho/scripts/
+	install -m 644 libs/libjuce.a           $(DESTDIR)/usr/src/distrho/libs/
+	install -m 755 libs/lv2_ttl_generator   $(DESTDIR)/usr/src/distrho/libs/
+	install -m 644 libs/juce/build-juce/*.h $(DESTDIR)/usr/src/distrho/libs/juce/build-juce/
+	install -m 644 libs/juce-plugin/*.cpp   $(DESTDIR)/usr/src/distrho/libs/juce-plugin/
+	install -m 644 libs/juce-plugin/*.h     $(DESTDIR)/usr/src/distrho/libs/juce-plugin/
+	install -m 644 scripts/*.lua            $(DESTDIR)/usr/src/distrho/scripts/
+	install -m 755 scripts/*.sh             $(DESTDIR)/usr/src/distrho/scripts/
 
-	find libs/juce/source/ -type f -name "*.h" -exec cp -v --parents {} $(DESTDIR)/src/distrho/ \;
+	find libs/juce/source/ -type f -name "*.h" -exec cp -v --parents {} $(DESTDIR)/usr/src/distrho/ \;
 
-	cp -v --parents -r libs/juce/source/modules/juce_audio_plugin_client/LV2/*                            $(DESTDIR)/src/distrho/
-	cp -v --parents    libs/juce/source/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp         $(DESTDIR)/src/distrho/
-	cp -v --parents    libs/juce/source/modules/juce_audio_plugin_client/utility/juce_PluginUtilities.cpp $(DESTDIR)/src/distrho/
+	cp -v --parents -r libs/juce/source/modules/juce_audio_plugin_client/LV2/*                            $(DESTDIR)/usr/src/distrho/
+	cp -v --parents    libs/juce/source/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp         $(DESTDIR)/usr/src/distrho/
+	cp -v --parents    libs/juce/source/modules/juce_audio_plugin_client/utility/juce_PluginUtilities.cpp $(DESTDIR)/usr/src/distrho/
 
 # -----------------------------------------
 # gen
