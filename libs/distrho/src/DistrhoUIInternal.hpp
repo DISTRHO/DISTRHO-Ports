@@ -144,14 +144,12 @@ public:
         fData->sendNoteCallbackFunc  = sendNoteCall;
         fData->uiResizeCallbackFunc  = uiResizeCall;
 
-#if DISTRHO_PLUGIN_WANT_DIRECT_ACCESS
-        fData->dspPtr = dspPtr;
-#endif
-
         glWindow.setSize(fUi->d_getWidth(), fUi->d_getHeight());
         glWindow.setResizable(false);
 
-#if ! DISTRHO_PLUGIN_WANT_DIRECT_ACCESS
+#if DISTRHO_PLUGIN_WANT_DIRECT_ACCESS
+        fData->dspPtr = dspPtr;
+#else
         return; // unused
         (void)dspPtr;
 #endif
