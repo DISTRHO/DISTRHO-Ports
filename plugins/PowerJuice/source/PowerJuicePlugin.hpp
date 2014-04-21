@@ -145,6 +145,9 @@ private:
     FloatStack input, rms, gainReduction;
     FloatRMSStack RMSStack;
     LookaheadStack lookaheadStack;
+    
+    bool newRepaint;
+    int repaintSkip;
 
     float fromDB(float gdb) {
         return (std::exp(gdb/20.f*std::log(10.f)));
@@ -196,6 +199,7 @@ public:
     //methods
     float getRMSHistory(int n);
     float getGainReductionHistory(int n);
+    bool repaintNeeded();
 };
 
 // -----------------------------------------------------------------------

@@ -213,7 +213,11 @@ void PowerJuiceUI::imageKnobValueChanged(ImageKnob* knob, float value)
 }
 
 void PowerJuiceUI::d_uiIdle() {
-    repaint();
+	dsp = (PowerJuicePlugin*)d_getPluginInstancePointer();
+	if (dsp -> repaintNeeded()) {
+		repaint();
+	} else {
+	}
 }
 
 void PowerJuiceUI::onDisplay()
@@ -259,7 +263,7 @@ void PowerJuiceUI::onDisplay()
     glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
     glLineWidth(2.0f);
     glBegin(GL_LINE_STRIP);
-    for (int i=10; i<w; i++) {
+    for (int i=2; i<w; i++) {
             float value = dsp->getRMSHistory(i);
             if (value<thresholdPosition) {
                 glColor4f(0.0f, 0.5f, 0.0f, 1.0f);

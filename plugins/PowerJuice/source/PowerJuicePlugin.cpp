@@ -177,8 +177,8 @@ void PowerJuicePlugin::d_setProgram(uint32_t index)
     mix = 1.0f;
 
     makeupFloat = fromDB(makeup);
-    attackSamples = d_getSampleRate()*(attack/100000.0f);
-    releaseSamples = d_getSampleRate()*(release/100000.0f);
+    attackSamples = d_getSampleRate()*(attack/5000.0f);
+    releaseSamples = d_getSampleRate()*(release/5000.0f);
 
 	
 
@@ -196,11 +196,14 @@ void PowerJuicePlugin::d_setProgram(uint32_t index)
     balancer = 1.0f;
     GR = 1.0f;
 
+	newRepaint = false;
+
     input.start = 0;
     rms.start = 0;
     gainReduction.start = 0;
     RMSStack.start = 0;
     lookaheadStack.start = 0;
+    repaintSkip = 0;
     std::memset(rms.data, 0, sizeof(float)*kFloatStackCount);
     std::memset(gainReduction.data, 0, sizeof(float)*kFloatStackCount);
     std::memset(RMSStack.data, 0, sizeof(float)*kFloatRMSStackCount);
@@ -218,7 +221,15 @@ float PowerJuicePlugin::getRMSHistory(int n) {
     return history.rms[n];
 }
 
+bool PowerJuicePlugin::repaintNeeded() {
+	return newRepaint;
+}
+
 float PowerJuicePlugin::getGainReductionHistory(int n) {
+	if (n == kFloatStackCount-1) {
+		newRepaint = false;
+		//printf("falsing!\n");
+	}
     return history.gainReduction[n];
 }
 
@@ -301,6 +312,7 @@ void PowerJuicePlugin::d_run(float** inputs, float** outputs, uint32_t frames)
                 lookaheadStack.start = 0;
 
         if (++averageCounter == 300) {
+		  
             //add relevant values to the shared memory
             rms.data[rms.start++] = RMSDB;
             gainReduction.data[gainReduction.start++] = GR;
@@ -322,7 +334,13 @@ void PowerJuicePlugin::d_run(float** inputs, float** outputs, uint32_t frames)
                 history.gainReduction[j] = -toIEC(-gainReduction.data[(gainReduction.start+j) % kFloatStackCount])/200*h +h +y;
 			
 		  }
-	
+			
+			repaintSkip++;
+			if (repaintSkip>5) {
+				repaintSkip = 0;
+				newRepaint = true;
+			}
+			
             averageCounter = 0;
             inputMax = 0.0f;
         }
