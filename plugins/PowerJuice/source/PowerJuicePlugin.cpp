@@ -35,7 +35,8 @@ PowerJuicePlugin::PowerJuicePlugin()
 
 PowerJuicePlugin::~PowerJuicePlugin()
 {
-
+	free(lookaheadStack.data);
+	free(RMSStack.data);
 }
 
 // -----------------------------------------------------------------------
@@ -177,8 +178,8 @@ void PowerJuicePlugin::d_setProgram(uint32_t index)
     mix = 1.0f;
 
     makeupFloat = fromDB(makeup);
-    attackSamples = d_getSampleRate()*(attack/5000.0f);
-    releaseSamples = d_getSampleRate()*(release/5000.0f);
+    attackSamples = d_getSampleRate()*(attack/1000.0f);
+    releaseSamples = d_getSampleRate()*(release/1000.0f);
 
 	
 
@@ -204,17 +205,28 @@ void PowerJuicePlugin::d_setProgram(uint32_t index)
     RMSStack.start = 0;
     lookaheadStack.start = 0;
     repaintSkip = 0;
+    
+    
+    kFloatRMSStackCount = 400.0f/44100.0f*d_getSampleRate();
+    RMSStack.data = (float*) calloc(kFloatRMSStackCount, sizeof(float));
+    
+    kFloatLookaheadStackCount = 800.0f/44100.0f*d_getSampleRate();
+    lookaheadStack.data = (float*) calloc(kFloatLookaheadStackCount, sizeof(float));
+    
+    refreshSkip= 300.0f/44100.0f*d_getSampleRate();
+    
     std::memset(rms.data, 0, sizeof(float)*kFloatStackCount);
     std::memset(gainReduction.data, 0, sizeof(float)*kFloatStackCount);
     std::memset(RMSStack.data, 0, sizeof(float)*kFloatRMSStackCount);
     std::memset(lookaheadStack.data, 0, sizeof(float)*kFloatLookaheadStackCount);
-
+    
 	for (int j=0; j < kFloatStackCount; ++j)
 		history.rms[j] = h +y;
 	for (int j=0; j < kFloatStackCount; ++j) 
 		history.gainReduction[j] = h +y;
 
     d_activate();
+    
 }
 
 float PowerJuicePlugin::getRMSHistory(int n) {
@@ -265,6 +277,7 @@ void PowerJuicePlugin::d_run(float** inputs, float** outputs, uint32_t frames)
 
         //store audio samples in an RMS buffer line
         RMSStack.data[RMSStack.start++] = in[i];
+	   
         if (RMSStack.start == kFloatRMSStackCount)
                 RMSStack.start = 0;
         //compute RMS over last kFloatRMSStackCount samples
@@ -272,6 +285,7 @@ void PowerJuicePlugin::d_run(float** inputs, float** outputs, uint32_t frames)
             data = RMSStack.data[(RMSStack.start+j) % kFloatRMSStackCount];
             sum += data * data;
         }
+	   
         //root mean SQUARE
           float RMS = sqrt(sum / kFloatRMSStackCount);
         sanitizeDenormal(RMS);
@@ -288,7 +302,7 @@ void PowerJuicePlugin::d_run(float** inputs, float** outputs, uint32_t frames)
             targetGR = difference - difference/ratio;
             if (targetGR>difference/(ratio/4.0f)) {
                 targetGR = difference - difference/(ratio*1.5f);
-                //double power!
+                //more power!
             }
 		  //
             if (GR<targetGR) {
@@ -305,13 +319,15 @@ void PowerJuicePlugin::d_run(float** inputs, float** outputs, uint32_t frames)
             //approach targetGR at releaseSamples rate, targetGR = 0.0f
             GR -= GR/releaseSamples;
         }
-
+		
         //store audio in lookahead buffer
+	   
         lookaheadStack.data[lookaheadStack.start++] = in[i];
+	   //printf("rms\n");
         if (lookaheadStack.start == kFloatLookaheadStackCount)
                 lookaheadStack.start = 0;
-
-        if (++averageCounter == 300) {
+		
+        if (++averageCounter >= refreshSkip) {
 		  
             //add relevant values to the shared memory
             rms.data[rms.start++] = RMSDB;
@@ -346,7 +362,6 @@ void PowerJuicePlugin::d_run(float** inputs, float** outputs, uint32_t frames)
         }
 
         /* compress, mix, done. */
-
         float compressedSignal = in[i]*fromDB(-GR);
         out[i] = (compressedSignal*makeupFloat*mix)+in[i]*(1-mix);
     }

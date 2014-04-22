@@ -23,25 +23,24 @@
 #include <cmath>
 
 static const int kFloatStackCount = 563;
-static const int kFloatRMSStackCount = 400;
-static const int kFloatLookaheadStackCount = 800;
 
-struct FloatStack {
+
+struct FloatStack { //history for GUI!
     int32_t start;
     float data[kFloatStackCount];
 };
 
-struct FloatRMSStack {
+struct FloatRMSStack { //rms, sr-dependent
     int32_t start;
-    float data[kFloatRMSStackCount];
+    float* data;
 };
 
-struct LookaheadStack {
+struct LookaheadStack { //lookahead buffer, sr-dependent
     int32_t start;
-    float data[kFloatLookaheadStackCount];
+    float* data;
 };
 
-struct SharedMemData {
+struct SharedMemData { //history for the GUI !
     float rms[kFloatStackCount];
     float gainReduction[kFloatStackCount];
 };
@@ -138,13 +137,17 @@ private:
     int x;  //waveform plane positions
     int y;
     int dc; //0DC line y position
+    
+    int kFloatRMSStackCount;
+	int kFloatLookaheadStackCount;
+    
+    float refreshSkip;
 
     int averageCounter;
     float inputMax;
-
     FloatStack input, rms, gainReduction;
-    FloatRMSStack RMSStack;
-    LookaheadStack lookaheadStack;
+    struct FloatRMSStack RMSStack;
+    struct LookaheadStack lookaheadStack;
     
     bool newRepaint;
     int repaintSkip;
