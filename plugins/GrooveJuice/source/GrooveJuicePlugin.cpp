@@ -39,180 +39,260 @@ GrooveJuicePlugin::GrooveJuicePlugin()
 
 void GrooveJuicePlugin::d_initParameter(uint32_t index, Parameter& parameter)
 {
-    switch (index)
-    {
-    case paramX:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE;
-        parameter.name       = "X";
-        parameter.symbol     = "x";
-        parameter.unit       = "";
-        parameter.ranges.def = 0.5f;
-        parameter.ranges.min = 0.0f;
-        parameter.ranges.max = 1.0f;
-        break;
+	switch (index)
+	{
+	    case paramX:
+		   parameter.hints      = PARAMETER_IS_AUTOMABLE;
+		   parameter.name       = "X";
+		   parameter.symbol     = "x";
+		   parameter.unit       = "";
+		   parameter.ranges.def = 0.5f;
+		   parameter.ranges.min = 0.0f;
+		   parameter.ranges.max = 1.0f;
+		   break;
 
-    case paramY:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE;
-        parameter.name       = "Y";
-        parameter.symbol     = "y";
-        parameter.unit       = "";
-        parameter.ranges.def = 0.5f;
-        parameter.ranges.min = 0.0f;
-        parameter.ranges.max = 1.0f;
-        break;
+	    case paramY:
+		   parameter.hints      = PARAMETER_IS_AUTOMABLE;
+		   parameter.name       = "Y";
+		   parameter.symbol     = "y";
+		   parameter.unit       = "";
+		   parameter.ranges.def = 0.5f;
+		   parameter.ranges.min = 0.0f;
+		   parameter.ranges.max = 1.0f;
+		   break;
 
-    case paramOrbitSpeedX:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE;
-        parameter.name       = "Orbit Speed X";
-        parameter.symbol     = "";
-        parameter.unit       = "";
-        parameter.ranges.def = 4.0f;
-        parameter.ranges.min = 1.0f;
-        parameter.ranges.max = 128.0f;
-        break;
+	    case paramOrbitSpeedX:
+		   parameter.hints      = PARAMETER_IS_AUTOMABLE;
+		   parameter.name       = "Orbit Speed X";
+		   parameter.symbol     = "";
+		   parameter.unit       = "";
+		   parameter.ranges.def = 4.0f;
+		   parameter.ranges.min = 1.0f;
+		   parameter.ranges.max = 128.0f;
+		   break;
 
-    case paramOrbitSpeedY:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE;
-        parameter.name       = "Orbit Speed Y";
-        parameter.symbol     = "";
-        parameter.unit       = "";
-        parameter.ranges.def = 4.0f;
-        parameter.ranges.min = 1.0f;
-        parameter.ranges.max = 128.0f;
-        break;
+	    case paramOrbitSpeedY:
+		   parameter.hints      = PARAMETER_IS_AUTOMABLE;
+		   parameter.name       = "Orbit Speed Y";
+		   parameter.symbol     = "";
+		   parameter.unit       = "";
+		   parameter.ranges.def = 4.0f;
+		   parameter.ranges.min = 1.0f;
+		   parameter.ranges.max = 128.0f;
+		   break;
 
-    case paramOrbitSizeX:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE;
-        parameter.name       = "Orbit Size X";
-        parameter.symbol     = "osl";
-        parameter.unit       = "";
-        parameter.ranges.def = 0.5f;
-        parameter.ranges.min = 0.0f;
-        parameter.ranges.max = 1.0f;
-        break;
+	    case paramOrbitSizeX:
+		   parameter.hints      = PARAMETER_IS_AUTOMABLE;
+		   parameter.name       = "Orbit Size X";
+		   parameter.symbol     = "osl";
+		   parameter.unit       = "";
+		   parameter.ranges.def = 0.5f;
+		   parameter.ranges.min = 0.0f;
+		   parameter.ranges.max = 1.0f;
+		   break;
 
-    case paramOrbitSizeY:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE;
-        parameter.name       = "Orbit Size Y";
-        parameter.symbol     = "osr";
-        parameter.unit       = "";
-        parameter.ranges.def = 0.5f;
-        parameter.ranges.min = 0.0f;
-        parameter.ranges.max = 1.0f;
-        break;
+	    case paramOrbitSizeY:
+		   parameter.hints      = PARAMETER_IS_AUTOMABLE;
+		   parameter.name       = "Orbit Size Y";
+		   parameter.symbol     = "osr";
+		   parameter.unit       = "";
+		   parameter.ranges.def = 0.5f;
+		   parameter.ranges.min = 0.0f;
+		   parameter.ranges.max = 1.0f;
+		   break;
 
-    case paramSubOrbitSpeed:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE;
-        parameter.name       = "SubOrbit Speed";
-        parameter.symbol     = "";
-        parameter.unit       = "";
-        parameter.ranges.def = 32.0f;
-        parameter.ranges.min = 1.0f;
-        parameter.ranges.max = 128.0f;
-        break;
+	    case paramSubOrbitSpeed:
+		   parameter.hints      = PARAMETER_IS_AUTOMABLE;
+		   parameter.name       = "SubOrbit Speed";
+		   parameter.symbol     = "";
+		   parameter.unit       = "";
+		   parameter.ranges.def = 32.0f;
+		   parameter.ranges.min = 1.0f;
+		   parameter.ranges.max = 128.0f;
+		   break;
 
-    case paramSubOrbitSize:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE;
-        parameter.name       = "SubOrbit Size";
-        parameter.symbol     = "";
-        parameter.unit       = "";
-        parameter.ranges.def = 0.5f;
-        parameter.ranges.min = 0.0f;
-        parameter.ranges.max = 1.0f;
-        break;
+	    case paramSubOrbitSize:
+		   parameter.hints      = PARAMETER_IS_AUTOMABLE;
+		   parameter.name       = "SubOrbit Size";
+		   parameter.symbol     = "";
+		   parameter.unit       = "";
+		   parameter.ranges.def = 0.5f;
+		   parameter.ranges.min = 0.0f;
+		   parameter.ranges.max = 1.0f;
+		   break;
 
-    case paramSubOrbitSmooth:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE;
-        parameter.name       = "SubOrbit Wave";
-        parameter.symbol     = "";
-        parameter.unit       = "";
-        parameter.ranges.def = 0.5f;
-        parameter.ranges.min = 0.0f;
-        parameter.ranges.max = 1.0f;
-        break;
+	    case paramSubOrbitSmooth:
+		   parameter.hints      = PARAMETER_IS_AUTOMABLE;
+		   parameter.name       = "SubOrbit Wave";
+		   parameter.symbol     = "";
+		   parameter.unit       = "";
+		   parameter.ranges.def = 0.5f;
+		   parameter.ranges.min = 0.0f;
+		   parameter.ranges.max = 1.0f;
+		   break;
 
-    case paramOrbitWaveX:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE;
-        parameter.name       = "Orbit Wave X";
-        parameter.symbol     = "";
-        parameter.unit       = "";
-        parameter.ranges.def = 3.0f;
-        parameter.ranges.min = 1.0f;
-        parameter.ranges.max = 4.0f;
-        break;
+	    case paramOrbitWaveX:
+		   parameter.hints      = PARAMETER_IS_AUTOMABLE;
+		   parameter.name       = "Orbit Wave X";
+		   parameter.symbol     = "";
+		   parameter.unit       = "";
+		   parameter.ranges.def = 3.0f;
+		   parameter.ranges.min = 1.0f;
+		   parameter.ranges.max = 4.0f;
+		   break;
 
-    case paramOrbitPhaseX:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE;
-        parameter.name       = "Orbit Phase X";
-        parameter.symbol     = "";
-        parameter.unit       = "";
-        parameter.ranges.def = 0.0f;
-        parameter.ranges.min = 0.0f;
-        parameter.ranges.max = 1.0f;
-        break;
+	    case paramOrbitPhaseX:
+		   parameter.hints      = PARAMETER_IS_AUTOMABLE;
+		   parameter.name       = "Orbit Phase X";
+		   parameter.symbol     = "";
+		   parameter.unit       = "";
+		   parameter.ranges.def = 0.0f;
+		   parameter.ranges.min = 0.0f;
+		   parameter.ranges.max = 1.0f;
+		   break;
 
-    case paramOrbitPhaseY:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE;
-        parameter.name       = "Orbit Phase Y";
-        parameter.symbol     = "";
-        parameter.unit       = "";
-        parameter.ranges.def = 0.0f;
-        parameter.ranges.min = 0.0f;
-        parameter.ranges.max = 1.0f;
-        break;
+	    case paramOrbitPhaseY:
+		   parameter.hints      = PARAMETER_IS_AUTOMABLE;
+		   parameter.name       = "Orbit Phase Y";
+		   parameter.symbol     = "";
+		   parameter.unit       = "";
+		   parameter.ranges.def = 0.0f;
+		   parameter.ranges.min = 0.0f;
+		   parameter.ranges.max = 1.0f;
+		   break;
 
-    case paramOrbitWaveY:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE;
-        parameter.name       = "Orbit Wave Y";
-        parameter.symbol     = "";
-        parameter.unit       = "";
-        parameter.ranges.def = 3.0f;
-        parameter.ranges.min = 1.0f;
-        parameter.ranges.max = 4.0f;
-        break;
+	    case paramOrbitWaveY:
+		   parameter.hints      = PARAMETER_IS_AUTOMABLE;
+		   parameter.name       = "Orbit Wave Y";
+		   parameter.symbol     = "";
+		   parameter.unit       = "";
+		   parameter.ranges.def = 3.0f;
+		   parameter.ranges.min = 1.0f;
+		   parameter.ranges.max = 4.0f;
+		   break;
 
-    case paramOrbitOutX:
-        parameter.hints      = PARAMETER_IS_OUTPUT;
-        parameter.name       = "Orbit X";
-        parameter.symbol     = "orx";
-        parameter.unit       = "";
-        parameter.ranges.def = 0.5f;
-        parameter.ranges.min = 0.0f;
-        parameter.ranges.max = 1.0f;
-        break;
+	    case paramOrbitOutX:
+		   parameter.hints      = PARAMETER_IS_OUTPUT;
+		   parameter.name       = "Orbit X";
+		   parameter.symbol     = "orx";
+		   parameter.unit       = "";
+		   parameter.ranges.def = 0.5f;
+		   parameter.ranges.min = 0.0f;
+		   parameter.ranges.max = 1.0f;
+		   break;
 
-    case paramOrbitOutY:
-        parameter.hints      = PARAMETER_IS_OUTPUT;
-        parameter.name       = "Orbit Y";
-        parameter.symbol     = "ory";
-        parameter.unit       = "";
-        parameter.ranges.def = 0.5f;
-        parameter.ranges.min = 0.0f;
-        parameter.ranges.max = 1.0f;
-        break;
+	    case paramOrbitOutY:
+		   parameter.hints      = PARAMETER_IS_OUTPUT;
+		   parameter.name       = "Orbit Y";
+		   parameter.symbol     = "ory";
+		   parameter.unit       = "";
+		   parameter.ranges.def = 0.5f;
+		   parameter.ranges.min = 0.0f;
+		   parameter.ranges.max = 1.0f;
+		   break;
 
-    case paramSubOrbitOutX:
-        parameter.hints      = PARAMETER_IS_OUTPUT;
-        parameter.name       = "SubOrbit X";
-        parameter.symbol     = "sorx";
-        parameter.unit       = "";
-        parameter.ranges.def = 0.5f;
-        parameter.ranges.min = 0.0f;
-        parameter.ranges.max = 1.0f;
-        break;
+	    case paramSubOrbitOutX:
+		   parameter.hints      = PARAMETER_IS_OUTPUT;
+		   parameter.name       = "SubOrbit X";
+		   parameter.symbol     = "sorx";
+		   parameter.unit       = "";
+		   parameter.ranges.def = 0.5f;
+		   parameter.ranges.min = 0.0f;
+		   parameter.ranges.max = 1.0f;
+		   break;
 
-    case paramSubOrbitOutY:
-        parameter.hints      = PARAMETER_IS_OUTPUT;
-        parameter.name       = "SubOrbit Y";
-        parameter.symbol     = "sory";
-        parameter.unit       = "";
-        parameter.ranges.def = 0.5f;
-        parameter.ranges.min = 0.0f;
-        parameter.ranges.max = 1.0f;
-        break;
+	    case paramSubOrbitOutY:
+		   parameter.hints      = PARAMETER_IS_OUTPUT;
+		   parameter.name       = "SubOrbit Y";
+		   parameter.symbol     = "sory";
+		   parameter.unit       = "";
+		   parameter.ranges.def = 0.5f;
+		   parameter.ranges.min = 0.0f;
+		   parameter.ranges.max = 1.0f;
+		   break;
+   
+		case paramW1Out:
+		   parameter.hints      = PARAMETER_IS_OUTPUT;
+		   parameter.name       = "";
+		   parameter.symbol     = "";
+		   parameter.unit       = "";
+		   parameter.ranges.def = 0.5f;
+		   parameter.ranges.min = 0.0f;
+		   parameter.ranges.max = 1.0f;
+		   break;
+  
+		case paramW2Out:
+		   parameter.hints      = PARAMETER_IS_OUTPUT;
+		   parameter.name       = "";
+		   parameter.symbol     = "";
+		   parameter.unit       = "";
+		   parameter.ranges.def = 0.5f;
+		   parameter.ranges.min = 0.0f;
+		   parameter.ranges.max = 1.0f;
+		   break;
+		
+		case paramMOut:
+		   parameter.hints      = PARAMETER_IS_OUTPUT;
+		   parameter.name       = "";
+		   parameter.symbol     = "";
+		   parameter.unit       = "";
+		   parameter.ranges.def = 0.5f;
+		   parameter.ranges.min = 0.0f;
+		   parameter.ranges.max = 1.0f;
+		   break;
+		  
+		case paramCOut:
+		   parameter.hints      = PARAMETER_IS_OUTPUT;
+		   parameter.name       = "";
+		   parameter.symbol     = "";
+		   parameter.unit       = "";
+		   parameter.ranges.def = 0.5f;
+		   parameter.ranges.min = 0.0f;
+		   parameter.ranges.max = 1.0f;
+		   break;
+		 
+		case paramROut:
+		   parameter.hints      = PARAMETER_IS_OUTPUT;
+		   parameter.name       = "";
+		   parameter.symbol     = "";
+		   parameter.unit       = "";
+		   parameter.ranges.def = 0.5f;
+		   parameter.ranges.min = 0.0f;
+		   parameter.ranges.max = 1.0f;
+		   break;
+		   
+		case paramSOut:
+		   parameter.hints      = PARAMETER_IS_OUTPUT;
+		   parameter.name       = "";
+		   parameter.symbol     = "";
+		   parameter.unit       = "";
+		   parameter.ranges.def = 0.5f;
+		   parameter.ranges.min = 0.0f;
+		   parameter.ranges.max = 1.0f;
+		   break;
+		   
+		case paramReOut:
+		   parameter.hints      = PARAMETER_IS_OUTPUT;
+		   parameter.name       = "";
+		   parameter.symbol     = "";
+		   parameter.unit       = "";
+		   parameter.ranges.def = 0.5f;
+		   parameter.ranges.min = 0.0f;
+		   parameter.ranges.max = 1.0f;
+		   break;
+		   
+		case paramShOut:
+		   parameter.hints      = PARAMETER_IS_OUTPUT;
+		   parameter.name       = "";
+		   parameter.symbol     = "";
+		   parameter.unit       = "";
+		   parameter.ranges.def = 0.5f;
+		   parameter.ranges.min = 0.0f;
+		   parameter.ranges.max = 1.0f;
+		   break;
     }
     
-    if (index>=17 && index<paramCount) {
+    if (index>=17 && index<17+64) {
 		//int x = (index-17)%8;
 		//int y = (x+1)/(index-17)
 		
@@ -240,43 +320,59 @@ void GrooveJuicePlugin::d_initProgramName(uint32_t index, d_string& programName)
 
 float GrooveJuicePlugin::d_getParameterValue(uint32_t index) const
 {
-	if (index<17) {
+	if (index<17 || index>=17+64) {
 	    switch (index)
 	    {
-	    case paramX:
-		   return x;
-	    case paramY:
-		   return y;
-	    case paramOrbitSizeX:
-		   return orbitSizeX;
-	    case paramOrbitSizeY:
-		   return orbitSizeY;
-	    case paramOrbitSpeedX:
-		   return orbitSpeedX;
-	    case paramOrbitSpeedY:
-		   return orbitSpeedY;
-	    case paramSubOrbitSpeed:
-		   return subOrbitSpeed;
-	    case paramSubOrbitSize:
-		   return subOrbitSize;
-	    case paramOrbitOutX:
-		   return orbitX;
-	    case paramOrbitOutY:
-		   return orbitY;
-	    case paramSubOrbitOutX:
-		   return subOrbitX;
-	    case paramSubOrbitOutY:
-		   return subOrbitY;
-	    case paramSubOrbitSmooth:
-		   return subOrbitSmooth;
-	    case paramOrbitWaveX:
-		   return orbitWaveX;
-	    case paramOrbitWaveY:
-		   return orbitWaveY;
-	    case paramOrbitPhaseX:
-		   return orbitPhaseY;
-	    case paramOrbitPhaseY:
-		   return orbitPhaseY;
+			case paramX:
+				return x;
+			case paramY:
+				return y;
+			case paramOrbitSizeX:
+				return orbitSizeX;
+			case paramOrbitSizeY:
+				return orbitSizeY;
+			case paramOrbitSpeedX:
+				return orbitSpeedX;
+			case paramOrbitSpeedY:
+				return orbitSpeedY;
+			case paramSubOrbitSpeed:
+				return subOrbitSpeed;
+			case paramSubOrbitSize:
+				return subOrbitSize;
+			case paramOrbitOutX:
+				return orbitX;
+			case paramOrbitOutY:
+				return orbitY;
+			case paramSubOrbitOutX:
+				return subOrbitX;
+			case paramSubOrbitOutY:
+				return subOrbitY;
+			case paramSubOrbitSmooth:
+				return subOrbitSmooth;
+			case paramOrbitWaveX:
+				return orbitWaveX;
+			case paramOrbitWaveY:
+				return orbitWaveY;
+			case paramOrbitPhaseX:
+				return orbitPhaseY;
+			case paramOrbitPhaseY:
+				return orbitPhaseY;
+			case paramW1Out:
+				return synthSound[0];
+			case paramW2Out:
+				return synthSound[1];
+			case paramMOut:
+				return synthSound[2];
+			case paramCOut:
+				return synthSound[3];
+			case paramROut:
+				return synthSound[4];
+			case paramSOut:
+				return synthSound[5];
+			case paramReOut:
+				return synthSound[6];
+			case paramShOut:
+				return synthSound[7];
 	    default:
 		   return 0.0f;
 	    }
@@ -342,7 +438,7 @@ void GrooveJuicePlugin::d_setParameterValue(uint32_t index, float value)
 		   break;
 	    }
     
-    } else {
+    } else  {
 		
 		int num = (index-17); //synth params begin on #17
 		int x = num%8; //synth param
@@ -435,7 +531,6 @@ void GrooveJuicePlugin::d_run(float**, float** outputs, uint32_t frames, const M
 	tX = subOrbitX;
 	tY = subOrbitY;
 	//sum values
-	float synthSound[8];
 	float c = 0.41421f; //mid segment
 	float d = c/1.41f; //side segments
 	float distances[8];

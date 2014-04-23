@@ -57,6 +57,14 @@ public:
 	   w16, w26, m6, c6, r6, s6, re6, sh6,
 	   w17, w27, m7, c7, r7, s7, re7, sh7,
 	   w18, w28, m8, c8, r8, s8, re8, sh8,
+	   paramW1Out,
+	   paramW2Out,
+	   paramMOut,
+	   paramCOut,
+	   paramROut,
+	   paramSOut,
+	   paramReOut,
+	   paramShOut,
         paramCount
     };
 
@@ -262,6 +270,7 @@ private:
 	float sA[2], sB[2], sZ[2];
 
 	float synthData[8][8]; //as per gui, [param][page]
+	float synthSound[8];
 };
 
 // -----------------------------------------------------------------------

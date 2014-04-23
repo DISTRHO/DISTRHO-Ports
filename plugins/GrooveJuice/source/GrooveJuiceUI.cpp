@@ -247,7 +247,7 @@ void GrooveJuiceUI::d_parameterChanged(uint32_t index, float value)
 {
 
 	
-	if (index<17) {
+	if (index<17 || index>=17+64) {
 	    switch (index)
 	    {
 	    case GrooveJuicePlugin::paramX:
@@ -327,6 +327,22 @@ void GrooveJuiceUI::d_parameterChanged(uint32_t index, float value)
 			  repaint();
 		   }
 		   break;
+		case GrooveJuicePlugin::paramW1Out:
+			synthSound[0] = value;
+		case GrooveJuicePlugin::paramW2Out:
+			synthSound[1] = value;
+		case GrooveJuicePlugin::paramMOut:
+			synthSound[2] = value;
+		case GrooveJuicePlugin::paramCOut:
+			synthSound[3] = value;
+		case GrooveJuicePlugin::paramROut:
+			synthSound[4] = value;
+		case GrooveJuicePlugin::paramSOut:
+			synthSound[5] = value;
+		case GrooveJuicePlugin::paramReOut:
+			synthSound[6] = value;
+		case GrooveJuicePlugin::paramShOut:
+			synthSound[7] = value;
 	    }
     } else {
 		//synth param changed
@@ -541,50 +557,67 @@ void GrooveJuiceUI::onDisplay()
     }
     */
 
-    // get x, y mapped to XY area
-    int x = fCanvasArea.getX() + paramX*fCanvasArea.getWidth() - fImgRoundlet.getWidth()/2;
-    int y = fCanvasArea.getY() + paramY*fCanvasArea.getHeight() - fImgRoundlet.getHeight()/2;
-    int nOrbitX = fCanvasArea.getX()+((orbitX)*fCanvasArea.getWidth())-15;
-    int nOrbitY = fCanvasArea.getY()+((orbitY)*fCanvasArea.getWidth())-15;
-    int nSubOrbitX = fCanvasArea.getX()+(subOrbitX*fCanvasArea.getWidth())-15;
-    int nSubOrbitY = fCanvasArea.getY()+(subOrbitY*fCanvasArea.getWidth())-14;
+	// get x, y mapped to XY area
+	int x = fCanvasArea.getX() + paramX*fCanvasArea.getWidth() - fImgRoundlet.getWidth()/2;
+	int y = fCanvasArea.getY() + paramY*fCanvasArea.getHeight() - fImgRoundlet.getHeight()/2;
+	int nOrbitX = fCanvasArea.getX()+((orbitX)*fCanvasArea.getWidth())-15;
+	int nOrbitY = fCanvasArea.getY()+((orbitY)*fCanvasArea.getWidth())-15;
+	int nSubOrbitX = fCanvasArea.getX()+(subOrbitX*fCanvasArea.getWidth())-15;
+	int nSubOrbitY = fCanvasArea.getY()+(subOrbitY*fCanvasArea.getWidth())-14;
 
-    //draw lines, just for fun
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glColor4f(0.0f, 1.0f, 0.0f, 0.05f);
-    glLineWidth(4);
-    glBegin(GL_LINES);
-        glVertex2i(x+ fImgRoundlet.getWidth()/2, y+ fImgRoundlet.getHeight()/2);
-        glVertex2i(nOrbitX+15, nOrbitY+15);
-    glEnd();
-    glBegin(GL_LINES);
-        glVertex2i(nOrbitX+15, nOrbitY+15);
-        glVertex2i(nSubOrbitX+15, nSubOrbitY+14);
-    glEnd();
+	//draw lines, just for fun
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glColor4f(0.0f, 1.0f, 0.0f, 0.05f);
+	glLineWidth(4);
+	glBegin(GL_LINES);
+	   glVertex2i(x+ fImgRoundlet.getWidth()/2, y+ fImgRoundlet.getHeight()/2);
+	   glVertex2i(nOrbitX+15, nOrbitY+15);
+	glEnd();
+	glBegin(GL_LINES);
+	   glVertex2i(nOrbitX+15, nOrbitY+15);
+	   glVertex2i(nSubOrbitX+15, nSubOrbitY+14);
+	glEnd();
 
-    
+	//draw tab highlight
 
-    
-    
-    //draw dab highlight
-    
-    tabPosX -= (tabPosX-tabTargetPosX)/3;
-    glColor4f(0.5f, 0.5f, 1.0f, 1.0f);
-    glBegin(GL_POLYGON);
+	tabPosX -= (tabPosX-tabTargetPosX)/3;
+	glColor4f(0.5f, 0.5f, 1.0f, 1.0f);
+	glBegin(GL_POLYGON);
 		glVertex2i(tabPosX, tabOY);
 		glVertex2i(tabPosX+tabW, tabOY);
 		glVertex2i(tabPosX+tabW, tabOY+tabH);
 		glVertex2i(tabPosX, tabOY+tabH);
-    glEnd();
-    
-    // reset color
-    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-    
-    // draw roundlet and orbits
-    fImgRoundlet.draw(x, y);
-    fImgOrbit.draw(nOrbitX, nOrbitY);
-    fImgSubOrbit.draw(nSubOrbitX, nSubOrbitY);
+	glEnd();
+
+	//draw real knob values
+	int kPosX = 6;
+	int kPosY = 550;
+	int kH = 112;
+	int kW = 83;
+	int kM = 94-kPosX;
+	glColor4f(1.0f, 1.0f, 1.0f, 0.1f);
+	for (int i=0; i<8; i++) {
+		glBegin(GL_POLYGON);
+			glVertex2i(kPosX+kM*i, kPosY);
+			glVertex2i(kPosX+kM*i+kW, kPosY);
+			glVertex2i(kPosX+kM*i+kW, kPosY-synthSound[i]*kH);
+			glVertex2i(kPosX+kM*i, kPosY-synthSound[i]*kH);
+		glEnd();
+
+	}
+
+
+	// reset color
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+
+	// draw roundlet and orbits
+	fImgRoundlet.draw(x, y);
+	fImgOrbit.draw(nOrbitX, nOrbitY);
+	fImgSubOrbit.draw(nSubOrbitX, nSubOrbitY);
+
+
+	
 }
 
 bool GrooveJuiceUI::onMouse(int button, bool press, int x, int y)

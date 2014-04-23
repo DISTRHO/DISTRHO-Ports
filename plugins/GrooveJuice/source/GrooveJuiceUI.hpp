@@ -134,6 +134,7 @@ private:
     Rectangle<int> fCanvasArea;
     float orbitX, orbitY, subOrbitX, subOrbitY;
     float synthData[8][8]; //as per gui, [param][page]
+    float synthSound[8];
 };
 
 // -----------------------------------------------------------------------
