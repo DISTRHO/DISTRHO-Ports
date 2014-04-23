@@ -1,13 +1,13 @@
 
 dofile("../../../scripts/make-project.lua")
 
-package = make_distrho_vst_project("VectorJuice")
+package = make_distrho_vst_project("GrooveJuice")
 
 package.files = {
   matchfiles (
-    "../source/VectorJuiceArtwork.cpp",
-    "../source/VectorJuicePlugin.cpp",
-    "../source/VectorJuiceUI.cpp",
+    "../source/GrooveJuiceArtwork.cpp",
+    "../source/GrooveJuicePlugin.cpp",
+    "../source/GrooveJuiceUI.cpp",
     "../../../libs/distrho/DistrhoPluginMain.cpp",
     "../../../libs/distrho/DistrhoUIMain.cpp"
   )

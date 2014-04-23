@@ -1,12 +1,12 @@
 
 dofile("../../../scripts/make-project.lua")
 
-package = make_distrho_lv2_ui_project("VectorJuice")
+package = make_distrho_lv2_ui_project("GrooveJuice")
 
 package.files = {
   matchfiles (
-    "../source/VectorJuiceArtwork.cpp",
-    "../source/VectorJuiceUI.cpp",
+    "../source/GrooveJuiceArtwork.cpp",
+    "../source/GrooveJuiceUI.cpp",
     "../../../libs/distrho/DistrhoUIMain.cpp"
   )
 }
