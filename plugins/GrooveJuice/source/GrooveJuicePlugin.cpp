@@ -479,8 +479,10 @@ void GrooveJuicePlugin::d_run(float**, float** outputs, uint32_t frames, const M
 	synthR.setSustain(synthSound[5]);
 	synthL.setRelease(synthSound[6]);
 	synthR.setRelease(synthSound[6]);
-	//synthL.setShape(synthSound[7]);
-	//synthR.setShape(synthSound[7]);
+	synthL.setStereo(-0.5);
+	synthR.setStereo(0.5);
+	synthL.setShape(synthSound[7]);
+	synthR.setShape(synthSound[7]);
 	
 	float cutoff = std::exp((std::log(16000)-std::log(500))*synthSound[3]+std::log(500));
 	

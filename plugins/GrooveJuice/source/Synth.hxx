@@ -28,6 +28,7 @@ public:
 		envPhase = 0;
 		aCoeff=dCoeff=rCoeff=0;
 		stereo = 0;
+		shape = 0.5;
 		
 		
 		sustain=release=0.5f;
@@ -100,7 +101,7 @@ public:
 	}
 
 	void setRelease(float nRelease) {
-		release = nRelease*sampleRate/2;
+		release = nRelease*sampleRate/4;
 	}
 	
 	void setShape(float nShape) {
@@ -160,8 +161,12 @@ public:
 			//printf("out: %f\n", (waves[0]*3));
 			//printf("out: %f\n", phaseAccum);
 			out += getBlendedPhase((phaseAccum/cycleSize)*2*M_PI, (waves[0]*3)+1);
-			out += getBlendedPhase((phaseAccum/cycleSize)*8*M_PI, (waves[0]*3)+1)*0.5f;
-			out += getBlendedPhase((phaseAccum/cycleSize)*4*M_PI, (waves[0]*3)+1)*(1-mix);
+			out += getBlendedPhase((phaseAccum/cycleSize)*4*M_PI, (waves[0]*3)+1)*(sustain/4);
+			out += getBlendedPhase((phaseAccum/cycleSize)*8*M_PI, (waves[0]*3)+1)*(sustain/4);
+			out += getBlendedPhase((phaseAccum/cycleSize)*16*M_PI, (waves[0]*3)+1)*(sustain/4)/2;
+			out += getBlendedPhase((phaseAccum/cycleSize)*6*M_PI, (waves[0]*3)+1)*shape;
+			out += getBlendedPhase((phaseAccum/cycleSize)*12*M_PI, (waves[0]*3)+1)*(1-shape)/2;
+			out += getBlendedPhase((phaseAccum/cycleSize)*3*M_PI, (waves[0]*3)+1)*(1-mix);
 			out += getBlendedPhase((phaseAccum/cycleSize)*4*M_PI, (waves[1]*3)+1);
 			out += getBlendedPhase((phaseAccum/cycleSize)*2*M_PI*(getBlendedPhase((phaseAccum/cycleSize)*M_PI, (waves[1]*3)+1)), (waves[1]*3)+1)*mix;
 			//printf("out: %f\n", waves[0]*4);
