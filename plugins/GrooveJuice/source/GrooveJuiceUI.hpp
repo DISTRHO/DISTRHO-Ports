@@ -103,38 +103,55 @@ private:
     
     ImageKnob* fKnobsSynth[8];
     int page;
-
-    //sliders
-    ImageSlider* fSliderOrbitWaveX;
-    ImageSlider* fSliderOrbitWaveY;
-    ImageSlider* fSliderOrbitPhaseX;
-    ImageSlider* fSliderOrbitPhaseY;
-
-    ImageButton* fButtonAbout;
-    ImageButton* fButtonRandomize;
-    ImageButton* fButtonsPage[8];
     
-    int tabOX = 15;
-    int tabOY = 552;
-    int tabW = 64;
-    int tabH = 5;
-    float tabPosX = tabOX;
-    float tabTargetPosX = tabPosX;
-    int tabMarginX = 103-tabOX;
-    
-    float getRandom() {
+    struct square {
+		float timer;
+		float maxTimer; 
+		int x;
+		int y;
+		int size;
+    } squares[8][8];
+
+	//sliders
+	ImageSlider* fSliderOrbitWaveX;
+	ImageSlider* fSliderOrbitWaveY;
+	ImageSlider* fSliderOrbitPhaseX;
+	ImageSlider* fSliderOrbitPhaseY;
+
+	ImageButton* fButtonAbout;
+	ImageButton* fButtonRandomize;
+	ImageButton* fButtonsPage[8];
+
+	int tabOX = 15;
+	int tabOY = 552;
+	int tabW = 64;
+	int tabH = 5;
+	float tabPosX = tabOX;
+	float tabTargetPosX = tabPosX;
+	int tabMarginX = 103-tabOX;
+
+	float getRandom() {
 		return static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 	}
 
-    // needed for XY canvas handling
-    bool fDragging;
-    bool fDragValid;
-    int  fLastX;
-    int  fLastY;
-    Rectangle<int> fCanvasArea;
-    float orbitX, orbitY, subOrbitX, subOrbitY;
-    float synthData[8][8]; //as per gui, [param][page]
-    float synthSound[8];
+	
+
+	// needed for XY canvas handling
+	bool fDragging;
+	bool fDragValid;
+	int  fLastX;
+	int  fLastY;
+	Rectangle<int> fCanvasArea;
+	float orbitX, orbitY, subOrbitX, subOrbitY;
+	float synthData[8][8]; //as per gui, [param][page]
+	float synthSound[8];
+	
+	bool isWithinSquare(float x, float y, float sX, float sY) {
+		if (x>=sX && x<sX+0.125)
+			if (y>=sY && y<sY+0.125)
+				return true;
+		return false;
+	};
 };
 
 // -----------------------------------------------------------------------

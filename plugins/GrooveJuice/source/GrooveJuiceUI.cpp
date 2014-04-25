@@ -192,15 +192,17 @@ GrooveJuiceUI::GrooveJuiceUI()
     fSliderOrbitPhaseY->setValue(0.0f);
     fSliderOrbitPhaseY->setCallback(this);
     
-    
-    oX = 25;
+    //knobs graphics
+    oX = 25; //offset
     oY = 480;
-    mX = 113-oX;
+    mX = 113-oX; //margin
     mY = 545-oY;
     oX-=9;
     oY-=9;
     
     page = 0;
+    
+    
     
     //synth Knobs
 	for (int x=0; x<8; x++) {
@@ -213,11 +215,27 @@ GrooveJuiceUI::GrooveJuiceUI()
 		fKnobsSynth[x]->setCallback(this);
 	}
 	
+	
+	//default synthData
 	for (int x=0; x<8; x++)
 		for (int y=0; y<8; y++)
 			synthData[x][y] = 0.5;
 	
 	
+	
+	//default squares
+	oX = 20;
+	oY = 47;
+	mX = 372/8;
+	for (int x=0; x<8; x++) {
+		for (int y=0; y<8; y++) {
+			squares[x][y].timer = 0;
+			squares[x][y].maxTimer = d_getSampleRate()/8000;
+			squares[x][y].x=oX+mX*x;
+			squares[x][y].y=oY+mX*y;
+			squares[x][y].size = mX;
+		}
+	}
 }
 
 GrooveJuiceUI::~GrooveJuiceUI()
@@ -329,20 +347,36 @@ void GrooveJuiceUI::d_parameterChanged(uint32_t index, float value)
 		   break;
 		case GrooveJuicePlugin::paramW1Out:
 			synthSound[0] = value;
+			repaint();
+			break;
 		case GrooveJuicePlugin::paramW2Out:
 			synthSound[1] = value;
+			repaint();
+			break;
 		case GrooveJuicePlugin::paramMOut:
 			synthSound[2] = value;
+			repaint();
+			break;
 		case GrooveJuicePlugin::paramCOut:
 			synthSound[3] = value;
+			repaint();
+			break;
 		case GrooveJuicePlugin::paramROut:
 			synthSound[4] = value;
+			repaint();
+			break;
 		case GrooveJuicePlugin::paramSOut:
 			synthSound[5] = value;
+			repaint();
+			break;
 		case GrooveJuicePlugin::paramReOut:
 			synthSound[6] = value;
+			repaint();
+			break;
 		case GrooveJuicePlugin::paramShOut:
 			synthSound[7] = value;
+			repaint();
+			break;
 	    }
     } else {
 		//synth param changed
@@ -606,6 +640,33 @@ void GrooveJuiceUI::onDisplay()
 		glEnd();
 
 	}
+
+	/*for (int x=0; x<8; x++) {
+			for (int y=0; y<8; y++) {
+				if (isWithinSquare(orbitX, orbitY, x/8.0, y/8.0)) {
+					if (squares[x][y].timer<squares[x][y].maxTimer) {
+						squares[x][y].timer++;
+						
+					}
+				} else {
+					if (squares[x][y].timer>0) {
+						squares[x][y].timer--;
+					}
+				}
+				if (squares[x][y].timer>0) {
+					//draw this square
+					glColor4f(0.0f, 1.0f, 0.0f, squares[x][y].timer/squares[x][y].maxTimer/8);
+					//printf("blend: %f\n", squares[x][y].timer/squares[x][y].maxTimer);
+					glBegin(GL_POLYGON);
+						glVertex2i(squares[x][y].x, squares[x][y].y);
+						glVertex2i(squares[x][y].x+squares[x][y].size, squares[x][y].y);
+						glVertex2i(squares[x][y].x+squares[x][y].size, squares[x][y].y+squares[x][y].size);
+						glVertex2i(squares[x][y].x, squares[x][y].y+squares[x][y].size);
+					glEnd();
+					
+				}
+			}
+	}*/
 
 
 	// reset color
