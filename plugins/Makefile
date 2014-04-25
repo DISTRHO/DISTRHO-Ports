@@ -56,6 +56,8 @@ lv2: libs
 	$(MAKE) -C VectorJuice/LV2-UI
 	$(MAKE) -C WobbleJuice/LV2
 	$(MAKE) -C WobbleJuice/LV2-UI
+	$(MAKE) -C GrooveJuice/LV2
+	$(MAKE) -C GrooveJuice/LV2-UI
 
 # -----------------------------------------
 # vst
@@ -70,6 +72,7 @@ vst: libs
 	$(MAKE) -C SegmentJuice/VST
 	$(MAKE) -C VectorJuice/VST
 	$(MAKE) -C WobbleJuice/VST
+	$(MAKE) -C GrooveJuice/VST
 
 # -----------------------------------------
 # clean
@@ -108,6 +111,8 @@ clean:
 	$(MAKE) clean -C VectorJuice/LV2-UI
 	$(MAKE) clean -C WobbleJuice/LV2
 	$(MAKE) clean -C WobbleJuice/LV2-UI
+	$(MAKE) clean -C GrooveJuice/LV2
+	$(MAKE) clean -C GrooveJuice/LV2-UI
 
 	# VST
 	$(MAKE) clean -C 3BandEQ/VST
@@ -118,6 +123,7 @@ clean:
 	$(MAKE) clean -C SegmentJuice/VST
 	$(MAKE) clean -C VectorJuice/VST
 	$(MAKE) clean -C WobbleJuice/VST
+	$(MAKE) clean -C GrooveJuice/VST
 
 	rm -rf */LADSPA/intermediate
 	rm -rf */DSSI/intermediate
