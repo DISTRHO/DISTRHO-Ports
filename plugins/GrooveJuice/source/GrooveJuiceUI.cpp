@@ -27,7 +27,7 @@ GrooveJuiceUI::GrooveJuiceUI()
     : UI(),
       fAboutWindow(this)
 {
-	
+
     // xy params
     paramX = paramY = 0.5f;
 
@@ -60,17 +60,17 @@ GrooveJuiceUI::GrooveJuiceUI()
     fButtonAbout = new ImageButton(this, aboutImageNormal, aboutImageHover, aboutImageHover);
     fButtonAbout->setPos(599, 17);
     fButtonAbout->setCallback(this);
-    
+
     Image pageImageNormal(GrooveJuiceArtwork::pageButtonNormalData, GrooveJuiceArtwork::pageButtonNormalWidth, GrooveJuiceArtwork::pageButtonNormalHeight);
     Image pageImageHover(GrooveJuiceArtwork::pageButtonHoverData, GrooveJuiceArtwork::pageButtonHoverWidth, GrooveJuiceArtwork::pageButtonHoverHeight);
-    
+
     Image randomizeImageNormal(GrooveJuiceArtwork::randomizeButtonNormalData, GrooveJuiceArtwork::randomizeButtonNormalWidth, GrooveJuiceArtwork::randomizeButtonNormalHeight);
     Image randomizeImageHover(GrooveJuiceArtwork::randomizeButtonHoverData, GrooveJuiceArtwork::randomizeButtonHoverWidth, GrooveJuiceArtwork::randomizeButtonHoverHeight);
-    
+
     fButtonRandomize = new ImageButton(this, randomizeImageNormal, randomizeImageHover, randomizeImageHover);
     fButtonRandomize -> setPos(313, 586);
     fButtonRandomize -> setCallback(this);
-    
+
     int oX = 15;
     int oY = 557;
     int mX = 103-oX;
@@ -191,7 +191,7 @@ GrooveJuiceUI::GrooveJuiceUI()
     fSliderOrbitPhaseY->setStep(1.0f);
     fSliderOrbitPhaseY->setValue(0.0f);
     fSliderOrbitPhaseY->setCallback(this);
-    
+
     //knobs graphics
     oX = 25; //offset
     oY = 480;
@@ -199,11 +199,11 @@ GrooveJuiceUI::GrooveJuiceUI()
     mY = 545-oY;
     oX-=9;
     oY-=9;
-    
+
     page = 0;
-    
-    
-    
+
+
+
     //synth Knobs
 	for (int x=0; x<8; x++) {
 		fKnobsSynth[x] = new ImageKnob(this, knob2Image);
@@ -214,15 +214,15 @@ GrooveJuiceUI::GrooveJuiceUI()
 		fKnobsSynth[x]->setRotationAngle(270);
 		fKnobsSynth[x]->setCallback(this);
 	}
-	
-	
+
+
 	//default synthData
 	for (int x=0; x<8; x++)
 		for (int y=0; y<8; y++)
 			synthData[x][y] = 0.5;
-	
-	
-	
+
+
+
 	//default squares
 	oX = 20;
 	oY = 47;
@@ -236,7 +236,7 @@ GrooveJuiceUI::GrooveJuiceUI()
 			squares[x][y].size = mX;
 		}
 	}
-	
+
 	tabOX = 15;
 	tabOY = 552;
 	tabW = 64;
@@ -272,7 +272,7 @@ GrooveJuiceUI::~GrooveJuiceUI()
 void GrooveJuiceUI::d_parameterChanged(uint32_t index, float value)
 {
 
-	
+
 	if (index<17 || index>=17+64) {
 	    switch (index)
 	    {
@@ -429,16 +429,16 @@ void GrooveJuiceUI::imageButtonClicked(ImageButton* button, int)
 			for (int x=0; x<8; x++) {
 				synthData[x][y] = getRandom();
 				d_setParameterValue(17+y*8+x, synthData[x][y]);
-				
+
 			}
 		}
-				
+
 		for (int x=0; x<8; x++) {
 			fKnobsSynth[x]->setValue(synthData[x][page]);
 		}
 
 	}
-    
+
     for (int i=0; i<8; i++) {
 		if (button == fButtonsPage[i]) {
 			page = i;
@@ -449,12 +449,12 @@ void GrooveJuiceUI::imageButtonClicked(ImageButton* button, int)
 		}
     }
 
-    
+
 }
 
 void GrooveJuiceUI::imageKnobDragStarted(ImageKnob* knob)
 {
-	
+
     if (knob == fKnobOrbitSpeedX)
         d_editParameter(GrooveJuicePlugin::paramOrbitSpeedX, true);
     else if (knob == fKnobOrbitSpeedY)
@@ -469,18 +469,18 @@ void GrooveJuiceUI::imageKnobDragStarted(ImageKnob* knob)
         d_editParameter(GrooveJuicePlugin::paramSubOrbitSpeed, true);
     else if (knob == fKnobSubOrbitSmooth)
         d_editParameter(GrooveJuicePlugin::paramSubOrbitSmooth, true);
-	   
+
 	for (int i=0; i<8; i++) {
 		if (knob== fKnobsSynth[i]) {
 			d_editParameter(i+17+(page*8), true);
-			
+
 		}
 	}
 }
 
 void GrooveJuiceUI::imageKnobDragFinished(ImageKnob* knob)
 {
-	
+
     if (knob == fKnobOrbitSpeedX)
         d_editParameter(GrooveJuicePlugin::paramOrbitSpeedX, false);
     else if (knob == fKnobOrbitSpeedY)
@@ -495,7 +495,7 @@ void GrooveJuiceUI::imageKnobDragFinished(ImageKnob* knob)
         d_editParameter(GrooveJuicePlugin::paramSubOrbitSpeed, false);
     else if (knob == fKnobSubOrbitSmooth)
         d_editParameter(GrooveJuicePlugin::paramSubOrbitSmooth, false);
-	   
+
 	for (int i=0; i<8; i++) {
 		if (knob== fKnobsSynth[i]) {
 			d_editParameter(i+17+page*8, false);
@@ -520,7 +520,7 @@ void GrooveJuiceUI::imageKnobValueChanged(ImageKnob* knob, float value)
         d_setParameterValue(GrooveJuicePlugin::paramSubOrbitSpeed, value);
     else if (knob == fKnobSubOrbitSmooth)
         d_setParameterValue(GrooveJuicePlugin::paramSubOrbitSmooth, value);
-	   
+
 	for (int i=0; i<8; i++) {
 		if (knob== fKnobsSynth[i]) {
 			synthData[i][page] = value;
@@ -654,7 +654,7 @@ void GrooveJuiceUI::onDisplay()
 				if (isWithinSquare(orbitX, orbitY, x/8.0, y/8.0)) {
 					if (squares[x][y].timer<squares[x][y].maxTimer) {
 						squares[x][y].timer++;
-						
+
 					}
 				} else {
 					if (squares[x][y].timer>0) {
@@ -671,7 +671,7 @@ void GrooveJuiceUI::onDisplay()
 						glVertex2i(squares[x][y].x+squares[x][y].size, squares[x][y].y+squares[x][y].size);
 						glVertex2i(squares[x][y].x, squares[x][y].y+squares[x][y].size);
 					glEnd();
-					
+
 				}
 			}
 	}*/
@@ -686,7 +686,7 @@ void GrooveJuiceUI::onDisplay()
 	fImgSubOrbit.draw(nSubOrbitX, nSubOrbitY);
 
 
-	
+
 }
 
 bool GrooveJuiceUI::onMouse(int button, bool press, int x, int y)
