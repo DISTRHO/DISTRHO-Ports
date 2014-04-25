@@ -122,13 +122,13 @@ private:
 	ImageButton* fButtonRandomize;
 	ImageButton* fButtonsPage[8];
 
-	int tabOX = 15;
-	int tabOY = 552;
-	int tabW = 64;
-	int tabH = 5;
-	float tabPosX = tabOX;
-	float tabTargetPosX = tabPosX;
-	int tabMarginX = 103-tabOX;
+	int tabOX;
+	int tabOY;
+	int tabW;
+	int tabH;
+	float tabPosX;
+	float tabTargetPosX;
+	int tabMarginX;
 
 	float getRandom() {
 		return static_cast <float> (rand()) / static_cast <float> (RAND_MAX);

@@ -236,6 +236,14 @@ GrooveJuiceUI::GrooveJuiceUI()
 			squares[x][y].size = mX;
 		}
 	}
+	
+	tabOX = 15;
+	tabOY = 552;
+	tabW = 64;
+	tabH = 5;
+	tabPosX = tabOX;
+	tabTargetPosX = tabPosX;
+	tabMarginX = 103-tabOX;
 }
 
 GrooveJuiceUI::~GrooveJuiceUI()
