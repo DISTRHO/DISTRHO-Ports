@@ -146,20 +146,21 @@ GrooveJuiceUI::GrooveJuiceUI()
 
     // sliders
     Image sliderImage(GrooveJuiceArtwork::sliderData, GrooveJuiceArtwork::sliderWidth, GrooveJuiceArtwork::sliderHeight);
-    Point<int> sliderPosStart(410+48, 284);
-    Point<int> sliderPosEnd(410, 284);
+    Point<int> sliderPosStart(410, 284);
+    Point<int> sliderPosEnd(410+48, 284);
 
     // slider OrbitWaveX
     fSliderOrbitWaveX = new ImageSlider(this, sliderImage);
     fSliderOrbitWaveX->setStartPos(sliderPosStart);
     fSliderOrbitWaveX->setEndPos(sliderPosEnd);
     fSliderOrbitWaveX->setRange(1.0f, 4.0f);
+    fSliderOrbitWaveX->setStep(1.0f);
     fSliderOrbitWaveX->setValue(3.0f);
     fSliderOrbitWaveX->setCallback(this);
 
     // slider OrbitWaveY
-    sliderPosStart.setX(503+48);
-    sliderPosEnd.setX(503);
+    sliderPosStart.setX(503);
+    sliderPosEnd.setX(503+48);
     fSliderOrbitWaveY = new ImageSlider(this, sliderImage);
     fSliderOrbitWaveY->setStartPos(sliderPosStart);
     fSliderOrbitWaveY->setEndPos(sliderPosEnd);
@@ -169,26 +170,26 @@ GrooveJuiceUI::GrooveJuiceUI()
     fSliderOrbitWaveY->setCallback(this);
 
     // slider OrbitPhaseX
-    sliderPosStart.setX(410+48);
+    sliderPosStart.setX(410);
     sliderPosStart.setY(345);
-    sliderPosEnd.setX(410);
+    sliderPosEnd.setX(410+48);
     sliderPosEnd.setY(345);
     fSliderOrbitPhaseX = new ImageSlider(this, sliderImage);
     fSliderOrbitPhaseX->setStartPos(sliderPosStart);
     fSliderOrbitPhaseX->setEndPos(sliderPosEnd);
     fSliderOrbitPhaseX->setRange(0.0f, 1.0f);
-    fSliderOrbitPhaseX->setStep(1.0f);
+    //fSliderOrbitPhaseX->setStep(1.0f); // FIXME?
     fSliderOrbitPhaseX->setValue(0.0f);
     fSliderOrbitPhaseX->setCallback(this);
 
     // slider OrbitPhaseY
-    sliderPosStart.setX(503+48);
-    sliderPosEnd.setX(503);
+    sliderPosStart.setX(503);
+    sliderPosEnd.setX(503+48);
     fSliderOrbitPhaseY = new ImageSlider(this, sliderImage);
     fSliderOrbitPhaseY->setStartPos(sliderPosStart);
     fSliderOrbitPhaseY->setEndPos(sliderPosEnd);
     fSliderOrbitPhaseY->setRange(0.0f, 1.0f);
-    fSliderOrbitPhaseY->setStep(1.0f);
+    //fSliderOrbitPhaseY->setStep(1.0f); // FIXME?
     fSliderOrbitPhaseY->setValue(0.0f);
     fSliderOrbitPhaseY->setCallback(this);
 
