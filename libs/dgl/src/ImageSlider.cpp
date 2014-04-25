@@ -150,8 +150,6 @@ void ImageSlider::setValue(float value, bool sendCallback)
     if (fStep == 0.0f)
         fValueTmp = value;
 
-    d_stdout("SetValue %f", value);
-
     repaint();
 
     if (sendCallback && fCallback != nullptr)
@@ -165,7 +163,7 @@ void ImageSlider::setCallback(Callback* callback)
 
 void ImageSlider::onDisplay()
 {
-#if 1 // DEBUG, paints slider area
+#if 0 // DEBUG, paints slider area
     glColor3f(0.4f, 0.5f, 0.1f);
     glRecti(fSliderArea.getX(), fSliderArea.getY(), fSliderArea.getX()+fSliderArea.getWidth(), fSliderArea.getY()+fSliderArea.getHeight());
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
