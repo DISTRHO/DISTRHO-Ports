@@ -68,8 +68,10 @@ public:
     }
 
 protected:
-    App fApp;
+    App    fApp;
     Window fWindow;
+
+    DISTRHO_LEAK_DETECTOR(StandaloneWindow)
 };
 
 // -----------------------------------------------------------------------
