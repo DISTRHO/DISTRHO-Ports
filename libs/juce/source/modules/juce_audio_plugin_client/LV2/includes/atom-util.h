@@ -80,10 +80,10 @@ lv2_atom_sequence_begin(const LV2_Atom_Sequence_Body* body)
 }
 
 /** Get an iterator pointing to the end of a Sequence body. */
-static inline const LV2_Atom_Event*
-lv2_atom_sequence_end(const LV2_Atom_Sequence_Body* body, uint32_t size)
+static inline LV2_Atom_Event*
+lv2_atom_sequence_end(LV2_Atom_Sequence_Body* body, uint32_t size)
 {
-	return (const LV2_Atom_Event*)((const uint8_t*)body + lv2_atom_pad_size(size));
+	return (LV2_Atom_Event*)((uint8_t*)body + lv2_atom_pad_size(size));
 }
 
 /** Return true iff @p i has reached the end of @p body. */
@@ -126,6 +126,52 @@ lv2_atom_sequence_next(const LV2_Atom_Event* i)
 	for (const LV2_Atom_Event* (iter) = lv2_atom_sequence_begin(body); \
 	     !lv2_atom_sequence_is_end(body, size, (iter)); \
 	     (iter) = lv2_atom_sequence_next(iter))
+
+/**
+   @}
+   @name Sequence Utilities
+   @{
+*/
+
+/**
+   Clear all events from @p sequence.
+
+   This simply resets the size field, the other fields are left untouched.
+*/
+static inline void
+lv2_atom_sequence_clear(LV2_Atom_Sequence* seq)
+{
+	seq->atom.size = sizeof(LV2_Atom_Sequence_Body);
+}
+
+/**
+   Append an event at the end of @p sequence.
+
+   @param seq Sequence to append to.
+   @param capacity Total capacity of the sequence atom
+   (e.g. as set by the host for sequence output ports).
+   @param event Event to write.
+
+   @return A pointer to the newly written event in @p seq,
+   or NULL on failure (insufficient space).
+*/
+static inline LV2_Atom_Event*
+lv2_atom_sequence_append_event(LV2_Atom_Sequence*    seq,
+                               uint32_t              capacity,
+                               const LV2_Atom_Event* event)
+{
+	const uint32_t total_size = (uint32_t)sizeof(*event) + event->body.size;
+	if (capacity - seq->atom.size < total_size) {
+		return NULL;
+	}
+
+	LV2_Atom_Event* e = lv2_atom_sequence_end(&seq->body, seq->atom.size);
+	memcpy(e, event, total_size);
+
+	seq->atom.size += lv2_atom_pad_size(total_size);
+
+	return e;
+}
 
 /**
    @}
