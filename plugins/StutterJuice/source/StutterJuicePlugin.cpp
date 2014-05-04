@@ -106,7 +106,7 @@ void StutterJuicePlugin::d_setProgram(uint32_t index)
 		for (int param=0; param<3; param++) {
 			params[module][param] = 0.5;
 		}
-		modules[module] = new CRepeat();
+		modules[module] = new CSequence();
 		modules[module]->setSampleRate(d_getSampleRate());
 		modules[module]->initBuffers();
 	}

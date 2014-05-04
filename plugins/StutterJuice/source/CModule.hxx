@@ -1,15 +1,141 @@
 #ifndef CMODULE_HXX_INCLUDED
 #define CMODULE_HXX_INCLUDED
 
+class LPF
+{
+	private:
+		float r; // reso - 0.1 - 1.4
+		float f; // freq in Hz
+		float a1, a2, a3, b1, b2;
+		float in, in1, in2;
+		float out, out1, out2;
+		float c;
+		float sampleRate;
+		
+		void compute() {
+			c = 1.0 / tan(M_PI * f / sampleRate);
+			a1 = 1.0 / (1.0 + r*c + c*c);
+			a2 = 2 * a1;
+			a3 = a1;
+			b1 = 2.0 * (1.0 - c*c) * a1;
+			b2 = (1.0 - r*c + c*c) * a1;
+		}
+	
+	public:
+	
+		LPF() {
+			r = 0.3f;
+			f = 0.0f;
+			a1=a2=a3=b1=b2=0.0f;
+			in=in1=in2=out=out1=out2=0.0f;
+		}
+	
+		void setFreq(float nFreq) {
+			f = nFreq;
+			if (f==0) {
+				f=20;
+			}
+		}
+		
+		void setReso(float nReso) {
+			r = nReso;
+			if (r==0) {
+				r = 0.1f;
+			}
+		}
+		
+		void setSampleRate(float nSampleRate) {
+			sampleRate = nSampleRate;
+		}
+		
+	
+		float process(float sample) {
+			compute();
+			in = sample;
+			out = a1 * in + a2 * in1 + a3 * in2 - b1*out1 - b2*out2;
+			in2=in1;
+			in1=in;
+			out2=out1;
+			out1 = out;
+			
+			return out;
+		}
+
+
+};
+
+class HPF
+{
+	private:
+		float r; // reso - 0.1 - 1.4
+		float f; // freq in Hz
+		float a1, a2, a3, b1, b2;
+		float in, in1, in2;
+		float out, out1, out2;
+		float c;
+		float sampleRate;
+		
+		void compute() {
+			c = tan(M_PI * f / sampleRate);
+			a1 = 1.0 / (1.0 + r*c + c*c);
+			a2 = -2*a1;
+			a3 = a1;
+			b1 = 2.0 * (c*c - 1.0) * a1;
+			b2 = (1.0 - r*c + c*c) * a1;
+		}
+	
+	public:
+	
+		HPF() {
+			r = 0.3f;
+			f = 0.0f;
+			a1=a2=a3=b1=b2=0.0f;
+			in=in1=in2=out=out1=out2=0.0f;
+		}
+	
+		void setFreq(float nFreq) {
+			f = nFreq;
+			if (f==0) {
+				f=20;
+			}
+		}
+		
+		void setReso(float nReso) {
+			r = nReso;
+			if (r==0) {
+				r = 0.1f;
+			}
+		}
+		
+		void setSampleRate(float nSampleRate) {
+			sampleRate = nSampleRate;
+		}
+		
+	
+		float process(float sample) {
+			compute();
+			in = sample;
+			out = a1 * in + a2 * in1 + a3 * in2 - b1*out1 - b2*out2;
+			in2=in1;
+			in1=in;
+			out2=out1;
+			out1 = out;
+			
+			return out;
+		}
+
+
+};
+
 class CModule
 {
 
 public:
 	CModule() {
 		sampleRate = 0;
-		params[0] = 0.0f;
-		params[1] = 0.0f;
-		params[2] = 0.0f;
+		params[0] = 0.5f;
+		params[1] = 0.5f;
+		params[2] = 0.5f;
 		active = true;
 		sinePos = 0;
 	}
@@ -21,6 +147,7 @@ public:
 	virtual void process(float &audioL, float &audioR) {}
 	
 	virtual void initBuffers() {}
+	
 	void setSampleRate(int nSR) {
 		sampleRate = nSR;
 	}
@@ -209,12 +336,12 @@ class CRepeat: public CModule
 		//flip record and play buffers
 		void flip() {
 			repeats++;
-			if (repeats>3) {
+			if (repeats==(round(params[1]*6)+1)) {
 				if (flipState==0) flipState = 1; else flipState = 0;
 			}
 			bufferL[getPlayFlip()].start = (bufferL[getPlayFlip()].start-lag) % bufferStackCount;
 			bufferR[getPlayFlip()].start = (bufferR[getPlayFlip()].start-lag) % bufferStackCount;
-			if (repeats>4) {
+			if (repeats==(round(params[1]*6)+1)) {
 				lag = 0;
 				repeats = 0;
 			}
@@ -226,7 +353,6 @@ class CRepeat: public CModule
 		}
 		
 		int repeats;
-		uint32_t playStart;
 		uint32_t lag;
 
 	public:
@@ -242,8 +368,9 @@ class CRepeat: public CModule
 			if (++bufferR[flipState].start>bufferStackCount) {
 				bufferR[flipState].start = 0;
 			}
-			if (repeats == 0)
+			if (repeats == 0) {
 				lag++;
+			}
 			
 			
 			//play the buffer
@@ -280,7 +407,6 @@ class CRepeat: public CModule
 		void initBuffers() {
 			repeats = 0;
 			flipState = 0;
-			playStart = 0;
 			lag = 0;
 			//set up a 10 second buffer
 			bufferStackCount = sampleRate*10;
@@ -296,6 +422,72 @@ class CRepeat: public CModule
 				bufferR[i].start = 0;
 			}
 		}	
+
+};
+
+class CSequence: public CModule
+{
+	private:
+	
+		LPF lpf[2];
+		HPF hpf[2];
+		
+		float sequence[9][8] = {
+				{200.0f, 400.0f, 600.0f, 800.0f, 200.0f, 400.0f, 600.0f, 800.0f}, //1
+				{800.0f, 600.0f, 400.0f, 200.0f, 800.0f, 600.0f, 400.0f, 200.0f}, //2
+				{800.0f, 600.0f, 400.0f, 200.0f, 300.0f, 400.0f, 600.0f, 800.0f}, //3
+				{200.0f, 800.0f, 200.0f, 600.0f, 200.0f, 400.0f, 200.0f, 300.0f}, //4
+				{200.0f, 800.0f, 200.0f, 800.0f, 200.0f, 400.0f, 600.0f, 800.0f}, //5
+				{800.0f, 700.0f, 600.0f, 500.0f, 400.0f, 300.0f, 200.0f, 100.0f}, //6
+				{100.0f, 200.0f, 300.0f, 400.0f, 500.0f, 600.0f, 600.0f, 800.0f}, //7
+				{200.0f, 800.0f, 200.0f, 800.0f, 200.0f, 800.0f, 300.0f, 500.0f}, //8
+				{800.0f, 300.0f, 200.0f, 800.0f, 300.0f, 200.0f, 400.0f, 600.0f}, //9
+		};
+		int sequenceHead;
+
+
+	public:
+		void process(float &audioL, float &audioR) {
+			if (active) {
+			
+				float peakFreq = sequence[(int) round(params[1]*8)][sequenceHead];
+				
+				lpf[0].setFreq(peakFreq);
+				lpf[1].setFreq(peakFreq);
+				
+				hpf[0].setFreq(peakFreq);
+				hpf[1].setFreq(peakFreq);
+				
+				audioL = lpf[0].process(audioL);
+				audioR = lpf[1].process(audioR);
+				audioL = hpf[0].process(audioL);
+				audioR = hpf[1].process(audioR);
+				
+				
+			}
+		}
+		
+		//custom method, move sequenceHead when needed
+		void setSinePos(float nSinePos) {
+			if (sinePos > nSinePos) {
+				sequenceHead++;
+				if (sequenceHead>7) {
+					sequenceHead = 0;
+				}
+				
+			}
+			sinePos = nSinePos;
+		}
+		
+		void initBuffers() {
+			sequenceHead = 0;	
+			for (int i=0; i<2; i++) {
+				lpf[i].setSampleRate(sampleRate);
+				lpf[i].setReso(0.5);
+				hpf[i].setSampleRate(sampleRate);
+				hpf[i].setReso(0.5);
+			}
+		}
 
 };
 #endif // CMODULE_HXX_INCLUDED
