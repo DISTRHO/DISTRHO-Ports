@@ -34,11 +34,63 @@ public:
 		p1 = 0, p2, p3, p4, p5, p6, p7, p8, p9,
 		p11, p12, p13, p14, p15, p16, p17, p18,
 		p19, p20, p21, p22, p23, p24, p25, p26,
+		o1, o2, o3, o4, o5, o6, o7, o8, o9,
 		paramCount
 	};
+	
+	
+	void prepareOutputParams() {
+		for (int i=0; i<9; i++) {
+			outputParams[i] = modules[i]->getOutputParam();
+		}
+	}
+	
+	void rollLFOs() {
+		float bar, tick, tickOffset, sinePos, percentage;
+		
+		for (int i=0; i<1; i++) {
+			sinePos = modules[i]->getSinePos();
+			/* sample count for one bar */
+			const TimePos& time = d_getTimePos();
+			bar = ((120.0/(time.bbt.valid ? time.bbt.beatsPerMinute : 120.0))*(d_getSampleRate())); //ONE, two, three, four
+			tick = bar/(std::round(params[i][0]*16+2)); //size of one target wob
+			//printf("%d \n", time.bbt.beatsPerMinute);
+			if (time.bbt.valid) printf("hell yeah!\n");
+			if (time.playing)
+			{
+				/* if rolling then sync to timepos */
+				tickOffset = time.frame-std::floor(time.frame/tick)*tick; //how much after last tick
 
-    StutterJuicePlugin();
-    ~StutterJuicePlugin() override;
+				if (tickOffset!=0) {
+					//TODO: why do we need this??
+					percentage = tickOffset/tick;
+				} else {
+					percentage = 0;
+				}
+				sinePos = (M_PI*2)*percentage;
+
+				if (sinePos>2*M_PI) {
+					//TODO: can this ever happen??
+				  sinePos = 0;
+				}
+			}
+			else
+			{
+				/* else just keep on wobblin' */
+				sinePos += (2*M_PI)/(tick); //wtf, but works
+				if (sinePos>2*M_PI) {
+					sinePos = 0;
+				}
+			}
+			modules[i]->setSinePos(sinePos);
+			//printf("sinepos: %f\n", sinePos);
+		}
+	
+	}
+	
+
+	StutterJuicePlugin();
+	//~StutterJuicePlugin() override;
 
 protected:
     // -------------------------------------------------------------------
@@ -66,7 +118,7 @@ protected:
 
     long d_getUniqueId() const noexcept override
     {
-        return d_cconst('T', 'r', 'g', 'J');
+        return d_cconst('S', 't', 't', 'J');
     }
 
     // -------------------------------------------------------------------
@@ -95,47 +147,11 @@ private:
 
 	float params[9][3]; // left-> right, top->bottom
 	bool moduleActive[9];
+	float outputParams[9];
+	
+	
 	
 	CModule* modules[9];
-	
-	void rollLFOs() {
-		float bar, tick, tickOffset, sinePos, percentage;
-		const TimePos& time = d_getTimePos();
-		for (int i=0; i<9; i++) {
-			sinePos = modules[i]->getSinePos();
-			/* sample count for one bar */
-			bar = ((120.0/(time.bbt.valid ? time.bbt.beatsPerMinute : 120.0))*(d_getSampleRate())); //ONE, two, three, four
-			tick = bar/(std::round(params[i][0])); //size of one target wob
-			if (time.playing)
-			{
-				/* if rolling then sync to timepos */
-				tickOffset = time.frame-std::floor(time.frame/tick)*tick; //how much after last tick
-
-				if (tickOffset!=0) {
-					//TODO: why do we need this??
-					percentage = tickOffset/tick;
-				} else {
-					percentage = 0;
-				}
-				sinePos = (M_PI*2)*percentage;
-
-				if (sinePos>2*M_PI) {
-					//TODO: can this ever happen??
-				  sinePos = 0;
-				}
-			}
-			else
-			{
-				/* else just keep on wobblin' */
-				sinePos += (M_PI)/(tick/2000); //wtf, but works
-				if (sinePos>2*M_PI) {
-					sinePos = 0;
-				}
-			}
-			modules[i]->setSinePos(sinePos);
-		}
-	
-	}
 	
 };
 

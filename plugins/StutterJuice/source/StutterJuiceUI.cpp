@@ -29,29 +29,31 @@ StutterJuiceUI::StutterJuiceUI()
 {
 
 
-    // background
-    fImgBackground = Image(StutterJuiceArtwork::backgroundData, StutterJuiceArtwork::backgroundWidth, StutterJuiceArtwork::backgroundHeight, GL_BGR);
+	// background
+	fImgBackground = Image(StutterJuiceArtwork::backgroundData, StutterJuiceArtwork::backgroundWidth, StutterJuiceArtwork::backgroundHeight, GL_BGR);
 
-    // about
-    Image imageAbout(StutterJuiceArtwork::aboutData, StutterJuiceArtwork::aboutWidth, StutterJuiceArtwork::aboutHeight, GL_BGRA);
-    fAboutWindow.setImage(imageAbout);
-
-    // about button
-    Image aboutImageNormal(StutterJuiceArtwork::aboutButtonNormalData, StutterJuiceArtwork::aboutButtonNormalWidth, StutterJuiceArtwork::aboutButtonNormalHeight);
-    Image aboutImageHover(StutterJuiceArtwork::aboutButtonHoverData, StutterJuiceArtwork::aboutButtonHoverWidth, StutterJuiceArtwork::aboutButtonHoverHeight);
-    fButtonAbout = new ImageButton(this, aboutImageNormal, aboutImageHover, aboutImageHover);
-    fButtonAbout->setPos(358, 17);
-    fButtonAbout->setCallback(this);
+	// overlay
+	fImgOverlay = Image(StutterJuiceArtwork::overlayData, StutterJuiceArtwork::overlayWidth, StutterJuiceArtwork::overlayHeight, GL_BGRA);
 
 
-	//sliders
+	// about
+	Image imageAbout(StutterJuiceArtwork::aboutData, StutterJuiceArtwork::aboutWidth, StutterJuiceArtwork::aboutHeight, GL_BGRA);
+	fAboutWindow.setImage(imageAbout);
+
+	// about button
+	Image aboutImageNormal(StutterJuiceArtwork::aboutButtonNormalData, StutterJuiceArtwork::aboutButtonNormalWidth, StutterJuiceArtwork::aboutButtonNormalHeight);
+	Image aboutImageHover(StutterJuiceArtwork::aboutButtonHoverData, StutterJuiceArtwork::aboutButtonHoverWidth, StutterJuiceArtwork::aboutButtonHoverHeight);
+	fButtonAbout = new ImageButton(this, aboutImageNormal, aboutImageHover, aboutImageHover);
+	fButtonAbout->setPos(358, 17);
+	fButtonAbout->setCallback(this);
+
+
 	// sliders
-    Image sliderImage(StutterJuiceArtwork::sliderData, StutterJuiceArtwork::sliderWidth, StutterJuiceArtwork::sliderHeight);
-    Point<int> sliderPosStart(293, 74);
-    Point<int> sliderPosEnd(293+11, 74);
+	Image sliderImage(StutterJuiceArtwork::sliderData, StutterJuiceArtwork::sliderWidth, StutterJuiceArtwork::sliderHeight);
+	Point<int> sliderPosStart(293, 74);
+	Point<int> sliderPosEnd(293+11, 74);
 
-    // slider Rev
-   
+  
 
 	int oX = 130;
 	int oY = 93;
@@ -64,7 +66,6 @@ StutterJuiceUI::StutterJuiceUI()
 		for (int param=0; param<3; param++) {
 			sliderPosStart.setX(oX+(module%3)*mX);
 			sliderPosStart.setY(oY+(param*mY)  +  (int) (floor(module/3)*mMY));
-			printf("ypos: %i\n",  (int) floor(module/3)*mMY+oY);
 			sliderPosEnd.setX(sliderPosStart.getX() + w);
 			sliderPosEnd.setY(sliderPosStart.getY());
 			
@@ -73,11 +74,13 @@ StutterJuiceUI::StutterJuiceUI()
 			fSliders[module][param]->setEndPos(sliderPosEnd);
 			fSliders[module][param]->setRange(0.0f, 1.0f);
 			fSliders[module][param]->setValue(0.0f);
+			fSliders[module][param]->setStep(0.125f);
 			fSliders[module][param]->setCallback(this);
 			
 		}
+		
+		outputParams[module] = 0;
 	}
-	 
 
 }
 
@@ -91,6 +94,14 @@ StutterJuiceUI::~StutterJuiceUI()
 
 void StutterJuiceUI::d_parameterChanged(uint32_t index, float value)
 {
+	if (index<26) {
+		int module = index/3;
+		int param = index%3;
+		fSliders[module][param]->setValue(value);
+	} else {
+		outputParams[index-26] = value;
+		repaint();
+	}
 }
 
 void StutterJuiceUI::d_programChanged(uint32_t index)
@@ -147,6 +158,8 @@ void StutterJuiceUI::imageSliderValueChanged(ImageSlider* slider, float value)
 void StutterJuiceUI::onDisplay()
 {
     fImgBackground.draw();
+    drawLFOs();
+    fImgOverlay.draw();
     
 }
 

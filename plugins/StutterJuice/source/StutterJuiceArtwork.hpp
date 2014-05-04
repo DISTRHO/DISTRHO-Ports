@@ -30,6 +30,11 @@ namespace StutterJuiceArtwork
     const unsigned int knobWidth    = 51;
     const unsigned int knobHeight   = 51;
 
+    extern const char* overlayData;
+    const unsigned int overlayDataSize = 1244576;
+    const unsigned int overlayWidth    = 712;
+    const unsigned int overlayHeight   = 437;
+
     extern const char* sliderData;
     const unsigned int sliderDataSize = 2600;
     const unsigned int sliderWidth    = 26;

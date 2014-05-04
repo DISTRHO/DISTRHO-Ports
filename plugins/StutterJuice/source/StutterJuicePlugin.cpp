@@ -36,10 +36,6 @@ StutterJuicePlugin::StutterJuicePlugin()
     d_deactivate();
 }
 
-StutterJuicePlugin::~StutterJuicePlugin()
-{
-	
-}
 
 // -----------------------------------------------------------------------
 // Init
@@ -47,16 +43,23 @@ StutterJuicePlugin::~StutterJuicePlugin()
 void StutterJuicePlugin::d_initParameter(uint32_t index, Parameter& parameter)
 {
 
-	parameter.hints      = PARAMETER_IS_AUTOMABLE;
-	parameter.name       = "";
-	parameter.symbol     = "";
-	parameter.unit       = "";
-	parameter.ranges.def = 0.0f;
-	parameter.ranges.min = 0.0f;
-	parameter.ranges.max = 1.0f;
-	
-	
-	
+	if (index<26) {
+		parameter.hints      = PARAMETER_IS_AUTOMABLE;
+		parameter.name       = "";
+		parameter.symbol     = "";
+		parameter.unit       = "";
+		parameter.ranges.def = 0.0f;
+		parameter.ranges.min = 0.0f;
+		parameter.ranges.max = 1.0f;
+	} else {
+		parameter.hints      = PARAMETER_IS_OUTPUT;
+		parameter.name       = "";
+		parameter.symbol     = "";
+		parameter.unit       = "";
+		parameter.ranges.def = 0.0f;
+		parameter.ranges.min = 0.0f;
+		parameter.ranges.max = 1.0f;
+	}
 }
 
 void StutterJuicePlugin::d_initProgramName(uint32_t index, d_string& programName)
@@ -72,9 +75,13 @@ void StutterJuicePlugin::d_initProgramName(uint32_t index, d_string& programName
 
 float StutterJuicePlugin::d_getParameterValue(uint32_t index) const
 {
-	int module = index/3;
-	int param = index%3;
-	return params[module][param];
+	if (index<26) {
+		int module = index/3;
+		int param = index%3;
+		return params[module][param];
+	} else {
+		return outputParams[index-26];
+	}
 }
 
 void StutterJuicePlugin::d_setParameterValue(uint32_t index, float value)
@@ -83,6 +90,9 @@ void StutterJuicePlugin::d_setParameterValue(uint32_t index, float value)
 	int param = index%3;
 	params[module][param] = value;
 	modules[module]->setParam(value, param);
+	if (param ==2) {
+		modules[module]->resetSinePos();
+	}
 }
 
 void StutterJuicePlugin::d_setProgram(uint32_t index)
@@ -96,10 +106,12 @@ void StutterJuicePlugin::d_setProgram(uint32_t index)
 		for (int param=0; param<3; param++) {
 			params[module][param] = 0.5;
 		}
+		modules[module] = new CRepeat();
+		modules[module]->setSampleRate(d_getSampleRate());
+		modules[module]->initBuffers();
 	}
 	
-	modules[0] = new CGate();
-	modules[0]->setSampleRate(d_getSampleRate());
+	d_activate();
 
 }
 
@@ -112,22 +124,25 @@ void StutterJuicePlugin::d_activate()
 
 void StutterJuicePlugin::d_deactivate()
 {
-}
+}			
 
 void StutterJuicePlugin::d_run(float** inputs, float** outputs, uint32_t frames, const MidiEvent* midiEvents, uint32_t midiEventCount)
 {
 
 	for (uint32_t i; i<frames; i++) {	
 		
-		float* audio;
-		audio[0] = inputs[0][i];
-		audio[1] = inputs[1][i];
 		
-		//modules[0]->process(audio);
-		modules[0]->process(9.0f);
+		rollLFOs();
+		prepareOutputParams();
 		
-		*outputs[0] = audio[0];
-		*outputs[1] = audio[1];
+		float audioL = inputs[0][i];
+		float audioR = inputs[1][i];
+		
+		modules[0]->process(audioL, audioR);
+		
+		
+		outputs[0][i] = audioL;
+		outputs[1][i] = audioR;
 		
 	}
 
