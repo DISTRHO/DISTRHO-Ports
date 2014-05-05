@@ -95,18 +95,20 @@ private:
 		int wY = 26;
 		int mX = 228;
 		int mY = 116;
+		
 		// set color
 		glColor4f(0.0f, 1.0f, 0.0f, 0.2f);
 		for (int y=0; y<3; y++) {
 			for (int x=0; x<3; x++) {
 				float width = outputParams[x+y*3]*wX;
-				//printf("param: %i, value: %f\n", x+y*3, width);
-				glBegin(GL_POLYGON);
-					glVertex2i(oX+x*mX, oY+y*mY);
-					glVertex2i(oX+x*mX, oY+y*mY+wY);
-					glVertex2i(oX+x*mX+width, oY+y*mY+wY);
-					glVertex2i(oX+x*mX+width, oY+y*mY);
-				glEnd();
+				if (width!=0) {
+					glBegin(GL_POLYGON);
+						glVertex2i(oX+x*mX, oY+y*mY);
+						glVertex2i(oX+x*mX, oY+y*mY+wY);
+						glVertex2i(oX+x*mX+width, oY+y*mY+wY);
+						glVertex2i(oX+x*mX+width, oY+y*mY);
+					glEnd();
+				}// else {printf("hello!\n");}
 			}
 		}
 		

@@ -40,22 +40,27 @@ public:
 	
 	
 	void prepareOutputParams() {
-		for (int i=0; i<9; i++) {
-			outputParams[i] = modules[i]->getOutputParam();
+		
+		for (int i=0; i<4; i++) {
+			if (modules[i]->isActive()) {
+				outputParams[i] = modules[i]->getOutputParam();
+			} else {
+				outputParams[i] = 0;
+			}
 		}
 	}
 	
 	void rollLFOs() {
+		
 		float bar, tick, tickOffset, sinePos, percentage;
 		
-		for (int i=0; i<1; i++) {
+		for (int i=0; i<4; i++) {
 			sinePos = modules[i]->getSinePos();
 			/* sample count for one bar */
 			const TimePos& time = d_getTimePos();
 			bar = ((120.0/(time.bbt.valid ? time.bbt.beatsPerMinute : 120.0))*(d_getSampleRate())); //ONE, two, three, four
 			tick = bar/(std::round(params[i][0]*16+2)); //size of one target wob
-			//printf("%d \n", time.bbt.beatsPerMinute);
-			if (time.bbt.valid) printf("hell yeah!\n");
+			//if (time.bbt.valid) printf("hell yeah!\n");
 			if (time.playing)
 			{
 				/* if rolling then sync to timepos */

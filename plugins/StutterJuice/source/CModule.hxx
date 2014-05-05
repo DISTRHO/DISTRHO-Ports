@@ -138,8 +138,9 @@ public:
 		params[0] = 0.5f;
 		params[1] = 0.5f;
 		params[2] = 0.5f;
-		active = true;
+		active = false;
 		sinePos = 0;
+		
 	}
 	
 	virtual void setParam(float value, int index) {
@@ -154,12 +155,24 @@ public:
 		sampleRate = nSR;
 	}
 	
+	void activate() {
+		active = true;
+	}
+	
+	void deactivate() {
+		active = false;
+	}
+	
 	virtual void setSinePos(float nSinePos) {
 		sinePos = nSinePos;
 	}
 	
 	float getSinePos() {
 		return sinePos;
+	}
+	
+	float isActive() {
+		return active;
 	}
 	
 	void resetSinePos() {
@@ -218,6 +231,7 @@ protected:
 	}
 	
 	float sinePos;
+	float tAudioL, tAudioR;
 };
 
 
@@ -226,10 +240,14 @@ class CGate: public CModule
 {
 	public:
 		void process(float &audioL, float &audioR) {
+			tAudioL = audioL;
+			tAudioR = audioR;
+			
+			tAudioL *= getBlendedPhase(sinePos, params[1]);
+			tAudioR *= getBlendedPhase(sinePos, params[1]);
 			if (active) {
-				
-				audioL *= getBlendedPhase(sinePos, params[1]);
-				audioR *= getBlendedPhase(sinePos, params[1]);
+				audioL = tAudioL;
+				audioR = tAudioR;
 			}
 		}
 
@@ -263,9 +281,13 @@ class CReverse: public CModule
 
 	public:
 		void process(float &audioL, float &audioR) {
+			
+			tAudioL = audioL;
+			tAudioR = audioR;
+		
 			//fill the buffer
-			bufferL[flipState].data[bufferL[flipState].start] = audioL;
-			bufferR[flipState].data[bufferR[flipState].start] = audioR;
+			bufferL[flipState].data[bufferL[flipState].start] = tAudioL;
+			bufferR[flipState].data[bufferR[flipState].start] = tAudioR;
 			
 			//roll playhead forward
 			if (++bufferL[flipState].start>bufferStackCount) {
@@ -277,19 +299,21 @@ class CReverse: public CModule
 			
 			
 			//play the buffer
+			//audio
+			tAudioL = bufferL[getPlayFlip()].data[bufferL[getPlayFlip()].start]*params[2] + tAudioL*(1-params[2]);
+			tAudioR = bufferR[getPlayFlip()].data[bufferR[getPlayFlip()].start]*params[2] + tAudioR*(1-params[2]);
+			
+			
+			//roll playhead backwards
+			if (--bufferL[getPlayFlip()].start<0) {
+				bufferL[getPlayFlip()].start = bufferStackCount;
+			}
+			if (--bufferR[getPlayFlip()].start<0) {
+				bufferR[getPlayFlip()].start = bufferStackCount;
+			}
 			if (active) {
-				//audio
-				audioL = bufferL[getPlayFlip()].data[bufferL[getPlayFlip()].start]*params[2] + audioL*(1-params[2]);
-				audioR = bufferR[getPlayFlip()].data[bufferR[getPlayFlip()].start]*params[2] + audioR*(1-params[2]);
-				
-				
-				//roll playhead backwards
-				if (--bufferL[getPlayFlip()].start<0) {
-					bufferL[getPlayFlip()].start = bufferStackCount;
-				}
-				if (--bufferR[getPlayFlip()].start<0) {
-					bufferR[getPlayFlip()].start = bufferStackCount;
-				}
+				audioL = tAudioL;
+				audioR = tAudioR;
 			}
 		}
 		
@@ -360,9 +384,11 @@ class CRepeat: public CModule
 
 	public:
 		void process(float &audioL, float &audioR) {
+			tAudioL = audioL;
+			tAudioR = audioR;
 			//fill the buffer
-			bufferL[flipState].data[bufferL[flipState].start] = audioL;
-			bufferR[flipState].data[bufferR[flipState].start] = audioR;
+			bufferL[flipState].data[bufferL[flipState].start] = tAudioL;
+			bufferR[flipState].data[bufferR[flipState].start] = tAudioR;
 
 			//roll playhead forward
 			if (++bufferL[flipState].start>bufferStackCount) {
@@ -377,19 +403,21 @@ class CRepeat: public CModule
 			
 			
 			//play the buffer
+			//audio
+			tAudioL = bufferL[getPlayFlip()].data[bufferL[getPlayFlip()].start]*params[2] + tAudioL*(1-params[2]);
+			tAudioR = bufferR[getPlayFlip()].data[bufferR[getPlayFlip()].start]*params[2] + tAudioR*(1-params[2]);
+			
+			
+			//roll playhead forward
+			if (++bufferL[getPlayFlip()].start>bufferStackCount) {
+				bufferL[getPlayFlip()].start = 0;
+			}
+			if (++bufferR[getPlayFlip()].start>bufferStackCount) {
+				bufferR[getPlayFlip()].start = 0;
+			}
 			if (active) {
-				//audio
-				audioL = bufferL[getPlayFlip()].data[bufferL[getPlayFlip()].start]*params[2] + audioL*(1-params[2]);
-				audioR = bufferR[getPlayFlip()].data[bufferR[getPlayFlip()].start]*params[2] + audioR*(1-params[2]);
-				
-				
-				//roll playhead forward
-				if (++bufferL[getPlayFlip()].start>bufferStackCount) {
-					bufferL[getPlayFlip()].start = 0;
-				}
-				if (++bufferR[getPlayFlip()].start>bufferStackCount) {
-					bufferR[getPlayFlip()].start = 0;
-				}
+				audioL = tAudioL;
+				audioR = tAudioR;
 			}
 		}
 		
@@ -451,19 +479,21 @@ class CSequence: public CModule
 
 	public:
 		void process(float &audioL, float &audioR) {
+			tAudioL = audioL;
+			tAudioR = audioR;
+			lpf[0].setFreq(peakFreq);
+			lpf[1].setFreq(peakFreq);
+			
+			hpf[0].setFreq(peakFreq);
+			hpf[1].setFreq(peakFreq);
+			
+			tAudioL = lpf[0].process(tAudioL);
+			tAudioR = lpf[1].process(tAudioR);
+			tAudioL = hpf[0].process(tAudioL);
+			tAudioR = hpf[1].process(tAudioR);
 			if (active) {
-				lpf[0].setFreq(peakFreq);
-				lpf[1].setFreq(peakFreq);
-				
-				hpf[0].setFreq(peakFreq);
-				hpf[1].setFreq(peakFreq);
-				
-				audioL = lpf[0].process(audioL);
-				audioR = lpf[1].process(audioR);
-				audioL = hpf[0].process(audioL);
-				audioR = hpf[1].process(audioR);
-				
-				
+				audioL = tAudioL;
+				audioR = tAudioR;	
 			}
 		}
 		

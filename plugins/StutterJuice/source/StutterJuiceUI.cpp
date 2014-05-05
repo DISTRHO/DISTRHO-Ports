@@ -27,7 +27,7 @@ StutterJuiceUI::StutterJuiceUI()
     : UI(),
       fAboutWindow(this)
 {
-
+	
 
 	// background
 	fImgBackground = Image(StutterJuiceArtwork::backgroundData, StutterJuiceArtwork::backgroundWidth, StutterJuiceArtwork::backgroundHeight, GL_BGR);
@@ -53,7 +53,7 @@ StutterJuiceUI::StutterJuiceUI()
 	Point<int> sliderPosStart(293, 74);
 	Point<int> sliderPosEnd(293+11, 74);
 
-  
+	
 
 	int oX = 130;
 	int oY = 93;
@@ -81,6 +81,8 @@ StutterJuiceUI::StutterJuiceUI()
 		
 		outputParams[module] = 0;
 	}
+	
+	
 
 }
 
@@ -157,7 +159,9 @@ void StutterJuiceUI::imageSliderValueChanged(ImageSlider* slider, float value)
 
 void StutterJuiceUI::onDisplay()
 {
+	
     fImgBackground.draw();
+    
     drawLFOs();
     fImgOverlay.draw();
     
