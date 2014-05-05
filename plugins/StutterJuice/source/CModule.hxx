@@ -1,6 +1,8 @@
 #ifndef CMODULE_HXX_INCLUDED
 #define CMODULE_HXX_INCLUDED
 
+#include <time.h>
+
 class LPF
 {
 	private:
@@ -24,7 +26,7 @@ class LPF
 	public:
 	
 		LPF() {
-			r = 0.3f;
+			r = 1.0f;
 			f = 0.0f;
 			a1=a2=a3=b1=b2=0.0f;
 			in=in1=in2=out=out1=out2=0.0f;
@@ -87,7 +89,7 @@ class HPF
 	public:
 	
 		HPF() {
-			r = 0.3f;
+			r = 1.0f;
 			f = 0.0f;
 			a1=a2=a3=b1=b2=0.0f;
 			in=in1=in2=out=out1=out2=0.0f;
@@ -225,6 +227,7 @@ class CGate: public CModule
 	public:
 		void process(float &audioL, float &audioR) {
 			if (active) {
+				
 				audioL *= getBlendedPhase(sinePos, params[1]);
 				audioR *= getBlendedPhase(sinePos, params[1]);
 			}
@@ -434,24 +437,21 @@ class CSequence: public CModule
 		
 		float sequence[9][8] = {
 				{200.0f, 400.0f, 600.0f, 800.0f, 200.0f, 400.0f, 600.0f, 800.0f}, //1
-				{800.0f, 600.0f, 400.0f, 200.0f, 800.0f, 600.0f, 400.0f, 200.0f}, //2
+				{800.0f, 200.0f, 400.0f, 800.0f, 200.0f, 800.0f, 400.0f, 200.0f}, //2
 				{800.0f, 600.0f, 400.0f, 200.0f, 300.0f, 400.0f, 600.0f, 800.0f}, //3
 				{200.0f, 800.0f, 200.0f, 600.0f, 200.0f, 400.0f, 200.0f, 300.0f}, //4
 				{200.0f, 800.0f, 200.0f, 800.0f, 200.0f, 400.0f, 600.0f, 800.0f}, //5
-				{800.0f, 700.0f, 600.0f, 500.0f, 400.0f, 300.0f, 200.0f, 100.0f}, //6
-				{100.0f, 200.0f, 300.0f, 400.0f, 500.0f, 600.0f, 600.0f, 800.0f}, //7
+				{800.0f, 400.0f, 800.0f, 200.0f, 800.0f, 400.0f, 200.0f, 400.0f}, //6
+				{400.0f, 800.0f, 200.0f, 800.0f, 200.0f, 800.0f, 400.0f, 300.0f}, //7
 				{200.0f, 800.0f, 200.0f, 800.0f, 200.0f, 800.0f, 300.0f, 500.0f}, //8
 				{800.0f, 300.0f, 200.0f, 800.0f, 300.0f, 200.0f, 400.0f, 600.0f}, //9
 		};
 		int sequenceHead;
-
+		float peakFreq;
 
 	public:
 		void process(float &audioL, float &audioR) {
 			if (active) {
-			
-				float peakFreq = sequence[(int) round(params[1]*8)][sequenceHead];
-				
 				lpf[0].setFreq(peakFreq);
 				lpf[1].setFreq(peakFreq);
 				
@@ -474,13 +474,17 @@ class CSequence: public CModule
 				if (sequenceHead>7) {
 					sequenceHead = 0;
 				}
+				peakFreq = sequence[(int) round(params[1]*8)][sequenceHead];
+				peakFreq += (rand() % 400 - 200)*params[2];
 				
 			}
 			sinePos = nSinePos;
 		}
 		
 		void initBuffers() {
+			srand (time(NULL));
 			sequenceHead = 0;	
+			peakFreq = 200.0f;
 			for (int i=0; i<2; i++) {
 				lpf[i].setSampleRate(sampleRate);
 				lpf[i].setReso(0.5);
