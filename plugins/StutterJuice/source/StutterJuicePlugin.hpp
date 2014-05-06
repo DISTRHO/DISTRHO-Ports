@@ -41,7 +41,7 @@ public:
 	
 	void prepareOutputParams() {
 		
-		for (int i=0; i<4; i++) {
+		for (int i=0; i<5; i++) {
 			if (modules[i]->isActive()) {
 				outputParams[i] = modules[i]->getOutputParam();
 			} else {
@@ -54,12 +54,15 @@ public:
 		
 		float bar, tick, tickOffset, sinePos, percentage;
 		
-		for (int i=0; i<4; i++) {
+		for (int i=0; i<5; i++) {
 			sinePos = modules[i]->getSinePos();
+			float tempoDivider = modules[i]->getTempoDivider();
+			//if (i==4)
+				//printf("divider: %i\n", tempoDivider);
 			/* sample count for one bar */
 			const TimePos& time = d_getTimePos();
 			bar = ((120.0/(time.bbt.valid ? time.bbt.beatsPerMinute : 120.0))*(d_getSampleRate())); //ONE, two, three, four
-			tick = bar/(std::round(params[i][0]*16+2)); //size of one target wob
+			tick = bar/(std::round(params[i][0]*16+2))*tempoDivider; //size of one target wob
 			//if (time.bbt.valid) printf("hell yeah!\n");
 			if (time.playing)
 			{

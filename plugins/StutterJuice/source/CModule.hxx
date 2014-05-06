@@ -1,8 +1,12 @@
 #ifndef CMODULE_HXX_INCLUDED
 #define CMODULE_HXX_INCLUDED
 
-#include <time.h>
+#include <time.h> //rand
+#include <algorithm> //min
 
+
+// -----------------------------------------------------------------------
+// SubModules
 class LPF
 {
 	private:
@@ -129,6 +133,79 @@ class HPF
 
 };
 
+class CSHIFT {
+
+	private:
+	
+		float fVec0[65536];
+		float fRec0[2];
+		int IOTA;
+		float shiftAmt; //-12 .. 12 semi
+		float windowSize; // 50 .. 10k samples
+		float xfade; // 1 .. 10k samples
+		float sampleRate;
+		float output;
+		
+	public:
+	
+		CSHIFT() {
+			IOTA = 0;
+			for (int i = 0; i<65536; i++) {
+				fVec0[i] = 0.0f;
+			}
+			for (int i = 0; i<2; i++) {
+				fRec0[i] = 0.f;
+			}
+			
+			shiftAmt = 0.1f;
+			windowSize = 200.0f;
+			xfade = 76.0f;
+		}
+		
+		void setSampleRate(float nSampleRate) {
+			sampleRate = nSampleRate;
+		}
+		
+		void setWindowSize(float nWindowSize) {
+			windowSize = nWindowSize;
+		}
+		
+		void setXfade(float nXfade) {
+			xfade = nXfade;
+		}
+		
+		void setShiftAmt(float nShiftAmt) {
+			shiftAmt = nShiftAmt;
+		}
+		
+		float process(float audio) {
+			float input0 = audio;
+			float fSlow0 = windowSize;
+			float fSlow1 = ((1.f + fSlow0) - powf(2.f, (0.0833333f * shiftAmt)));
+			float fSlow2 = (1.f / xfade);
+			float fSlow3 = (fSlow0 - 1.f);
+
+			float fTemp0 = audio;
+			fVec0[(IOTA & 65535)] = fTemp0;
+			fRec0[0] = fmodf((fRec0[1] + fSlow1), fSlow0);
+			int iTemp1 = int(fRec0[0]);
+			int iTemp2 = (1 + iTemp1);
+			float fTemp3 = std::min((fSlow2 * fRec0[0]), 1.f);
+			float fTemp4 = (fRec0[0] + fSlow0);
+			int iTemp5 = int(fTemp4);
+			output = ((((fVec0[((IOTA - int((iTemp1 & 65535))) & 65535)] * (iTemp2 - fRec0[0])) + ((fRec0[0] - iTemp1) * fVec0[((IOTA - int((int(iTemp2) & 65535))) & 65535)])) * fTemp3) + (((fVec0[((IOTA - int((iTemp5 & 65535))) & 65535)] * (0.f - ((fRec0[0] + fSlow3) - float(iTemp5)))) + ((fTemp4 - float(iTemp5)) * fVec0[((IOTA - int((int((1 + iTemp5)) & 65535))) & 65535)])) * (1.f - fTemp3)));
+			IOTA = (IOTA + 1);
+			fRec0[1] = fRec0[0];
+			
+			return output;
+		
+		}
+
+};
+
+// -----------------------------------------------------------------------
+// Modules
+
 class CModule
 {
 
@@ -165,6 +242,10 @@ public:
 	
 	virtual void setSinePos(float nSinePos) {
 		sinePos = nSinePos;
+	}
+	
+	virtual float getTempoDivider() {
+		return 1.0f;
 	}
 	
 	float getSinePos() {
@@ -481,8 +562,8 @@ class CSequence: public CModule
 		void process(float &audioL, float &audioR) {
 			tAudioL = audioL;
 			tAudioR = audioR;
-			lpf[0].setFreq(peakFreq);
-			lpf[1].setFreq(peakFreq);
+			lpf[0].setFreq(peakFreq*2);
+			lpf[1].setFreq(peakFreq*2);
 			
 			hpf[0].setFreq(peakFreq);
 			hpf[1].setFreq(peakFreq);
@@ -506,6 +587,7 @@ class CSequence: public CModule
 				}
 				peakFreq = sequence[(int) round(params[1]*8)][sequenceHead];
 				peakFreq += (rand() % 400 - 200)*params[2];
+				peakFreq*=2;
 				
 			}
 			sinePos = nSinePos;
@@ -524,4 +606,70 @@ class CSequence: public CModule
 		}
 
 };
+
+class CShift: public CModule
+{
+	private:
+		CSHIFT shifter[2];
+	
+	public:
+		void process(float &audioL, float &audioR) {
+		
+			tAudioL = audioL;
+			tAudioR = audioR;
+			//if (active) debug();
+			//printf("sinePos: %d\n", active);
+			
+			float range = 96*params[1];
+			int variation = round(params[2]*3)+1;
+			float shiftAmt;
+			switch (variation) {
+				case 1:
+					shiftAmt = (sinePos/(M_PI*2))*range-range/2;
+					break;
+				case 2:
+					shiftAmt = -((sinePos/(M_PI*2))*range-range/2);
+					break;
+				case 3:
+					shiftAmt = (sinePos/(M_PI*2))*range;
+					break;
+				case 4:
+					shiftAmt = -(sinePos/(M_PI*2))*range;
+					break;
+			
+			}
+			
+			shiftAmt = round(shiftAmt*10)/10;
+			//if (shiftAmt == 0) shiftAmt = 0.1f;
+			//printf("shift: %f\n", shiftAmt);
+			for (int i=0; i<2; i++) {
+				shifter[i].setShiftAmt(shiftAmt);
+			}
+			
+			tAudioL = shifter[0].process(tAudioL);
+			tAudioR = shifter[1].process(tAudioR);
+			
+			
+			if (active) {
+				audioL = tAudioL;
+				audioR = tAudioR;
+			}
+		}
+		
+		void initBuffers() {
+			for (int i=0; i<2; i++) {
+			
+				shifter[i].setSampleRate(sampleRate);
+				
+			}
+			
+		}
+			
+		float getTempoDivider() {
+			return 8.0f;
+		}
+
+};
+
+
 #endif // CMODULE_HXX_INCLUDED
