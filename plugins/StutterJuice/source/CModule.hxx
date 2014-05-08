@@ -617,8 +617,6 @@ class CShift: public CModule
 		
 			tAudioL = audioL;
 			tAudioR = audioR;
-			//if (active) debug();
-			//printf("sinePos: %d\n", active);
 			
 			float range = 96*params[1];
 			int variation = round(params[2]*3)+1;
@@ -639,13 +637,14 @@ class CShift: public CModule
 			
 			}
 			
+			//round up to one decimal point
 			shiftAmt = round(shiftAmt*10)/10;
-			//if (shiftAmt == 0) shiftAmt = 0.1f;
-			//printf("shift: %f\n", shiftAmt);
+
 			for (int i=0; i<2; i++) {
 				shifter[i].setShiftAmt(shiftAmt);
 			}
 			
+			//shift!
 			tAudioL = shifter[0].process(tAudioL);
 			tAudioR = shifter[1].process(tAudioR);
 			
@@ -658,13 +657,79 @@ class CShift: public CModule
 		
 		void initBuffers() {
 			for (int i=0; i<2; i++) {
-			
 				shifter[i].setSampleRate(sampleRate);
-				
 			}
 			
 		}
 			
+		float getTempoDivider() {
+			return 8.0f;
+		}
+
+};
+
+class CFilter: public CModule
+{
+	private:
+	
+		LPF lpf[2];
+		HPF hpf[2];
+		float peakFreq;
+
+	public:
+		void process(float &audioL, float &audioR) {
+		
+			tAudioL = audioL;
+			tAudioR = audioR;
+			
+			//to log scale
+			peakFreq = std::exp((std::log(16000)-std::log(300))*getBlendedPhase(sinePos, params[1])+std::log(300));
+			//peakFreq = 500.0f;
+			lpf[0].setFreq(peakFreq);
+			lpf[1].setFreq(peakFreq);
+			
+			hpf[0].setFreq(peakFreq);
+			hpf[1].setFreq(peakFreq);
+			int type = params[2]*2+1;
+			
+			
+			switch (type) {
+				case 1:
+					tAudioL = lpf[0].process(tAudioL);
+					tAudioR = lpf[1].process(tAudioR);
+					//printf("type: %f\n", tAudioL);
+					break;
+					
+				case 2:
+					tAudioL = lpf[0].process(tAudioL);
+					tAudioR = lpf[1].process(tAudioR);
+					tAudioL = hpf[0].process(tAudioL);
+					tAudioR = hpf[1].process(tAudioR);
+					break;
+				case 3:
+					tAudioL = hpf[0].process(tAudioL);
+					tAudioR = hpf[1].process(tAudioR);
+					break;
+			
+			}
+			
+			
+			if (active) {
+				audioL = tAudioL;
+				audioR = tAudioR;	
+			}
+		}
+		
+		void initBuffers() {
+			peakFreq = 200.0f;
+			for (int i=0; i<2; i++) {
+				lpf[i].setSampleRate(sampleRate);
+				lpf[i].setReso(0.5);
+				hpf[i].setSampleRate(sampleRate);
+				hpf[i].setReso(0.5);
+			}
+		}
+		
 		float getTempoDivider() {
 			return 8.0f;
 		}

@@ -41,7 +41,7 @@ public:
 	
 	void prepareOutputParams() {
 		
-		for (int i=0; i<5; i++) {
+		for (int i=0; i<6; i++) {
 			if (modules[i]->isActive()) {
 				outputParams[i] = modules[i]->getOutputParam();
 			} else {
@@ -54,7 +54,7 @@ public:
 		
 		float bar, tick, tickOffset, sinePos, percentage;
 		
-		for (int i=0; i<5; i++) {
+		for (int i=0; i<6; i++) {
 			sinePos = modules[i]->getSinePos();
 			float tempoDivider = modules[i]->getTempoDivider();
 			//if (i==4)

@@ -103,7 +103,7 @@ void StutterJuicePlugin::d_setProgram(uint32_t index)
 		return;
 
 	//default params[][] values
-	for (int module=0; module<5; module++) {
+	for (int module=0; module<6; module++) {
 		moduleActive[module] = false;
 		for (int param=0; param<3; param++) {
 			params[module][param] = 0.5;
@@ -115,8 +115,9 @@ void StutterJuicePlugin::d_setProgram(uint32_t index)
 	modules[2] = new CRepeat();
 	modules[3] = new CSequence();
 	modules[4] = new CShift();
+	modules[5] = new CFilter();
 	
-	for (int module=0; module<5; module++) {
+	for (int module=0; module<6; module++) {
 		modules[module]->setSampleRate(d_getSampleRate());
 		modules[module]->initBuffers();
 	}
@@ -140,15 +141,17 @@ void StutterJuicePlugin::d_deactivate()
 void StutterJuicePlugin::d_run(float** inputs, float** outputs, uint32_t frames, const MidiEvent* midiEvents, uint32_t midiEventCount)
 {
 
+	
 	for (uint32_t i; i<frames; i++) {	
 		
 		float audioL = inputs[0][i];
 		float audioR = inputs[1][i];
 		
 		rollLFOs();
+		
 		prepareOutputParams();
 		
-		for (int i=0; i<5; i++) {
+		for (int i=0; i<6; i++) {
 			modules[i]->process(audioL, audioR);
 		}
 		
@@ -162,7 +165,7 @@ void StutterJuicePlugin::d_run(float** inputs, float** outputs, uint32_t frames,
 	for (uint32_t i; i<midiEventCount; i++) {
 	
 		int userNote = 48;//TODO
-		int range=5;
+		int range=6;
 
 		int mType = midiEvents[i].buf[0] & 0xF0;
 		int mChan = midiEvents[i].buf[0] & 0x0F;
