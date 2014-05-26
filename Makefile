@@ -21,7 +21,6 @@ all:
 
 install:
 	# make dirs
-	install -d $(DESTDIR)$(PREFIX)/lib/ladspa/
 	install -d $(DESTDIR)$(PREFIX)/lib/dssi/
 	install -d $(DESTDIR)$(PREFIX)/lib/lv2/
 	install -d $(DESTDIR)$(PREFIX)/lib/vst/
@@ -31,7 +30,6 @@ install:
 	install -d $(DESTDIR)/usr/src/distrho/scripts/
 
 	# install plugins
-	cp -r bin/ladspa/*          $(DESTDIR)$(PREFIX)/lib/ladspa/
 	cp -r bin/dssi/*            $(DESTDIR)$(PREFIX)/lib/dssi/
 	cp -r bin/lv2/*.lv2/        $(DESTDIR)$(PREFIX)/lib/lv2/
 	cp -r bin/vst/*             $(DESTDIR)$(PREFIX)/lib/vst/
@@ -96,9 +94,6 @@ mingw:
 
 # -----------------------------------------
 # Custom build types
-
-ladspa:
-	$(MAKE) -C plugins ladspa
 
 dssi:
 	$(MAKE) -C libs/dgl

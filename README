@@ -47,7 +47,7 @@ You are now ready to start building. Run this on the source root folder:
 
 $ make
 
-If you just want to build specific plugin versions, you can use 'make ladspa', 'make dssi', 'make lv2' or 'make vst'.
+If you just want to build specific plugin versions, you can use 'make dssi', 'make lv2' or 'make vst'.
 
 
 To build in debug mode, use this:
