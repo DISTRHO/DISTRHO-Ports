@@ -153,11 +153,7 @@
     Normally, JUCE_DEBUG is set to 1 or 0 based on compiler and project settings,
     but if you define this value, you can override this to force it to be true or false.
 */
-#if DEBUG
- #define JUCE_FORCE_DEBUG 1
-#else
- #define JUCE_FORCE_DEBUG 0
-#endif
+#define JUCE_FORCE_DEBUG 0
 
 //=============================================================================
 /** Config: JUCE_LOG_ASSERTIONS
@@ -171,11 +167,7 @@
 
     @see jassert, jassertfalse, Logger
 */
-#if DEBUG
- #define JUCE_LOG_ASSERTIONS 1
-#else
- #define JUCE_LOG_ASSERTIONS 0
-#endif
+#define JUCE_LOG_ASSERTIONS 1
 
 //=============================================================================
 /** Config: JUCE_CHECK_MEMORY_LEAKS
@@ -183,11 +175,7 @@
     Enables a memory-leak check for certain objects when the app terminates. See the LeakedObjectDetector
     class and the JUCE_LEAK_DETECTOR macro for more details about enabling leak checking for specific classes.
 */
-#if DEBUG
- #define JUCE_CHECK_MEMORY_LEAKS 1
-#else
- #define JUCE_CHECK_MEMORY_LEAKS 0
-#endif
+#define JUCE_CHECK_MEMORY_LEAKS 1
 
 //=============================================================================
 /** Config: JUCE_DONT_AUTOLINK_TO_WIN32_LIBRARIES
