@@ -7,7 +7,6 @@ PREFIX = /usr/local
 # all
 
 all:
-	$(MAKE) -C libs/dgl
 	$(MAKE) -C libs/drowaudio
 	$(MAKE) -C libs/juce
 	$(MAKE) -C libs/juced
@@ -64,7 +63,6 @@ gen_vst:
 # clean
 
 clean:
-	$(MAKE) clean -C libs/dgl
 	$(MAKE) clean -C libs/drowaudio
 	$(MAKE) clean -C libs/juce
 	$(MAKE) clean -C libs/juced
@@ -75,7 +73,6 @@ clean:
 	rm -rf bin/vst-extra/
 
 distclean: clean
-	$(MAKE) distclean -C libs/dgl
 	$(MAKE) distclean -C libs/drowaudio
 	$(MAKE) distclean -C libs/juce
 	$(MAKE) distclean -C libs/juced
@@ -91,7 +88,6 @@ mingw:
 # Custom build types
 
 lv2:
-	$(MAKE) -C libs/dgl
 	$(MAKE) -C libs/drowaudio
 	$(MAKE) -C libs/juce
 	$(MAKE) -C libs/juced
@@ -100,7 +96,6 @@ lv2:
 	$(MAKE) gen_lv2
 
 vst:
-	$(MAKE) -C libs/dgl
 	$(MAKE) -C libs/drowaudio
 	$(MAKE) -C libs/juce
 	$(MAKE) -C libs/juced
