@@ -588,7 +588,9 @@ private:
             }
         }
 
+#ifdef JUCE_DEBUG
         jassert (oldNumEntries == numEntries);
+#endif
 
         juce_free (oldEntries);
     }
