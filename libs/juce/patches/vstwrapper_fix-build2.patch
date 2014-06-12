@@ -1,0 +1,12 @@
+diff --git a/modules/juce_audio_plugin_client/utility/juce_PluginUtilities.cpp b/modules/juce_audio_plugin_client/utility/juce_PluginUtilities.cpp
+index 82e7e47..8400493 100644
+--- a/modules/juce_audio_plugin_client/utility/juce_PluginUtilities.cpp
++++ b/modules/juce_audio_plugin_client/utility/juce_PluginUtilities.cpp
+@@ -31,7 +31,6 @@
+ #include "AppConfig.h"
+ 
+ #include "../utility/juce_CheckSettingMacros.h"
+-#include "juce_IncludeModuleHeaders.h"
+ 
+ #if _MSC_VER || JUCE_MINGW
+ 
