@@ -48,13 +48,7 @@ end
 --=======================================================================================--
 
 function make_plugin_project(name, spec)
-  if (spec == "LADSPA") then
-    project.name   = name
-    project.bindir = "../../../bin/ladspa"
-  elseif (spec == "DSSI") then
-    project.name   = name
-    project.bindir = "../../../bin/dssi"
-  elseif (spec == "LV2") then
+  if (spec == "LV2") then
     project.name   = name .. ".lv2/" .. name
     project.bindir = "../../../bin/lv2"
   elseif (spec == "VST") then
@@ -70,11 +64,7 @@ function make_plugin_project(name, spec)
   package.kind = "dll"
   package.language = "c++"
 
-  if (spec == "LADSPA") then
-    package.defines = { "DISTRHO_PLUGIN_TARGET_LADSPA=1" }
-  elseif (spec == "DSSI") then
-    package.defines = { "DISTRHO_PLUGIN_TARGET_DSSI=1" }
-  elseif (spec == "LV2") then
+  if (spec == "LV2") then
     package.defines = { "DISTRHO_PLUGIN_TARGET_LV2=1", "JucePlugin_Build_AU=0", "JucePlugin_Build_LV2=1", "JucePlugin_Build_RTAS=0", "JucePlugin_Build_VST=0", "JucePlugin_Build_Standalone=0" }
   elseif (spec == "VST") then
     package.defines = { "DISTRHO_PLUGIN_TARGET_VST=1", "JucePlugin_Build_AU=0", "JucePlugin_Build_LV2=0", "JucePlugin_Build_RTAS=0", "JucePlugin_Build_VST=1", "JucePlugin_Build_Standalone=0" }
@@ -124,144 +114,6 @@ function make_plugin_project(name, spec)
   else
     package.defines      = { package.defines, "LINUX=1", "BINTYPE=\"Linux-" .. spec .. "\"" }
     package.buildoptions = { package.buildoptions, "-std=c++0x" }
-  end
-
-  return package
-end
-
---=======================================================================================--
-
-function make_distrho_ladspa_project(name)
-  package = make_plugin_project(name, "LADSPA")
-
-  package.includepaths = {
-    package.includepaths,
-    "../../../libs/distrho"
-  }
-
-  return package
-end
-
-function make_distrho_dssi_project(name)
-  package = make_plugin_project(name, "DSSI")
-
-  package.includepaths = {
-    package.includepaths,
-    "../../../libs/distrho"
-  }
-
-  return package
-end
-
-function make_distrho_dssi_ui_project(name)
-  package = make_plugin_project(name, "DSSI")
-
-  project.name = project.name .. "/" .. project.name .. "_gl"
-  package.kind = "exe"
-
-  package.buildoptions = { package.buildoptions, "`pkg-config --cflags liblo`" }
-  package.linkoptions  = { package.linkoptions, "`pkg-config --libs liblo`" }
-
-  package.config["Release"].links  = { "dgl" }
-  package.config["Release"].target = project.name
-
-  package.config["Debug"].links  = { "dgl_debug" }
-  package.config["Debug"].target = project.name .. "Debug"
-
-  package.includepaths = {
-    package.includepaths,
-    "../../../libs/distrho",
-    "../../../libs/dgl"
-  }
-
-  if (windows) then
-    package.links       = { "opengl32", "gdi32" }
-  elseif (macosx) then
-    package.linkoptions = { package.linkoptions, "-framework OpenGL", "-framework Cocoa" }
-  else
-    package.linkoptions = { package.linkoptions, "`pkg-config --libs gl x11`" }
-  end
-
-  return package
-end
-
-function make_distrho_lv2_project(name)
-  package = make_plugin_project(name, "LV2")
-
-  package.includepaths = { package.includepaths, "../../../libs/distrho" }
-
-  return package
-end
-
-function make_distrho_lv2_ui_project(name)
-  package = make_plugin_project(name, "LV2")
-
-  project.name = name .. ".lv2/" .. name .. "_ui"
-
-  package.config["Release"].links  = { "dgl" }
-  package.config["Release"].target = project.name
-
-  package.config["Debug"].links  = { "dgl_debug" }
-  package.config["Debug"].target = name .. ".lv2/" .. name .. "_debug_ui"
-
-  package.includepaths = {
-    package.includepaths,
-    "../../../libs/distrho",
-    "../../../libs/dgl"
-  }
-
-  if (windows) then
-    package.links       = { "opengl32", "gdi32" }
-  elseif (macosx) then
-    package.linkoptions = { package.linkoptions, "-framework OpenGL", "-framework Cocoa" }
-  else
-    package.linkoptions = { package.linkoptions, "`pkg-config --libs gl x11`" }
-  end
-
-  return package
-end
-
-function make_distrho_lv2_combined_project(name)
-  package = make_plugin_project(name, "LV2")
-
-  package.config["Release"].links = { "dgl" }
-  package.config["Debug"].links   = { "dgl_debug" }
-
-  package.includepaths = {
-    package.includepaths,
-    "../../../libs/distrho",
-    "../../../libs/dgl"
-  }
-
-  if (windows) then
-    package.links       = { "opengl32", "gdi32" }
-  elseif (macosx) then
-    package.linkoptions = { package.linkoptions, "-framework OpenGL", "-framework Cocoa" }
-  else
-    package.linkoptions = { package.linkoptions, "`pkg-config --libs gl x11`" }
-  end
-
-  return package
-end
-
-function make_distrho_vst_project(name)
-  package = make_plugin_project(name, "VST")
-
-  package.config["Release"].links = { "dgl" }
-  package.config["Debug"].links   = { "dgl_debug" }
-
-  package.includepaths = {
-    package.includepaths,
-    "../../../libs/distrho",
-    "../../../libs/dgl"
-  }
-
-  if (windows) then
-    package.links       = { "opengl32", "gdi32" }
-  elseif (macosx) then
-    package.linkoptions = { package.linkoptions, "-framework OpenGL", "-framework Cocoa" }
-  else
-    package.linkoptions = { package.linkoptions, "`pkg-config --libs gl x11`" }
   end
 
   return package

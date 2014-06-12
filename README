@@ -3,16 +3,8 @@
 -----------------------
 
 DISTRHO is an open source project that has the goal of making cross-platform plugins and Linux ports.
-The DISTRHO Team currently has 2 members - falkTX (the coder) and nieee (graphics designer).
 
-The source repository is layered out this way:
- bin/       - directory where all the compiled binaries will be placed
- libs/      - libraries
- plugins/   - plugins developed and/or designed by the DISTRHO Team
- ports/     - plugin ports (plugins not made by us)
- scripts/   - build scripts
- sdks/      - SDKs must be placed here (VST SDK)
-
+<b>This repository contains the Linux ports</b>.
 
 -----------------------------------------------------------------------------------------
 ---- BUILD DEPENDENCIES
@@ -22,14 +14,13 @@ To build plugins, you first need to install the following dependencies:
  All OSes:
 
 - csound (version 6)
-- liblo
 - premake (version 3)
 
  Linux: (development versions of these)
 
 - ladspa
 - freetype2
-- OpenGL
+- OpenGL/Mesa
 - X11 core and extensions (Xinerama, XShm, XRender and XCursor)
 
 
@@ -47,7 +38,7 @@ You are now ready to start building. Run this on the source root folder:
 
 $ make
 
-If you just want to build specific plugin versions, you can use 'make dssi', 'make lv2' or 'make vst'.
+If you just want to build specific plugin versions, you can use 'make lv2' or 'make vst'.
 
 
 To build in debug mode, use this:
