@@ -16,14 +16,14 @@
 //==============================================================================
 TheFunctionAudioProcessor::TheFunctionAudioProcessor()
 {
-	  gain = 1.0f;
-	  gainL = 1.0f;
-	  gainR = 1.0f;
-	  panL = 0.0f;
-	  panR = 1.0f;
-	  phaseL = 0.0f;
-	  phaseR = 0.0f;
-	  currentPreset = 0;
+    gain = 1.0f;
+    gainL = 1.0f;
+    gainR = 1.0f;
+    panL = 0.0f;
+    panR = 1.0f;
+    phaseL = 0.0f;
+    phaseR = 0.0f;
+    currentPreset = 0;
 }
 
 TheFunctionAudioProcessor::~TheFunctionAudioProcessor()
@@ -48,11 +48,10 @@ float TheFunctionAudioProcessor::getParameter (int index)
         case gainParam:     return gain;
         case gainLParam:    return gainL;
         case gainRParam:    return gainR;
-		case panLParam:    return panL;
-		case panRParam:    return panR;
-		case phaseLParam:	return phaseL;
-		case phaseRParam:	return phaseR;
-
+        case panLParam:     return panL;
+        case panRParam:     return panR;
+        case phaseLParam:   return phaseL;
+        case phaseRParam:   return phaseR;
         default:            return 0.0f;
     }
 }
@@ -61,13 +60,13 @@ void TheFunctionAudioProcessor::setParameter (int index, float newValue)
 {
 	switch (index)
     {
-        case gainParam:     gain = newValue;  break;
-        case gainLParam:     gainL = newValue;  break;
-        case gainRParam:     gainR = newValue;  break;
-        case panLParam:     panL = newValue;  break;
-        case panRParam:     panR = newValue;  break;
-        case phaseLParam:    phaseL = newValue;  break;
-        case phaseRParam:    phaseR = newValue;  break;
+        case gainParam:     gain = newValue;   break;
+        case gainLParam:    gainL = newValue;  break;
+        case gainRParam:    gainR = newValue;  break;
+        case panLParam:     panL = newValue;   break;
+        case panRParam:     panR = newValue;   break;
+        case phaseLParam:   phaseL = newValue; break;
+        case phaseRParam:   phaseR = newValue; break;
         default:            break;
     }
 }
@@ -76,17 +75,15 @@ const String TheFunctionAudioProcessor::getParameterName (int index)
 {
     switch (index)
     {
-        case gainParam:     return "Gain";
-        case gainLParam:     return "Gain L";
-        case gainRParam:     return "Gain R";
-        case panLParam:     return "Pan L";
-        case panRParam:     return "Pan R";
-        case phaseLParam:	return "Phase L";
-        case phaseRParam:	return "Phase R";
-        default:            break;
+        case gainParam:   return "Gain";
+        case gainLParam:  return "Gain L";
+        case gainRParam:  return "Gain R";
+        case panLParam:   return "Pan L";
+        case panRParam:   return "Pan R";
+        case phaseLParam: return "Phase L";
+        case phaseRParam: return "Phase R";
+        default:          return String::empty;
     }
-
-    return String::empty;
 }
 
 const String TheFunctionAudioProcessor::getParameterText (int index)
