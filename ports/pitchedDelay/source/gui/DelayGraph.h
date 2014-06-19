@@ -42,24 +42,19 @@ class DelayGraph  : public Component,
 public:
 	//==============================================================================
 	DelayGraph (OwnedArray<PitchedDelayTab>& tabs_, PitchedDelayAudioProcessor* ownerFilter);
-	~DelayGraph();
+	~DelayGraph() override;
 
 	//==============================================================================
 	//[UserMethods]	 -- You can add your own custom methods in this section.
-	void timerCallback();
-	void mouseWheelMove (const MouseEvent& e, const MouseWheelDetails& wheel);
+	void timerCallback() override;
+	void mouseWheelMove (const MouseEvent& e, const MouseWheelDetails& wheel) override;
 	//[/UserMethods]
 
-	void paint (Graphics& g);
-	void resized();
-	void mouseDown (const MouseEvent& e);
-	void mouseDrag (const MouseEvent& e);
-	void mouseUp (const MouseEvent& e);
-
-
-
-	//==============================================================================
-	juce_UseDebuggingNewOperator
+	void paint (Graphics& g) override;
+	void resized() override;
+	void mouseDown (const MouseEvent& e) override;
+	void mouseDrag (const MouseEvent& e) override;
+	void mouseUp (const MouseEvent& e) override;
 
 private:
 	//[UserVariables]   -- You can add your own custom variables in this section.

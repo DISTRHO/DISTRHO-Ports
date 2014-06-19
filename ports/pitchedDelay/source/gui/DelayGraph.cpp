@@ -217,7 +217,7 @@ void DelayGraph::mouseDrag (const MouseEvent& e)
 		if (tab != 0)
 		{
 			if (! tab->tbEnable->getToggleState())
-				tab->tbEnable->setToggleState(true, true);
+				tab->tbEnable->setToggleState(true, sendNotification);
 
 			tab->setDelaySeconds(delayTime, true);
 			tab->sVolume->setValue(volume, sendNotification);			
@@ -244,7 +244,7 @@ void DelayGraph::mouseUp (const MouseEvent& e)
 			const int currentSync = tab->cbSync->getSelectedId();
 			const int newSync = currentSync > tab->cbSync->getNumItems() - 2 ? 1 : currentSync + 1;
 
-			tab->cbSync->setSelectedId(newSync, false);
+			tab->cbSync->setSelectedId(newSync, dontSendNotification);
 		}
 	}
 	else if (e.getNumberOfClicks() > 1)
@@ -255,7 +255,7 @@ void DelayGraph::mouseUp (const MouseEvent& e)
 			Proc->currentTab = tabIndex;
 			PitchedDelayTab* tab = tabs[Proc->currentTab];
 
-			tab->tbEnable->setToggleState(false, true);
+			tab->tbEnable->setToggleState(false, sendNotification);
 		}
 
 	}

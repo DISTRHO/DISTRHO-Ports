@@ -330,11 +330,9 @@ void PitchedDelayAudioProcessor::releaseResources()
 
 void PitchedDelayAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& /*midiMessages*/)
 {
-	ScopedSSECSR csr;
-
 	const int numSamples = buffer.getNumSamples();
-	float* chL = buffer.getSampleData(0);
-	float* chR = buffer.getSampleData(buffer.getNumChannels()-1);
+	float* chL = buffer.getWritePointer(0);
+	float* chR = buffer.getWritePointer(buffer.getNumChannels()-1);
 
 
 	float* dspProcL = osBufferL[0];

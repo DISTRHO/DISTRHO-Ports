@@ -229,7 +229,7 @@ PitchedDelayTab::PitchedDelayTab (PitchedDelayAudioProcessor* processor, int del
 	tbMono->setButtonText (L"Mono");
 	tbMono->setRadioGroupId (5000);
 	tbMono->addListener (this);
-	tbMono->setToggleState (true, false);
+	tbMono->setToggleState (true, dontSendNotification);
 
 	addAndMakeVisible (tbStereo = new ToggleButton (L"StereoTogglebutton"));
 	tbStereo->setTooltip (L"Stereo delay");
@@ -283,8 +283,8 @@ PitchedDelayTab::PitchedDelayTab (PitchedDelayAudioProcessor* processor, int del
 	for (int i=0; i<DelayTabDsp::kNumParameters; ++i)
 	 currentValues[i] = -1e8;
 
-	cbFilter->setSelectedId(1, true);
-	cbSync->setSelectedId(1, true);
+	cbFilter->setSelectedId(1, sendNotification);
+	cbSync->setSelectedId(1, sendNotification);
 
 	setDelayRange();
 	setPitchRange();
@@ -863,7 +863,7 @@ void PitchedDelayTab::setParam(int index, double value)
 			sPitch->setValue(value, dontSendNotification);
 			break;
 		case DelayTabDsp::kSync:
-			cbSync->setSelectedId((int) value+1, true);
+			cbSync->setSelectedId((int) value+1, sendNotification);
 			break;
 		case DelayTabDsp::kPreDelay:
 			sPreDelay->setValue(quantizeDelay(value), dontSendNotification);
@@ -876,18 +876,18 @@ void PitchedDelayTab::setParam(int index, double value)
 			setDelayRange();
 			break;
 		case DelayTabDsp::kPitchType:
-			cbPitch->setSelectedId((int) value + 1, true);
+			cbPitch->setSelectedId((int) value + 1, sendNotification);
 			sPitch->setEnabled(value > 0.5);
 			break;
 		case DelayTabDsp::kPrePitch:
-			tbPostPitch->setToggleState(value > 0.5 , false);
+			tbPostPitch->setToggleState(value > 0.5 , dontSendNotification);
 			break;
 		case DelayTabDsp::kFeedback:
 			sFeedback->setValue(value, dontSendNotification);
 			break;
 
 		case DelayTabDsp::kFilterType:
-			cbFilter->setSelectedId((int) value + 1, true);
+			cbFilter->setSelectedId((int) value + 1, sendNotification);
 			sFreq->setEnabled(value != 0);
 			sQfactor->setEnabled(value != 0);
 			sGain->setEnabled(value >=3 && value <= 5);
@@ -905,11 +905,11 @@ void PitchedDelayTab::setParam(int index, double value)
 
 		case DelayTabDsp::kMode:
 			if (value < 0.5)
-				tbMono->setToggleState(true, false);
+				tbMono->setToggleState(true, dontSendNotification);
 			else if (value < 1.5)
-				tbStereo->setToggleState(true, false);
+				tbStereo->setToggleState(true, dontSendNotification);
 			else
-				tbPingpong->setToggleState(true, false);
+				tbPingpong->setToggleState(true, dontSendNotification);
 			break;
 
 		case DelayTabDsp::kVolume:
@@ -920,7 +920,7 @@ void PitchedDelayTab::setParam(int index, double value)
 			break;
 
 		case DelayTabDsp::kEnabled:
-			tbEnable->setToggleState(value > 0.5, false);
+			tbEnable->setToggleState(value > 0.5, dontSendNotification);
 			break;
 		default:
 			jassertfalse;

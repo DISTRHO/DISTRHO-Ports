@@ -122,7 +122,7 @@ void PitchedDelayAudioProcessorEditor::timerCallback()
 	dryVolume.setValue(12. + Decibels::gainToDecibels(Proc->getParameter(Proc->getNumDelayParameters() + PitchedDelayAudioProcessor::kDryVolume)));
 	masterVolume.setValue(12. + Decibels::gainToDecibels(Proc->getParameter(Proc->getNumDelayParameters() + PitchedDelayAudioProcessor::kMasterVolume)));
 
-	showTooltips.setToggleState(Proc->showTooltips, false);
+	showTooltips.setToggleState(Proc->showTooltips, dontSendNotification);
 
 	if (Proc->showTooltips && tooltipWindow == nullptr)
 		tooltipWindow = new TooltipWindow();

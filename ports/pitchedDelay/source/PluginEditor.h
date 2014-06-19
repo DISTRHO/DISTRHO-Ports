@@ -53,7 +53,7 @@ public:
 	{
 	}
 
-	void currentTabChanged(int newCurrentTabIndex, const String& /*newCurrentTabName*/)
+	void currentTabChanged(int newCurrentTabIndex, const String& /*newCurrentTabName*/) override
 	{
 		processor->currentTab = newCurrentTabIndex;
 	}
@@ -72,18 +72,18 @@ class PitchedDelayAudioProcessorEditor  : public AudioProcessorEditor,
 {
 public:
   PitchedDelayAudioProcessorEditor (PitchedDelayAudioProcessor* ownerFilter);
-  ~PitchedDelayAudioProcessorEditor();
+  ~PitchedDelayAudioProcessorEditor() override;
 
   //==============================================================================
   // This is just a standard Juce paint method...
-  void paint (Graphics& g);
-	void resized();
+  void paint (Graphics& g) override;
+	void resized() override;
 
-	void timerCallback();
-	void actionListenerCallback (const String& message);
-	void sliderValueChanged (Slider* slider);
-	void buttonClicked (Button* button);
-	void comboBoxChanged (ComboBox* comboBoxThatHasChanged);
+	void timerCallback() override;
+	void actionListenerCallback (const String& message) override;
+	void sliderValueChanged (Slider* slider) override;
+	void buttonClicked (Button* button) override;
+	void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
 
 private:
 
@@ -111,6 +111,9 @@ private:
 	TextButton addPreset;
 	TextButton removePreset;
 	ComboBox presetList;
+
+  //==============================================================================
+  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PitchedDelayAudioProcessorEditor);
 };
 
 

@@ -47,7 +47,7 @@ class PitchedDelayTab  : public Component,
 public:
 	//==============================================================================
 	PitchedDelayTab (PitchedDelayAudioProcessor* processor, int delayindex);
-	~PitchedDelayTab();
+	~PitchedDelayTab() override;
 
 	//==============================================================================
 	//[UserMethods]	 -- You can add your own custom methods in this section.
@@ -61,7 +61,7 @@ public:
 	double getPreDelaySeconds();
 	void setPreDelaySeconds(double seconds, bool sendMessage=false);
 
-	void timerCallback();
+	void timerCallback() override;
 
 	void setParam(int index, double value);
 
@@ -70,16 +70,11 @@ public:
 	PitchedDelayAudioProcessor* getProcessor() { return filter; }
 	//[/UserMethods]
 
-	void paint (Graphics& g);
-	void resized();
-	void sliderValueChanged (Slider* sliderThatWasMoved);
-	void comboBoxChanged (ComboBox* comboBoxThatHasChanged);
-	void buttonClicked (Button* buttonThatWasClicked);
-
-
-
-	//==============================================================================
-	juce_UseDebuggingNewOperator
+	void paint (Graphics& g) override;
+	void resized() override;
+	void sliderValueChanged (Slider* sliderThatWasMoved) override;
+	void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
+	void buttonClicked (Button* buttonThatWasClicked) override;
 
 private:
 	//[UserVariables]   -- You can add your own custom variables in this section.

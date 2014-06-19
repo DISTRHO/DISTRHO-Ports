@@ -1,26 +1,4 @@
 #include "JuceHeader.h"
-#include "xmmintrin.h"
-
-
-class ScopedSSECSR
-{
-public:
-	ScopedSSECSR()
-		: csr(_mm_getcsr())
-	{
-		_mm_setcsr(csr | 0x8040);
-	}
-
-	~ScopedSSECSR()
-	{
-		_mm_setcsr(csr);
-	}
-
-private:
-	const int csr;
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ScopedSSECSR);
-};
-
 
 class CAllPassFilterPair
 {

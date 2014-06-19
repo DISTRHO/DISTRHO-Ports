@@ -54,49 +54,49 @@ public:
 
 	//==============================================================================
 	PitchedDelayAudioProcessor();
-	~PitchedDelayAudioProcessor();
+	~PitchedDelayAudioProcessor() override;
 
 	//==============================================================================
-	void prepareToPlay (double sampleRate, int samplesPerBlock);
-	void releaseResources();
+	void prepareToPlay (double sampleRate, int samplesPerBlock) override;
+	void releaseResources() override;
 
-	void processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages);
-
-	//==============================================================================
-	AudioProcessorEditor* createEditor();
-	bool hasEditor() const;
-
-	double getTailLengthSeconds() const { return 0.0; }
+	void processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages) override;
 
 	//==============================================================================
-	const String getName() const;
+	AudioProcessorEditor* createEditor() override;
+	bool hasEditor() const override;
 
-	int getNumParameters();
-
-	float getParameter (int index);
-	void setParameter (int index, float newValue);
-
-	const String getParameterName (int index);
-	const String getParameterText (int index);
-
-	const String getInputChannelName (int channelIndex) const;
-	const String getOutputChannelName (int channelIndex) const;
-	bool isInputChannelStereoPair (int index) const;
-	bool isOutputChannelStereoPair (int index) const;
-
-	bool acceptsMidi() const;
-	bool producesMidi() const;
-	bool silenceInProducesSilenceOut() const;
-	//==============================================================================
-	int getNumPrograms();
-	int getCurrentProgram();
-	void setCurrentProgram (int index);
-	const String getProgramName (int index);
-	void changeProgramName (int index, const String& newName);
+	double getTailLengthSeconds() const override { return 0.0; }
 
 	//==============================================================================
-	void getStateInformation (MemoryBlock& destData);
-	void setStateInformation (const void* data, int sizeInBytes);
+	const String getName() const override;
+
+	int getNumParameters() override;
+
+	float getParameter (int index) override;
+	void setParameter (int index, float newValue) override;
+
+	const String getParameterName (int index) override;
+	const String getParameterText (int index) override;
+
+	const String getInputChannelName (int channelIndex) const override;
+	const String getOutputChannelName (int channelIndex) const override;
+	bool isInputChannelStereoPair (int index) const override;
+	bool isOutputChannelStereoPair (int index) const override;
+
+	bool acceptsMidi() const override;
+	bool producesMidi() const override;
+	bool silenceInProducesSilenceOut() const override;
+	//==============================================================================
+	int getNumPrograms() override;
+	int getCurrentProgram() override;
+	void setCurrentProgram (int index) override;
+	const String getProgramName (int index) override;
+	void changeProgramName (int index, const String& newName) override;
+
+	//==============================================================================
+	void getStateInformation (MemoryBlock& destData) override;
+	void setStateInformation (const void* data, int sizeInBytes) override;
 
 	DelayTabDsp* getDelay(int index)
 	{
