@@ -13,30 +13,26 @@
 
 #include "JuceHeader.h"
 #include "JucePluginCharacteristics.h"
-
-// Binary Image
 #include "../Binary Data/UI/button.h"
-
 
 //==============================================================================
 /**
 */
-class FancyButton  : public TextButton
-
+class FancyButton : public TextButton
 {
 public:
     //==============================================================================
     FancyButton();
-    ~FancyButton();
+    ~FancyButton() override;
 
-    void paint (Graphics& g);
+    void paint (Graphics& g) override;
 
 private:
     //==============================================================================
+    Image buttonImage;
+    int frameWidth;
 
-	Image buttonImage;
-	int frameWidth;
-
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(FancyButton);
 };
 
 #endif  // __PHASEBUTTON_H_CFF4EBB1__

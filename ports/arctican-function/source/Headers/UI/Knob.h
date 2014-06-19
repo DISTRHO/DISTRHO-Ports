@@ -15,32 +15,29 @@
 #include "JucePluginCharacteristics.h"
 #include "../Binary Data/UI/knobs.h"
 
-
 //==============================================================================
 /**
 */
-class Knob  : public Slider
-
+class Knob : public Slider
 {
 public:
     //==============================================================================
     Knob();
-    ~Knob();
+    ~Knob() override;
 
-	String getTextFromValue (double value);
-	void setReadoutType(String type);
-	//void Slider::PopupDisplayComponent::BubbleComponent::paint(Graphics& g);
+    String getTextFromValue (double value) override;
+    void setReadoutType (String type) override;
 
-    void paint (Graphics& g);
+    void paint (Graphics& g) override;
 
 private:
     //==============================================================================
+    Image knobImage, smallKnobImage;
+    int frameWidth;
+    String readoutType;
+    String testReadout;
 
-	Image knobImage,smallKnobImage;
-	int frameWidth;
-	String readoutType;
-	String testReadout;
-
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Knob);
 };
 
 #endif  // __VOLUMEDIAL_H_CFF4EBB1__

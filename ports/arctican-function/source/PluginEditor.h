@@ -14,7 +14,6 @@
 #include "JuceHeader.h"
 #include "JucePluginCharacteristics.h"
 #include "PluginProcessor.h"
-// #include "Resources/Headers/Meters/LevelMeter.h"
 #include "Headers/UI/Knob.h"
 #include "Headers/UI/FancyButton.h"
 #include "Headers/Binary Data/Backgrounds/thefunctionbackground.h"
@@ -24,38 +23,39 @@
 /**
 */
 class TheFunctionAudioProcessorEditor  : public AudioProcessorEditor,
-										public SliderListener,
-										public ButtonListener,					
-										public Timer
+                                         public SliderListener,
+                                         public ButtonListener,
+                                         public Timer
 {
 public:
     TheFunctionAudioProcessorEditor (TheFunctionAudioProcessor* ownerFilter);
-    ~TheFunctionAudioProcessorEditor();
+    ~TheFunctionAudioProcessorEditor() override;
 
     //==============================================================================
-    // This is just a standard Juce paint method...
-    void paint (Graphics& g);
-	void resized();
-	void sliderValueChanged (Slider*);
-	void buttonClicked (Button*);
-	void timerCallback();
+    void paint (Graphics& g) override;
+    void resized() override;
+    void sliderValueChanged (Slider*) override;
+    void buttonClicked (Button*) override;
+    void timerCallback() override;
 
-	Knob gainSlider;
-	Knob gainLSlider;
-	Knob gainRSlider;
-	Knob panLSlider;
-	Knob panRSlider;
+private:
+    Knob gainSlider;
+    Knob gainLSlider;
+    Knob gainRSlider;
+    Knob panLSlider;
+    Knob panRSlider;
 
-	FancyButton phaseButtonL;
-	FancyButton phaseButtonR;
+    FancyButton phaseButtonL;
+    FancyButton phaseButtonR;
 
-	Image backgroundGUI;
+    Image backgroundGUI;
 
-	TheFunctionAudioProcessor* getProcessor() const
+    TheFunctionAudioProcessor* getProcessor() const
     {
         return static_cast <TheFunctionAudioProcessor*> (getAudioProcessor());
     }
-};
 
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(TheFunctionAudioProcessorEditor);
+};
 
 #endif  // __PLUGINEDITOR_H_AE42FDA5__
