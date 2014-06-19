@@ -31,11 +31,12 @@ namespace audiofft
   
 namespace internal
 {
+#if DEBUG
   static bool IsPowerOf2(size_t val)
   {
     return (val == 1 || (val & (val-1)) == 0);
   }
-
+#endif
 
   template<typename TypeDest, typename TypeSrc>
   void ConvertBuffer(TypeDest* dest, const TypeSrc* src, size_t len)

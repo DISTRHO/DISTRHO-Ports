@@ -1110,7 +1110,7 @@ void KlangFalterEditor::updateUI()
     _drySlider->setRange(0.0, 1.0);
     _drySlider->setValue(scale, juce::dontSendNotification);
     _dryLevelLabel->setText(DecibelScaling::DecibelString(db), sendNotification);
-    _dryButton->setToggleState(_processor.getParameter(Parameters::DryOn), false);
+    _dryButton->setToggleState(_processor.getParameter(Parameters::DryOn), juce::dontSendNotification);
   }
   {
     const float db = _processor.getParameter(Parameters::WetDecibels);
@@ -1119,11 +1119,11 @@ void KlangFalterEditor::updateUI()
     _wetSlider->setRange(0.0, 1.0);
     _wetSlider->setValue(scale, juce::dontSendNotification);
     _wetLevelLabel->setText(DecibelScaling::DecibelString(db), sendNotification);
-    _wetButton->setToggleState(_processor.getParameter(Parameters::WetOn), false);
+    _wetButton->setToggleState(_processor.getParameter(Parameters::WetOn), juce::dontSendNotification);
   }
   {
     _reverseButton->setEnabled(true);
-    _reverseButton->setToggleState(_processor.getReverse(), false);
+    _reverseButton->setToggleState(_processor.getReverse(), juce::dontSendNotification);
   }
   {
     const double irBegin = _processor.getIRBegin();
@@ -1166,7 +1166,7 @@ void KlangFalterEditor::updateUI()
     const bool autoGainOn = _processor.getParameter(Parameters::AutoGainOn);
     const juce::String autoGainText = DecibelScaling::DecibelString(autoGainDecibels);
     _autogainButton->setButtonText(juce::String("Autogain ") + autoGainText);
-    _autogainButton->setToggleState(autoGainOn, false);
+    _autogainButton->setToggleState(autoGainOn, juce::dontSendNotification);
   }
   {
     Parameters::EqType lowEqType = static_cast<Parameters::EqType>(_processor.getParameter(Parameters::EqLowType));
@@ -1233,7 +1233,7 @@ void KlangFalterEditor::updateUI()
     _levelMeterDry->setChannelCount(numInputChannels);
     _levelMeterOut->setChannelCount(numOutputChannels);
     Settings::ResultLevelMeterDisplay resultDisplay = _processor.getSettings().getResultLevelMeterDisplay();
-    _levelMeterOutLabelButton->setToggleState(resultDisplay == Settings::Out, false);
+    _levelMeterOutLabelButton->setToggleState(resultDisplay == Settings::Out, juce::dontSendNotification);
     _levelMeterOutLabelButton->setButtonText((resultDisplay == Settings::Out) ? juce::String("Out") : juce::String("Wet"));
   }
   {

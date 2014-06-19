@@ -292,7 +292,7 @@ FloatBuffer::Ptr IRCalculation::importAudioFile(const File& file, size_t fileCha
     info.startSample = 0;
     info.numSamples = loading;
     audioFormatReaderSource.getNextAudioBlock(info);
-    ::memcpy(buffer->data()+pos, importBuffer.getSampleData(fileChannel), static_cast<size_t>(loading) * sizeof(float));
+    ::memcpy(buffer->data()+pos, importBuffer.getReadPointer(fileChannel), static_cast<size_t>(loading) * sizeof(float));
     pos += static_cast<size_t>(loading);
   }
 
@@ -400,7 +400,7 @@ FloatBuffer::Ptr IRCalculation::changeSampleRate(const FloatBuffer::Ptr& inputBu
     info.startSample = 0;
     info.numSamples = processing;
     resamplingSource.getNextAudioBlock(info);      
-    ::memcpy(outputBuffer->data()+static_cast<size_t>(processed), blockBuffer.getSampleData(0), processing * sizeof(float));
+    ::memcpy(outputBuffer->data()+static_cast<size_t>(processed), blockBuffer.getReadPointer(0), processing * sizeof(float));
     processed += processing;
   }
 

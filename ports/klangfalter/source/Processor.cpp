@@ -267,13 +267,13 @@ void Processor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& /*midiMessag
   float* channelData1 = nullptr;
   if (numInputChannels == 1)
   {    
-    channelData0 = buffer.getSampleData(0);
-    channelData1 = buffer.getSampleData(0);
+    channelData0 = buffer.getWritePointer(0);
+    channelData1 = buffer.getWritePointer(0);
   }
   else if (numInputChannels == 2)
   {
-    channelData0 = buffer.getSampleData(0);
-    channelData1 = buffer.getSampleData(1);
+    channelData0 = buffer.getWritePointer(0);
+    channelData1 = buffer.getWritePointer(1);
   }
 
   // Convolution
@@ -320,7 +320,7 @@ void Processor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& /*midiMessag
   if (numOutputChannels >= 2)
   {
     _stereoWidth.updateWidth(getParameter(Parameters::StereoWidth));
-    _stereoWidth.process(_wetBuffer.getSampleData(0), _wetBuffer.getSampleData(1), samplesToProcess);
+    _stereoWidth.process(_wetBuffer.getWritePointer(0), _wetBuffer.getWritePointer(1), samplesToProcess);
   }
 
   // Dry/wet gain
@@ -340,13 +340,13 @@ void Processor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& /*midiMessag
   // Level measurement (dry)
   if (numInputChannels == 1)
   {    
-    _levelMeasurementsDry[0].process(samplesToProcess, buffer.getSampleData(0));
+    _levelMeasurementsDry[0].process(samplesToProcess, buffer.getReadPointer(0));
     _levelMeasurementsDry[1].reset();
   }
   else if (numInputChannels == 2)
   {
-    _levelMeasurementsDry[0].process(samplesToProcess, buffer.getSampleData(0));
-    _levelMeasurementsDry[1].process(samplesToProcess, buffer.getSampleData(1));
+    _levelMeasurementsDry[0].process(samplesToProcess, buffer.getReadPointer(0));
+    _levelMeasurementsDry[1].process(samplesToProcess, buffer.getReadPointer(1));
   }
 
   // Sum wet to dry signal
@@ -362,28 +362,28 @@ void Processor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& /*midiMessag
     _wetOn.getSmoothValues(samplesToProcess, wetOnGain0, wetOnGain1);
     if (numOutputChannels > 0)
     {
-      buffer.addFromWithRamp(0, 0, _wetBuffer.getSampleData(0), samplesToProcess, wetOnGain0, wetOnGain1);
+      buffer.addFromWithRamp(0, 0, _wetBuffer.getReadPointer(0), samplesToProcess, wetOnGain0, wetOnGain1);
     }
     if (numOutputChannels > 1)
     {
-      buffer.addFromWithRamp(1, 0, _wetBuffer.getSampleData(1), samplesToProcess, wetOnGain0, wetOnGain1);
+      buffer.addFromWithRamp(1, 0, _wetBuffer.getReadPointer(1), samplesToProcess, wetOnGain0, wetOnGain1);
     }
   }
 
   // Level measurement (wet/out)
   if (numOutputChannels == 1)
   {
-    _levelMeasurementsWet[0].process(samplesToProcess, _wetBuffer.getSampleData(0));
+    _levelMeasurementsWet[0].process(samplesToProcess, _wetBuffer.getReadPointer(0));
     _levelMeasurementsWet[1].reset();
-    _levelMeasurementsOut[0].process(samplesToProcess, buffer.getSampleData(0));
+    _levelMeasurementsOut[0].process(samplesToProcess, buffer.getReadPointer(0));
     _levelMeasurementsOut[1].reset();
   }
   else if (numOutputChannels == 2)
   {
-    _levelMeasurementsWet[0].process(samplesToProcess, _wetBuffer.getSampleData(0));
-    _levelMeasurementsWet[1].process(samplesToProcess, _wetBuffer.getSampleData(1));
-    _levelMeasurementsOut[0].process(samplesToProcess, buffer.getSampleData(0));
-    _levelMeasurementsOut[1].process(samplesToProcess, buffer.getSampleData(1));
+    _levelMeasurementsWet[0].process(samplesToProcess, _wetBuffer.getReadPointer(0));
+    _levelMeasurementsWet[1].process(samplesToProcess, _wetBuffer.getReadPointer(1));
+    _levelMeasurementsOut[0].process(samplesToProcess, buffer.getReadPointer(0));
+    _levelMeasurementsOut[1].process(samplesToProcess, buffer.getReadPointer(1));
   }
 
   // In case we have more outputs than inputs, we'll clear any output
