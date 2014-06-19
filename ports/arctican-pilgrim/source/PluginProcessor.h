@@ -16,99 +16,86 @@
 
 #include "PluginParameter.h"
 
-
 //==============================================================================
 /**
 */
-class ThePilgrimAudioProcessor  : public AudioProcessor
+class ThePilgrimAudioProcessor : public AudioProcessor
 {
 public:
     //==============================================================================
     ThePilgrimAudioProcessor();
-    ~ThePilgrimAudioProcessor();
+    ~ThePilgrimAudioProcessor() override;
 
     //==============================================================================
-    void prepareToPlay (double sampleRate, int samplesPerBlock);
-    void releaseResources();
+    void prepareToPlay (double sampleRate, int samplesPerBlock) override;
+    void releaseResources() override;
 
-    void processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages);
-
-    //==============================================================================
-    AudioProcessorEditor* createEditor();
-    bool hasEditor() const;
-
-    double getTailLengthSeconds() const { return 0.0; }
+    void processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages) override;
 
     //==============================================================================
-    const String getName() const;
+    AudioProcessorEditor* createEditor() override;
+    bool hasEditor() const override;
 
-    int getNumParameters();
-
-    float getParameter (int index);
-    void setParameter (int index, float newValue);
-
-    const String getParameterName (int index);
-    const String getParameterText (int index);
-
-    const String getInputChannelName (int channelIndex) const;
-    const String getOutputChannelName (int channelIndex) const;
-    bool isInputChannelStereoPair (int index) const;
-    bool isOutputChannelStereoPair (int index) const;
-
-    bool acceptsMidi() const;
-    bool producesMidi() const;
+    double getTailLengthSeconds() const override { return 0.0; }
 
     //==============================================================================
-    int getNumPrograms();
-    int getCurrentProgram();
-    void setCurrentProgram (int index);
-    const String getProgramName (int index);
-    void changeProgramName (int index, const String& newName);
+    const String getName() const override;
+
+    int getNumParameters() override;
+
+    float getParameter (int index) override;
+    void setParameter (int index, float newValue) override;
+
+    const String getParameterName (int index) override;
+    const String getParameterText (int index) override;
+
+    const String getInputChannelName (int channelIndex) const override;
+    const String getOutputChannelName (int channelIndex) const override;
+    bool isInputChannelStereoPair (int index) const override;
+    bool isOutputChannelStereoPair (int index) const override;
+
+    bool acceptsMidi() const override;
+    bool producesMidi() const override;
 
     //==============================================================================
-    void getStateInformation (MemoryBlock& destData);
-    void setStateInformation (const void* data, int sizeInBytes);
+    int getNumPrograms() override;
+    int getCurrentProgram() override;
+    void setCurrentProgram (int index) override;
+    const String getProgramName (int index) override;
+    void changeProgramName (int index, const String& newName) override;
 
-    String getStateInformationString ();
-    void setStateInformationString (const String& data);
+    //==============================================================================
+    void getStateInformation (MemoryBlock& destData) override;
+    void setStateInformation (const void* data, int sizeInBytes) override;
 
-    bool silenceInProducesSilenceOut() const { return true; }
+    bool silenceInProducesSilenceOut() const override { return true; }
 
     //==============================================================================
     //	USER FUNCTIONS =============================================================
     //==============================================================================
 
-	void updateFilter();
+    void updateFilter();
 
-	PluginParameter filterParameter;
-	PluginParameter mixParameter;
+    PluginParameter filterParameter;
+    PluginParameter mixParameter;
 
-	IIRFilterOld highFilterL;
-	IIRFilterOld highFilterR;
-	IIRFilterOld lowFilterL;
-	IIRFilterOld lowFilterR;
+    IIRFilterOld highFilterL;
+    IIRFilterOld highFilterR;
+    IIRFilterOld lowFilterL;
+    IIRFilterOld lowFilterR;
 
-	double globalSampleRate;
+    double globalSampleRate;
 
-	enum Parameters
+    enum Parameters
     {
         filterFreqParam = 0,
-		mixParam,
-
+        mixParam,
         totalNumParams
     };
 
-	int contnumber;
-	int contvalue;
-	bool learnIsActive;
-	int currentLearnParam;
-	int lastMovedParam;
+    AudioSampleBuffer dryBuffer;
 
-
-private:
-    //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ThePilgrimAudioProcessor);
-
 };
 
 #endif  // __PLUGINPROCESSOR_H_34DAFF0F__

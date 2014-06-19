@@ -15,11 +15,10 @@
 #include "JucePluginCharacteristics.h"
 #include "KnobsBI.h"
 
-
 //==============================================================================
 /**
 */
-class Knob  :	public Slider
+class Knob : public Slider
 
 
 {
@@ -28,57 +27,28 @@ public:
     Knob();
     ~Knob();
 
-	//String getStringValue (double value);
-	//void setReadoutType(String type);
-	//void Slider::PopupDisplayComponent::BubbleComponent::paint(Graphics& g);
+    void paint (Graphics& g) override;
+    void setKnobType (int newType);
+    void calculateReadoutValue();
 
-    void paint (Graphics& g);
-	void setKnobType (int newType);
-	void calculateReadoutValue();
-	
-	void setMIDILearn (bool isOn);
-	bool getMIDILearn ();
-	
-	void setCCNumber(int newNumber);
-	int getCCNumber();
-	
-	void setIsLearning(bool areWeLearning);
-
-
-	
-	
-	enum KnobType
+    enum KnobType
     {
-		defaultType = 0,
+        defaultType = 0,
         dualFilterType,
-		mixType,
-		panType,
-		gainType,
-		
+        mixType,
+        panType,
+        gainType,
         totalNumTypes
     };
-	
-	 //!!!!!!!!!!!!!
 
 private:
     //==============================================================================
+    Image filterKnobImage, mixKnobImage;
+    int frameWidth;
+    String readoutText;
+    int knobType;
 
-	Image filterKnobImage,mixKnobImage;
-	int frameWidth;
-	//Label readoutValue;
-	//String readoutType;
-	String readoutText;
-	String CCText;
-	int CCNumber;
-	int knobType;
-	bool MIDILearnIsActive;
-	bool isLearning;
-	
-
-	
-
-
-
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Knob);
 };
 
 #endif  // __VOLUMEDIAL_H_CFF4EBB1__

@@ -155,6 +155,12 @@ function make_juce_vst_project(name)
   package.config["Release"].links = { "juce" }
   package.config["Debug"].links   = { "juce_debug" }
 
+  package.buildoptions = {
+    package.buildoptions,
+    "-Wno-multichar",
+    "-Wno-write-strings"
+  }
+
   package.includepaths = {
     package.includepaths,
     "../../../libs/juce/source",

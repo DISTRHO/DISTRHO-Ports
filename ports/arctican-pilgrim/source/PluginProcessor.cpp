@@ -15,11 +15,8 @@
 //==============================================================================
 ThePilgrimAudioProcessor::ThePilgrimAudioProcessor()
 {
-	learnIsActive=0;
-	currentLearnParam=0;
-	contnumber=0;
-	contvalue=0;
-	lastMovedParam=0;
+    filterParameter.setValue(0.5);
+    mixParameter.setValue(1.0);
 }
 
 ThePilgrimAudioProcessor::~ThePilgrimAudioProcessor()
@@ -162,13 +159,14 @@ void ThePilgrimAudioProcessor::prepareToPlay (double sampleRate, int samplesPerB
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
-	globalSampleRate=sampleRate;
-	updateFilter();
-	lowFilterL.reset();
-	lowFilterR.reset();
-	highFilterL.reset();
-	highFilterR.reset();
-
+    globalSampleRate=sampleRate;
+    updateFilter();
+    lowFilterL.reset();
+    lowFilterR.reset();
+    highFilterL.reset();
+    highFilterR.reset();
+    dryBuffer.setSize(2, samplesPerBlock);
+    dryBuffer.clear();
 }
 
 void ThePilgrimAudioProcessor::releaseResources()
@@ -177,64 +175,8 @@ void ThePilgrimAudioProcessor::releaseResources()
     // spare memory, etc.
 }
 
-void ThePilgrimAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
+void ThePilgrimAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer&)
 {
-
-	MidiMessage message;
-	MidiBuffer::Iterator i (midiMessages);
-	int messageFrameRelativeTothisProcess;
-	while (i.getNextEvent (message, messageFrameRelativeTothisProcess))
-	{
-		if (message.isController() == true)
-		{
-
-
-
-			// Get values
-			contnumber = message.getControllerNumber();
-			contvalue = message.getControllerValue();
-
-
-			// Live Mode
-			if (learnIsActive == false)
-			{
-				// Update Parameter
-				if (contnumber == filterParameter.getControllerNumber())
-					setParameter(filterFreqParam, (float(contvalue) / 127.0) );
-				else if (contnumber == mixParameter.getControllerNumber())
-					setParameter(mixParam, (float(contvalue) / 127.0) );
-			}
-
-			// Learn Mode
-			if (learnIsActive == true)
-			{
-				if (currentLearnParam == 0)
-				{
-					filterParameter.setControllerNumber(contnumber);
-				}
-				else if (currentLearnParam == 1)
-				{
-					mixParameter.setControllerNumber(contnumber);
-				}
-			}
-
-		}
-
-
-
-
-   }
-
-
-		//bool isController() const noexcept;
-
-   // int getControllerNumber() const noexcept;
-// get Controller name
-
-   // int getControllerValue() const noexcept;
-
-
-
 	// TIDY UP THIS SO ANY VALUE WORKS
 	int samplesUntilSmooth = 8;
 	int currentSmoothSample = 0;
@@ -246,9 +188,10 @@ void ThePilgrimAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuff
 	// The 'for' loop cycles through each channel at a time.
     for (int channel = 0; channel < getNumInputChannels(); ++channel)
     {
-        float* channelData = buffer.getSampleData (channel);
-		AudioSampleBuffer dryBuffer = buffer;
-        float* dryData = dryBuffer.getSampleData (channel);
+        float* channelData = buffer.getWritePointer(channel);
+
+        dryBuffer.copyFrom(channel, 0, channelData, buffer.getNumSamples());
+        const float* dryData = dryBuffer.getReadPointer(channel);
 
 			for (int i = 0; i < buffer.getNumSamples(); ++i)
 			{
@@ -347,8 +290,6 @@ void ThePilgrimAudioProcessor::getStateInformation (MemoryBlock& destData)
 	// xml.setAttribute ("delay", delay);
 	xml.setAttribute ("freq", filterParameter.getValue());
 	xml.setAttribute ("mix", mixParameter.getValue());
-	xml.setAttribute ("freqCC", filterParameter.getControllerNumber());
-	xml.setAttribute ("mixCC", mixParameter.getControllerNumber());
 
     // then use this helper function to stuff it into the binary blob and return it..
     copyXmlToBinary (xml, destData);
@@ -374,40 +315,9 @@ void ThePilgrimAudioProcessor::setStateInformation (const void* data, int sizeIn
 
             filterParameter.setValue((float) xmlState->getDoubleAttribute ("freq", 0));
             mixParameter.setValue((float) xmlState->getDoubleAttribute ("mix", 0));
-            filterParameter.setControllerNumber((float) xmlState->getDoubleAttribute ("freqCC", 0));
-            mixParameter.setControllerNumber((float) xmlState->getDoubleAttribute ("mixCC", 0));
 
         }
 	}
-}
-
-String ThePilgrimAudioProcessor::getStateInformationString ()
-{
-    XmlElement xml ("MYPLUGINSETTINGS");
-
-    //xml.setAttribute ("freq", filterParameter.getValue());
-    //xml.setAttribute ("mix", mixParameter.getValue());
-    xml.setAttribute ("freqCC", filterParameter.getControllerNumber());
-    xml.setAttribute ("mixCC", mixParameter.getControllerNumber());
-
-    return xml.createDocument (String::empty);
-}
-
-void ThePilgrimAudioProcessor::setStateInformationString (const String& data)
-{
-    XmlElement* const xmlState = XmlDocument::parse(data);
-
-    if (xmlState != 0)
-    {
-        // make sure that it's actually our type of XML object..
-        if (xmlState->hasTagName ("MYPLUGINSETTINGS"))
-        {
-            //filterParameter.setValue((float) xmlState->getDoubleAttribute ("freq", 0));
-            //mixParameter.setValue((float) xmlState->getDoubleAttribute ("mix", 0));
-            filterParameter.setControllerNumber((float) xmlState->getDoubleAttribute ("freqCC", 0));
-            mixParameter.setControllerNumber((float) xmlState->getDoubleAttribute ("mixCC", 0));
-        }
-    }
 }
 
 //==============================================================================

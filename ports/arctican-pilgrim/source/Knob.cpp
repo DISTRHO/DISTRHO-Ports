@@ -28,13 +28,6 @@ Knob::Knob()
 	setTextBoxStyle(NoTextBox, true, 0, 0);
 
 	readoutText = "HELLO!!";
-
-	CCNumber = -1;
-	CCText = "Off";
-	isLearning=false;
-	MIDILearnIsActive=false;
-
-
 }
 
 Knob::~Knob()
@@ -52,8 +45,7 @@ void Knob::paint (Graphics& g)
 	else                            div = 1.0 / 31; // 31 frames
 
 	// Work out current frame number to be shown
-	double pos         = (int)(Knob::getValue() / div);
-
+	double pos = (int)(getValue() / div);
 
    // Little hack to get image centred when knob value at half
 	if (pos > 0)
@@ -76,28 +68,6 @@ void Knob::paint (Graphics& g)
 	g.setColour(juce::Colour(150,150,150));
 
 
-	if (MIDILearnIsActive == true)
-	{
-		g.setColour(juce::Colour(200,150,75));
-		if (isLearning == true)
-		{
-
-			g.drawFittedText("--------" , 0,105,90,50,Justification::centred,1);
-		}
-
-		if (CCNumber > -1) {
-			String newOut = "CC " + String(CCNumber);
-			g.drawFittedText(newOut , 0,90,90,50,Justification::centred,1);
-		}
-		else {
-			g.drawFittedText("OFF" , 0,90,90,50,Justification::centred,1);
-
-		}
-
-
-
-	}
-	else
 	{
 		g.setColour(juce::Colour(150,150,150));
 		g.drawFittedText(readoutText,0,90,90,50,Justification::centred,1);
@@ -105,13 +75,6 @@ void Knob::paint (Graphics& g)
 
 
 }
-
-
-void Knob::setCCNumber(int newNumber)	{CCNumber = newNumber; isLearning = false; repaint();}
-int Knob::getCCNumber()					{return CCNumber;}
-void Knob::setIsLearning(bool areWeLearning)	{isLearning = areWeLearning;}
-
-
 
 void Knob::calculateReadoutValue()
 {
@@ -225,20 +188,6 @@ void Knob::calculateReadoutValue()
 
 
 }
-
-void Knob::setMIDILearn (bool isOn)
-{
-	MIDILearnIsActive = isOn;
-	repaint();
-
-}
-bool Knob::getMIDILearn ()
-{
-	return MIDILearnIsActive;
-
-}
-
-
 
 void Knob::setKnobType (int newType)
 {

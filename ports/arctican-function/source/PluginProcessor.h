@@ -81,7 +81,6 @@ public:
         totalNumParams
     };
 
-private:
     float gain;
     float gainL;
     float gainR;
@@ -94,6 +93,8 @@ private:
 
     int currentPreset;
     int timeSinceChunkCalled;
+
+    AudioSampleBuffer tmpBuffer;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TheFunctionAudioProcessor);
 };

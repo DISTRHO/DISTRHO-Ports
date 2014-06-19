@@ -19,7 +19,7 @@ ThePilgrimAudioProcessorEditor::ThePilgrimAudioProcessorEditor (ThePilgrimAudioP
     // This is where our plugin's editor size is set.
     setSize (443, 300);
 
-	
+
 	bgImage = ImageFileFormat::loadFrom (BackgroundImage::gui_png, BackgroundImage::gui_pngSize);
 	// Sliders
 	filterSlider.addListener(this);
@@ -31,16 +31,8 @@ ThePilgrimAudioProcessorEditor::ThePilgrimAudioProcessorEditor (ThePilgrimAudioP
 	mixSlider.setRange(0.0, 1.0, 0.001);
 	mixSlider.setKnobType(Knob::mixType);
 	addAndMakeVisible (&mixSlider);
-	
-	learnButton.addListener(this);
-	learnButton.setButtonText("LEARN");
-	addAndMakeVisible (&learnButton);
 
-	
 	startTimer (50);
-
-	
-
 }
 
 ThePilgrimAudioProcessorEditor::~ThePilgrimAudioProcessorEditor()
@@ -50,89 +42,29 @@ ThePilgrimAudioProcessorEditor::~ThePilgrimAudioProcessorEditor()
 //==============================================================================
 void ThePilgrimAudioProcessorEditor::paint (Graphics& g)
 {
-	g.drawImage(bgImage, 0, 0, 443, 300, 0, 0, 443, 300, false);
-	
-   // g.fillAll (Colours::white);
-    //g.setColour (Colours::black);
-    //g.setFont (15.0f);
-   // g.drawFittedText ("Hello World!",
-    //                  0, 0, getWidth(), getHeight(),
-      //                Justification::centred, 1);
+    g.drawImage(bgImage, 0, 0, 443, 300, 0, 0, 443, 300, false);
 }
 
 void ThePilgrimAudioProcessorEditor::resized()
 {
-	
-	filterSlider.setBounds(106,101,90,150);
-	mixSlider.setBounds(246,101,90,150);
-	learnButton.setBounds(0,0,112,41);
-	
-	//midiLayOverlay[0].setBounds(106,101,90,150);
-	//midiLayOverlay[1].setBounds(246,101,90,150);	
-	
+    filterSlider.setBounds(106,101,90,150);
+    mixSlider.setBounds(246,101,90,150);
 }
 
 void ThePilgrimAudioProcessorEditor::sliderValueChanged (Slider *slider)
 {
-	
-	if (slider == &filterSlider)
-	{
-        getProcessor()->setParameterNotifyingHost (getProcessor()->filterFreqParam,	float (filterSlider.getValue())); 
-		getProcessor()->currentLearnParam=0;
-		//filterSlider.setIsLearning(true);
-		//mixSlider.setIsLearning(false);
-		
-	}
-	else if (slider == &mixSlider)
-	{
-        getProcessor()->setParameterNotifyingHost (getProcessor()->mixParam,		float (mixSlider.getValue())); 	
-		getProcessor()->currentLearnParam=1;
-		//filterSlider.setIsLearning(false);
-		//mixSlider.setIsLearning(true);
-
-
-	}
-	
-
+    if (slider == &filterSlider)
+    {
+        getProcessor()->setParameterNotifyingHost (getProcessor()->filterFreqParam,	float (filterSlider.getValue()));
+    }
+    else if (slider == &mixSlider)
+    {
+        getProcessor()->setParameterNotifyingHost (getProcessor()->mixParam,		float (mixSlider.getValue()));
+    }
 }
-
-void ThePilgrimAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked)
-{
-	if (getProcessor()->learnIsActive == 1)
-	{
-		getProcessor()->learnIsActive = 0;
-		filterSlider.setMIDILearn(false);
-		mixSlider.setMIDILearn(false);
-		learnButton.setButtonText("Stopped");
-	}
-	else 
-	{
-		getProcessor()->learnIsActive = 1;
-		filterSlider.setMIDILearn(true);
-		mixSlider.setMIDILearn(true);		
-		learnButton.setButtonText("Learning");
-
-	}
-		
-}
-
-
 
 void ThePilgrimAudioProcessorEditor::timerCallback()
-{	
+{
     filterSlider.setValue (getProcessor()->filterParameter.getValue(), dontSendNotification);
-	mixSlider.setValue (getProcessor()->mixParameter.getValue(), dontSendNotification);
-	filterSlider.setCCNumber(getProcessor()->filterParameter.getControllerNumber());	
-	mixSlider.setCCNumber(getProcessor()->mixParameter.getControllerNumber());
-	learnButton.setIsLearning(getProcessor()->learnIsActive);
-	
-	if (getProcessor()->currentLearnParam == 0) {
-		filterSlider.setIsLearning(true);
-		mixSlider.setIsLearning(false);
-	}
-	else if (getProcessor()->currentLearnParam == 1) {
-		filterSlider.setIsLearning(false);
-		mixSlider.setIsLearning(true);
-	}
+    mixSlider.setValue (getProcessor()->mixParameter.getValue(), dontSendNotification);
 }
-

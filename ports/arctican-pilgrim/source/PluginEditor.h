@@ -16,46 +16,36 @@
 #include "PluginProcessor.h"
 #include "Knob.h"
 #include "BackgroundImage.h"
-#include "MIDIButton.h"
-
 
 //==============================================================================
 /**
 */
 class ThePilgrimAudioProcessorEditor  : public AudioProcessorEditor,
-										public Slider::Listener,
-										public Button::Listener,
-										public Timer
-
+                                        public Slider::Listener,
+                                        public Timer
 {
 public:
     ThePilgrimAudioProcessorEditor (ThePilgrimAudioProcessor* ownerFilter);
-    ~ThePilgrimAudioProcessorEditor();
+    ~ThePilgrimAudioProcessorEditor() override;
 
     //==============================================================================
     // This is just a standard Juce paint method...
-    void paint (Graphics& g);
-	void resized ();
-	void sliderValueChanged (Slider *slider);
-	void timerCallback();
-	void buttonClicked(Button *buttonThatWasClicked);
-	void actionListenerCallback (const String &message);
-	
-	ThePilgrimAudioProcessor* getProcessor() const
+    void paint (Graphics& g) override;
+    void resized () override;
+    void sliderValueChanged (Slider *slider) override;
+    void timerCallback() override;
+
+    ThePilgrimAudioProcessor* getProcessor() const
     {
         return static_cast <ThePilgrimAudioProcessor*> (getAudioProcessor());
     }
-	
+
 private:
-	Knob filterSlider;
-	Knob mixSlider;
-	Image bgImage;
-	//Label contNo;
-	//Label contVal;
-	MIDIButton learnButton;
-	
+    Knob filterSlider;
+    Knob mixSlider;
+    Image bgImage;
 
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ThePilgrimAudioProcessorEditor);
 };
-
 
 #endif  // __PLUGINEDITOR_H_A5624E04__

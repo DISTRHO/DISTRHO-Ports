@@ -11,6 +11,7 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
+#include <cmath>
 
 //==============================================================================
 TheFunctionAudioProcessor::TheFunctionAudioProcessor()
@@ -23,8 +24,6 @@ TheFunctionAudioProcessor::TheFunctionAudioProcessor()
 	  phaseL = 0.0f;
 	  phaseR = 0.0f;
 	  currentPreset = 0;
-
-
 }
 
 TheFunctionAudioProcessor::~TheFunctionAudioProcessor()
@@ -82,8 +81,8 @@ const String TheFunctionAudioProcessor::getParameterName (int index)
         case gainRParam:     return "Gain R";
         case panLParam:     return "Pan L";
         case panRParam:     return "Pan R";
-		case phaseLParam:	return "Phase L";
-		case phaseRParam:	return "Phase R";
+        case phaseLParam:	return "Phase L";
+        case phaseRParam:	return "Phase R";
         default:            break;
     }
 
@@ -238,6 +237,8 @@ void TheFunctionAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
+    tmpBuffer.setSize(2, samplesPerBlock);
+    tmpBuffer.clear();
 }
 
 void TheFunctionAudioProcessor::releaseResources()
@@ -252,14 +253,16 @@ void TheFunctionAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuf
 // This is the place where you'd normally do the guts of your plugin's
     // audio processing...
 
-		float numberOfSamples = buffer.getNumSamples();
+        int numberOfSamples = buffer.getNumSamples();
 
-        float* channelDataL = buffer.getSampleData (0);
-		float* channelDataR = buffer.getSampleData (1);
+        float* channelDataL = buffer.getWritePointer (0);
+        float* channelDataR = buffer.getWritePointer (1);
 
-		AudioSampleBuffer inputData = buffer; // Temp buffer for manipulation
-        float* inputDataL = inputData.getSampleData (0);
-		float* inputDataR = inputData.getSampleData (1);
+        tmpBuffer.copyFrom(0, 0, channelDataL, numberOfSamples);
+        tmpBuffer.copyFrom(1, 0, channelDataR, numberOfSamples);
+
+        float* inputDataL = tmpBuffer.getWritePointer (0);
+        float* inputDataR = tmpBuffer.getWritePointer (1);
 
 		float LinLout; // Left IN Left OUT - Gain
 		float LinRout; // Left IN Right OUT - Gain
@@ -307,7 +310,7 @@ void TheFunctionAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuf
 				inputDataR[i] *= -1;
 
 		// Pan
-			channelDataR[i]  = (inputDataR[i] * RinRout) + (inputDataL[i] * LinRout);
+			channelDataR[i] = (inputDataR[i] * RinRout) + (inputDataL[i] * LinRout);
 			channelDataL[i] = (inputDataL[i] * LinLout) + (inputDataR[i] * RinLout);
 
 		// Gain
@@ -319,8 +322,8 @@ void TheFunctionAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuf
 			if (channelDataR[i] > peakLevelR)
 				peakLevelR = channelDataR[i];
 
-			RMSLevelL += abs(channelDataL[i]);
-			RMSLevelR += abs(channelDataR[i]);
+			RMSLevelL += std::abs(channelDataL[i]);
+			RMSLevelR += std::abs(channelDataR[i]);
 
 		}
 	//******************

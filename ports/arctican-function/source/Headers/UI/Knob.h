@@ -26,7 +26,7 @@ public:
     ~Knob() override;
 
     String getTextFromValue (double value) override;
-    void setReadoutType (String type) override;
+    void setReadoutType (String type);
 
     void paint (Graphics& g) override;
 

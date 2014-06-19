@@ -26,7 +26,7 @@ TheFunctionAudioProcessorEditor::TheFunctionAudioProcessorEditor (TheFunctionAud
     gainSlider.setRange (0.0, 1.0, 0.001);
 	gainSlider.setTextBoxStyle(Slider::NoTextBox, false, 0, 0);
 
-	gainSlider.setPopupDisplayEnabled(true,0);
+	//gainSlider.setPopupDisplayEnabled(true,0);
 	gainSlider.setReadoutType("gain");
 
 // Gain L Slider
@@ -74,7 +74,7 @@ TheFunctionAudioProcessorEditor::TheFunctionAudioProcessorEditor (TheFunctionAud
     phaseButtonL.addListener (this);
 	phaseButtonL.setClickingTogglesState(true);
 	phaseButtonL.setConnectedEdges(15);
-    
+
 	addAndMakeVisible (&phaseButtonR);
 	phaseButtonR.addListener (this);
 	phaseButtonR.setClickingTogglesState(true);
@@ -133,27 +133,27 @@ void TheFunctionAudioProcessorEditor::sliderValueChanged (Slider* slider)
 
     if (slider == &gainSlider)
     {
-         getProcessor()->setParameterNotifyingHost (TheFunctionAudioProcessor::gainParam,				
+         getProcessor()->setParameterNotifyingHost (TheFunctionAudioProcessor::gainParam,
                                                    (float) gainSlider.getValue());
     }
 	if (slider == &gainLSlider)
     {
-         getProcessor()->setParameterNotifyingHost (TheFunctionAudioProcessor::gainLParam,				
+         getProcessor()->setParameterNotifyingHost (TheFunctionAudioProcessor::gainLParam,
                                                    (float) gainLSlider.getValue());
     }
 	if (slider == &gainRSlider)
     {
-         getProcessor()->setParameterNotifyingHost (TheFunctionAudioProcessor::gainRParam,				
+         getProcessor()->setParameterNotifyingHost (TheFunctionAudioProcessor::gainRParam,
                                                    (float) gainRSlider.getValue());
     }
 	if (slider == &panLSlider)
     {
-         getProcessor()->setParameterNotifyingHost (TheFunctionAudioProcessor::panLParam,				
+         getProcessor()->setParameterNotifyingHost (TheFunctionAudioProcessor::panLParam,
                                                    (float) panLSlider.getValue());
     }
 	if (slider == &panRSlider)
     {
-         getProcessor()->setParameterNotifyingHost (TheFunctionAudioProcessor::panRParam,				
+         getProcessor()->setParameterNotifyingHost (TheFunctionAudioProcessor::panRParam,
                                                    (float) panRSlider.getValue());
     }
 
@@ -161,32 +161,19 @@ void TheFunctionAudioProcessorEditor::sliderValueChanged (Slider* slider)
 
 void TheFunctionAudioProcessorEditor::buttonClicked (Button* button)
 {
-	     // It's vital to use setParameterNotifyingHost to change any parameters that are automatable
-        // by the host, rather than just modifying them directly, otherwise the host won't know
-        // that they've changed.
+     // It's vital to use setParameterNotifyingHost to change any parameters that are automatable
+     // by the host, rather than just modifying them directly, otherwise the host won't know
+     // that they've changed.
 
     if (button == &phaseButtonL)
     {
-		if (phaseButtonL.getToggleState() == true)
-			getProcessor()->setParameterNotifyingHost (TheFunctionAudioProcessor::phaseLParam, 1.0);
-
-		else if (phaseButtonL.getToggleState() == false)
-			getProcessor()->setParameterNotifyingHost (TheFunctionAudioProcessor::phaseLParam, 0.0);
-
-    } 
-	 if (button == &phaseButtonR)
+        getProcessor()->setParameterNotifyingHost (TheFunctionAudioProcessor::phaseLParam, phaseButtonL.getToggleState() ? 1.0 : 0.0);
+    }
+    else if (button == &phaseButtonR)
     {
-		if (phaseButtonR.getToggleState() == true)
-			getProcessor()->setParameterNotifyingHost (TheFunctionAudioProcessor::phaseRParam, 1.0);
-
-		else if (phaseButtonR.getToggleState() == false)
-			getProcessor()->setParameterNotifyingHost (TheFunctionAudioProcessor::phaseRParam, 0.0);
-
-    } 
-
-
+        getProcessor()->setParameterNotifyingHost (TheFunctionAudioProcessor::phaseRParam, phaseButtonR.getToggleState() ? 1.0 : 0.0);
+    }
 }
-
 
 void TheFunctionAudioProcessorEditor::timerCallback()
 {
@@ -194,18 +181,10 @@ void TheFunctionAudioProcessorEditor::timerCallback()
 
     gainSlider.setValue (ourProcessor->gain, dontSendNotification);
     gainLSlider.setValue (ourProcessor->gainL, dontSendNotification);
-	gainRSlider.setValue (ourProcessor->gainR, dontSendNotification);
+    gainRSlider.setValue (ourProcessor->gainR, dontSendNotification);
     panLSlider.setValue (ourProcessor->panL, dontSendNotification);
     panRSlider.setValue (ourProcessor->panR, dontSendNotification);
 
-
-	if (ourProcessor->phaseL < 0.5)
-		phaseButtonL.setToggleState(false,false);
-	else if (ourProcessor->phaseL >= 0.5)
-		phaseButtonL.setToggleState(true,false);
-
-	if (ourProcessor->phaseR < 0.5)
-		phaseButtonR.setToggleState(false,false);
-	else if (ourProcessor->phaseR >= 0.5)
-		phaseButtonR.setToggleState(true,false);
+    phaseButtonL.setToggleState(ourProcessor->phaseL >= 0.5, dontSendNotification);
+    phaseButtonR.setToggleState(ourProcessor->phaseR >= 0.5, dontSendNotification);
 }
