@@ -48,7 +48,7 @@ namespace ValueTreeComparators
         
         int compareElements (const ValueTree& first, const ValueTree& second) const
         {
-            const int result = first[attributeToSort].toString().compareLexicographically (second[attributeToSort].toString());
+            const int result = first[attributeToSort].toString().compareNatural (second[attributeToSort].toString());
             
             return direction * result;
         }
@@ -103,10 +103,10 @@ namespace ValueTreeComparators
         
         int compareElements (const ValueTree& first, const ValueTree& second) const
         {
-            int result = first[attributeToSort].toString().compareLexicographically (second[attributeToSort].toString());
+            int result = first[attributeToSort].toString().compareNatural (second[attributeToSort].toString());
             
             if (result == 0)
-                result = first[backupAttribute].toString().compareLexicographically (second[backupAttribute].toString());
+                result = first[backupAttribute].toString().compareNatural (second[backupAttribute].toString());
             
             return direction * result;
         }
@@ -138,11 +138,11 @@ namespace XmlComparators
         int compareElements (XmlElement* first, XmlElement* second) const
         {
             int result = first->getStringAttribute (attributeToSort)
-                           .compareLexicographically (second->getStringAttribute (attributeToSort));
+                           .compareNatural (second->getStringAttribute (attributeToSort));
 
             if (result == 0)
                 result = first->getStringAttribute ("ID")
-                           .compareLexicographically (second->getStringAttribute ("ID"));
+                           .compareNatural (second->getStringAttribute ("ID"));
 
             return direction * result;
         }
