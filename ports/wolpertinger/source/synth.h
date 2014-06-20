@@ -420,7 +420,7 @@ class wolp:	public AudioProcessor,
                 bool silenceInProducesSilenceOut() const override { return false; }
                 double getTailLengthSeconds() const override { return 0.0; }
 
-		const String getName() const override { return "wolp"; }
+		const String getName() const override { return "Wolpertinger"; }
 		void prepareToPlay (double sampleRate, int estimatedSamplesPerBlock) override
 		{
 			setCurrentPlaybackSampleRate(sampleRate);
