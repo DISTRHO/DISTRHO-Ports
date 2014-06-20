@@ -62,17 +62,17 @@ public:
         jassert (newItemSelected > 0) // if you fall back here, then you have defined
                                       // a parameter which starts from 0 and not from
                                       // 1 and this is impossible in a ComboBox
-    
-        setSelectedId (newItemSelected, true);
+
+        setSelectedId (newItemSelected, sendNotification);
 #else
 /*
         int newItemSelected = roundFloatToInt (parameter->getValue () * getNumItems () + 0.5f);
-    
+
         jassert (newItemSelected > 0) // if you fall back here, then you have defined
                                       // a parameter which starts from 0 and not from
                                       // 1 and this is impossible in a ComboBox
-    
-        setSelectedId (newItemSelected, true);
+
+        setSelectedId (newItemSelected, sendNotification);
 */
 #endif
     }

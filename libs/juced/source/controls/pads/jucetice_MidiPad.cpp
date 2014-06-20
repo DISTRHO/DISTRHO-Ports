@@ -93,16 +93,16 @@ bool MidiPad::hitTest (int x, int y)
 bool MidiPad::isInterestedInFileDrag (const StringArray& files)
 {
     File file = File(files.joinIntoString(String::empty,0,1));
-    if (file.hasFileExtension("png") || 
-        file.hasFileExtension("gif") || 
-        file.hasFileExtension("jpg") || 
+    if (file.hasFileExtension("png") ||
+        file.hasFileExtension("gif") ||
+        file.hasFileExtension("jpg") ||
         file.hasFileExtension("svg") )
         return true;
     else return false;
 }
 
 //==============================================================================
-void MidiPad::filesDropped(const juce::StringArray &filenames, int mouseX, int mouseY) 
+void MidiPad::filesDropped(const juce::StringArray &filenames, int mouseX, int mouseY)
 {
     if (isInterestedInFileDrag(filenames)) {
         String filename = filenames.joinIntoString(String::empty,0,1);
@@ -136,7 +136,7 @@ void MidiPad::addButtonListener (ButtonListener *const newListener) {
 
 //==============================================================================
 void MidiPad::setToggleState (bool state) {
-    drawableButton->setToggleState (state, false);
+    drawableButton->setToggleState (state, dontSendNotification);
 }
 
 

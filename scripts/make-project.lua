@@ -15,7 +15,7 @@ function make_library_project(name)
   package.target       = project.name
   package.objdir       = "intermediate"
   package.defines      = {}
-  package.buildoptions = { "-fPIC", "-DPIC", os.getenv("CXXFLAGS") }
+  package.buildoptions = { "-fPIC", "-DPIC", "-Wall", os.getenv("CXXFLAGS") }
 
   package.config["Release"].target       = project.name
   package.config["Release"].objdir       = "intermediate/Release"

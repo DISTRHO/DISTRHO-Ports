@@ -54,7 +54,7 @@ public:
     //==============================================================================
     void parameterChanged (AudioParameter* parameter, const int index)
     {
-        setToggleState ((parameter->getValueMapped () > 0.5f ? true : false), false);
+        setToggleState ((parameter->getValueMapped () > 0.5f ? true : false), dontSendNotification);
     }
 
 };
