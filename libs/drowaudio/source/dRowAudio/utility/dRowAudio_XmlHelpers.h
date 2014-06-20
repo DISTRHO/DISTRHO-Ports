@@ -38,7 +38,7 @@ namespace XmlHelpers
     /** Adds an XML style comment to a string.
         Useful if you're constructing a string to be parsed into and XmlElement.
      */
-    static String& addXmlComment (String& string, const String& comment)
+    inline static String& addXmlComment (String& string, const String& comment)
     {
         return string << "<!-- " << comment << " -->" << newLine;
     }
@@ -47,7 +47,7 @@ namespace XmlHelpers
     /** Searches an XmlElement for an element with a given attribute name with
         the given attribute value.
      */
-    static XmlElement* findXmlElementWithAttributeWithValue (XmlElement* element,
+    inline static XmlElement* findXmlElementWithAttributeWithValue (XmlElement* element,
                                                              const String& attributeName,
                                                              const String& attributeValue)
     {
@@ -80,7 +80,7 @@ namespace XmlHelpers
     //==============================================================================
     /** Searches an XmlElement for an element with a given attribute name.
      */
-    static XmlElement* findXmlElementWithAttribute (XmlElement* element, const String& attributeName)
+    inline static XmlElement* findXmlElementWithAttribute (XmlElement* element, const String& attributeName)
     {
         if (element == nullptr)
             return nullptr;
@@ -109,7 +109,7 @@ namespace XmlHelpers
     //==============================================================================
     /** Searches for an element with subtext that is an exact match.
      */
-    static XmlElement* findXmlElementWithSubText (XmlElement* element, const String& subtext)
+    inline static XmlElement* findXmlElementWithSubText (XmlElement* element, const String& subtext)
     {
         if (element == nullptr)
             return nullptr;
@@ -138,7 +138,7 @@ namespace XmlHelpers
     //==============================================================================
     /** Searches for an element with subtext contains the given text.
      */
-    static XmlElement* findXmlElementContainingSubText (XmlElement* element, const String& subtext)
+    inline static XmlElement* findXmlElementContainingSubText (XmlElement* element, const String& subtext)
     {
         if (element == nullptr || element->getFirstChildElement() == nullptr)
             return nullptr;

@@ -8,8 +8,8 @@
   ==============================================================================
 */
 
-#ifndef __COMMON_H_86A3DB6__
-#define __COMMON_H_86A3DB6__
+#ifndef _PARAMETERS_H_
+#define _PARAMETERS_H_
 
 #include "JuceHeader.h"
 
@@ -78,4 +78,4 @@ namespace Parameters
 }
 
 
-#endif  // __COMMON_H_86A3DB6__
+#endif  // _PARAMETERS_H_

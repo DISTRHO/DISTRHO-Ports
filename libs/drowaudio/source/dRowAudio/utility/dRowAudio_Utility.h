@@ -134,7 +134,7 @@ void reverseTwoArrays (Type* array1, Type* array2, int length)
 	@param	trackName	The track name to look for.
 	@param	retryLimit	An optional number of retries as sometimes the URL won't load first time.
  */
-static String findKeyFromChemicalWebsite (const String& releaseNo, const String& trackName)
+inline static String findKeyFromChemicalWebsite (const String& releaseNo, const String& trackName)
 {
     URL chemicalURL ("http://www.chemical-records.co.uk/sc/servlet/Info");
     chemicalURL = chemicalURL.withParameter ("Track", releaseNo);
@@ -170,7 +170,7 @@ static String findKeyFromChemicalWebsite (const String& releaseNo, const String&
 /** Draws a line representing the normalised set of samples to the given Image.
     Note the samples must be in the range of 1-0 and the line will be stretched to fit the whole image.
  */
-static void drawBufferToImage (const Image& image, const float* samples, int numSamples, Colour colour, float thickness)
+inline static void drawBufferToImage (const Image& image, const float* samples, int numSamples, Colour colour, float thickness)
 {
     if (image.isNull())
         return;
@@ -198,7 +198,7 @@ static void drawBufferToImage (const Image& image, const float* samples, int num
 /** Dumps a given image to a File in png format.
     If the file parameter is nonexistant a temp file will be created on the desktop.
  */
-static void saveImageToFile (const Image& image, File file = File::nonexistent)
+inline static void saveImageToFile (const Image& image, File file = File::nonexistent)
 {
     if (! file.exists())
         file = File::getSpecialLocation (File::userDesktopDirectory).getNonexistentChildFile ("tempImage", ".png");
@@ -429,7 +429,7 @@ static bool writeValueTreeToFile (const ValueTree& treeToWrite, const File& file
     attempt to read it as binary. If this also fails it will return an invalid
     ValueTree.
  */
-static ValueTree readValueTreeFromFile (const File& fileToReadFrom)
+inline static ValueTree readValueTreeFromFile (const File& fileToReadFrom)
 {
     ScopedPointer<XmlElement> treeAsXml (XmlDocument::parse (fileToReadFrom));
     if (treeAsXml != nullptr)
@@ -562,7 +562,7 @@ struct ScopedChangeSender
  */
 #ifndef UNUSED_NOWARN
 
-	#if defined(JUCE_MAC) || defined(JUCE_IOS)
+	#if defined(JUCE_MAC) || defined(JUCE_IOS) || defined(JUCE_LINUX)
 		// enable supression of unused variable is GCC
 		#define UNUSED_NOWARN __attribute__((unused))
 

@@ -41,10 +41,10 @@ namespace GuiHelpers
     /** Creates a base colour for a component based on the current keyboard
         and mouse interactivity.
      */
-    static Colour createBaseColour (const Colour& colour,
-                                    const bool hasKeyboardFocus,
-                                    const bool isMouseOver,
-                                    const bool isButtonDown) noexcept
+    inline static Colour createBaseColour (const Colour& colour,
+                                           const bool hasKeyboardFocus,
+                                           const bool isMouseOver,
+                                           const bool isButtonDown) noexcept
     {
         const float sat = hasKeyboardFocus ? 1.3f : 0.9f;
         const Colour baseColour (colour.withMultipliedSaturation (sat));
@@ -60,8 +60,8 @@ namespace GuiHelpers
     /** Draws a square bevel around a given rectange.
         This is useful for insetting components and givin them a border.
      */
-    static void drawBevel (Graphics& g, Rectangle<float> innerBevelBounds,
-                           float bevelThickness, const Colour& baseColour)
+    inline static void drawBevel (Graphics& g, Rectangle<float> innerBevelBounds,
+                                  float bevelThickness, const Colour& baseColour)
     {
        Rectangle<float> outerBevelBounds (innerBevelBounds.expanded (bevelThickness, bevelThickness));
        Rectangle<float> centreBevelBounds (innerBevelBounds.expanded (bevelThickness * 0.5f, bevelThickness * 0.5f));
@@ -174,7 +174,7 @@ namespace GuiHelpers
      
         @see Font, CustomTypeface
      */
-    static bool serializeFont (const Font& font, File& destinationFile, int maxNumChars = 127)
+    inline static bool serializeFont (const Font& font, File& destinationFile, int maxNumChars = 127)
     {
         destinationFile.deleteFile();
         ScopedPointer<FileOutputStream> outFileStream (destinationFile.createOutputStream());
@@ -220,7 +220,7 @@ namespace GuiHelpers
     
     /** Creates an icon in a given colour.
      */
-    static DrawablePath createIcon (IconType icon, Colour colour)
+    inline static DrawablePath createIcon (IconType icon, Colour colour)
     {
         switch (icon) 
         {

@@ -11,12 +11,12 @@
 
 //=====================================================================================
 void dRowLookAndFeel::drawRotarySlider (Graphics& g,
-									  int x, int y,
-									  int width, int height,
-									  float sliderPos,
-									  const float rotaryStartAngle,
-									  const float rotaryEndAngle,
-									  Slider& slider)
+                                        int x, int y,
+                                        int width, int height,
+                                        float sliderPos,
+                                        const float rotaryStartAngle,
+                                        const float rotaryEndAngle,
+                                        Slider& slider)
 {
     const float radius = jmin (width / 2, height / 2) ;//- 2.0f;
     const float centreX = x + width * 0.5f;
@@ -26,12 +26,12 @@ void dRowLookAndFeel::drawRotarySlider (Graphics& g,
     const float rw = radius * 2.0f;
     const float angle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
     const bool isMouseOver = slider.isMouseOverOrDragging() && slider.isEnabled();
-	
+
 	if (slider.isEnabled())
 		g.setColour (slider.findColour (Slider::rotarySliderFillColourId).withAlpha (isMouseOver ? 1.0f : 0.8f));
 	else
 		g.setColour (Colour (0x80808080));
-			
+
 	//======================================================================
 	// draw dial top
 	ColourGradient bottomShaddowGradient ( slider.findColour(Slider::rotarySliderFillColourId).withBrightness(0.1f),
@@ -41,7 +41,7 @@ void dRowLookAndFeel::drawRotarySlider (Graphics& g,
 										  false);
 	g.setGradientFill (bottomShaddowGradient);
 	g.fillEllipse (rx, ry, rw, rw);
-	
+
 	// draw rounding highlight
 	ColourGradient highlight (Colours::white.withAlpha(0.45f),
 							  rx+(rw/2), ry+(rw * 0.2f),
@@ -50,21 +50,21 @@ void dRowLookAndFeel::drawRotarySlider (Graphics& g,
 							  true);
 	g.setGradientFill(highlight);
 	g.fillEllipse (rx, ry, rw, rw/2);
-	
+
 	// draw rim
 	g.setColour (Colours::black);
 	g.drawEllipse (rx, ry, rw, rw, 0.5f);
-	
+
 	// draw thumb
 	const float adj = (radius * 0.7f) * cos(angle);
 	const float opp = (radius * 0.7f) * sin(angle);
 	const float posX = rx + (rw/2) + opp;
 	const float posY = ry + (rw/2) - adj;
-	
+
 	const float thumbW = rw * 0.15f;
 	const float thumbX = posX - (thumbW * 0.5f);
 	const float thumbY = posY - (thumbW * 0.5f);
-	
+
 	ColourGradient thumbGradient ( slider.findColour(Slider::rotarySliderFillColourId).withBrightness(0.05f),
 								  thumbX, thumbY,
 								  slider.findColour(Slider::rotarySliderFillColourId).withBrightness(0.75f),
@@ -72,7 +72,7 @@ void dRowLookAndFeel::drawRotarySlider (Graphics& g,
 								  false);
 	g.setGradientFill(thumbGradient);
 	g.fillEllipse (thumbX, thumbY, thumbW, thumbW);
-	
+
 	// draw thumb rim
 	g.setColour (Colours::black);
 	g.drawEllipse (thumbX, thumbY, thumbW, thumbW, thumbW * 0.02f);
@@ -82,9 +82,9 @@ void dRowLookAndFeel::drawRotarySlider (Graphics& g,
 void dRowLookAndFeel::drawLabel (Graphics& g, Label& label)
 {
 	int innerBoxHeight = label.getHeight();
-	int innerBoxWidth = label.getWidth();	
+	int innerBoxWidth = label.getWidth();
 	bool hasTransparentBackground = label.findColour(Label::backgroundColourId).isTransparent();
-	
+
 	// increase the border to allow the extra highlight
 	if (! hasTransparentBackground)
 	{
@@ -95,11 +95,11 @@ void dRowLookAndFeel::drawLabel (Graphics& g, Label& label)
 	// fill background
 	g.setColour(label.findColour (Label::backgroundColourId));
 	g.fillRoundedRectangle(0, 0, label.getWidth(), label.getHeight()-1, 2);
-	
+
     if (! label.isBeingEdited())
     {
         const float alpha = label.isEnabled() ? 1.0f : 0.5f;
-		
+
         g.setColour (label.findColour (Label::textColourId).withMultipliedAlpha (alpha));
 		if (! hasTransparentBackground)
 		{
@@ -111,14 +111,14 @@ void dRowLookAndFeel::drawLabel (Graphics& g, Label& label)
 			g.setFont (label.getFont());
 		}
 		g.drawFittedText (label.getText(),
-                          label.getHorizontalBorderSize()+3,
-                          label.getVerticalBorderSize()+5,
-                          innerBoxWidth - 2 * (label.getHorizontalBorderSize()+2),
-                          innerBoxHeight - 2 * (label.getVerticalBorderSize()+4),
+                          label.getBorderSize().getLeftAndRight()+3,
+                          label.getBorderSize().getTopAndBottom()+5,
+                          innerBoxWidth - 2 * (label.getBorderSize().getLeftAndRight()+2),
+                          innerBoxHeight - 2 * (label.getBorderSize().getTopAndBottom()+4),
                           label.getJustificationType(),
                           jmax (1, (int) (innerBoxHeight / label.getFont().getHeight())),
                           label.getMinimumHorizontalScale());
-		
+
         g.setColour (label.findColour (Label::outlineColourId).withMultipliedAlpha (alpha));
         g.drawRect (1, 1, innerBoxWidth, innerBoxHeight);
     }
@@ -127,7 +127,7 @@ void dRowLookAndFeel::drawLabel (Graphics& g, Label& label)
         g.setColour (label.findColour (Label::outlineColourId));
         g.drawRect (0, 0, innerBoxWidth, innerBoxHeight);
     }
-	
+
 	// draw the 3D aspects only if the background is not transparent
 	if ( !hasTransparentBackground )
 	{
@@ -139,12 +139,12 @@ void dRowLookAndFeel::drawLabel (Graphics& g, Label& label)
 									false);
 		innerShaddow.addColour(0.35, findColour(Label::backgroundColourId));
 		innerShaddow.addColour(0.75, findColour(Label::backgroundColourId));
-		
+
 //		GradientBrush innerShaddowBrush(innerShaddow);
 		g.setGradientFill(innerShaddow);
-		
+
 		g.fillRect(1, 1, innerBoxWidth, innerBoxHeight);
-		
+
 		// draw bottom edge highlight
 		ColourGradient bottomHighlight(Colours::transparentWhite,
 									   0, label.getHeight()-1,
@@ -161,16 +161,16 @@ void dRowLookAndFeel::drawLabel (Graphics& g, Label& label)
 
 //=====================================================================================
 void dRowLookAndFeel::drawInsetLine (Graphics& g,
-									 const float startX,
-									 const float startY,
-									 const float endX,
-									 const float endY,
-									 const float lineThickness)
+                                     const float startX,
+                                     const float startY,
+                                     const float endX,
+                                     const float endY,
+                                     const float lineThickness)
 {
 	Colour currentColour(Colours::grey);//(g.getCurrentColour());
 	const float firstThickness = lineThickness * 0.5f;
 	const float secondThickness = lineThickness * 0.25f;
-	
+
 	if (startX < endX)
 	{
 		g.setColour(currentColour.withBrightness(0.2f));

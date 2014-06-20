@@ -37,7 +37,6 @@
 #include "Parameters.h"
 
 #include "dRowAudio_PluginLookAndFeel.h"
-#include "dRowAudio_Meter.h"
 
 //==============================================================================
 /**
@@ -66,26 +65,26 @@ public:
     DRowAudioEditorComponent (DRowAudioFilter* const ownerFilter);
 
     /** Destructor. */
-    ~DRowAudioEditorComponent();
+    ~DRowAudioEditorComponent() override;
 
     //==============================================================================
     /** Our demo filter is a ChangeBroadcaster, and will call us back when one of
         its parameters changes.
     */
-    void changeListenerCallback (ChangeBroadcaster* source);
+    void changeListenerCallback (ChangeBroadcaster* source) override;
 
-    void sliderValueChanged (Slider*);
-	void sliderDragStarted(Slider*);
-	void sliderDragEnded(Slider*);
+    void sliderValueChanged (Slider*) override;
+	void sliderDragStarted(Slider*) override;
+	void sliderDragEnded(Slider*) override;
 	
-	void buttonClicked(Button* clickedButton);
+	void buttonClicked(Button* clickedButton) override;
 	
     //==============================================================================
     /** Standard Juce paint callback. */
-    void paint (Graphics& g);
+    void paint (Graphics& g) override;
 
     /** Standard Juce resize callback. */
-    void resized();
+    void resized() override;
 
 
 private:
@@ -96,12 +95,9 @@ private:
 	OwnedArray <Slider> sliders;
 	OwnedArray <Label> sliderLabels;
 	OwnedArray <TextButton> buttons;
-	
-	MeterComponent* meterLeft;
-	MeterComponent* meterRight;
-	
+
 	int noButtons;
-	
+
 	// Binary resources:
     static const char* flanger_title;
     static const int flanger_title_size;
@@ -113,7 +109,7 @@ private:
 
     // handy wrapper method to avoid having to cast the filter to a DRowAudioFilter
     // every time we need it..
-    DRowAudioFilter* getFilter() const throw()       { return (DRowAudioFilter*) getAudioProcessor(); }
+    DRowAudioFilter* getFilter() const noexcept       { return (DRowAudioFilter*) getAudioProcessor(); }
 };
 
 

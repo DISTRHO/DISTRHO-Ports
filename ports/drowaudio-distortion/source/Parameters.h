@@ -44,7 +44,7 @@ enum parameters
 static const char UNUSED_NOWARN *parameterNames[] = { 
 	"Pre Filtering",				// 0
 	"Input Gain",					// 1
-	"Colour",						// 2
+	"Colour",					// 2
 	"Post Filtering",				// 3
 	"Output Gain",					// 4
 };

@@ -302,7 +302,7 @@ void DRowAudioFilter::processBlock (AudioSampleBuffer& buffer,
 	int samplesLeft = numSamples;
 	float* pfSample[numInputChannels];
 	for (int channel = 0; channel < numInputChannels; channel++)
-		pfSample[channel] = buffer.getSampleData(channel);
+		pfSample[channel] = buffer.getWritePointer(channel);
 
 
 	if (numInputChannels == 2)
@@ -333,8 +333,8 @@ void DRowAudioFilter::processBlock (AudioSampleBuffer& buffer,
 		//========================================================================
 
 		// output filter the samples
-		outFilterL.processSamples(buffer.getSampleData(0), numSamples);
-		outFilterR.processSamples(buffer.getSampleData(1), numSamples);
+		outFilterL.processSamples(buffer.getWritePointer(0), numSamples);
+		outFilterR.processSamples(buffer.getWritePointer(1), numSamples);
 	}
 	else if (numInputChannels == 1)
 	{
@@ -359,7 +359,7 @@ void DRowAudioFilter::processBlock (AudioSampleBuffer& buffer,
 		//========================================================================
 
 		// output filter the samples
-		outFilterL.processSamples(buffer.getSampleData(0), numSamples);
+		outFilterL.processSamples(buffer.getWritePointer(0), numSamples);
 	}
 
 
@@ -410,6 +410,7 @@ void DRowAudioFilter::setStateInformation (const void* data, int sizeInBytes)
 				params[i].readXml(xmlState);
 			}
 
+            updateFilters ();
             sendChangeMessage ();
         }
 

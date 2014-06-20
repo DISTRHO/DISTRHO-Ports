@@ -85,7 +85,7 @@ namespace BezierCurve
 		This will calculate the quadratic Bezier of a given input x based on a co-ordinate pair (a, b).
 		All points have to be within a unit square ie. 0 < x < 1
 	 */
-	static float quadraticBezier (float x, float a, float b)
+	inline static float quadraticBezier (float x, float a, float b)
 	{
 		// adapted from BEZMATH.PS (1993)
 		// by Don Lancaster, SYNERGETICS Inc. 
@@ -110,7 +110,7 @@ namespace BezierCurve
 		This will calculate the cubic Bezier of a given input x based on two co-ordinate pairs (a, b) & (c, d).
 		All points have to be within a unit square ie. 0 < x < 1.
 	 */
-	static float cubicBezier (float x, float a, float b, float c, float d)
+	inline static float cubicBezier (float x, float a, float b, float c, float d)
 	{
 		
 		float y0a = 0.00f; // initial y
@@ -154,7 +154,7 @@ namespace BezierCurve
 		The Bezier curve calculated will try to go through both the given points within reason.
 		All points have to be within a unit square ie. 0 < x < 1
 	 */
-	static float cubicBezierNearlyThroughTwoPoints (float x, float a, float b, float c, float d)
+	inline static float cubicBezierNearlyThroughTwoPoints (float x, float a, float b, float c, float d)
 	{
 		
 		float y = 0;

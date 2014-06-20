@@ -124,7 +124,7 @@ static inline double midiToFrequency (double midiNoteNumber)
 
 /** Converts a time in seconds to a timecode string.
  */
-static const String timeToTimecodeString (const double seconds)
+inline static const String timeToTimecodeString (const double seconds)
 {
     const double absSecs = fabs (seconds);
     const String sign ((seconds < 0) ? "-" : "");
@@ -144,7 +144,7 @@ static const String timeToTimecodeString (const double seconds)
 
 /** Converts a time in seconds to a timecode string displaying mins, secs and 1/10th secs.
  */
-static const String timeToTimecodeStringLowRes (const double seconds)
+inline static const String timeToTimecodeStringLowRes (const double seconds)
 {
     const double absSecs = fabs (seconds);
     const String sign ((seconds < 0) ? "-" : "");
@@ -166,7 +166,7 @@ static const String timeToTimecodeStringLowRes (const double seconds)
 	This is useful when displaying times as hrs, mins secs etc.
 	as it will only display the units needed.
  */
-static const String secondsToTimeLength (double numSeconds)
+inline static const String secondsToTimeLength (double numSeconds)
 {
 	double decimalTime = numSeconds / 60000.0;
 	
@@ -194,10 +194,10 @@ static const String secondsToTimeLength (double numSeconds)
 
 /** Formats a CurretPositionInfo to a bars/beats string.
  */
-static const String ppqToBarsBeatsString (const double ppq,
-                                          const double /*lastBarPPQ*/,
-                                          const int numerator,
-                                          const int denominator)
+inline static const String ppqToBarsBeatsString (const double ppq,
+                                                 const double /*lastBarPPQ*/,
+                                                 const int numerator,
+                                                 const int denominator)
 {
     if (numerator == 0 || denominator == 0)
         return "1|1|0";
@@ -216,7 +216,7 @@ static const String ppqToBarsBeatsString (const double ppq,
 
 /** Compares a filename extension with a wildcard string.
  */
-static bool matchesAudioWildcard (const String& extensionToTest, const String& wildcard, const bool ignoreCase=true)
+inline static bool matchesAudioWildcard (const String& extensionToTest, const String& wildcard, const bool ignoreCase=true)
 {
 	if (ignoreCase ? wildcard.containsIgnoreCase (extensionToTest)
                    : wildcard.contains (extensionToTest))
@@ -228,7 +228,7 @@ static bool matchesAudioWildcard (const String& extensionToTest, const String& w
 /** Converts a block of audio sample to floating point samples if the reader
     used an integer format.
  */
-static void convertToFloat (AudioFormatReader* reader, void* sourceBuffer, float* destBuffer, int numSamples)
+inline static void convertToFloat (AudioFormatReader* reader, void* sourceBuffer, float* destBuffer, int numSamples)
 {
 	if (reader != nullptr)
 	{
@@ -255,7 +255,7 @@ static void convertToFloat (AudioFormatReader* reader, void* sourceBuffer, float
  
     This can be used to find out how many bytes to pass to isAudioSampleBuffer().
  */
-static size_t getNumBytesForAudioSampleBuffer (const AudioSampleBuffer& buffer)
+inline static size_t getNumBytesForAudioSampleBuffer (const AudioSampleBuffer& buffer)
 {
     const size_t channelListSize = (buffer.getNumChannels() + 1) * sizeof (float*);
     const size_t sampleDataSize = buffer.getNumSamples() * buffer.getNumChannels() * sizeof (float);
@@ -277,7 +277,7 @@ static size_t getNumBytesForAudioSampleBuffer (const AudioSampleBuffer& buffer)
  
     @see AudioSampleBufferAudioFormat, getNumBytesForAudioSampleBuffer, AudioSampleBuffer
  */
-static bool isAudioSampleBuffer (void* sourceData, size_t sourceDataSize, int maxNumChannels = 128)
+inline static bool isAudioSampleBuffer (void* sourceData, size_t sourceDataSize, int maxNumChannels = 128)
 {
     const float** channelList = reinterpret_cast<const float**> (sourceData);
  
@@ -325,9 +325,9 @@ static bool isAudioSampleBuffer (void* sourceData, size_t sourceDataSize, int ma
  
     @see AudioSampleBufferAudioFormat, getNumBytesForAudioSampleBuffer, AudioSampleBuffer
  */
-static bool isAudioSampleBuffer (InputStream& inputStream,
-                                 unsigned int &numChannels, int64 &numSamples,
-                                 int maxNumChannels = 128)
+inline static bool isAudioSampleBuffer (InputStream& inputStream,
+                                        unsigned int &numChannels, int64 &numSamples,
+                                        int maxNumChannels = 128)
 {
     // get start samples
     Array<float> channelStartSamples;

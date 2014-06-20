@@ -52,6 +52,12 @@ DRowAudioEditorComponent::DRowAudioEditorComponent (DRowAudioFilter* const owner
 		addAndMakeVisible( sliders[i]);
 		
 		String labelName = ownerFilter->getParameterName(i);
+		
+		if (labelName == "Input Gain")
+			labelName == "In Gain";
+		else if (labelName == "Output Gain")
+			labelName == "Out Gain";
+		
 		sliderLabels.add(new Label(String("Label") + String(i), labelName));
 		addAndMakeVisible(sliderLabels[i]);
 		sliderLabels[i]->setJustificationType(Justification::left);
@@ -97,10 +103,6 @@ DRowAudioEditorComponent::DRowAudioEditorComponent (DRowAudioFilter* const owner
 	
 	buttons[2]->setClickingTogglesState(true);
 	buttons[2]->addListener(this);
-	
-	// set up the meters
-	addAndMakeVisible(meterLeft = new MeterComponent(&ownerFilter->RMSLeft, &ownerFilter->peakLeft, &ownerFilter->getCallbackLock()));
-	addAndMakeVisible(meterRight = new MeterComponent(&ownerFilter->RMSRight, &ownerFilter->peakRight, &ownerFilter->getCallbackLock()));
 	
     // set our component's initial size to be the last one that was stored in the filter's settings
     setSize (250, 200);
