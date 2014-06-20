@@ -124,9 +124,6 @@ public:
     void initialiseToDefault ();
 
     //==============================================================================
-    juce_UseDebuggingNewOperator
-
-    //==============================================================================
     static int numInstances;
 
 protected:

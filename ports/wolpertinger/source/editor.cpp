@@ -29,7 +29,8 @@
 
 //[MiscUserDefs] You can add your own user definitions and misc code here...
 
-struct _myLookAndFeel: public LookAndFeel_V2
+struct _myLookAndFeel: public LookAndFeel_V2,
+                       public DeletedAtShutdown
 {
 	_myLookAndFeel()
 	{
@@ -658,22 +659,16 @@ editor::editor (AudioProcessor *const ownerFilter)
 
     setSize (400, 444);
 
-    //[Constructor] You can add your own custom stuff here..
-
     ((wolp*)ownerFilter)->addChangeListener(this);
-	if(!myLookAndFeel) myLookAndFeel= new _myLookAndFeel();
 
-	oversmplComboBox->setLookAndFeel(myLookAndFeel);
+    if(!myLookAndFeel) myLookAndFeel= new _myLookAndFeel();
 
-    //[/Constructor]
+    oversmplComboBox->setLookAndFeel(myLookAndFeel);
 }
 
 editor::~editor()
 {
-    //[Destructor_pre]. You can add your own custom destruction code here..
     ((wolp*)getAudioProcessor())->removeChangeListener(this);
-    printf("~editor() -- Thread: %08X\n", Thread::getCurrentThreadId());
-    //[/Destructor_pre]
 
     deleteAndZero (groupComponent2);
     deleteAndZero (groupComponent);
@@ -869,8 +864,6 @@ void editor::resized()
     slfilterlimits->setMaxValue(synth->getParameter(wolp::filtermax)*(synth->paraminfos[wolp::filtermax].max-synth->paraminfos[wolp::filtermax].min), dontSendNotification);
     slfilterlimits->setMinValue(synth->getParameter(wolp::filtermin)*(synth->paraminfos[wolp::filtermin].max-synth->paraminfos[wolp::filtermin].min), dontSendNotification);
     #undef initslider
-
-	changeListenerCallback((ChangeBroadcaster *)wolp::oversampling);    // XXX
 #endif
     //[/UserResized]
 }
@@ -1036,11 +1029,6 @@ void editor::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
     //[/UsercomboBoxChanged_Post]
 }
 
-
-
-//[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
-
-
 void editor::changeListenerCallback(ChangeBroadcaster *objectThatHasChanged)
 {
 //    intptr_t idx= (intptr_t)objectThatHasChanged;
@@ -1070,7 +1058,6 @@ void editor::changeListenerCallback(ChangeBroadcaster *objectThatHasChanged)
                 updateslider (velocity, slvelocity);
                 updateslider (inertia, slinertia);
                 updateslider (nfilters, slpasses);
-        //		updateslider (curcutoff, slcurcutoff);
                 updateslider (attack, knobAttack);
                 updateslider (decay, knobDecay);
                 updateslider (sustain, knobSustain);
@@ -1091,24 +1078,17 @@ void editor::changeListenerCallback(ChangeBroadcaster *objectThatHasChanged)
                 case wolp::oversampling:
                 {
                     int idx= int(synth->getParameter(wolp::oversampling)*2);
-                    oversmplComboBox->setSelectedItemIndex( idx, true );
+                    oversmplComboBox->setSelectedItemIndex( idx, sendNotification );
                     break;
                 }
 
                 default:
-                    printf("Unknown Object Changed: %zu\n", idx);
+                    printf("Unknown Object Changed: %i\n", idx);
                     break;
             }
         }
 #undef updateslider
 }
-
-void editor::parentHierarchyChanged()
-{
-}
-
-//[/MiscUserCode]
-
 
 //==============================================================================
 #if 0

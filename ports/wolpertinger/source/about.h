@@ -41,24 +41,16 @@ class about  : public Component
 public:
     //==============================================================================
     about ();
-    ~about();
+    ~about() override;
 
-    //==============================================================================
-    //[UserMethods]     -- You can add your own custom methods in this section.
-    void changeListenerCallback(ChangeBroadcaster *objectThatHasChanged);
-    //[/UserMethods]
-
-    void paint (Graphics& g);
-    void resized();
+    void paint (Graphics& g) override;
+    void resized() override;
 
     // Binary resources:
     static const char* logo_png;
     static const int logo_pngSize;
     static const char* icon_png;
     static const int icon_pngSize;
-
-    //==============================================================================
-    juce_UseDebuggingNewOperator
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.

@@ -124,7 +124,7 @@ void wolpVoice<oversampling>::renderNextBlock (AudioSampleBuffer& outputBuffer, 
 {
 	if(getCurrentlyPlayingNote()>=0)
 	{
-		float **outbuf= outputBuffer.getArrayOfChannels();
+		float **outbuf= outputBuffer.getArrayOfWritePointers();
 		process(outbuf[0]+startSample, outbuf[1]+startSample, numSamples);
 	}
 }
@@ -310,11 +310,10 @@ void wolp::setParameter (int idx, float value)
 		}
 	}
 
-	if(isProcessing)
-		paraminfos[idx].dirty= true;
+    paraminfos[idx].dirty = true;
 
-	else if(getActiveEditor())
-		sendChangeMessage();
+    if (getActiveEditor())
+        sendChangeMessage();
 }
 
 
@@ -378,7 +377,7 @@ wolp::~wolp()
 
 void wolp::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 {
-	float **outbuf= buffer.getArrayOfChannels();
+	float **outbuf= buffer.getArrayOfWritePointers();
 	int size= buffer.getNumSamples();
 
 	memset(outbuf[0], 0, size*sizeof(float));

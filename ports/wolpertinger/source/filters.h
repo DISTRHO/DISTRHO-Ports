@@ -373,7 +373,7 @@ template <typename T> struct velocityfilter
 
 		T run(T newval, T time)
 		{
-			T oldval= value, oldspd= speed;
+			//T oldval= value, oldspd= speed;
 			speed+= (newval-value)*time * velocity;
 			value+= speed*time;
 			speed-= speed*(inertia*time);

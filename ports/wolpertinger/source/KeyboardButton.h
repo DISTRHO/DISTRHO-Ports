@@ -8,10 +8,10 @@ class KeyboardButton : public RotatingToggleButton
 {
 	public:
 		KeyboardButton(const String& buttonText);
-		virtual ~KeyboardButton();
-		void setRotationState(float rotState);
+		virtual ~KeyboardButton() override;
+		void setRotationState(float rotState) override;
 	protected:
-		void parentHierarchyChanged();
+		void parentHierarchyChanged() override;
 		int parentHeight;
 	private:
 };

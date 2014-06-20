@@ -44,25 +44,17 @@ class editor  : public AudioProcessorEditor,
 public:
     //==============================================================================
     editor (AudioProcessor *const ownerFilter);
-    ~editor();
+    ~editor() override;
 
-    //==============================================================================
-    //[UserMethods]     -- You can add your own custom methods in this section.
-    void changeListenerCallback(ChangeBroadcaster *objectThatHasChanged);
-    void parentHierarchyChanged();
-    //[/UserMethods]
-
-    void paint (Graphics& g);
-    void resized();
-    void sliderValueChanged (Slider* sliderThatWasMoved);
-    void comboBoxChanged (ComboBox* comboBoxThatHasChanged);
+    void paint (Graphics& g) override;
+    void resized() override;
+    void sliderValueChanged (Slider* sliderThatWasMoved) override;
+    void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
+    void changeListenerCallback(ChangeBroadcaster *objectThatHasChanged) override;
 
     // Binary resources:
     static const char* scratches_png;
     static const int scratches_pngSize;
-
-    //==============================================================================
-    juce_UseDebuggingNewOperator
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.

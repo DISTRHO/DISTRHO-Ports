@@ -8,7 +8,7 @@ class PresetComboBox : public ComboBox
 {
 	public:
 		PresetComboBox(const String &name);
-		virtual ~PresetComboBox();
+		virtual ~PresetComboBox() override;
 		void initItems();
 	protected:
 	private:

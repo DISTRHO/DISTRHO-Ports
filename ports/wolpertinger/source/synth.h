@@ -27,8 +27,8 @@ inline uint64_t rdtsc()
 class wolpSound: public SynthesiserSound
 {
 	public:
-		bool appliesToNote(const int midiNoteNumber) { return true; }
-		bool appliesToChannel(const int midiChannel) { return true; }
+		bool appliesToNote(const int midiNoteNumber) override { return true; }
+		bool appliesToChannel(const int midiChannel) override { return true; }
 };
 
 
@@ -267,7 +267,7 @@ template<int oversampling> class WaveGenerator
 
 		float *generateSamples(int nSamples)
 		{
-			if(sampleBuffer.size()<nSamples)
+			if(int(sampleBuffer.size())<nSamples)
 				sampleBuffer.resize(nSamples);
 			double s;
 			for(int i= 0; i<nSamples; i++)
@@ -335,22 +335,22 @@ template<int oversampling> class wolpVoice: public SynthesiserVoice
 		wolpVoice(class wolp *s);
 
 		//==============================================================================
-		bool canPlaySound (SynthesiserSound* sound) { return true; }
+		bool canPlaySound (SynthesiserSound* sound) override { return true; }
 
 		void startNote (const int midiNoteNumber,
 						const float velocity,
 						SynthesiserSound* sound,
-						const int currentPitchWheelPosition);
+						const int currentPitchWheelPosition) override;
 
-		void stopNote (const bool allowTailOff);
+		void stopNote (const bool allowTailOff) override;
 
-		void pitchWheelMoved (const int newValue) { }
+		void pitchWheelMoved (const int newValue) override { }
 
 		void controllerMoved (const int controllerNumber,
-							  const int newValue) { }
+							  const int newValue) override { }
 
 		//==============================================================================
-		void renderNextBlock (AudioSampleBuffer& outputBuffer, int startSample, int numSamples);
+		void renderNextBlock (AudioSampleBuffer& outputBuffer, int startSample, int numSamples) override;
 
 		void setvolume(double v) { vol= v; }
 		void setfreq(double f) { freq= f; }
@@ -414,35 +414,35 @@ class wolp:	public AudioProcessor,
 
 
 		wolp();
-		~wolp();
+		~wolp() override;
 
-                bool hasEditor() const { return true; }
-                bool silenceInProducesSilenceOut() const { return false; }
-                double getTailLengthSeconds() const { return 0.0; }
+                bool hasEditor() const override { return true; }
+                bool silenceInProducesSilenceOut() const override { return false; }
+                double getTailLengthSeconds() const override { return 0.0; }
 
-		const String getName() const { return "wolp"; }
-		void prepareToPlay (double sampleRate, int estimatedSamplesPerBlock)
+		const String getName() const override { return "wolp"; }
+		void prepareToPlay (double sampleRate, int estimatedSamplesPerBlock) override
 		{
 			setCurrentPlaybackSampleRate(sampleRate);
 			for(int i= 0; i<getNumVoices(); i++)
 				getVoice(i)->setCurrentPlaybackSampleRate(sampleRate);
 		}
-		void releaseResources() { }
-		void processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages);
-		const String getInputChannelName (const int channelIndex) const { return String("In") + String(channelIndex); }
-		const String getOutputChannelName (const int channelIndex) const { return String("Out") + String(channelIndex); }
-		bool isInputChannelStereoPair (int index) const { return true; }
-		bool isOutputChannelStereoPair (int index) const { return true; }
-		bool acceptsMidi() const  { return true; }
-		bool producesMidi() const { return false; }
-		AudioProcessorEditor* createEditor();
-		int getNumParameters() { return param_size; }
-		const String getParameterName (int idx) { return String(paraminfos[idx].label); }
-		float getParameter (int idx)
+		void releaseResources() override { }
+		void processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages) override;
+		const String getInputChannelName (const int channelIndex) const override { return String("In") + String(channelIndex); }
+		const String getOutputChannelName (const int channelIndex) const override { return String("Out") + String(channelIndex); }
+		bool isInputChannelStereoPair (int index) const override { return true; }
+		bool isOutputChannelStereoPair (int index) const override { return true; }
+		bool acceptsMidi() const override  { return true; }
+		bool producesMidi() const override { return false; }
+		AudioProcessorEditor* createEditor() override;
+		int getNumParameters() override { return param_size; }
+		const String getParameterName (int idx) override { return String(paraminfos[idx].label); }
+		float getParameter (int idx) override
 		{
 			return params[idx];
 		}
-		const String getParameterText (int idx)
+		const String getParameterText (int idx) override
 		{
 			switch(idx)
 			{
@@ -450,18 +450,18 @@ class wolp:	public AudioProcessor,
 					return String(getparam(idx), 2);
 			}
 		}
-		void setParameter (int idx, float value);
+		void setParameter (int idx, float value) override;
 
 		//==============================================================================
-		int getNumPrograms() { return 1; };
-		int getCurrentProgram() { return 0; };
-		void setCurrentProgram (int index) { };
-		const String getProgramName (int index) { return "Default"; };
-		void changeProgramName (int index, const String& newName) {}
+		int getNumPrograms() override { return 1; };
+		int getCurrentProgram() override { return 0; };
+		void setCurrentProgram (int index) override { };
+		const String getProgramName (int index) override { return "Default"; };
+		void changeProgramName (int index, const String& newName) override {}
 
 		//==============================================================================
-		void getStateInformation (JUCE_NAMESPACE::MemoryBlock& destData);
-		void setStateInformation (const void* data, int sizeInBytes);
+		void getStateInformation (JUCE_NAMESPACE::MemoryBlock& destData) override;
+		void setStateInformation (const void* data, int sizeInBytes) override;
 
 		//==============================================================================
 		double getnotefreq (int noteNumber)
@@ -490,7 +490,7 @@ class wolp:	public AudioProcessor,
 			careful not to block, and avoid any UI activity in the callback.
 		*/
 		virtual void handleNoteOn (MidiKeyboardState* source,
-								   int midiChannel, int midiNoteNumber, float velocity)
+								   int midiChannel, int midiNoteNumber, float velocity) override
 		{
 //			printf("MidiKeyboard noteOn isProcessing=%s\n", isProcessing? "true": "false");
 			noteOn(midiChannel, midiNoteNumber, velocity);
@@ -506,7 +506,7 @@ class wolp:	public AudioProcessor,
 			careful not to block, and avoid any UI activity in the callback.
 		*/
 		virtual void handleNoteOff (MidiKeyboardState* source,
-									int midiChannel, int midiNoteNumber)
+									int midiChannel, int midiNoteNumber) override
 		{
 //			printf("MidiKeyboard noteOff isProcessing=%s\n", isProcessing? "true": "false");
 			noteOff(midiChannel, midiNoteNumber, velocity);

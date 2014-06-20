@@ -54,9 +54,6 @@ public:
     static const char* equalizer_png;
     static const int equalizer_pngSize;
 
-    //==============================================================================
-    juce_UseDebuggingNewOperator
-
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
     //[/UserVariables]

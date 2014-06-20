@@ -44,23 +44,20 @@ class tabbed_editor  : public AudioProcessorEditor,
 public:
     //==============================================================================
     tabbed_editor (AudioProcessor *const ownerFilter);
-    ~tabbed_editor();
+    ~tabbed_editor() override;
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
     void setPolyText(String text) { polytext->setText(text, dontSendNotification); }
     //[/UserMethods]
 
-    void paint (Graphics& g);
-    void resized();
-    void comboBoxChanged (ComboBox* comboBoxThatHasChanged);
+    void paint (Graphics& g) override;
+    void resized() override;
+    void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
 
     // Binary resources:
     static const char* scratches_png;
     static const int scratches_pngSize;
-
-    //==============================================================================
-    juce_UseDebuggingNewOperator
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.

@@ -7,19 +7,19 @@ class RotatingToggleButton : public ToggleButton, public Timer
 {
 	public:
 		RotatingToggleButton(const String& buttonText);
-		virtual ~RotatingToggleButton();
+		virtual ~RotatingToggleButton() override;
 		virtual void setRotationState(float rotationState);
 	protected:
 		/** @internal */
 		void paintButton (Graphics& g,
 						  bool isMouseOverButton,
-						  bool isButtonDown);
+						  bool isButtonDown) override;
 
-		void clicked();
+		void clicked() override;
 
-		void timerCallback();
+		void timerCallback() override;
 
-		void parentHierarchyChanged();
+		void parentHierarchyChanged() override;
 
 		unsigned last_timer_call;
 

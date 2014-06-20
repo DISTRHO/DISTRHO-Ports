@@ -58,10 +58,6 @@ public:
     static const char* hifilofi_jpg;
     static const int hifilofi_jpgSize;
 
-
-    //==============================================================================
-    juce_UseDebuggingNewOperator
-
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
     Processor& _processor;

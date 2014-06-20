@@ -115,10 +115,6 @@ public:
 	void smoothParameters();
 	PluginParameter* getParameterPointer(int index);
 
-
-    //==============================================================================
-    juce_UseDebuggingNewOperator
-
 	float RMSLeft;
 	float RMSRight;
 	float peakLeft;

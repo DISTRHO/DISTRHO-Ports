@@ -110,9 +110,6 @@ public:
 	void smoothParameters();
 	PluginParameter* getParameterPointer(int index);
 
-    //==============================================================================
-    juce_UseDebuggingNewOperator
-
 	float* getDistortionBuffer()	{	return distortionBuffer;		}
 	int getDistortionBufferSize()	{	return distortionBufferSize;	}
 

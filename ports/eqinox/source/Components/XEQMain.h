@@ -57,10 +57,6 @@ public:
     void resized();
     void sliderValueChanged (Slider* sliderThatWasMoved);
 
-
-    //==============================================================================
-    juce_UseDebuggingNewOperator
-
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
     Equalizer* manager;
