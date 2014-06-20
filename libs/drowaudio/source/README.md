@@ -6,8 +6,6 @@ dRowAudio is hosted on Github at [https://github.com/drowaudio/drowaudio][2]
 
 The online documentation is at [http://drowaudio.co.uk/docs/][3]
 
-A wiki with feature overview and demo screenshots can be found at [http://www.rawmaterialsoftware.com/wiki/index.php/DRowAudio][4]
-
 ## Platforms
 
 All platforms supported by JUCE are also supported by dRowAudio. Currently these
@@ -32,7 +30,7 @@ This documentation assumes that the reader has a working knowledge of JUCE.
 
 ## External Modules
 
-In order to use the cURL classes you will need to link to the cURL library. This is included as part of Mac OSX, for Windows there pre-built 32-bit binaries or you can download the library yourself for the most recent version. Instructions for linkage are detailed on the [dRowAudio wiki][4].
+In order to use the cURL classes you will need to link to the cURL library. This is included as part of Mac OSX, for Windows there pre-built 32-bit binaries or you can download the library yourself for the most recent version.
 
 Although some aspects of dRowAudio rely on other 3rd party modules such as [SoundTouch][5] and [FFTReal][6], these are included as part of the module so no external linking is required. Their use should be transparent to the user.
 
@@ -63,7 +61,6 @@ Some portions of the software including but not limited to [SoundTouch][5] and [
 [1]: http://www.rawmaterialsoftware.com/wiki/index.php/Coding_Standards
 [2]: https://github.com/drowaudio/drowaudio
 [3]: http://drowaudio.co.uk/docs/
-[4]: http://www.rawmaterialsoftware.com/wiki/index.php/DRowAudio
 [5]: http://www.surina.net/soundtouch/index.html
 [6]: http://ldesoras.free.fr/prod.html
 [7]: http://www.gnu.org/licenses/gpl-2.0.html

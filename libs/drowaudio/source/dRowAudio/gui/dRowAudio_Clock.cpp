@@ -64,7 +64,7 @@ void Clock::setTimeDisplayFormat(const int newFormat)
 
 void Clock::timerCallback()
 {
-	Time currentTime = Time::getCurrentTime();
+	Time currentTime = Time::getCurrentTime();	
 	timeAsString = String::empty;
 	
 	String formatString;

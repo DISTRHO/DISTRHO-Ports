@@ -39,7 +39,7 @@
 void BiquadFilter::processSamples (float* const samples,
                                    const int numSamples) noexcept
 {
-    IIRFilterOld::processSamples (samples, numSamples);
+    IIRFilter::processSamples (samples, numSamples);
 }
 
 void BiquadFilter::processSamples (int* const samples,
@@ -49,18 +49,18 @@ void BiquadFilter::processSamples (int* const samples,
     
     if (active)
     {
-        const float c0 = coefficients[0];
-        const float c1 = coefficients[1];
-        const float c2 = coefficients[2];
-        const float c3 = coefficients[3];
-        const float c4 = coefficients[4];
+        const float c0 = coefficients.coefficients[0];
+        const float c1 = coefficients.coefficients[1];
+        const float c2 = coefficients.coefficients[2];
+        const float c3 = coefficients.coefficients[3];
+        const float c4 = coefficients.coefficients[4];
         float lv1 = v1, lv2 = v2;
 
         for (int i = 0; i < numSamples; ++i)
         {
             const float in = (float) samples[i];
             const float out = c0 * in + lv1;
-            samples[i] = (float) out;
+            samples[i] = (int) out;
             
             lv1 = c1 * in - c3 * out + lv2;
             lv2 = c2 * in - c4 * out;
@@ -71,9 +71,9 @@ void BiquadFilter::processSamples (int* const samples,
     }
 }
 
-void BiquadFilter::makeLowPass (const double sampleRate,
-								const double frequency,
-                                const double Q) noexcept
+IIRCoefficients BiquadFilter::makeLowPass (const double sampleRate,
+                                           const double frequency,
+                                           const double Q) noexcept
 {
 	const double oneOverCurrentSampleRate = 1.0 / sampleRate;
 	float w0 = (float) (2.0f * float_Pi * frequency * oneOverCurrentSampleRate);
@@ -81,17 +81,17 @@ void BiquadFilter::makeLowPass (const double sampleRate,
 	float sin_w0 = sin (w0);
 	float alpha = sin_w0 / (2.0f * (float) Q);
     
-	setCoefficients ((1.0f - cos_w0) * 0.5f, 
-                     (1.0f - cos_w0), 
-                     (1.0f - cos_w0) * 0.5f, 
-                     (1.0f + alpha), 
-                     -2.0f * cos_w0, 
-                     (1.0f - alpha));
+	return IIRCoefficients ((1.0f - cos_w0) * 0.5f,
+                            (1.0f - cos_w0),
+                            (1.0f - cos_w0) * 0.5f,
+                            (1.0f + alpha),
+                            -2.0f * cos_w0,
+                            (1.0f - alpha));
 }
 
-void BiquadFilter::makeHighPass (const double sampleRate,
-                                 const double frequency,
-                                 const double Q) noexcept
+IIRCoefficients BiquadFilter::makeHighPass (const double sampleRate,
+                                            const double frequency,
+                                            const double Q) noexcept
 {
 	const double oneOverCurrentSampleRate = 1.0 / sampleRate;
 	float w0 = (float) (2.0f * float_Pi * frequency * oneOverCurrentSampleRate);
@@ -99,17 +99,17 @@ void BiquadFilter::makeHighPass (const double sampleRate,
 	float sin_w0 = sin (w0);
 	float alpha = sin_w0 / (2.0f * (float) Q);
     
-	setCoefficients ((1.0f + cos_w0) * 0.5f, 
-                     -(1.0f + cos_w0), 
-                     (1.0f + cos_w0) * 0.5f, 
-                     (1.0f + alpha), 
-                     -2.0f * cos_w0, 
-                     (1.0f - alpha));	
+	return IIRCoefficients ((1.0f + cos_w0) * 0.5f,
+                            -(1.0f + cos_w0),
+                            (1.0f + cos_w0) * 0.5f,
+                            (1.0f + alpha),
+                            -2.0f * cos_w0,
+                            (1.0f - alpha));
 }
 
-void BiquadFilter::makeBandPass(const double sampleRate,
-                                const double frequency,
-                                const double Q) noexcept
+IIRCoefficients BiquadFilter::makeBandPass (const double sampleRate,
+                                            const double frequency,
+                                            const double Q) noexcept
 {
 	const double qFactor = jlimit (0.00001, 1000.0, Q);
 	const double oneOverCurrentSampleRate = 1.0 / sampleRate;
@@ -120,17 +120,17 @@ void BiquadFilter::makeBandPass(const double sampleRate,
 	float alpha = sin_w0 / (2.0f * (float) qFactor);
     //	float alpha = sin_w0 * sinh( (log(2.0)/2.0) * bandwidth * w0/sin_w0 );
 	
-	setCoefficients (alpha, 
-					 0.0f, 
-					 -alpha, 
-                     1.0f + alpha, 
-                     -2.0f * cos_w0, 
-                     1.0f - alpha);
+	return IIRCoefficients (alpha,
+                            0.0f,
+                            -alpha,
+                            1.0f + alpha,
+                            -2.0f * cos_w0,
+                            1.0f - alpha);
 }
 
-void BiquadFilter::makeBandStop(const double sampleRate,
-                                const double frequency,
-                                const double Q) noexcept
+IIRCoefficients BiquadFilter::makeBandStop (const double sampleRate,
+                                            const double frequency,
+                                            const double Q) noexcept
 {
 	const double qFactor = jlimit(0.00001, 1000.0, Q);
 	const double oneOverCurrentSampleRate = 1.0 / sampleRate;
@@ -141,18 +141,18 @@ void BiquadFilter::makeBandStop(const double sampleRate,
 	float sin_w0 = sin (w0);
 	float alpha = (float) (sin_w0 / (2 * qFactor));
 	
-	setCoefficients (1.0f, 
-					 -2*cos_w0, 
-					 1.0f, 
-					 1.0f + alpha, 
-					 -2.0f * cos_w0, 
-					 1.0f - alpha);
+	return IIRCoefficients (1.0f,
+                            -2*cos_w0,
+                            1.0f,
+                            1.0f + alpha,
+                            -2.0f * cos_w0,
+                            1.0f - alpha);
 }
 
-void BiquadFilter::makePeakNotch (const double sampleRate,
-								  const double centreFrequency,
-								  const double Q,
-								  const float gainFactor) noexcept
+IIRCoefficients BiquadFilter::makePeakNotch (const double sampleRate,
+                                             const double centreFrequency,
+                                             const double Q,
+                                             const float gainFactor) noexcept
 {
     jassert (sampleRate > 0);
     jassert (Q > 0);
@@ -164,17 +164,17 @@ void BiquadFilter::makePeakNotch (const double sampleRate,
     const double alphaTimesA = alpha * A;
     const double alphaOverA = alpha / A;
 	
-    setCoefficients (1.0 + alphaTimesA,
-                     c2,
-                     1.0 - alphaTimesA,
-                     1.0 + alphaOverA,
-                     c2,
-                     1.0 - alphaOverA);
+    return IIRCoefficients (1.0 + alphaTimesA,
+                            c2,
+                            1.0 - alphaTimesA,
+                            1.0 + alphaOverA,
+                            c2,
+                            1.0 - alphaOverA);
 }
 
-void BiquadFilter::makeAllpass (const double sampleRate,
-                                const double frequency,
-                                const double Q) noexcept
+IIRCoefficients BiquadFilter::makeAllpass (const double sampleRate,
+                                           const double frequency,
+                                           const double Q) noexcept
 {
 	const double qFactor = jlimit(0.00001, 1000.0, Q);
 	const double oneOverCurrentSampleRate = 1.0 / sampleRate;
@@ -184,20 +184,12 @@ void BiquadFilter::makeAllpass (const double sampleRate,
 	float sin_w0 = sin(w0);
 	float alpha = (float) (sin_w0 / (2 * qFactor));
 	
-	setCoefficients (1.0f - alpha,
-                     -2 * cos_w0,
-                     1.0f + alpha,
-                     1.0f + alpha,
-                     -2.0f * cos_w0,
-                     1.0f - alpha);
-}
-
-void BiquadFilter::copyCoefficientsFrom (const BiquadFilter& other) noexcept
-{
-    const SpinLock::ScopedLockType sl (processLock);
-	
-    memcpy (coefficients, other.coefficients, sizeof (coefficients));
-    active = other.active;
+	return IIRCoefficients (1.0f - alpha,
+                            -2 * cos_w0,
+                            1.0f + alpha,
+                            1.0f + alpha,
+                            -2.0f * cos_w0,
+                            1.0f - alpha);
 }
 
 void BiquadFilter::copyOutputsFrom (const BiquadFilter& other) noexcept

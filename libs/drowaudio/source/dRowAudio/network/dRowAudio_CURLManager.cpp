@@ -31,8 +31,17 @@
 
 #if DROWAUDIO_USE_CURL
 
+} //namespace drow
 
+#if JUCE_WINDOWS
+ #include "curl/include/curl/curl.h"
+#else
+ #include <curl/curl.h>
+#endif
 
+namespace drow {
+
+//==============================================================================
 juce_ImplementSingleton (CURLManager);
 
 CURLManager::CURLManager()
@@ -49,11 +58,9 @@ CURLManager::~CURLManager()
 	curl_global_cleanup();
 }
 
-const StringArray CURLManager::getSupportedProtocols()
+CURL* CURLManager::createEasyCurlHandle()
 {
-	StringArray supportedProtocols (getCURLVersionInfoData()->protocols);
-	
-	return supportedProtocols;
+    return curl_easy_init();
 }
 
 void CURLManager::cleanUpEasyCurlHandle (CURL* handle)
@@ -62,6 +69,12 @@ void CURLManager::cleanUpEasyCurlHandle (CURL* handle)
 	handle = nullptr;
 }
 
-
+StringArray CURLManager::getSupportedProtocols()
+{
+    if (curl_version_info_data* info = curl_version_info (CURLVERSION_NOW))
+        return StringArray (info->protocols);
+	
+	return StringArray();
+}
 
 #endif

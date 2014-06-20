@@ -63,9 +63,6 @@ inline Type cubeNumber (Type input)
     return input * input * input;
 }
 
-//#define squareNumber(x)	(x * x)
-//#define cubeNumber(x)	(x * x * x)
-
 #if JUCE_WINDOWS
 template <class Type>
 inline Type log2 (Type input)
@@ -73,4 +70,5 @@ inline Type log2 (Type input)
     return log (input) / log ((Type) 2);
 }
 #endif
+
 #endif //__DROWAUDIO_CONSTANTS_H__

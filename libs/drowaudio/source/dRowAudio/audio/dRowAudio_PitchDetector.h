@@ -80,11 +80,6 @@ public:
     /** Destructor. */
     ~PitchDetector();
     
-    /** Sets the sample rate to base the detection and pitch calculation algorithms on.
-        This needs to be set before any detection can be made.
-     */
-    void setSampleRate (double newSampleRate) noexcept;
-    
     /** Process a block of samples.
         Because the number of samples required to find a pitch varies depending on
         the minimum frequency set this uses an internal buffer to store samples until
@@ -110,6 +105,13 @@ public:
     double detectPitch (float* samples, int numSamples) noexcept;
 
     //==============================================================================
+    /** Sets the sample rate to base the detection and pitch calculation algorithms on.
+        This needs to be set before any detection can be made.
+        Note that this isn't thread safe so don't call it concurrently with any calls
+        to the process methods.
+     */
+    void setSampleRate (double newSampleRate) noexcept;
+    
     /** Sets the detection algorithm to use.
         By default this is autoCorrelationFunction.
      */
@@ -156,12 +158,16 @@ private:
     float minFrequency, maxFrequency;
     Buffer buffer1, buffer2;
 
-    IIRFilterOld highFilter, lowFilter;
+    IIRFilter highFilter, lowFilter;
     int numSamplesNeededForDetection;
     Buffer currentBlockBuffer;
     FifoBuffer<float> inputFifoBuffer;
     double mostRecentPitch;
-    
+
+    //==============================================================================
+    void updateFiltersAndBlockSizes();
+
+    //==============================================================================
     double detectPitchForBlock (float* samples, int numSamples);
     double detectAcfPitchForBlock (float* samples, int numSamples);
     double detectSdfPitchForBlock (float* samples, int numSamples);

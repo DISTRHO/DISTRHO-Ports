@@ -83,6 +83,58 @@ public:
 
 		expectEquals ((int) isnan (1), (int) false);
         expectEquals ((int) isnan (sqrt (-1.0)), (int) true);
+        
+        // RMS
+        {
+            const int numSamples = 512;
+            AudioSampleBuffer asb (1, numSamples);
+
+            // Sin
+            {
+                const double delta = numSamples / (2 * double_Pi);
+                float* data = asb.getWritePointer (0);
+
+                for (int i = 0; i < numSamples; ++i)
+                    *data++ = (float) std::sin (i * delta);
+
+                const float rms = findRMS<float> (asb.getReadPointer (0), numSamples);
+                expect (almostEqual (rms, 0.707f, 0.001f));
+            }
+            
+            // Square
+            {
+                float* data = asb.getWritePointer (0);
+
+                for (int i = 0; i < numSamples; ++i)
+                    *data++ = isOdd (i) ? 1.0f : -1.0f;
+
+                const float rms = findRMS<float> (asb.getReadPointer (0), numSamples);
+                expect (almostEqual (rms, 1.0f, 0.001f));
+            }
+        }
+        
+        // Reciprocal
+        {
+            Reciprocal<float> r;
+            expectEquals (r.get(), 1.0f);
+            expectEquals (r.getReciprocal(), 1.0f);
+            
+            Reciprocal<double> r2 (10.0);
+            expectEquals (r2.get(), 10.0);
+            expectEquals (r2.getReciprocal(), 1.0 / 10.0);
+            expectEquals (r2 * 10, 100.0);
+            expectEquals (r2 *= 10, 100.0);
+            expectEquals (r2.get(), 100.0);
+            expectEquals (r2.getReciprocal(), 1.0 / 100.0);
+            
+            expectEquals (r2 / 10, 10.0);
+            expectEquals (r2.get(), 100.0);
+            expectEquals (r2.getReciprocal(), 1.0 / 100.0);
+            
+            expectEquals (r2 /= 10, 10.0);
+            expectEquals (r2.get(), 10.0);
+            expectEquals (r2.getReciprocal(), 1.0 / 10.0);
+        }
     }
 };
 

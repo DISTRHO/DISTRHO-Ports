@@ -34,6 +34,8 @@
 } // namespace drow
 using drow::AudioPicker;
 
+#include <MediaPlayer/MediaPlayer.h>
+
 //==============================================================================
 @interface JuceUIAudioPicker : MPMediaPickerController <MPMediaPickerControllerDelegate,
                                                         UIPopoverControllerDelegate>

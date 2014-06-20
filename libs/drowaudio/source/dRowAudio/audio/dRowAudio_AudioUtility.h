@@ -66,16 +66,16 @@ forcedinline static double secondsToMins (double seconds)
 
 /** Converts a time in seconds to a number of samples for a given sample rate.
  */
-forcedinline static int secondsToSamples (float timeMs, double sampleRate)
+forcedinline static int64 secondsToSamples (double timeSeconds, double sampleRate)
 {
-    return (int) (timeMs * sampleRate);
+    return (int64) (timeSeconds * sampleRate);
 }
 
 /** Converts a time in milliseconds to a number of samples for a given sample rate.
  */
-forcedinline static int msToSamples (float timeMs, double sampleRate)
+forcedinline static int64 msToSamples (double timeMs, double sampleRate)
 {
-    return (int) (timeMs * 0.001 * sampleRate);
+    return (int64) (timeMs * 0.001 * sampleRate);
 }
 
 /** Converts a number of samples to a time in ms for a given sample rate.
@@ -297,7 +297,7 @@ static bool isAudioSampleBuffer (void* sourceData, size_t sourceDataSize, int ma
         return false;
     
     const size_t channelListSize = (channelPointers.size() + 1) * sizeof (float*);
-    const int expectedNumSamples = (sourceDataSize - channelListSize) / (channelPointers.size() * sizeof (float));
+    const size_t expectedNumSamples = (sourceDataSize - channelListSize) / (channelPointers.size() * sizeof (float));
     const size_t bytesPerChannel = expectedNumSamples * sizeof (float);
 
     const float* startOfChannels = reinterpret_cast<float*> (addBytesToPointer (sourceData, channelListSize));

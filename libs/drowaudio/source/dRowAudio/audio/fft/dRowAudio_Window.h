@@ -37,11 +37,17 @@
 #include "../../maths/dRowAudio_MathsUtilities.h"
 
 //==============================================================================
+/**
+    A pre-calculated Window buffer used for audio processing.
+    @see FFT
+ */
 class Window
 {
 public:
     //==============================================================================
-	enum WindowType {
+    /** Window types supported. */
+	enum WindowType
+    {
 		Rectangular,
 		Hann,
 		Hamming,
@@ -59,19 +65,37 @@ public:
 	};
 	
     //==============================================================================
-	Window (int windowSize);
+    /** Creates a default Hann Window with 0 size. */
+    Window();
 
+    /** Creates a Hann Window with a given size. */
+	explicit Window (int windowSize);
+
+    /** Creates a Window with a given size. */
+	explicit Window (int windowSize, WindowType type);
+
+    /** Destructor. */
 	~Window();
 
+    /** Sets the window type. */
 	void setWindowType (WindowType newType);
-    
-	WindowType getWindowType()              {	return windowType;          }
+
+    /** Sets the window size. */
+	void setWindowSize (int newSize);
+
+    /** Returns the window type. */
+	WindowType getWindowType() const noexcept           { return windowType; }
 	
-	float getWindowFactor()                 {	return windowFactor;        }
-	
-    float getOneOverWindowFactor()          {	return oneOverWindowFactor;	}
-	
-	void applyWindow (float *samples,  const int numSamples);
+    /** Returns the window factor. */
+	float getWindowFactor() const noexcept              { return windowFactor; }
+
+    /** Returns the reciprocal of the window factor. */
+    float getOneOverWindowFactor()                      { return oneOverWindowFactor; }
+
+	/** Applies this window to a set of samples.
+        For speed, your the number of samples passed here should be the same as the window size.
+     */
+	void applyWindow (float* samples,  const int numSamples) const noexcept;
 	
 private:
     //==============================================================================
@@ -93,15 +117,11 @@ private:
 	void applyFlatTopWindow (float *samples,  const int numSamples);
 	
     //==============================================================================
-	int windowSize;
 	WindowType windowType;
-	float windowFactor;
-	float oneOverWindowFactor;
-	
-	Buffer windowBuffer;
+	float windowFactor, oneOverWindowFactor;
+	AudioSampleBuffer windowBuffer;
     
-    //==============================================================================
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Window);
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Window)
 };
 
 #endif //__DROWAUDIO_WINDOW_H__

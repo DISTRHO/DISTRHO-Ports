@@ -62,8 +62,8 @@ public:
         output channels. The input channel data is filtered during this process so
         if you don't want to lose it then make a copy before calling this method.
      */
-    void process (float** inputChannelData, const int numInputChannels, const int numInputSamples,
-                  float** outputChannelData, const int numOutputChannels, const int numOutputSamples);
+    void process (float** inputChannelData, int numInputChannels, int numInputSamples,
+                  float** outputChannelData, int numOutputChannels, int numOutputSamples);
 
 private:
     //==============================================================================

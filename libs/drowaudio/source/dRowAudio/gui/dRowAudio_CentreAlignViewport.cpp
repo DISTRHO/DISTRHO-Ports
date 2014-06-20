@@ -200,7 +200,7 @@ void CentreAlignViewport::updateVisibleArea()
     bool hBarVisible = canShowHBar && ! horizontalScrollBar.autoHides();
     bool vBarVisible = canShowVBar && ! verticalScrollBar.autoHides();
 	
-    juce::Rectangle<int> contentArea (getLocalBounds());
+    Rectangle<int> contentArea (getLocalBounds());
 
     if (contentComp != 0 && ! contentArea.contains (contentComp->getBounds()))
     {
@@ -228,7 +228,7 @@ void CentreAlignViewport::updateVisibleArea()
 	
     contentHolder.setBounds (contentArea);
 	
-    juce::Rectangle<int> contentBounds;
+    Rectangle<int> contentBounds;
     if (contentComp != 0)
         contentBounds = contentComp->getBounds();
 	
@@ -256,7 +256,7 @@ void CentreAlignViewport::updateVisibleArea()
     horizontalScrollBar.setVisible (hBarVisible);
     verticalScrollBar.setVisible (vBarVisible);
 	
-    const juce::Rectangle<int> visibleArea (visibleOrigin.getX(), visibleOrigin.getY(),
+    const Rectangle<int> visibleArea (visibleOrigin.getX(), visibleOrigin.getY(),
                                       jmin (contentBounds.getWidth() - visibleOrigin.getX(),  contentArea.getWidth()),
                                       jmin (contentBounds.getHeight() - visibleOrigin.getY(), contentArea.getHeight()));
 	

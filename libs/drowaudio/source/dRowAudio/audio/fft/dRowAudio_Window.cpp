@@ -30,11 +30,22 @@
 */
 
 
+Window::Window()
+    : windowType (Window::Hann), windowFactor (1.0f), oneOverWindowFactor (1.0f),
+      windowBuffer (1, 0)
+{
+}
 
 Window::Window (int windowSize_)
-    : windowSize (windowSize_),
-      windowType (Window::Hann),
-      windowBuffer (windowSize)
+    : windowType (Window::Hann), windowFactor (1.0f), oneOverWindowFactor (1.0f),
+      windowBuffer (1, windowSize_)
+{
+	setUpWindowBuffer();
+}
+
+Window::Window (int windowSize_, WindowType type)
+    : windowType (type), windowFactor (1.0f), oneOverWindowFactor (1.0f),
+      windowBuffer (1, windowSize_)
 {
 	setUpWindowBuffer();
 }
@@ -43,30 +54,41 @@ Window::~Window()
 {
 }
 
-void Window::setWindowType(WindowType newType)
+void Window::setWindowType (WindowType newType)
 {
+    if (windowType == newType)
+        return;
+
 	windowType = newType;
 	setUpWindowBuffer();
 }
 
-void Window::applyWindow (float *samples, const int numSamples)
+void Window::setWindowSize (int newSize)
 {
-	windowBuffer.applyBuffer (samples, numSamples);
+    if (windowBuffer.getNumSamples() == newSize)
+        return;
+    
+    windowBuffer.setSize (1, newSize);
+	setUpWindowBuffer();
+}
 
-	if (numSamples > windowBuffer.getSize())
-    {
-        jassertfalse; // set your window size properly!
-		zeromem (samples + windowBuffer.getSize(), (numSamples - windowBuffer.getSize()) * sizeof (float));
-    }
+void Window::applyWindow (float* samples, const int numSamples) const noexcept
+{
+    const float* window = windowBuffer.getReadPointer (0);
+    const int windowSize = windowBuffer.getNumSamples();
+    jassert (numSamples == windowSize); // Set your window size properly!
+
+    FloatVectorOperations::multiply (samples, window, numSamples);
+
+	if (numSamples > windowSize)
+        FloatVectorOperations::clear (samples + windowSize, numSamples - windowSize);
 }
 
 void Window::setUpWindowBuffer()
 {
-	const int bufferSize = windowBuffer.getSize();
-	float *bufferSample = windowBuffer.getData();
-	
-    for (int i = 0; i < windowSize; i++)
-		bufferSample[i] = 1.0f;
+    const int bufferSize = windowBuffer.getNumSamples();
+    float* bufferSample = windowBuffer.getWritePointer (0);
+    FloatVectorOperations::fill (bufferSample, 1.0f, bufferSize);
 	
 	switch (windowType)
 	{
@@ -86,10 +108,11 @@ void Window::setUpWindowBuffer()
 		case FlatTop:               applyFlatTopWindow (bufferSample, bufferSize);              break;
 		default:                    applyRectangularWindow (bufferSample, bufferSize);          break;
 	}
-    
+
 	oneOverWindowFactor = 1.0f / windowFactor;
 }
 
+//==============================================================================
 void Window::applyRectangularWindow (float *samples, const int numSamples)
 {
 	const double oneOverSize = (1.0f / numSamples);
@@ -114,7 +137,7 @@ void Window::applyHannWindow (float* samples, const int numSamples)
 	for (int i = 0; i < numSamples; i++)
 	{
 		// Hann window equation
-		float window = 0.5f * (1.0f - (float) (cos (i * oneOverSizeMinusOne * twoTimesPi)));
+		float window = 0.5f * (1.0f - (float) (std::cos (i * oneOverSizeMinusOne * twoTimesPi)));
 		samples[i] *= window;
 		windowFactor += window;
 	}
@@ -122,7 +145,7 @@ void Window::applyHannWindow (float* samples, const int numSamples)
     windowFactor *= (float) oneOverSize;
 }
 
-void Window::applyHammingWindow(float *samples, const int numSamples)
+void Window::applyHammingWindow (float *samples, const int numSamples)
 {
 	const double oneOverSize = (1.0 / numSamples);
 	const double oneOverSizeMinusOne = 1.0 / (numSamples - 1.0);
@@ -131,7 +154,7 @@ void Window::applyHammingWindow(float *samples, const int numSamples)
 	for (int i = 0; i < numSamples; i++)
 	{
 		// Hamming window equation
-		float window = 0.54f - 0.46f * (float) (cos (twoTimesPi * i * oneOverSizeMinusOne));
+		float window = 0.54f - 0.46f * (float) (std::cos (twoTimesPi * i * oneOverSizeMinusOne));
 		samples[i] *= window;
 		windowFactor += window;
 	}
@@ -148,7 +171,7 @@ void Window::applyCosineWindow (float *samples,  const int numSamples)
 	for (int i = 0; i < numSamples; i++)
 	{
 		// Cosine window equation
-		float window = (float) sin (double_Pi * i * oneOverSizeMinusOne);
+		float window = (float) std::sin (double_Pi * i * oneOverSizeMinusOne);
 		samples[i] *= window;
 		windowFactor += window;
 	}
@@ -183,7 +206,7 @@ void Window::applyZeroEndTriangleWindow (float *samples,  const int numSamples)
 	for (int i = 0; i < numSamples; i++)
 	{
 		// Triangle window equation
-		float window = (float) ((2.0 * oneOverSizeMinusOne) * ((sizeMinusOne * 0.5) - fabs (double (i) - (sizeMinusOne * 0.5))));
+		float window = (float) ((2.0 * oneOverSizeMinusOne) * ((sizeMinusOne * 0.5) - std::fabs (double (i) - (sizeMinusOne * 0.5))));
 		samples[i] *= window;
 		windowFactor += window;
 	}
@@ -200,7 +223,7 @@ void Window::applyNonZeroEndTriangleWindow(float *samples,  const int numSamples
 	for (int i = 0; i < numSamples; i++)
 	{
 		// Triangle window equation
-		float window = (float) ((2.0 * oneOverSize) * ((numSamples*0.5) - fabs(double(i) - (sizeMinusOne * 0.5))));
+		float window = (float) ((2.0 * oneOverSize) * ((numSamples * 0.5) - std::fabs (double (i) - (sizeMinusOne * 0.5))));
 		samples[i] *= window;
 		windowFactor += window;
 	}
@@ -219,7 +242,7 @@ void Window::applyGaussianWindow (float *samples,  const int numSamples)
 	for (int i = 0; i < numSamples; i++)
 	{
 		// Gaussian window equation
-		float window = (float) (exp (-0.5 * squareNumber ((i - sizeMinusOne * 0.5) / (sigma * sizeMinusOne * 0.5))));
+		float window = (float) (std::exp (-0.5 * squareNumber ((i - sizeMinusOne * 0.5) / (sigma * sizeMinusOne * 0.5))));
 		samples[i] *= window;
 		windowFactor += window;
 	}
@@ -240,7 +263,7 @@ void Window::applyBartlettHannWindow (float *samples,  const int numSamples)
 	for (int i = 0; i < numSamples; i++)
 	{
 		// Bartlett-Hann window equation
-		float window = (float) (a0 - a1 * fabs (i * oneOverSizeMinusOne - 0.5) - a2 * cos (twoTimesPi * i * oneOverSizeMinusOne));
+		float window = (float) (a0 - a1 * std::fabs (i * oneOverSizeMinusOne - 0.5) - a2 * std::cos (twoTimesPi * i * oneOverSizeMinusOne));
 		samples[i] *= window;
 		windowFactor += window;
 	}
@@ -262,7 +285,7 @@ void Window::applyBlackmanWindow (float *samples,  const int numSamples)
 	for (int i = 0; i < numSamples; i++)
 	{
 		// Blackman window equation
-		float window = (float) (a0 - a1 * cos (twoTimesPi * i * oneOverSizeMinusOne) + a2 * cos (fourTimesPi * i * oneOverSizeMinusOne));
+		float window = (float) (a0 - a1 * std::cos (twoTimesPi * i * oneOverSizeMinusOne) + a2 * std::cos (fourTimesPi * i * oneOverSizeMinusOne));
 		samples[i] *= window;
 		windowFactor += window;
 	}
@@ -284,9 +307,9 @@ void Window::applyNuttallWindow (float* samples,  const int numSamples)
 	for (int i = 0; i < numSamples; i++)
 	{
 		// Nuttall window equation
-		float window = a0 - a1 * (float) (cos (twoTimesPi * i * oneOverSizeMinusOne))
-		+ a2 * (float) (cos (fourTimesPi * i * oneOverSizeMinusOne))
-		- a3 * (float) (cos (sixTimesPi * i * oneOverSizeMinusOne));
+		float window = a0 - a1 * (float) (std::cos (twoTimesPi * i * oneOverSizeMinusOne))
+		+ a2 * (float) (std::cos (fourTimesPi * i * oneOverSizeMinusOne))
+		- a3 * (float) (std::cos (sixTimesPi * i * oneOverSizeMinusOne));
 		samples[i] *= window;
 		windowFactor += window;
 	}
@@ -308,9 +331,9 @@ void Window::applyBlackmanHarrisWindow (float* samples, const int numSamples)
 	for (int i = 0; i < numSamples; i++)
 	{
 		// Blackman-Harris window equation
-		float window = a0 - a1 * (float) (cos (twoTimesPi * i * oneOverSizeMinusOne))
-		+ a2 * (float) (cos (fourTimesPi * i * oneOverSizeMinusOne))
-		- a3 * (float) (cos (sixTimesPi * i * oneOverSizeMinusOne));
+		float window = a0 - a1 * (float) (std::cos (twoTimesPi * i * oneOverSizeMinusOne))
+		+ a2 * (float) (std::cos (fourTimesPi * i * oneOverSizeMinusOne))
+		- a3 * (float) (std::cos (sixTimesPi * i * oneOverSizeMinusOne));
 		samples[i] *= window;
 		windowFactor += window;
 	}
@@ -332,9 +355,9 @@ void Window::applyBlackmanNuttallWindow (float* samples, const int numSamples)
 	for (int i = 0; i < numSamples; i++)
 	{
 		// Blackman-Nuttall window equation
-		float window = a0 - a1 * (float) (cos (twoTimesPi * i * oneOverSizeMinusOne))
-		+ a2 * (float) (cos (fourTimesPi * i * oneOverSizeMinusOne))
-		- a3 * (float) (cos (sixTimesPi * i * oneOverSizeMinusOne));
+		float window = a0 - a1 * (float) (std::cos (twoTimesPi * i * oneOverSizeMinusOne))
+		+ a2 * (float) (std::cos (fourTimesPi * i * oneOverSizeMinusOne))
+		- a3 * (float) (std::cos (sixTimesPi * i * oneOverSizeMinusOne));
 		samples[i] *= window;
 		windowFactor += window;
 	}
@@ -357,10 +380,10 @@ void Window::applyFlatTopWindow (float* samples, const int numSamples)
 	for (int i = 0; i < numSamples; i++)
 	{
 		// Flat-Top window equation
-		float window = a0 - a1 * (float) (cos (twoTimesPi * i * oneOverSizeMinusOne))
-		+ a2 * (float) (cos (fourTimesPi * i * oneOverSizeMinusOne))
-		- a3 * (float) (cos (sixTimesPi * i * oneOverSizeMinusOne))
-		+ a4 * (float) (cos (2.0 * fourTimesPi * i * oneOverSizeMinusOne));
+		float window = a0 - a1 * (float) (std::cos (twoTimesPi * i * oneOverSizeMinusOne))
+		+ a2 * (float) (std::cos (fourTimesPi * i * oneOverSizeMinusOne))
+		- a3 * (float) (std::cos (sixTimesPi * i * oneOverSizeMinusOne))
+		+ a4 * (float) (std::cos (2.0 * fourTimesPi * i * oneOverSizeMinusOne));
 		samples[i] *= window;
 		windowFactor += window;
 	}

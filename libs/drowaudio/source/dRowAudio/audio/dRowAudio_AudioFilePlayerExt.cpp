@@ -34,8 +34,8 @@
 
 AudioFilePlayerExt::AudioFilePlayerExt()
 {
-    loopingAudioSource = new LoopingAudioSource (audioTransportSource, false);
-    reversibleAudioSource = new ReversibleAudioSource (audioTransportSource, false);
+    loopingAudioSource = new LoopingAudioSource (&audioTransportSource, false);
+    reversibleAudioSource = new ReversibleAudioSource (&audioTransportSource, false);
     filteringAudioSource = new FilteringAudioSource (reversibleAudioSource, false);
 
     masterSource = filteringAudioSource;
@@ -43,7 +43,7 @@ AudioFilePlayerExt::AudioFilePlayerExt()
 
 AudioFilePlayerExt::~AudioFilePlayerExt()
 {
-    audioTransportSource->setSource (nullptr);
+    audioTransportSource.setSource (nullptr);
 }
 
 void AudioFilePlayerExt::setPlaybackSettings (SoundTouchProcessor::PlaybackSettings newSettings)
@@ -115,7 +115,7 @@ void AudioFilePlayerExt::setPosition (double newPosition, bool ignoreAnyLoopBoun
         const double sampleRate = audioFormatReaderSource->getAudioFormatReader()->sampleRate;
         
         if (sampleRate > 0.0)
-            loopingAudioSource->setNextReadPositionIgnoringLoop ((int64) secondsToSamples (newPosition, sampleRate));
+            loopingAudioSource->setNextReadPositionIgnoringLoop (secondsToSamples (newPosition, sampleRate));
     }
     else
     {
@@ -129,7 +129,7 @@ bool AudioFilePlayerExt::setSourceWithReader (AudioFormatReader* reader)
     if (soundTouchAudioSource != nullptr)
         currentSoundtouchSettings = soundTouchAudioSource->getPlaybackSettings();
     
-	audioTransportSource->setSource (nullptr);
+	audioTransportSource.setSource (nullptr);
     loopingAudioSource = nullptr;
     soundTouchAudioSource = nullptr;
     bufferingAudioSource = nullptr;
@@ -147,9 +147,9 @@ bool AudioFilePlayerExt::setSourceWithReader (AudioFormatReader* reader)
         loopingAudioSource->setLoopBetweenTimes (shouldBeLooping);
         updateLoopTimes();
         
-        audioTransportSource->setSource (loopingAudioSource,
-                                         0, nullptr,
-                                         reader->sampleRate);
+        audioTransportSource.setSource (loopingAudioSource,
+                                        0, nullptr,
+                                        reader->sampleRate);
         
         listeners.call (&Listener::fileChanged, this);
         setPlaybackSettings (currentSoundtouchSettings);
@@ -165,7 +165,7 @@ bool AudioFilePlayerExt::setSourceWithReader (AudioFormatReader* reader)
 
 void AudioFilePlayerExt::updateLoopTimes()
 {
-    const double duration = audioTransportSource->getLengthInSeconds();
+    const double duration = audioTransportSource.getLengthInSeconds();
     currentLoopEndTime = jmin (currentLoopEndTime, duration);
     
     if (currentLoopStartTime > currentLoopEndTime)

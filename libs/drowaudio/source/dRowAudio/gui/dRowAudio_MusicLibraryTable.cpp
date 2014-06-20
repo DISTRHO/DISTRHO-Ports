@@ -224,7 +224,7 @@ void MusicLibraryTable::sortOrderChanged (int newSortColumnId, bool isForwards)
             || newSortColumnId == MusicColumns::Added
             || newSortColumnId == MusicColumns::Modified)
 		{
-			ValueTreeComparators::Numerical sorter (MusicColumns::columnNames[newSortColumnId], isForwards);
+			ValueTreeComparators::Numerical<double> sorter (MusicColumns::columnNames[newSortColumnId], isForwards);
 			filteredDataList.sort (sorter, 0, false);
 		}
 		else

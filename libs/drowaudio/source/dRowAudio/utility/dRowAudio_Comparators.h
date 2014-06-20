@@ -36,8 +36,7 @@
 namespace ValueTreeComparators
 {
     //==============================================================================
-    /** A standard Lexiographc ValueTreeComparitor.
-     */
+    /** A standard Lexiographc ValueTreeComparator. */
     class Lexicographic
     {
     public:
@@ -47,11 +46,9 @@ namespace ValueTreeComparators
         {
         }
         
-        int compareElements (const ValueTree &first, const ValueTree &second) const
+        int compareElements (const ValueTree& first, const ValueTree& second) const
         {
-            int result = 0;
-            
-            result = first[attributeToSort].toString().compareLexicographically(second[attributeToSort].toString());
+            const int result = first[attributeToSort].toString().compareLexicographically (second[attributeToSort].toString());
             
             return direction * result;
         }
@@ -60,26 +57,24 @@ namespace ValueTreeComparators
         const Identifier attributeToSort;
         const int direction;
         
-        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Lexicographic);
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Lexicographic)
     };
 
     //==============================================================================
-    /** A standard Numberical ValueTreeComparitor.
-     */
+    /** A standard Numberical ValueTreeComparator. */
+    template<typename NumericalType>
     class Numerical
     {
     public:
         Numerical (const Identifier attributeToSort_, bool forwards)
-        :	attributeToSort (attributeToSort_),
-            direction (forwards ? 1 : -1)
+            : attributeToSort (attributeToSort_),
+              direction (forwards ? 1 : -1)
         {
         }
         
-        int compareElements (const ValueTree &first, const ValueTree &second) const
+        int compareElements (const ValueTree& first, const ValueTree& second) const
         {
-            int result = 0;
-            
-            result = (double(first[attributeToSort]) > double(second[attributeToSort])) ? 1 : -1;
+            const int result = (NumericalType (first[attributeToSort]) > NumericalType (second[attributeToSort])) ? 1 : -1;
             
             return direction * result;
         }
@@ -88,12 +83,12 @@ namespace ValueTreeComparators
         const Identifier attributeToSort;
         const int direction;
         
-        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Numerical);
-    };	
-        
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Numerical)
+    };
+    
     //==============================================================================
-    /** A Lexiographc ValueTreeComparitor which will use a second comparitor if the
-        result is the same, useful when sorting tables withough using the much
+    /** A Lexiographc ValueTreeComparator which will use a second comparitor if the
+        result is the same, useful when sorting tables without using the much
         slower maintainSortOrder method.
      */
     class LexicographicWithBackup
@@ -106,11 +101,9 @@ namespace ValueTreeComparators
         {
         }
         
-        int compareElements (const ValueTree &first, const ValueTree &second) const
+        int compareElements (const ValueTree& first, const ValueTree& second) const
         {
-            int result = 0;
-            
-            result = first[attributeToSort].toString().compareLexicographically (second[attributeToSort].toString());
+            int result = first[attributeToSort].toString().compareLexicographically (second[attributeToSort].toString());
             
             if (result == 0)
                 result = first[backupAttribute].toString().compareLexicographically (second[backupAttribute].toString());
@@ -123,7 +116,7 @@ namespace ValueTreeComparators
         const Identifier backupAttribute;
         const int direction;
         
-        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (LexicographicWithBackup);
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (LexicographicWithBackup)
     };
     
 } //ValueTreeComparators

@@ -49,7 +49,7 @@ SoundTouchProcessor::~SoundTouchProcessor()
 
 void SoundTouchProcessor::initialise (int numChannels, double sampleRate)
 {
-    ScopedLock sl (lock);
+    const ScopedLock sl (lock);
     soundTouch.setChannels (numChannels);
     soundTouch.setSampleRate ((uint32) sampleRate);
     soundTouch.clear();
@@ -58,6 +58,7 @@ void SoundTouchProcessor::initialise (int numChannels, double sampleRate)
 void SoundTouchProcessor::writeSamples (float** sourceChannelData, int numChannels, int numSamples, int startSampleOffset)
 {
     const int requiredBufferSize = numSamples * numChannels;
+    
     if (interleavedInputBufferSize < requiredBufferSize) 
     {
         interleavedInputBuffer.malloc (requiredBufferSize);
@@ -73,13 +74,14 @@ void SoundTouchProcessor::writeSamples (float** sourceChannelData, int numChanne
     for (int i = 0; i < numChannels; i++)
         sourceChannelData[i] -= startSampleOffset;
     
-    ScopedLock sl (lock);
+    const ScopedLock sl (lock);
     soundTouch.putSamples ((SAMPLETYPE*) interleavedInputBuffer, numSamples);
 }
 
 void SoundTouchProcessor::readSamples (float** destinationChannelData, int numChannels, int numSamples, int startSampleOffset)
 {
     const int requiredBufferSize = numSamples * numChannels;
+    
     if (interleavedOutputBufferSize < requiredBufferSize) 
     {
         interleavedOutputBuffer.malloc (requiredBufferSize);
@@ -90,19 +92,18 @@ void SoundTouchProcessor::readSamples (float** destinationChannelData, int numCh
     int numThisTime = 0;
     
     {
-        ScopedLock sl (lock);
+        const ScopedLock sl (lock);
     
-        do
+        for (;;)
         {
-            int maxNumSamples = numSamples - numSamplesDone;
+            const int maxNumSamples = numSamples - numSamplesDone;
             numThisTime = soundTouch.receiveSamples ((SAMPLETYPE*) &interleavedOutputBuffer[numChannels * numSamplesDone], maxNumSamples);
             
             numSamplesDone += numThisTime;
             
-            if (numSamplesDone == numSamples)
+            if (numSamplesDone == numSamples || numThisTime == 0)
                 break;
         }
-        while (numThisTime != 0);
     }
     
     if (numSamplesDone < numSamples)
@@ -121,12 +122,11 @@ void SoundTouchProcessor::setPlaybackSettings (PlaybackSettings newSettings)
 {
     settings = newSettings;
     
-    ScopedLock sl (lock);
+    const ScopedLock sl (lock);
     soundTouch.setRate (settings.rate);
     soundTouch.setTempo (settings.tempo);
-    soundTouch.setPitch (settings.pitch);    
+    soundTouch.setPitch (settings.pitch);
 }
-
 
 void SoundTouchProcessor::setSoundTouchSetting (int settingId, int settingValue)
 {
@@ -137,6 +137,5 @@ int SoundTouchProcessor::getSoundTouchSetting (int settingId)
 {
     return soundTouch.getSetting (settingId);
 }
-
 
 #endif

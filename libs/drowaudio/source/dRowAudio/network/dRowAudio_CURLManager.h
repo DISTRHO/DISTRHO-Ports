@@ -34,11 +34,9 @@
 
 #if DROWAUDIO_USE_CURL || DOXYGEN
 
-#if JUCE_WINDOWS
- #include "curl/include/curl/curl.h"
-#else
- #include <curl/curl.h>
-#endif
+}
+typedef void CURL;
+namespace drow {
 
 //==============================================================================
 class CURLManager : public TimeSliceThread,
@@ -58,7 +56,7 @@ public:
 		to clean up when the handle is no longer needed. This can be done with
 		cleanUpEasyCurlHandle().
 	 */
-	CURL* createEasyCurlHandle()				{	return curl_easy_init();	}
+	CURL* createEasyCurlHandle();
 	
 	/**	Cleans up an easy curl session for you.
 		You can pass this a handle generated with createEasyCurlHandle() to clean
@@ -69,13 +67,8 @@ public:
 	
 	/**	Returns a list of the supported protocols.
 	 */
-	const StringArray getSupportedProtocols();
-
-	/**	Returns a pointer to the version info data structure.
-		@see curl_version_info_data
-	 */
-	curl_version_info_data* getCURLVersionInfoData()	{	return curl_version_info (CURLVERSION_NOW);	}
-	
+	StringArray getSupportedProtocols();
+    
 private:
 	//==============================================================================
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CURLManager);

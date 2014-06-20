@@ -640,7 +640,7 @@ public:
         cacheNeedsRefilling = true;
     }
 
-    void drawChannel (Graphics& g, const juce::Rectangle<int>& area,
+    void drawChannel (Graphics& g, const Rectangle<int>& area,
                       const double startTime, const double endTime,
                       const int channelNum, const float verticalZoomFactor,
                       const double sampleRate, const int numChannels, const int samplesPerThumbSample,
@@ -651,7 +651,7 @@ public:
 
         if (isPositiveAndBelow (channelNum, numChannelsCached))
         {
-            const juce::Rectangle<int> clip (g.getClipBounds().getIntersection (area.withWidth (jmin (numSamplesCached, area.getWidth()))));
+            const Rectangle<int> clip (g.getClipBounds().getIntersection (area.withWidth (jmin (numSamplesCached, area.getWidth()))));
 
             if (! clip.isEmpty())
             {
@@ -676,7 +676,7 @@ public:
         }
     }
 
-	void drawColouredChannel (Graphics& g, const juce::Rectangle<int>& area,
+	void drawColouredChannel (Graphics& g, const Rectangle<int>& area,
 							  const double startTime, const double endTime,
 							  const int channelNum, const float verticalZoomFactor,
 							  const double sampleRate, const int numChannels, const int samplesPerThumbSample,
@@ -687,7 +687,7 @@ public:
 		
         if (isPositiveAndBelow (channelNum, numChannelsCached))
         {
-            const juce::Rectangle<int> clip (g.getClipBounds().getIntersection (area.withWidth (jmin (numSamplesCached, area.getWidth()))));
+            const Rectangle<int> clip (g.getClipBounds().getIntersection (area.withWidth (jmin (numSamplesCached, area.getWidth()))));
 			
             if (! clip.isEmpty())
             {
@@ -998,7 +998,7 @@ void ColouredAudioThumbnail::addBlock (const int64 startSample, const AudioSampl
 
         for (int chan = 0; chan < numChans; ++chan)
         {
-            const float* const sourceData = incoming.getSampleData (chan, startOffsetInBuffer);
+            const float* const sourceData = incoming.getReadPointer (chan, startOffsetInBuffer);
             MinMaxColourValue* const dest = thumbData + numToDo * chan;
             thumbChannels [chan] = dest;
 
@@ -1078,7 +1078,7 @@ void ColouredAudioThumbnail::getApproximateMinMax (const double startTime, const
     maxValue = result.getMaxValue() / 128.0f;
 }
 
-void ColouredAudioThumbnail::drawChannel (Graphics& g, const juce::Rectangle<int>& area, double startTime,
+void ColouredAudioThumbnail::drawChannel (Graphics& g, const Rectangle<int>& area, double startTime,
                                   double endTime, int channelNum, float verticalZoomFactor)
 {
     const ScopedLock sl (lock);
@@ -1086,7 +1086,7 @@ void ColouredAudioThumbnail::drawChannel (Graphics& g, const juce::Rectangle<int
     drawColouredChannel (g, area, startTime, endTime, channelNum, verticalZoomFactor);
 }
 
-void ColouredAudioThumbnail::drawColouredChannel (Graphics& g, const juce::Rectangle<int>& area, double startTime,
+void ColouredAudioThumbnail::drawColouredChannel (Graphics& g, const Rectangle<int>& area, double startTime,
 												  double endTime, int channelNum, float verticalZoomFactor)
 {
     const ScopedLock sl (lock);
@@ -1095,7 +1095,7 @@ void ColouredAudioThumbnail::drawColouredChannel (Graphics& g, const juce::Recta
 								 sampleRate, numChannels, samplesPerThumbSample, source, channels);
 }
 
-void ColouredAudioThumbnail::drawChannels (Graphics& g, const juce::Rectangle<int>& area, double startTimeSeconds,
+void ColouredAudioThumbnail::drawChannels (Graphics& g, const Rectangle<int>& area, double startTimeSeconds,
                                            double endTimeSeconds, float verticalZoomFactor)
 {
     for (int i = 0; i < numChannels; ++i)
@@ -1103,7 +1103,7 @@ void ColouredAudioThumbnail::drawChannels (Graphics& g, const juce::Rectangle<in
         const int y1 = roundToInt ((i * area.getHeight()) / numChannels);
         const int y2 = roundToInt (((i + 1) * area.getHeight()) / numChannels);
 
-        drawChannel (g, juce::Rectangle<int> (area.getX(), area.getY() + y1, area.getWidth(), y2 - y1),
+        drawChannel (g, Rectangle<int> (area.getX(), area.getY() + y1, area.getWidth(), y2 - y1),
                      startTimeSeconds, endTimeSeconds, i, verticalZoomFactor);
     }
 }

@@ -73,18 +73,18 @@ void ReversibleAudioSource::getNextAudioBlock (const AudioSourceChannelInfo& inf
 
 		if (info.buffer->getNumChannels() == 1)
 		{
-			reverseArray (info.buffer->getSampleData (0) + info.startSample, info.numSamples);
+			reverseArray (info.buffer->getWritePointer (0) + info.startSample, info.numSamples);
 		}
 		else if (info.buffer->getNumChannels() == 2) 
 		{
-			reverseTwoArrays (info.buffer->getSampleData (0) + info.startSample,
-                              info.buffer->getSampleData (1) + info.startSample,
+			reverseTwoArrays (info.buffer->getWritePointer (0) + info.startSample,
+                              info.buffer->getWritePointer (1) + info.startSample,
                               info.numSamples);
 		}
 		else
 		{
 			for (int c = 0; c < info.buffer->getNumChannels(); c++)
-				reverseArray (info.buffer->getSampleData(c) + info.startSample, info.numSamples);
+				reverseArray (info.buffer->getWritePointer (c) + info.startSample, info.numSamples);
 		}
         
         previousReadPosition = nextReadPosition;

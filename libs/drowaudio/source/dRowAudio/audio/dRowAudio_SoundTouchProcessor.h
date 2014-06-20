@@ -34,9 +34,11 @@
 
 #if DROWAUDIO_USE_SOUNDTOUCH || DOXYGEN
 
+} // namespace drow
+
 #include "soundtouch/SoundTouch.h"
 
-//using namespace soundtouch;
+namespace drow {
 
 //==============================================================================
 /** Wraps a SoundTouch object to enable pitch and tempo adjustments to an audio buffer;
@@ -50,16 +52,17 @@ class SoundTouchProcessor
 {
 public:
     //==============================================================================
-    /** A struct use to hold all the different playback settings.
-     */
+    /** A struct use to hold all the different playback settings. */
     struct PlaybackSettings
     {
         PlaybackSettings()
-          : rate (1.0f),
-            tempo (1.0f),
-            pitch (1.0f)
+          : rate (1.0f), tempo (1.0f), pitch (1.0f)
         {}
-        
+
+        PlaybackSettings (float rate_, float tempo_, float pitch_)
+            : rate (rate_), tempo (tempo_), pitch (pitch_)
+        {}
+
         float rate, tempo, pitch;
     };
     
@@ -96,8 +99,7 @@ public:
      */
     void readSamples (float** destinationChannelData, int numChannels, int numSamples, int startSampleOffset = 0);
     
-    /** Clears the pipeline of all samples, ready for new processing.
-     */
+    /** Clears the pipeline of all samples, ready for new processing. */
     void clear()                                                {   soundTouch.clear();             }
     
     /** Flushes the last samples from the processing pipeline to the output.
@@ -110,20 +112,16 @@ public:
      */
     void flush()                                                {   soundTouch.flush();             }
     
-    /** Returns the number of samples ready.
-     */
+    /** Returns the number of samples ready. */
     int getNumReady()                                           {   return soundTouch.numSamples(); }
     
-    /** Returns the number of samples in the pipeline but currently unprocessed.
-     */
+    /** Returns the number of samples in the pipeline but currently unprocessed. */
     int getNumUnprocessedSamples()                              {   return soundTouch.numUnprocessedSamples();  }
     
-    /** Sets all of the settings at once.
-     */
+    /** Sets all of the settings at once. */
     void setPlaybackSettings (PlaybackSettings newSettings);
     
-    /** Returns all of the settings.
-     */
+    /** Returns all of the settings. */
     PlaybackSettings getPlaybackSettings()                      {   return settings;                            }
     
     /** Sets a custom SoundTouch setting.
@@ -136,8 +134,7 @@ public:
      */
     int getSoundTouchSetting (int settingId);
     
-    /** Returns the effective playback ratio i.e. the number of output samples produced per input sample.
-     */
+    /** Returns the effective playback ratio i.e. the number of output samples produced per input sample. */
     double getEffectivePlaybackRatio()                          {   return (double) soundTouch.getEffectiveRate() * soundTouch.getEffectiveTempo(); }
             
 private:

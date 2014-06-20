@@ -153,7 +153,7 @@ public:
         with the verticalZoomFactor parameter.
     */
     void drawChannel (Graphics& g,
-                      const juce::Rectangle<int>& area,
+                      const Rectangle<int>& area,
                       double startTimeSeconds,
                       double endTimeSeconds,
                       int channelNum,
@@ -161,7 +161,7 @@ public:
 
 	/**	Draws the waveform for a channel with colour coded frequency information.
 	 */
-	void drawColouredChannel (Graphics& g, const juce::Rectangle<int>& area, double startTime,
+	void drawColouredChannel (Graphics& g, const Rectangle<int>& area, double startTime,
 							  double endTime, int channelNum, float verticalZoomFactor);
 
     /** Draws the waveforms for all channels in the thumbnail.
@@ -172,7 +172,7 @@ public:
         @see drawChannel
     */
     void drawChannels (Graphics& g,
-                       const juce::Rectangle<int>& area,
+                       const Rectangle<int>& area,
                        double startTimeSeconds,
                        double endTimeSeconds,
                        float verticalZoomFactor);

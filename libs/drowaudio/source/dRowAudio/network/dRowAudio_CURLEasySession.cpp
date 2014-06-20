@@ -31,30 +31,38 @@
 
 #if DROWAUDIO_USE_CURL
 
+} //namespace drow
 
+#if JUCE_WINDOWS
+ #include "curl/include/curl/curl.h"
+#else
+ #include <curl/curl.h>
+#endif
 
+namespace drow {
+
+//==============================================================================
 CURLEasySession::CURLEasySession()
-:	handle      (nullptr),
-	remotePath  (String::empty),
-	progress    (1.0f)
+    : handle      (CURLManager::getInstance()->createEasyCurlHandle()),
+	  remotePath  (String::empty),
+	  progress    (1.0f)
 {
-	handle = CURLManager::getInstance()->createEasyCurlHandle();
-
-	enableFullDebugging(true);
-	curl_easy_setopt(handle, CURLOPT_NOPROGRESS, false);
+	enableFullDebugging (true);
+	curl_easy_setopt (handle, CURLOPT_NOPROGRESS, false);
 }
 
-CURLEasySession::CURLEasySession(String localPath,
-								 String remotePath,
-								 bool upload,
-								 String username,
-								 String password)
+CURLEasySession::CURLEasySession (String localPath,
+                                  String remotePath,
+                                  bool upload,
+                                  String username,
+                                  String password)
+    : handle      (CURLManager::getInstance()->createEasyCurlHandle())
 {
 	handle = CURLManager::getInstance()->createEasyCurlHandle();
 	enableFullDebugging (true);
 	curl_easy_setopt (handle, CURLOPT_NOPROGRESS, false);
 
-	setLocalFile (File (localPath));
+	setLocalFile (localPath);
 	setRemotePath (remotePath);
 	setUserNameAndPassword (username, password);
 	beginTransfer (upload);
@@ -270,7 +278,7 @@ int CURLEasySession::internalProgressCallback (CURLEasySession* session, double 
 }
 
 //==============================================================================
-CURLcode CURLEasySession::performTransfer (bool transferIsUpload)
+int CURLEasySession::performTransfer (bool transferIsUpload)
 {
 	curl_easy_setopt (handle, CURLOPT_URL, remotePath.toUTF8().getAddress());
     curl_easy_setopt (handle, CURLOPT_UPLOAD, (long) transferIsUpload);
@@ -299,10 +307,12 @@ CURLcode CURLEasySession::performTransfer (bool transferIsUpload)
     
 	//perform the transfer
 	progress = 0.0f;
+    listeners.call (&CURLEasySession::Listener::transferAboutToStart, this);
 	CURLcode result = curl_easy_perform (handle);
 	
 	// delete the streams to flush the buffers
 	outputStream = nullptr;
+    listeners.call (&CURLEasySession::Listener::transferEnded, this);
     
     return result;
 }

@@ -87,7 +87,7 @@ const Image AudioThumbnailImage::getImageAtTime (double startTime, double durati
         const int startPixel = roundToInt (startTime * oneOverFileLength * waveformImage.getWidth());
         const int numPixels = roundToInt (duration * oneOverFileLength * waveformImage.getWidth());
         
-        return waveformImage.getClippedImage (juce::Rectangle<int> (startPixel, 0, numPixels, waveformImage.getHeight()));
+        return waveformImage.getClippedImage (Rectangle<int> (startPixel, 0, numPixels, waveformImage.getHeight()));
     }
     else
     {
@@ -245,7 +245,7 @@ void AudioThumbnailImage::refreshWaveform()
                                           false);
             }
             
-            juce::Rectangle<int> rectangleToDraw (0, 0, numTempPixels, waveformImageHeight);
+            Rectangle<int> rectangleToDraw (0, 0, numTempPixels, waveformImageHeight);
             
             Graphics gTemp (tempSectionImage);
             tempSectionImage.clear (tempSectionImage.getBounds(), backgroundColour);

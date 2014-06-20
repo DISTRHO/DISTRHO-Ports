@@ -37,18 +37,118 @@
 #endif
 
 //==============================================================================
-/** Returns true if the given integer number is even.
+/** Contains a value and its reciprocal.
+    This has some handy operator overloads to speed up multiplication and divisions.
  */
+template <typename FloatingPointType>
+class Reciprocal
+{
+public:
+    /** Creates a 1/1 value/reciprocal pair. */
+    Reciprocal()                                        { set (1.0); }
+    
+    /** Creates a 1/x value/reciprocal pair. */
+    Reciprocal (FloatingPointType initalValue)          { set (initalValue); }
+
+    /** Returns the value. */
+    FloatingPointType get() const noexcept              { return value; }
+
+    /** Returns the value. */
+    FloatingPointType getValue() const noexcept         { return value; }
+    
+    /** Returns the reciprocal. */
+    FloatingPointType getReciprocal() const noexcept    { return reciprocal; }
+
+    /** Sets the value updating the reciprocal. */
+    FloatingPointType set (FloatingPointType newValue) noexcept
+    {
+        jassert (newValue != 0);
+        value = newValue;
+        reciprocal = (FloatingPointType) (1.0 / value);
+        
+        return value;
+    }
+
+    /** Sets the value updating the reciprocal. */
+    FloatingPointType operator= (FloatingPointType newValue) noexcept           { return set (newValue); }
+
+    FloatingPointType operator+ (FloatingPointType operand) const noexcept      { return value + operand; }
+    FloatingPointType operator+= (FloatingPointType operand) noexcept           { return set (value + operand); }
+
+    FloatingPointType operator- (FloatingPointType operand) const noexcept      { return value - operand; }
+    FloatingPointType operator-= (FloatingPointType operand) noexcept           { return set (value - operand); }
+
+    FloatingPointType operator* (FloatingPointType operand) const noexcept      { return value * operand; }
+    FloatingPointType operator/ (FloatingPointType operand) const noexcept      { return operand * reciprocal * value; }
+    FloatingPointType operator*= (FloatingPointType operand) noexcept           { return set (value *= operand); }
+    FloatingPointType operator/= (FloatingPointType operand) noexcept           { return set (operand * reciprocal * value); }
+
+private:
+    FloatingPointType value, reciprocal;
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Reciprocal)
+};
+
+//==============================================================================
+/** Returns true if the given integer number is even. */
 inline bool isEven (int number) noexcept
 {
     return ! (number & 0x1);
 }
 
-/** Returns true if the given integer number is odd.
- */
+/** Returns true if the given integer number is odd. */
 inline bool isOdd (int number) noexcept
 {
     return number & 0x1;
+}
+
+//==============================================================================
+/** Finds the maximum value and location of this in a buffer regardless of sign. */
+template <typename FloatingPointType>
+inline void findAbsoluteMax (const FloatingPointType* samples, int numSamples,
+                             int& maxSampleLocation, FloatingPointType& maxSampleValue) noexcept
+{
+    maxSampleValue = 0;
+    
+    for (int i = 0; i < numSamples; ++i)
+    {
+        const FloatingPointType absoluteSample = fabs (samples[i]);
+        
+        if (absoluteSample > maxSampleValue)
+        {
+            maxSampleValue = absoluteSample;
+            maxSampleLocation = i;
+        }
+    }
+}
+
+/** Normalises a set of samples to the absolute maximum contained within the buffer. */
+template <typename FloatingPointType>
+inline void normalise (FloatingPointType* samples, int numSamples) noexcept
+{
+    FloatingPointType max = 0;
+    int location;
+    
+    findAbsoluteMax (samples, numSamples, location, max);
+    
+    if (max != 0)
+    {
+        const FloatingPointType oneOverMax = 1 / max;
+        
+        for (int i = 0; i < numSamples; ++i)
+            samples[i] *= oneOverMax;
+    }
+    else
+    {
+        zeromem (samples, numSamples * sizeof (float));
+    }
+}
+
+/** Squares all the values in an array. */
+template <typename FloatingPointType>
+inline void square (FloatingPointType* samples, int numSamples)
+{
+    for (int i = 0; i < numSamples; ++i)
+        samples[i] = juce::square<FloatingPointType> (samples[i]);
 }
 
 //==============================================================================
@@ -113,8 +213,7 @@ inline void differentiate (const FloatingPointType* inputSamples, int numSamples
     }
 }
 
-/** Finds the mean of a set of samples.
- */
+/** Finds the mean of a set of samples. */
 template <typename FloatingPointType>
 inline FloatingPointType findMean (const FloatingPointType* samples, int numSamples) noexcept
 {
@@ -126,8 +225,7 @@ inline FloatingPointType findMean (const FloatingPointType* samples, int numSamp
     return total / numSamples;
 }
 
-/** Returns the median of a set of samples assuming they are sorted.
- */
+/** Returns the median of a set of samples assuming they are sorted. */
 template <typename FloatingPointType>
 inline FloatingPointType findMedian (const FloatingPointType* samples, int numSamples) noexcept
 {
@@ -145,8 +243,7 @@ inline FloatingPointType findMedian (const FloatingPointType* samples, int numSa
     }
 }
 
-/** Finds the variance of a set of samples.
- */
+/** Finds the variance of a set of samples. */
 template <typename FloatingPointType>
 inline FloatingPointType findVariance (const FloatingPointType* samples, int numSamples) noexcept
 {
@@ -160,7 +257,7 @@ inline FloatingPointType findVariance (const FloatingPointType* samples, int num
 }
 
 /** Finds the corrected variance for a set of samples suitable for a sample standard deviation.
-    Note the N - 1 in the formular to correct for small data sets.
+    Note the N - 1 in the formula to correct for small data sets.
  */
 template <typename FloatingPointType>
 inline FloatingPointType findCorrectedVariance (const FloatingPointType* samples, int numSamples) noexcept
@@ -174,64 +271,23 @@ inline FloatingPointType findCorrectedVariance (const FloatingPointType* samples
     return total / (numSamples - 1);
 }
 
-/** Finds the sample standard deviation for a set of samples.
- */
+/** Finds the sample standard deviation for a set of samples. */
 template <typename FloatingPointType>
 inline FloatingPointType findStandardDeviation (const FloatingPointType* samples, int numSamples) noexcept
 {
     return sqrt (findCorrectedVariance (samples, numSamples));
 }
 
-/** Finds the RMS for a set of samples.
- */
+/** Finds the RMS for a set of samples. */
 template <typename FloatingPointType>
 inline FloatingPointType findRMS (const FloatingPointType* samples, int numSamples) noexcept
 {
-    return sqrt (squareNumber (findMean (samples, numSamples)));
-}
-
-//==============================================================================
-/** Finds the maximum value and location of this in a buffer regardless of sign.
- */
-template <typename FloatingPointType>
-inline void findAbsoluteMax (const FloatingPointType* samples, int numSamples,
-                             int& maxSampleLocation, FloatingPointType& maxSampleValue) noexcept
-{
-    maxSampleValue = 0;
+    FloatingPointType sum = 0;
     
     for (int i = 0; i < numSamples; ++i)
-    {
-        const FloatingPointType absoluteSample = fabs (samples[i]);
-        
-        if (absoluteSample > maxSampleValue)
-        {
-            maxSampleValue = absoluteSample;
-            maxSampleLocation = i;
-        }
-    }
-}
-
-/** Normalises a set of samples to the absolute maximum contained within the buffer.
- */
-template <typename FloatingPointType>
-inline void normalise (FloatingPointType* samples, int numSamples) noexcept
-{
-    FloatingPointType max = 0;
-    int location;
+        sum += juce::square (*samples++);
     
-    findAbsoluteMax (samples, numSamples, location, max);
-    
-    if (max != 0)
-    {
-        const FloatingPointType oneOverMax = 1 / max;
-        
-        for (int i = 0; i < numSamples; ++i)
-            samples[i] *= oneOverMax;
-    }
-    else
-    {
-        zeromem (samples, numSamples * sizeof (float));
-    }
+    return std::sqrt (sum / numSamples);
 }
 
 //==============================================================================
@@ -287,9 +343,17 @@ inline FloatingPointType logBase10Scale (const FloatingPointType valueToScale,
     return log10 (minimum + ((maximum - minimum) * valueToScale)) / log10 (maximum);
 }
 
-//==============================================================================
-/** Checks to see if a number is NaN eg. sqrt (-1).
+/** Converts a frequency in hertz to its Mel (or melody) based scale.
+    The Mel scale is devised so that 1KHz represents a human perceived doubling in pitch.
  */
+template <typename FloatingPointType>
+inline FloatingPointType melScale (const FloatingPointType frequencyInHerts) noexcept
+{
+    return 2595 * log10 (1 + (frequencyInHerts / 700.0));
+}
+
+//==============================================================================
+/** Checks to see if a number is NaN eg. sqrt (-1). */
 template <typename Type>
 inline static bool isnan (Type value)
 {
@@ -302,8 +366,7 @@ inline static bool isnan (Type value)
 #endif
 }
 
-/** Checks to see if a number is Inf eg. 100.0 / 0.0.
- */
+/** Checks to see if a number is Inf eg. 100.0 / 0.0. */
 template <typename Type>
 inline static bool isinf (Type value)
 {
@@ -315,8 +378,7 @@ inline static bool isinf (Type value)
 }
 
 //==============================================================================
-/**	Sinc function.
- */
+/**	Sinc function. */
 template <typename Type>
 inline Type sinc (const Type x) noexcept
 {
@@ -336,12 +398,11 @@ inline FloatingPointType sincPi (const FloatingPointType x) noexcept
     if (x == 0)
         return static_cast<FloatingPointType> (1);
     
-    return static_cast<FloatingPointType> (sin (double_Pi * x) / (double_Pi * x));
+    return static_cast<FloatingPointType> (std::sin (double_Pi * x) / (double_Pi * x));
 }
 
 //==============================================================================
-/** Converts a number of degrees to radians
- */
+/** Converts a number of degrees to radians. */
 template<typename FloatingPointType>
 inline FloatingPointType degreesToRadians (const FloatingPointType degrees) noexcept
 {
@@ -363,8 +424,7 @@ inline bool isPowerOfTwo (IntegerType number) noexcept
 	return (number) && ! (number & (number - 1));
 }
 
-/**	Returns the next power of 2 of the given number.
- */
+/**	Returns the next power of 2 of the given number. */
 inline int nextPowerOfTwo (int number) noexcept
 {
 	if (isPowerOfTwo (number))
@@ -397,15 +457,13 @@ inline int findPowerForBaseTwo (int number) noexcept
 }
 
 #if JUCE_MSVC || DOXYGEN
-/** Log2 function for the MSVC compiler.
- */
+/** Log2 function for the MSVC compiler. */
 inline double log2 (double number)
 {
     return log (number) / log (2.0);
 }
 
-/** Log2f function for the MSVC compiler.
- */
+/** Log2f function for the MSVC compiler. */
 inline float log2f (float number)
 {
     return log (number) / log (2.0f);

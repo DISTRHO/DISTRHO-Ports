@@ -69,20 +69,29 @@ void FilteringAudioSource::setGain (FilterType setting, float newGain)
     switch (setting)
     {
         case Low:
+        {
             gains[Low] = newGain;
-            filter[0][Low].makeLowShelf     (sampleRate, defaultSettings[Low][CF], defaultSettings[Low][Q], gains[Low]);
-            filter[1][Low].makeLowShelf     (sampleRate, defaultSettings[Low][CF], defaultSettings[Low][Q], gains[Low]);
+            const IIRCoefficients lowCoeff (IIRCoefficients::makeLowShelf       (sampleRate, defaultSettings[Low][CF], defaultSettings[Low][Q], gains[Low]));
+            filter[0][Low].setCoefficients (lowCoeff);
+            filter[1][Low].setCoefficients (lowCoeff);
             break;
+        }
         case Mid:
+        {
             gains[Mid] = newGain;
-            filter[0][Mid].makeBandPass     (sampleRate, defaultSettings[Mid][CF], defaultSettings[Mid][Q], gains[Mid]);
-            filter[1][Mid].makeBandPass     (sampleRate, defaultSettings[Mid][CF], defaultSettings[Mid][Q], gains[Mid]);
+            const IIRCoefficients midCoeff (IIRCoefficients::makePeakFilter     (sampleRate, defaultSettings[Mid][CF], defaultSettings[Mid][Q], gains[Mid]));
+            filter[0][Mid].setCoefficients (midCoeff);
+            filter[1][Mid].setCoefficients (midCoeff);
             break;
+        }
         case High:
+        {
             gains[High] = newGain;
-            filter[0][High].makeHighShelf   (sampleRate, defaultSettings[High][CF], defaultSettings[High][Q], gains[High]);
-            filter[1][High].makeHighShelf   (sampleRate, defaultSettings[High][CF], defaultSettings[High][Q], gains[High]);
+            const IIRCoefficients highCoeff (IIRCoefficients::makeHighShelf     (sampleRate, defaultSettings[High][CF], defaultSettings[High][Q], gains[High]));
+            filter[0][High].setCoefficients (highCoeff);
+            filter[1][High].setCoefficients (highCoeff);
             break;
+        }
         default:
             break;
     }
@@ -118,7 +127,7 @@ void FilteringAudioSource::getNextAudioBlock (const AudioSourceChannelInfo& info
     if (filterSource && info.buffer->getNumChannels() > 0)
     {
         const int bufferNumSamples = info.numSamples;
-        float* sampleDataL = info.buffer->getSampleData (0, info.startSample);
+        float* sampleDataL = info.buffer->getWritePointer (0, info.startSample);
         
         filter[0][Low].processSamples   (sampleDataL, bufferNumSamples);
         filter[0][Mid].processSamples   (sampleDataL, bufferNumSamples);
@@ -126,7 +135,7 @@ void FilteringAudioSource::getNextAudioBlock (const AudioSourceChannelInfo& info
 
         if (info.buffer->getNumChannels() > 1)
         {
-            float* sampleDataR = info.buffer->getSampleData (1, info.startSample);
+            float* sampleDataR = info.buffer->getWritePointer (1, info.startSample);
 
             filter[1][Low].processSamples   (sampleDataR, bufferNumSamples);
             filter[1][Mid].processSamples   (sampleDataR, bufferNumSamples);
@@ -137,11 +146,15 @@ void FilteringAudioSource::getNextAudioBlock (const AudioSourceChannelInfo& info
 
 void FilteringAudioSource::resetFilters()
 {
-	filter[0][Low].makeLowShelf   (sampleRate, defaultSettings[Low][CF], defaultSettings[Low][Q], gains[Low]);
-	filter[1][Low].makeLowShelf   (sampleRate, defaultSettings[Low][CF], defaultSettings[Low][Q], gains[Low]);
-	filter[0][Mid].makeBandPass   (sampleRate, defaultSettings[Mid][CF], defaultSettings[Mid][Q], gains[Mid]);
-	filter[1][Mid].makeBandPass   (sampleRate, defaultSettings[Mid][CF], defaultSettings[Mid][Q], gains[Mid]);
-	filter[0][High].makeHighShelf (sampleRate, defaultSettings[High][CF], defaultSettings[High][Q], gains[High]);
-	filter[1][High].makeHighShelf (sampleRate, defaultSettings[High][CF], defaultSettings[High][Q], gains[High]);	
+    const IIRCoefficients lowCoeff (IIRCoefficients::makeLowShelf       (sampleRate, defaultSettings[Low][CF], defaultSettings[Low][Q], gains[Low]));
+    const IIRCoefficients midCoeff (IIRCoefficients::makePeakFilter     (sampleRate, defaultSettings[Mid][CF], defaultSettings[Mid][Q], gains[Mid]));
+    const IIRCoefficients highCoeff (IIRCoefficients::makeHighShelf     (sampleRate, defaultSettings[High][CF], defaultSettings[High][Q], gains[High]));
+
+    filter[0][Low].setCoefficients (lowCoeff);
+    filter[1][Low].setCoefficients (lowCoeff);
+    filter[0][Mid].setCoefficients (midCoeff);
+    filter[1][Mid].setCoefficients (midCoeff);
+    filter[0][High].setCoefficients (highCoeff);
+    filter[1][High].setCoefficients (highCoeff);
 }
 

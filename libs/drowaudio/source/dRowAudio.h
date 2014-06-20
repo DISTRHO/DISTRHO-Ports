@@ -30,6 +30,8 @@
 */
 
 //=============================================================================
+#include <modules/juce_core/juce_core.h>
+
 /** Config: DROWAUDIO_USE_FFTREAL
     Enables the FFTReal library. By default this is enabled except on the Mac
     where the Accelerate framework is preferred. However, if you do explicity 

@@ -329,19 +329,9 @@ bool ColumnFileBrowserContents::keyPressed (const KeyPress& key)
 //==================================================================================
 int ColumnFileBrowserContents::getNumValidChildFiles (const File& sourceFile)
 {
-    DBG (filesToDisplay->getDescription());
-    int numChildFiles = sourceFile.getNumberOfChildFiles (File::findFilesAndDirectories +
-                                                          File::ignoreHiddenFiles,
-                                                          filesToDisplay == nullptr ? "*" : filesToDisplay->getDescription().fromFirstOccurrenceOf ("(", false, false).upToFirstOccurrenceOf (")", false, false));
-    
-    DBG_VAR (numChildFiles);
-    Array<File> files;
-    sourceFile.findChildFiles (files, File::findFilesAndDirectories +
-                               File::ignoreHiddenFiles, false);
-    for (int i = 0; i < files.size(); ++i)
-    {
-        DBG (files[i].getFullPathName());
-    }
+    const int numChildFiles = sourceFile.getNumberOfChildFiles (File::findFilesAndDirectories +
+                                                                File::ignoreHiddenFiles,
+                                                                filesToDisplay == nullptr ? "*" : filesToDisplay->getDescription().fromFirstOccurrenceOf ("(", false, false).upToFirstOccurrenceOf (")", false, false));
     
     return numChildFiles;
 }
@@ -377,7 +367,7 @@ void ColumnFileBrowser::resized()
     fileBrowser->setSize (fileBrowser->getWidth(), getMaximumVisibleHeight());
 }
 
-void ColumnFileBrowser::visibleAreaChanged (const juce::Rectangle<int>& /*newVisibleArea*/)
+void ColumnFileBrowser::visibleAreaChanged (const Rectangle<int>& /*newVisibleArea*/)
 {
     resized();
 }
@@ -386,9 +376,8 @@ void ColumnFileBrowser::mouseWheelMove (const MouseEvent& e, const MouseWheelDet
 {
     if (! (e.mods.isAltDown() || e.mods.isCtrlDown()))
     {
-        if (getHorizontalScrollBar()->isVisible())
-            Viewport::useMouseWheelMoveIfNeeded (e, wheel);
-        else
-            Viewport::useMouseWheelMoveIfNeeded (e, wheel);
+        if (e.eventComponent != this && e.eventComponent != getHorizontalScrollBar())
+            if (wheel.deltaX != 0.0f)
+                Viewport::useMouseWheelMoveIfNeeded (e, wheel);
     }
 }

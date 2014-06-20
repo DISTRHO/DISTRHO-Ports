@@ -51,16 +51,14 @@ class FifoBuffer
 {
 public:
     //==============================================================================
-    /** Creates a FifoBuffer with a given initial size.
-     */
+    /** Creates a FifoBuffer with a given initial size. */
 	FifoBuffer (int initialSize)
         : abstractFifo (initialSize)
 	{
 		buffer.malloc (abstractFifo.getTotalSize());
 	}
 	
-    /** Returns the number of samples in the buffer.
-     */
+    /** Returns the number of samples in the buffer. */
 	inline int getNumAvailable()
 	{
         const ScopedLockType sl (lock);
@@ -99,20 +97,10 @@ public:
         
 		abstractFifo.setTotalSize (newSize);
 		buffer.realloc (newSize);
-        
-//        if (buffer == nullptr) // might need to do something like this if realloc isn't guaranteed
-//        {
-//            HeapBlock<ElementType> tempBlock;
-//            memcpy (tempBlock, buffer, numUsed * sizeof (ElementType));
-//            buffer.malloc (newSize);
-//            buffer.swapWith (tempBlock);
-//        }
-        
         abstractFifo.finishedWrite (numUsed);
 	}
 
-    /** Returns the size of the buffer.
-     */
+    /** Returns the size of the buffer. */
 	inline int getSize()
 	{
         const ScopedLockType sl (lock);
@@ -125,8 +113,7 @@ public:
         abstractFifo.reset();
     }
     
-    /** Writes a number of samples into the buffer.
-     */
+    /** Writes a number of samples into the buffer. */
 	void writeSamples (const ElementType* samples, int numSamples)
 	{
         const ScopedLockType sl (lock);
@@ -143,8 +130,7 @@ public:
 		abstractFifo.finishedWrite (size1 + size2);
 	}
 	
-    /** Reads a number of samples from the buffer into the array provided.
-     */
+    /** Reads a number of samples from the buffer into the array provided. */
 	void readSamples (ElementType* bufferToFill, int numSamples)
 	{
         const ScopedLockType sl (lock);
@@ -162,14 +148,19 @@ public:
 	}
 	
     
-    /** Removes a number of samples from the buffer.
-     */
+    /** Removes a number of samples from the buffer. */
     void removeSamples (int numSamples)
     {
         const ScopedLockType sl (lock);
         abstractFifo.finishedRead (numSamples);
     }
 
+    /** Returns the raw block of data.
+        You shouldn't need to mess with this usually but could come in handy if you want
+        to use the Fifo as a buffer without clearing it regularly.
+     */
+    ElementType* getData()                                  { return buffer.getData(); }
+    
     //==============================================================================
     /** Returns the CriticalSection that locks this fifo.
         To lock, you can call getLock().enter() and getLock().exit(), or preferably use

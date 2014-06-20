@@ -67,18 +67,18 @@ public:
         
         {
             AudioSampleBuffer buffer (1, 512);
-            expect (isAudioSampleBuffer (buffer.getArrayOfChannels(), getNumBytesForAudioSampleBuffer (buffer)));
+            expect (isAudioSampleBuffer (buffer.getArrayOfReadPointers(), getNumBytesForAudioSampleBuffer (buffer)));
         }
 
         {
             AudioSampleBuffer buffer (6, 1024);
-            expect (isAudioSampleBuffer (buffer.getArrayOfChannels(), getNumBytesForAudioSampleBuffer (buffer)));
+            expect (isAudioSampleBuffer (buffer.getArrayOfReadPointers(), getNumBytesForAudioSampleBuffer (buffer)));
         }
         
         {
             AudioSampleBuffer buffer (3, 256);
 
-            MemoryInputStream stream (buffer.getArrayOfChannels(), getNumBytesForAudioSampleBuffer (buffer), false);
+            MemoryInputStream stream (buffer.getArrayOfReadPointers(), getNumBytesForAudioSampleBuffer (buffer), false);
             unsigned int numChannels;
             int64 numSamples;
             expect (isAudioSampleBuffer (stream, numChannels, numSamples));

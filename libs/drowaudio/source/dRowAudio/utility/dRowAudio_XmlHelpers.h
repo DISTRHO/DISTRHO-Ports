@@ -35,6 +35,15 @@
 namespace XmlHelpers
 {
     //==============================================================================
+    /** Adds an XML style comment to a string.
+        Useful if you're constructing a string to be parsed into and XmlElement.
+     */
+    static String& addXmlComment (String& string, const String& comment)
+    {
+        return string << "<!-- " << comment << " -->" << newLine;
+    }
+
+    //==============================================================================
     /** Searches an XmlElement for an element with a given attribute name with
         the given attribute value.
      */
@@ -45,19 +54,17 @@ namespace XmlHelpers
         if (element == nullptr)
             return nullptr;
         
-        if (element->hasAttribute(attributeName)) {
-            if(element->compareAttribute(attributeName, attributeValue, true))
+        if (element->hasAttribute (attributeName))
+            if (element->compareAttribute (attributeName, attributeValue, true))
                 return element;
-        }
         
         XmlElement* child = element->getFirstChildElement();
         
         while (child != nullptr)
         {
-            if (child->hasAttribute(attributeName)) {
-                if(element->compareAttribute(attributeName, attributeValue, true))
+            if (child->hasAttribute (attributeName))
+                if(element->compareAttribute (attributeName, attributeValue, true))
                     return element;
-            }
             
             XmlElement* const found = findXmlElementWithAttributeWithValue (child, attributeName, attributeValue);
             
@@ -78,16 +85,15 @@ namespace XmlHelpers
         if (element == nullptr)
             return nullptr;
         
-        if (element->hasAttribute(attributeName))
+        if (element->hasAttribute (attributeName))
             return element;
         
         XmlElement* child = element->getFirstChildElement();
         
         while (child != nullptr)
         {
-            if (child->hasAttribute(attributeName)) {
+            if (child->hasAttribute (attributeName))
                 return element;
-            }
             
             XmlElement* const found = findXmlElementWithAttribute (child, attributeName);
             
@@ -115,9 +121,8 @@ namespace XmlHelpers
         
         while (child != nullptr)
         {
-            if (child->getAllSubText() == subtext) {
+            if (child->getAllSubText() == subtext)
                 return child;
-            }
             
             XmlElement* const found = findXmlElementWithSubText (child, subtext);
             
@@ -147,9 +152,8 @@ namespace XmlHelpers
         while (child != nullptr)
         {
             if (child->isTextElement()
-                && child->getText().contains (subtext)) {
+                && child->getText().contains (subtext))
                 return child;
-            }
             
             XmlElement* const found = findXmlElementContainingSubText (child, subtext);
             

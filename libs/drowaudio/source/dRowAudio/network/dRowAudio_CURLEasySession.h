@@ -139,6 +139,9 @@ public:
     
     //==============================================================================
     /** A class for receiving callbacks from a CURLEasySession.
+        
+        Note that these callbacks will be called from the transfer thread so make sure
+        any code within them is thread safe!
 	 */
     class  Listener
     {
@@ -148,16 +151,13 @@ public:
         virtual ~Listener() {}
 		
         //==============================================================================
-        /** Called when a transfer is about to start.
-		 */
+        /** Called when a transfer is about to start. */
         virtual void transferAboutToStart (CURLEasySession* /*session*/) {};
 		
-        /** Called when a transfer is about to start.
-		 */
+        /** Called when a transfer is about to start. */
         virtual void transferProgressUpdate (CURLEasySession* /*session*/) {};
 
-        /** Called when a transfer is about to start.
-		 */
+        /** Called when a transfer is about to start. */
         virtual void transferEnded (CURLEasySession* /*session*/) {};
     };
 	
@@ -184,10 +184,10 @@ private:
 	MemoryBlock directoryContentsList;
     
     CriticalSection transferLock;
-    ListenerList <Listener> listeners;
+    ListenerList<Listener> listeners;
 
     //==============================================================================
-    CURLcode performTransfer (bool transferIsUpload);
+    int performTransfer (bool transferIsUpload);
     
     static size_t writeCallback (void* sourcePointer, size_t blockSize, size_t numBlocks, CURLEasySession* session);
 	static size_t readCallback (void* destinationPointer, size_t blockSize, size_t numBlocks, CURLEasySession* session);

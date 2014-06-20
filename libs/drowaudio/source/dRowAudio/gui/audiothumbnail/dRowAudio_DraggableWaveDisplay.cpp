@@ -81,7 +81,7 @@ void DraggableWaveDisplay::setDraggable (bool isWaveformDraggable)
 void DraggableWaveDisplay::resized()
 {
     // redraw playhead image
-    playheadImage = Image (Image::RGB, 3, getHeight(), false);
+    playheadImage = Image (Image::RGB, 3, jmax (1, getHeight()), false);
 
     Graphics g (playheadImage);
     g.fillAll (Colours::black);

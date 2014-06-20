@@ -47,9 +47,16 @@ SampleRateConverter::~SampleRateConverter()
 }
 
 //==============================================================================
-void SampleRateConverter::process (float** inputChannelData, const int numInputChannels, const int numInputSamples,
-                                   float** outputChannelData, const int numOutputChannels, const int numOutputSamples)
+void SampleRateConverter::process (float** inputChannelData, int numInputChannels, int numInputSamples,
+                                   float** outputChannelData, int numOutputChannels, int numOutputSamples)
 {
+    // take a copy of the outpur channel pointers so they can be re-used afterwards
+    float* outputChannels[256];
+    for (int i = 0; i < numOutputChannels; ++i)
+        outputChannels[i] = outputChannelData[i];
+    
+    outputChannels[numOutputChannels] = nullptr;
+    
     const int channelsToProcess = jmin (numInputChannels, numOutputChannels);
     const double localRatio = numInputSamples / (double) numOutputSamples;
         
@@ -70,7 +77,7 @@ void SampleRateConverter::process (float** inputChannelData, const int numInputC
     for (int s = 0; s < numOutputSamples; ++s)
     {
         for (int channel = 0; channel < channelsToProcess; ++channel)
-            *outputChannelData[channel]++ = linearInterpolate (inputChannelData[channel], numInputSamples, nextSample);
+            *outputChannels[channel]++ = linearInterpolate (inputChannelData[channel], numInputSamples, nextSample);
         
         nextSample += (float) localRatio;
     }
@@ -103,6 +110,7 @@ void SampleRateConverter::process (float** inputChannelData, const int numInputC
         }
     }
 }
+
 //==============================================================================
 void SampleRateConverter::setFilterCoefficients (double c1, double c2, double c3, double c4, double c5, double c6)
 {
@@ -125,7 +133,7 @@ void SampleRateConverter::setFilterCoefficients (double c1, double c2, double c3
 void SampleRateConverter::createLowPass (const double frequencyRatio)
 {
     const double proportionalRate = (frequencyRatio > 1.0) ? 0.5 / frequencyRatio
-    : 0.5 * frequencyRatio;
+                                                           : 0.5 * frequencyRatio;
     
     const double n = 1.0 / std::tan (double_Pi * jmax (0.001, proportionalRate));
     const double nSquared = n * n;

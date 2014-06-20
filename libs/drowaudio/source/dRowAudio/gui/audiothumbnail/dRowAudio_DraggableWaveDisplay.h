@@ -67,15 +67,15 @@ public:
 	/** Sets the offset of the white line that marks the current position.
         This is as a fraction of the width of the display.
 	 */
-	inline void setPlayheadPosition (float newPlayheadPosition);
+	void setPlayheadPosition (float newPlayheadPosition);
 	
 	/** Turns dragging to reposition the transport on or off.
      */
-	inline void setDraggable (bool isWaveformDraggable);
+	void setDraggable (bool isWaveformDraggable);
 	
 	/** Returns true if dragging the waveform will reposition the audio source 
      */
-	inline bool getDraggable()              {   return isDraggable;   }
+	bool getDraggable()              {   return isDraggable;   }
 	    
     //====================================================================================
 	/** @internal */

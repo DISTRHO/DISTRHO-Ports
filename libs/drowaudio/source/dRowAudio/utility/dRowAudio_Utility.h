@@ -37,6 +37,7 @@
 #endif
 
 #include "dRowAudio_XmlHelpers.h"
+#include "dRowAudio_DebugObject.h"
 
 //==============================================================================
 /** @file
@@ -60,11 +61,11 @@ inline static String stripFileProtocolForLocal (const String& pathToStrip)
 {
 	if (pathToStrip.startsWith ("file://localhost"))
 	{
-#if JUCE_WINDOWS
+       #if JUCE_WINDOWS
 		String temp (pathToStrip.substring (pathToStrip.indexOf (7, "/") + 1));
-#else
+       #else
 		String temp (pathToStrip.substring (pathToStrip.indexOf (7, "/")));
-#endif   
+       #endif
 		return URL::removeEscapeChars (temp);
 	}
 	
@@ -85,14 +86,7 @@ inline static Time parseITunesDateString (const String& dateString)
     int milliseconds    = 0;
     bool useLocalTime   = true;
     
-    return Time (year,
-                 month,
-                 day,
-                 hours,
-                 minutes,
-                 seconds,
-                 milliseconds,
-                 useLocalTime);
+    return Time (year, month, day, hours, minutes, seconds, milliseconds, useLocalTime);
 }
 
 /**	Reverses an array.
@@ -118,6 +112,7 @@ template <class Type>
 void reverseTwoArrays (Type* array1, Type* array2, int length)
 {
     Type swap;
+    
     for (int a = 0; a < --length; a++)  //increment a and decrement b until they meet eachother
     {
         swap = array1[a];               //put what's in a into swap space
@@ -169,6 +164,50 @@ static String findKeyFromChemicalWebsite (const String& releaseNo, const String&
     }
     
     return String::empty;
+}
+
+//==============================================================================
+/** Draws a line representing the normalised set of samples to the given Image.
+    Note the samples must be in the range of 1-0 and the line will be stretched to fit the whole image.
+ */
+static void drawBufferToImage (const Image& image, const float* samples, int numSamples, Colour colour, float thickness)
+{
+    if (image.isNull())
+        return;
+    
+    jassert (image.getWidth() > 0 && image.getHeight() > 0);
+    
+    Graphics g (image);
+    g.setColour (colour);
+    const float imageXScale = image.getWidth() / (float) numSamples;
+    float y1 = (float) image.getHeight();
+    
+    for (int i = 0; i < numSamples; ++i)
+    {
+        const float x1 = i * imageXScale;
+        const float x2 = x1 + imageXScale;
+        const float y2 = image.getHeight() - (samples[i] * image.getHeight());
+        
+        const Line<float> line (Point<float> (x1, y1), Point<float> (x2, y2));
+        g.drawLine (line, thickness);
+        
+        y1 = y2;
+    }
+}
+
+/** Dumps a given image to a File in png format.
+    If the file parameter is nonexistant a temp file will be created on the desktop.
+ */
+static void saveImageToFile (const Image& image, File file = File::nonexistent)
+{
+    if (! file.exists())
+        file = File::getSpecialLocation (File::userDesktopDirectory).getNonexistentChildFile ("tempImage", ".png");
+    
+    PNGImageFormat format;
+    ScopedPointer<OutputStream> os (file.createOutputStream());
+    
+    if (os != nullptr)
+        format.writeImageToStream (image, *os);
 }
 
 //==============================================================================
@@ -300,8 +339,7 @@ public:
     /** Creates a ReferencedCountedMemoryBlock with a blank MemoryBlock.
      */
     ReferencedCountedMemoryBlock()
-    {
-    }
+    {}
 
     /** Creates a ReferencedCountedMemoryBlock for a given MemoryBlock.
         Note that this will take a copy of the data so you can dispose of the the
@@ -309,8 +347,7 @@ public:
      */
     ReferencedCountedMemoryBlock (const MemoryBlock& memoryBlockToReference)
         : memoryBlock (memoryBlockToReference)
-    {
-    }
+    {}
     
 #if JUCE_COMPILER_SUPPORTS_MOVE_SEMANTICS
     /** Creates a ReferencedCountedMemoryBlock for a given MemoryBlock.
@@ -319,14 +356,12 @@ public:
      */
     ReferencedCountedMemoryBlock (MemoryBlock&& other)
         : memoryBlock (other)
-    {
-    }
+    {}
 #endif
 
     /** Destructor. */
     ~ReferencedCountedMemoryBlock()
-    {
-    }
+    {}
     
     /** Returns the MemoryBlock being held.
      */
@@ -357,7 +392,7 @@ private:
     This is a helper method to conveniently write a ValueTree to a File,
     optionally storing it as Xml.
  */
-static bool writeValueTreeToFile (ValueTree& treeToWrite, File& fileToWriteTo, bool asXml = true)
+static bool writeValueTreeToFile (const ValueTree& treeToWrite, const File& fileToWriteTo, bool asXml = true)
 {
     if (fileToWriteTo.hasWriteAccess())
     {
@@ -373,7 +408,7 @@ static bool writeValueTreeToFile (ValueTree& treeToWrite, File& fileToWriteTo, b
         else 
         {
             TemporaryFile tempFile (fileToWriteTo);
-            ScopedPointer <FileOutputStream> outputStream (tempFile.getFile().createOutputStream());
+            ScopedPointer<FileOutputStream> outputStream (tempFile.getFile().createOutputStream());
             
             if (outputStream != nullptr)
             {
@@ -413,38 +448,113 @@ static ValueTree readValueTreeFromFile (const File& fileToReadFrom)
 }
 
 //==============================================================================
+/**
+    Simple class that reads a ValueTree from a file and saves it back again on
+    destruction.
+ */
+class ScopedValueTreeFile
+{
+public:
+    //==============================================================================
+    /** Creates a blank ScopedValueTreeFile.
+        This initially does nothing, use the setFile() method to read the contents
+        into the internal tree and then retrieve it using getTree().
+     */
+    ScopedValueTreeFile()
+        : asXml (true)
+    {
+    }
+
+    /** Creates a ScopedValueTreeFile for a given file.
+        Thsi will read the contents of the File into the internal ValueTree which
+        you can then retrieve with the getTree() method.
+     */
+    ScopedValueTreeFile (const File& sourceFile)
+        : asXml (true)
+    {
+        setFile (sourceFile);
+    }
+
+    /** Destructor.
+        Saves the contents of the tree to the current file.
+     */
+    ~ScopedValueTreeFile()
+    {
+        save();
+    }
+
+    /** Sets the file to use.
+        This will attempt to read the contents of the File into the ValueTree which
+        you can obtain using the getTree() method.
+     */
+    inline void setFile (const File& newFile)   {   tree = readValueTreeFromFile (file = newFile);  }
+    
+    /** Saves the file to disk using a TemporaryFile in case there are any problems. */
+    inline Result save()
+    {
+        return writeValueTreeToFile (tree, file, asXml) ? Result::ok()
+                                                        : Result::fail (TRANS("Error saving file to disk"));
+    }
+
+    /** Returns the ValueTree being used. */
+    inline ValueTree& getTree()                 {    return tree;           }
+
+    /** Returns the File being used. */
+    inline File getFile() const                 {    return file;           }
+    
+    /** Sets the tree to save to the file as XML or binary data. */
+    inline void setSaveAsXml (bool saveAsXml)   {   asXml = saveAsXml;      }
+    
+    /** Returns true if the file will be saved as XML. */
+    inline bool getSaveAsXml() const            {   return asXml;           }
+    
+private:
+    //==============================================================================
+    bool asXml;
+    File file;
+    ValueTree tree;
+    
+    //==============================================================================
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ScopedValueTreeFile);
+};
+
+//==============================================================================
+/** Simple utility class to send a change message when it goes out of scope. */
+struct ScopedChangeSender
+{
+    ScopedChangeSender (ChangeBroadcaster& owner) : broadcaster (owner) {}
+    ~ScopedChangeSender() { broadcaster.sendChangeMessage(); }
+    
+    ChangeBroadcaster& broadcaster;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ScopedChangeSender)
+};
+
+//==============================================================================
 /** Useful macro to print a variable name and value to the console.
  */
-#define DBG_VAR(dbgvar)     {DBG (JUCE_STRINGIFY(dbgvar) << ": " << dbgvar) }
+#define DBG_VAR(dbgvar)     {DBG (JUCE_STRINGIFY(dbgvar) << ": " << dbgvar)}
 
-/** Useful macro to print a rectangle to the console.
+/** Useful macro to print a Point to the console.
  */
-#define DBG_RECT(dbgrect)   {DBG ("x: " << dbgrect.getX() << " y: " << dbgrect.getY() << " w: " << dbgrect.getWidth() << " h: " << dbgrect.getHeight()) }
+#define DBG_POINT(dbgpoint) {DBG (JUCE_STRINGIFY(dbgpoint) << ": " << DebugObject::convertToString (dbgpoint))}
 
 /** Useful macro to print a Range to the console.
  */
-#define DBG_RANGE(dbgrange) {DBG ("s: " << dbgrange.getStart() << " e: " << dbgrange.getEnd() << " l: " << dbgrange.getLength()) }
+#define DBG_RANGE(dbgrange) {DBG (JUCE_STRINGIFY(dbgrange) << ": " << DebugObject::convertToString (dbgrange))}
 
-/** Useful macro to print a XML to the console.
+/** Useful macro to print a Line to the console.
  */
-#define DBG_XML(dbgxml)                                         \
-{                                                               \
-    if (dbgxml != nullptr)                                      \
-        {DBG (dbgxml->createDocument (String::empty));}         \
-    else                                                        \
-        {DBG ("invalid XML: " << JUCE_STRINGIFY(dbgxml));}      \
-}
+#define DBG_LINE(dbgline)   {DBG (JUCE_STRINGIFY(dbgline) << ": " << DebugObject::convertToString (dbgline))}
 
-/** Useful macro to print a ValueTree to the console as XML.
+/** Useful macro to print a Rectangle to the console.
  */
-#define DBG_TREE(dbgtree)                                       \
-{                                                               \
-    ScopedPointer<XmlElement> dbgxml (dbgtree.createXml());     \
-    if (dbgxml != nullptr)                                      \
-        {DBG (dbgxml->createDocument (String::empty));}         \
-    else                                                        \
-        {DBG ("invalid tree: " << JUCE_STRINGIFY(dbgtree));}    \
-}
+#define DBG_RECT(dbgrect)   {DBG (JUCE_STRINGIFY(dbgrect) << ": " << DebugObject::convertToString (dbgrect))}
+
+/** Prints a string representation of a lot of common objects to the console for
+    debugging purposes.
+ */
+#define DBG_OBJ(dbgobj)     {DBG (JUCE_STRINGIFY(dbgobj) << ": " << DebugObject::convertToString (dbgobj))}
 
 //==============================================================================
 /** This handy macro is a platform independent way of stopping compiler

@@ -19,11 +19,11 @@
   copies or substantial portions of the Software.
 
   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
   SOFTWARE.
 
   ==============================================================================
@@ -82,20 +82,20 @@ void PluginParameter::init (const String& name_, ParameterUnit unit_, String des
 	name = name_;
 	unit = unit_;
 	description = description_;
-
+	
 	min = min_;
 	max = max_;
 	setValue (value_);
 	defaultValue = default_;
-
+	
 	smoothCoeff = smoothCoeff_;
 	smoothValue = getValue();
-
+	
 	skewFactor = skewFactor_;
 	step = step_;
-
+	
 	unitSuffix = unitSuffix_;
-
+	
 	// default label suffix's, these can be changed later
 	switch (unit)
 	{
@@ -109,7 +109,7 @@ void PluginParameter::init (const String& name_, ParameterUnit unit_, String des
 		case UnitBPM:           setUnitSuffix("BPM");                       break;
 		case UnitMilliseconds:  setUnitSuffix("ms");                        break;
 		default:                                                            break;
-	}
+	}	
 }
 
 void PluginParameter::setValue (double value)
@@ -132,7 +132,7 @@ void PluginParameter::smooth()
 	if (smoothValue != getValue())
 	{
 		if( (smoothCoeff == 1.0) || almostEqual (smoothValue, getValue()) )
-			smoothValue = getValue();
+			smoothValue = getValue(); 
 		else
 			smoothValue = ((getValue() - smoothValue) * smoothCoeff) + smoothValue;
 	}

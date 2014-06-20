@@ -29,25 +29,22 @@
   ==============================================================================
 */
 
+//==============================================================================
 PitchDetector::PitchDetector()
-    : detectionMethod (autoCorrelationFunction),
-      sampleRate (44100.0),
-      minFrequency (50), maxFrequency (1600),
-      buffer1 (512), buffer2 (512),
+    : detectionMethod       (autoCorrelationFunction),
+      sampleRate            (44100.0),
+      minFrequency          (50), maxFrequency (1600),
+      buffer1               (512), buffer2 (512),
       numSamplesNeededForDetection (int ((sampleRate / minFrequency) * 2)),
-      currentBlockBuffer (numSamplesNeededForDetection),
-      inputFifoBuffer (numSamplesNeededForDetection * 2),
-      mostRecentPitch (0.0)
+      currentBlockBuffer    (numSamplesNeededForDetection),
+      inputFifoBuffer       (numSamplesNeededForDetection * 2),
+      mostRecentPitch       (0.0)
 {
+    updateFiltersAndBlockSizes();
 }
 
 PitchDetector::~PitchDetector()
 {
-}
-
-void PitchDetector::setDetectionMethod (DetectionMethod newMethod)
-{
-    detectionMethod = newMethod;
 }
 
 void PitchDetector::processSamples (const float* samples, int numSamples) noexcept
@@ -64,6 +61,7 @@ void PitchDetector::processSamples (const float* samples, int numSamples) noexce
     }
 }
 
+//==============================================================================
 double PitchDetector::detectPitch (float* samples, int numSamples) noexcept
 {
     Array<double> pitches;
@@ -113,21 +111,24 @@ double PitchDetector::detectPitch (float* samples, int numSamples) noexcept
     return 0.0;
 }
 
+//==============================================================================
+void PitchDetector::setSampleRate (double newSampleRate) noexcept
+{
+    sampleRate = newSampleRate;
+    updateFiltersAndBlockSizes();
+}
+
+void PitchDetector::setDetectionMethod (DetectionMethod newMethod)
+{
+    detectionMethod = newMethod;
+}
+
 void PitchDetector::setMinMaxFrequency (float newMinFrequency, float newMaxFrequency) noexcept
 {
     minFrequency = newMinFrequency;
     maxFrequency = newMaxFrequency;
-    
-    lowFilter.makeLowPass (sampleRate, maxFrequency);
-    highFilter.makeHighPass (sampleRate, minFrequency);
 
-    numSamplesNeededForDetection = int (sampleRate / minFrequency) * 2;
-
-    inputFifoBuffer.setSizeKeepingExisting (numSamplesNeededForDetection * 2);
-    currentBlockBuffer.setSize (numSamplesNeededForDetection);
-
-    buffer1.setSizeQuick (numSamplesNeededForDetection);
-    buffer2.setSizeQuick (numSamplesNeededForDetection);
+    updateFiltersAndBlockSizes();
 }
 
 //==============================================================================
@@ -135,27 +136,37 @@ Buffer* PitchDetector::getBuffer (int stageIndex)
 {
     switch (stageIndex)
     {
-        case 1:     return &buffer1; break;
-        case 2:     return &buffer2; break;
+        case 1:     return &buffer1;    break;
+        case 2:     return &buffer2;    break;
         default:    return nullptr;
     }
     
     return nullptr;
 }
 
+//==============================================================================
+void PitchDetector::updateFiltersAndBlockSizes()
+{
+    lowFilter.setCoefficients (IIRCoefficients::makeLowPass (sampleRate, maxFrequency));
+    highFilter.setCoefficients (IIRCoefficients::makeHighPass (sampleRate, minFrequency));
+    
+    numSamplesNeededForDetection = int (sampleRate / minFrequency) * 2;
+    
+    inputFifoBuffer.setSizeKeepingExisting (numSamplesNeededForDetection * 2);
+    currentBlockBuffer.setSize (numSamplesNeededForDetection);
+    
+    buffer1.setSizeQuick (numSamplesNeededForDetection);
+    buffer2.setSizeQuick (numSamplesNeededForDetection);
+}
+
+//==============================================================================
 double PitchDetector::detectPitchForBlock (float* samples, int numSamples)
 {
     switch (detectionMethod)
     {
-        case autoCorrelationFunction:
-            return detectAcfPitchForBlock (samples, numSamples);
-            break;
-        case squareDifferenceFunction:
-            return detectSdfPitchForBlock (samples, numSamples);
-            break;
-        default:
-            return 0.0;
-            break;
+        case autoCorrelationFunction:   return detectAcfPitchForBlock (samples, numSamples);
+        case squareDifferenceFunction:  return detectSdfPitchForBlock (samples, numSamples);
+        default:                        return 0.0;
     }
 }
 

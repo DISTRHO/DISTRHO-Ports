@@ -66,7 +66,7 @@ public:
 	void resized();
 		
     /** @internal */
-	void visibleAreaChanged (const juce::Rectangle<int>& newVisibleArea);
+	void visibleAreaChanged (const Rectangle<int>& newVisibleArea);
 	
     /** @internal */
 	void mouseWheelMove (const MouseEvent& event, const MouseWheelDetails& wheel);

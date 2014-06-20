@@ -60,11 +60,11 @@ namespace GuiHelpers
     /** Draws a square bevel around a given rectange.
         This is useful for insetting components and givin them a border.
      */
-    static void drawBevel (Graphics& g, juce::Rectangle<float> innerBevelBounds,
+    static void drawBevel (Graphics& g, Rectangle<float> innerBevelBounds,
                            float bevelThickness, const Colour& baseColour)
     {
-       juce::Rectangle<float> outerBevelBounds (innerBevelBounds.expanded (bevelThickness, bevelThickness));
-       juce::Rectangle<float> centreBevelBounds (innerBevelBounds.expanded (bevelThickness * 0.5f, bevelThickness * 0.5f));
+       Rectangle<float> outerBevelBounds (innerBevelBounds.expanded (bevelThickness, bevelThickness));
+       Rectangle<float> centreBevelBounds (innerBevelBounds.expanded (bevelThickness * 0.5f, bevelThickness * 0.5f));
         
         Path pL, pR, pT, pB, pTL, pTR, pBL, pBR;
         pL.startNewSubPath (centreBevelBounds.getTopLeft());

@@ -43,6 +43,7 @@ AudioFileDropTarget::AudioFileDropTarget (AudioFilePlayerExt* audioFilePlayerToC
 {
     if (attachedComponent != nullptr)
     {
+        attachedComponent->addAndMakeVisible (this);
         attachedComponent->addComponentListener (this);
         attachedComponent->addMouseListener (this, false);
     }
@@ -101,7 +102,7 @@ void AudioFileDropTarget::componentMovedOrResized (Component& /*component*/,
                                                    bool /*wasResized*/)
 {
     if (attachedComponent != nullptr)
-        setBounds (attachedComponent->getBounds());
+        setBounds (attachedComponent->getLocalBounds());
 }
 
 //==============================================================================

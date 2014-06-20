@@ -46,6 +46,8 @@
 
 #include "dRowAudio.h"
 
+#include "audio/soundtouch/SoundTouch_Source.cpp"
+
 namespace drow {
 
 // Audio
@@ -53,7 +55,6 @@ namespace drow {
 #include "audio/dRowAudio_AudioFilePlayerExt.cpp"
 #include "audio/dRowAudio_AudioSampleBufferAudioFormat.cpp"
 
-#include "audio/soundtouch/SoundTouch_Source.cpp"
 #include "audio/dRowAudio_SoundTouchProcessor.cpp"
 #include "audio/dRowAudio_SoundTouchAudioSource.cpp"
 
@@ -65,7 +66,6 @@ namespace drow {
 
 #include "audio/dRowAudio_AudioUtilityUnitTests.cpp"
 
-#include "audio/dRowAudio_Buffer.cpp"
 #include "audio/dRowAudio_EnvelopeFollower.cpp"
 #include "audio/dRowAudio_SampleRateConverter.cpp"
 
@@ -73,10 +73,7 @@ namespace drow {
 #include "audio/filters/dRowAudio_OnePoleFilter.cpp"
 
 #include "audio/fft/dRowAudio_Window.cpp"
-#include "audio/fft/dRowAudio_FFTEngine.cpp"
-#include "audio/fft/dRowAudio_mac_FFTOperation.cpp"
-#include "audio/fft/dRowAudio_ios_FFTOperation.cpp"
-#include "audio/fft/dRowAudio_FFTReal_FFTOperation.cpp"
+#include "audio/fft/dRowAudio_FFT.cpp"
 #include "audio/fft/dRowAudio_LTAS.cpp"
 
 // Gui
@@ -86,6 +83,7 @@ namespace drow {
 #include "gui/dRowAudio_AudioTransportCursor.cpp"
 #include "gui/dRowAudio_SegmentedMeter.cpp"
 #include "gui/dRowAudio_Sonogram.cpp"
+#include "gui/dRowAudio_Spectrograph.cpp"
 #include "gui/dRowAudio_Spectroscope.cpp"
 #include "gui/dRowAudio_TriggeredScope.cpp"
 #include "gui/dRowAudio_CpuMeter.cpp"
@@ -121,6 +119,7 @@ namespace drow {
 #include "utility/dRowAudio_ITunesLibrary.cpp"
 #include "utility/dRowAudio_ITunesLibraryParser.cpp"
 #include "utility/dRowAudio_UnityBuilder.cpp"
+#include "utility/dRowAudio_UnityProjectBuilder.cpp"
 #include "parameters/dRowAudio_PluginParameter.cpp"
 
 }
