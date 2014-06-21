@@ -6,10 +6,14 @@ package = make_juce_lv2_project("drowaudio-tremolo")
 package.config["Release"].links = { package.config["Release"].links, "drowaudio" }
 package.config["Debug"].links   = { package.config["Debug"].links, "drowaudio_debug" }
 
+package.includepaths = {
+  package.includepaths,
+  "../../drowaudio-common"
+}
+
 package.files = {
   matchfiles (
     "../source/*.cpp",
-    "../source/Common/*.cpp",
     "../../../libs/juce-plugin/JucePluginMain.cpp"
   )
 }

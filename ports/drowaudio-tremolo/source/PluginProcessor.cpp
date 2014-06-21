@@ -10,7 +10,7 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
-#include "Common/PluginHelpers.h"
+#include "PluginHelpers.h"
 
 //==============================================================================
 TremoloAudioProcessor::TremoloAudioProcessor()
@@ -177,7 +177,7 @@ void TremoloAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer&
 	// initialise the pointer to samples
 	float* channelData[numChannels];
     for (int c = 0; c < numChannels; ++c)
-		channelData[c] = buffer.getSampleData (c);
+		channelData[c] = buffer.getWritePointer (c);
 
 	//===================================================================
 	// Main Sample Loop
@@ -247,6 +247,7 @@ void TremoloAudioProcessor::valueChanged (Value& changedValue)
         {
             // we don't need to add if its already pending
             parameterUpdater.addParameter (i);
+            break;
         }
     }
 }
@@ -275,8 +276,6 @@ void TremoloAudioProcessor::parameterUpdated (int parameter)
     {
         fillBuffer (tremoloBufferL.getData(), 0);
         fillBuffer (tremoloBufferR.getData(), degreesToRadians (parameters.getUnchecked (Parameters::phase)->getValue()));
-
-        // once we've refilled the buffer we need to let the UI know again
         sendChangeMessage();
     }
 }

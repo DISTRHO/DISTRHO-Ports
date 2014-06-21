@@ -11,53 +11,52 @@
 #ifndef __PLUGINEDITOR_H_F74EDC4B__
 #define __PLUGINEDITOR_H_F74EDC4B__
 
-#include "Common.h"
 #include "PluginProcessor.h"
-#include "Common/PluginLookAndFeel.h"
 #include "TremoloBufferView.h"
+
+#include "PluginLookAndFeel.h"
 
 
 //==============================================================================
 /**
 */
 class TremoloAudioProcessorEditor : public AudioProcessorEditor,
-                                    //public Value::Listener,
                                     public Slider::Listener,
                                     public ChangeListener
 {
 public:
     TremoloAudioProcessorEditor (TremoloAudioProcessor* ownerFilter);
-    ~TremoloAudioProcessorEditor();
+    ~TremoloAudioProcessorEditor() override;
 
     //==============================================================================
     // This is just a standard Juce paint method...
-    void paint (Graphics& g);
-    
-    void resized();
-    
+    void paint (Graphics& g) override;
+
+    void resized() override;
+
     //void valueChanged (Value& value);
-    void changeListenerCallback (ChangeBroadcaster* source);
-    
-    void sliderValueChanged (Slider* slider);
-    
-    void sliderDragStarted (Slider* slider);
-    
-    void sliderDragEnded (Slider* slider);
+    void changeListenerCallback (ChangeBroadcaster* source) override;
+
+    void sliderValueChanged (Slider* slider) override;
+
+    void sliderDragStarted (Slider* slider) override;
+
+    void sliderDragEnded (Slider* slider) override;
 
 private:
     //==============================================================================
     TremoloAudioProcessor* ownerFilter;
-    PluginLookAndFeel customLookAndFeel;
-    
+    PluginLookAndFeel lookAndFeel;
+
     OwnedArray<Slider> sliders;
     OwnedArray<Label> labels;
-    
-	ScopedPointer<TremoloBufferView> bufferViewL;
-	ScopedPointer<TremoloBufferView> bufferViewR;
-	
-	ScopedPointer<Label> bufferViewLLabel;
+
+    ScopedPointer<TremoloBufferView> bufferViewL;
+    ScopedPointer<TremoloBufferView> bufferViewR;
+
+    ScopedPointer<Label> bufferViewLLabel;
     ScopedPointer<Label> bufferViewRLabel;
-    
+
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TremoloAudioProcessorEditor);
 };

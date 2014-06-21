@@ -11,9 +11,7 @@
 #ifndef _PARAMETERS_H_
 #define _PARAMETERS_H_
 
-#include "JuceHeader.h"
-
-using namespace drow;
+#include "includes.h"
 
 /* Our list of parameters and the names that will be displayed for them.
  */
@@ -27,8 +25,8 @@ namespace Parameters
         phase,
         numParameters
     };
-    
-    static const char* UNUSED_NOWARN names[numParameters] = 
+
+    static const char* UNUSED_NOWARN names[numParameters] =
     {
         "Rate",
         "Depth",
@@ -36,23 +34,23 @@ namespace Parameters
         "Phase"
     };
 
-    static const ParameterUnit UNUSED_NOWARN units[numParameters] = 
+    static const ParameterUnit UNUSED_NOWARN units[numParameters] =
     {
         UnitHertz,
         UnitPercent,
         UnitGeneric,
         UnitDegrees
     };
-    
-    static const char* UNUSED_NOWARN descriptions[numParameters] = 
+
+    static const char* UNUSED_NOWARN descriptions[numParameters] =
     {
         "The rate of the effect",
         "The depth of the effect",
         "The shape of the tremolo effect",
         "The level of offset of the second channel"
     };
-    
-    static const double UNUSED_NOWARN mins[numParameters] = 
+
+    static const double UNUSED_NOWARN mins[numParameters] =
     {
         0.0,
         0.0,
@@ -60,15 +58,15 @@ namespace Parameters
         -180.0
     };
 
-    static const double UNUSED_NOWARN maxs[numParameters] = 
+    static const double UNUSED_NOWARN maxs[numParameters] =
     {
         20.0,
         100.0,
         10.0,
         180.0
     };
-    
-    static const double UNUSED_NOWARN defaults[numParameters] = 
+
+    static const double UNUSED_NOWARN defaults[numParameters] =
     {
         5.0,
         100.0,

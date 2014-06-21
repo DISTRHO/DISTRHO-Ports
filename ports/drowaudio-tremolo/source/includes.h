@@ -17,5 +17,6 @@
 #include "dRowAudio.h"
 
 using namespace juce;
+using namespace drow;
 
 #endif   // __APPHEADERFILE_E0XYLT__
