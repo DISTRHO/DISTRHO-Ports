@@ -120,7 +120,6 @@ private:
 
 	static const int distortionBufferSize = 1024;
 	static const int distortionBufferMax = distortionBufferSize - 1;
-//	float *distortionBuffer;
 	HeapBlock <float> distortionBuffer;
 
 	ScopedPointer <OnePoleFilter> inFilterL;

@@ -17,9 +17,9 @@
 #include "Parameters.h"
 #include "CurvePoint.h"
 
-class GraphComponent  :	public Component,
-						public ComponentListener,
-						private Value::Listener
+class GraphComponent  : public Component,
+                        public ComponentListener,
+                        private Value::Listener
 {
 private:
 	//==============================================================================

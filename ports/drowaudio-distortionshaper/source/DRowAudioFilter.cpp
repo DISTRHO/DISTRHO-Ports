@@ -80,7 +80,6 @@ DRowAudioFilter::DRowAudioFilter()
 					0.75, 0.0, 1.0, 0.75);
 
 	// initialiase and fill the buffer
-//	distortionBuffer = new float[distortionBufferSize];
 	distortionBuffer.calloc(distortionBufferSize);
 	refillBuffer();
 
@@ -92,7 +91,6 @@ DRowAudioFilter::DRowAudioFilter()
 
 DRowAudioFilter::~DRowAudioFilter()
 {
-//	delete[] distortionBuffer;
 }
 
 //==============================================================================
@@ -110,14 +108,14 @@ float DRowAudioFilter::getParameter (int index)
 {
 	if (index >= 0 && index < noParams)
 		return params[index].getNormalisedValue();
-	else return 0.0f;
+	return 0.0f;
 }
 
 double DRowAudioFilter::getScaledParameter (int index)
 {
 	if (index >= 0 && index < noParams)
 		return params[index].getValue();
-	else return 0.0f;
+	return 0.0f;
 }
 
 void DRowAudioFilter::setParameter (int index, float newValue)
@@ -129,6 +127,7 @@ void DRowAudioFilter::setParameter (int index, float newValue)
 				params[i].setNormalisedValue(newValue);
 				sendChangeMessage ();
 			}
+			break;
 		}
 	}
 	parameterChanged(index, newValue);
@@ -143,6 +142,7 @@ void DRowAudioFilter::setScaledParameter (int index, float newValue)
 				params[i].setValue(newValue);
 				sendChangeMessage ();
 			}
+                        break;
 		}
 	}
 	parameterChanged(index, newValue);
@@ -151,9 +151,13 @@ void DRowAudioFilter::setScaledParameter (int index, float newValue)
 void DRowAudioFilter::setScaledParameterNotifyingHost(int index, float newValue)
 {
 	for (int i = 0; i < noParams; i++)
-		if (index == i)
+        {
+		if (index == i) {
 			if (params[i].getValue() != newValue)
 				setParameterNotifyingHost(index, params[i].normaliseValue(newValue));
+                        break;
+                }
+        }
 }
 
 const String DRowAudioFilter::getParameterName (int index)
@@ -426,6 +430,13 @@ void DRowAudioFilter::setStateInformation (const void* data, int sizeInBytes)
 			for(int i = 0; i < noParams; i++) {
 				params[i].readXml(xmlState);
 			}
+
+            // update all params
+            refillBuffer();
+            inFilterL->makeLowPass(currentSampleRate, params[PREFILTER].getValue());
+            inFilterR->makeLowPass(currentSampleRate, params[PREFILTER].getValue());
+            outFilterL->makeLowPass(currentSampleRate, params[POSTFILTER].getValue());
+            outFilterR->makeLowPass(currentSampleRate, params[POSTFILTER].getValue());
 
             sendChangeMessage ();
         }

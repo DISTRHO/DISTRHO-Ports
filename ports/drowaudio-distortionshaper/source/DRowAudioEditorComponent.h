@@ -94,15 +94,13 @@ public:
 
 private:
     //==============================================================================
-	dRowLookAndFeel *lookAndFeel;
+    ScopedPointer<dRowLookAndFeel> lookAndFeel;
 
-	OwnedArray <Value> values;
-	OwnedArray <Slider> sliders;
-	OwnedArray <Label> labels;
+    OwnedArray <Value>  values;
+    OwnedArray <Slider> sliders;
+    OwnedArray <Label>  labels;
 
-	GraphComponent *graphComponent;
-
-    TooltipWindow tooltipWindow;
+    GraphComponent* graphComponent;
 
     void updateParametersFromFilter();
 

@@ -115,6 +115,7 @@ void DRowAudioFilter::setParameter (int index, float newValue)
 				params[i].setNormalisedValue(newValue);
 				sendChangeMessage ();
 			}
+			break;
 		}
 	}
 
@@ -130,6 +131,7 @@ void DRowAudioFilter::setScaledParameter (int index, float newValue)
 				params[i].setValue(newValue);
 				sendChangeMessage ();
 			}
+			break;
 		}
 	}
 
@@ -139,9 +141,14 @@ void DRowAudioFilter::setScaledParameter (int index, float newValue)
 void DRowAudioFilter::setScaledParameterNotifyingHost(int index, float newValue)
 {
 	for (int i = 0; i < noParams; i++)
+        {
 		if (index == i)
+                {
 			if (params[i].getValue() != newValue)
 				setParameterNotifyingHost(index, params[i].normaliseValue(newValue));
+                        break;
+                }
+        }
 }
 
 const String DRowAudioFilter::getParameterName (int index)

@@ -52,11 +52,11 @@ DRowAudioEditorComponent::DRowAudioEditorComponent (DRowAudioFilter* const owner
                 labelName = "Out Gain";
 
             slider->addListener (this);
-            slider->setTextBoxStyle (Slider::TextBoxRight, false, 60, 18);
             slider->setColour (Slider::thumbColourId, Colours::grey);
             slider->setColour (Slider::textBoxTextColourId, Colour (0xff78f4ff));
             slider->setColour (Slider::textBoxBackgroundColourId, Colour(0xFF455769).withBrightness(0.15f));
             slider->setColour (Slider::textBoxOutlineColourId, (Colour (0xffffffff)).withBrightness(0.5f));
+            slider->setTextBoxStyle (Slider::TextBoxRight, false, 60, 18);
 
             Label* const label = new Label(String("Label") + String(i), labelName);
             label->setJustificationType(Justification::left);
@@ -94,6 +94,8 @@ DRowAudioEditorComponent::DRowAudioEditorComponent (DRowAudioFilter* const owner
     // class to tell us when something has changed, and this will call our changeListenerCallback()
     // method.
     ownerFilter->addChangeListener (this);
+
+    updateParametersFromFilter();
 }
 
 DRowAudioEditorComponent::~DRowAudioEditorComponent()
