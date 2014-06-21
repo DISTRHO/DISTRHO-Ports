@@ -281,30 +281,29 @@ void DRowAudioFilter::releaseResources()
 {
 }
 
-void DRowAudioFilter::processBlock (AudioSampleBuffer& buffer,
-									MidiBuffer& midiMessages)
+void DRowAudioFilter::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 {
 	smoothParameters();
 	const int numInputChannels = getNumInputChannels();
-	int numSamples = buffer.getNumSamples();
+	const int numSamples = buffer.getNumSamples();
 
 	// set up the parameters to be used
 	float inGain = decibelsToAbsolute(params[INGAIN].getSmoothedValue());
 	float outGain = decibelsToAbsolute(params[OUTGAIN].getSmoothedValue());
 
-	buffer.applyGain(0, buffer.getNumSamples(), inGain);
+	buffer.applyGain(0, numSamples, inGain);
 
 	if (numInputChannels == 2)
 	{
 		// get sample pointers
-		float* channelL = buffer.getSampleData(0);
-		float* channelR = buffer.getSampleData(1);
+		float* channelL = buffer.getWritePointer(0);
+		float* channelR = buffer.getWritePointer(1);
 
 		// pre-filter
-		inFilterL->processSamples(buffer.getSampleData(0), numSamples);
-		inFilterR->processSamples(buffer.getSampleData(1), numSamples);
+		inFilterL->processSamples(channelL, numSamples);
+		inFilterR->processSamples(channelR, numSamples);
 
-		while (--numSamples >= 0)
+		for (int i=numSamples; --i >= 0;)
 		{
 			float sampleL = *channelL;
 			float sampleR = *channelR;
@@ -336,20 +335,20 @@ void DRowAudioFilter::processBlock (AudioSampleBuffer& buffer,
 		}
 
 		// post-filter
-		outFilterL->processSamples(buffer.getSampleData(0), buffer.getNumSamples());
-		outFilterR->processSamples(buffer.getSampleData(1), buffer.getNumSamples());
+		outFilterL->processSamples(channelL, numSamples);
+		outFilterR->processSamples(channelR, numSamples);
 
-		buffer.applyGain(0, buffer.getNumSamples(), outGain);
+		buffer.applyGain(0, numSamples, outGain);
 	}
 	else if (numInputChannels == 1)
 	{
 		// get sample pointers
-		float* channelL = buffer.getSampleData(0);
+		float* channelL = buffer.getWritePointer(0);
 
 		// pre-filter
-		inFilterL->processSamples(buffer.getSampleData(0), numSamples);
+		inFilterL->processSamples(channelL, numSamples);
 
-		while (--numSamples >= 0)
+		for (int i=numSamples; --i >= 0;)
 		{
 			float sampleL = *channelL;
 
@@ -369,9 +368,9 @@ void DRowAudioFilter::processBlock (AudioSampleBuffer& buffer,
 		}
 
 		// post-filter
-		outFilterL->processSamples(buffer.getSampleData(0), buffer.getNumSamples());
+		outFilterL->processSamples(channelL, numSamples);
 
-		buffer.applyGain(0, buffer.getNumSamples(), outGain);
+		buffer.applyGain(0, numSamples, outGain);
 	}
 	//========================================================================
 
@@ -381,7 +380,7 @@ void DRowAudioFilter::processBlock (AudioSampleBuffer& buffer,
     // guaranteed to be empty - they may contain garbage).
     for (int i = getNumInputChannels(); i < getNumOutputChannels(); ++i)
     {
-        buffer.clear (i, 0, buffer.getNumSamples());
+        buffer.clear (i, 0, numSamples);
     }
 }
 

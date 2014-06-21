@@ -67,41 +67,41 @@ public:
     DRowAudioEditorComponent (DRowAudioFilter* const ownerFilter);
 
     /** Destructor. */
-    ~DRowAudioEditorComponent();
+    ~DRowAudioEditorComponent() override;
 
     //==============================================================================
     /** Our demo filter is a ChangeBroadcaster, and will call us back when one of
         its parameters changes.
     */
-    void changeListenerCallback (ChangeBroadcaster* source);
-	
+    void changeListenerCallback (ChangeBroadcaster* source) override;
+
 	/*	we need to alert the host when a parameter is about to change or has ended
-		in order for automation to work correctly 
+		in order for automation to work correctly
 	 */
-    void sliderValueChanged (Slider* slider);
-	void sliderDragStarted (Slider* slider);
-	void sliderDragEnded (Slider* slider);
-	
-	void valueChanged(Value& value);
-	
+    void sliderValueChanged (Slider* slider) override;
+	void sliderDragStarted (Slider* slider) override;
+	void sliderDragEnded (Slider* slider) override;
+
+	void valueChanged(Value& value) override;
+
     //==============================================================================
     /** Standard Juce paint callback. */
-    void paint (Graphics& g);
+    void paint (Graphics& g) override;
 
     /** Standard Juce resize callback. */
-    void resized();
+    void resized() override;
 
 
 private:
     //==============================================================================
 	dRowLookAndFeel *lookAndFeel;
-	
+
 	OwnedArray <Value> values;
 	OwnedArray <Slider> sliders;
 	OwnedArray <Label> labels;
-	
+
 	GraphComponent *graphComponent;
-			
+
     TooltipWindow tooltipWindow;
 
     void updateParametersFromFilter();

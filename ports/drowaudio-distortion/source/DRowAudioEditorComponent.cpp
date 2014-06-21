@@ -33,45 +33,44 @@
 
 //==============================================================================
 DRowAudioEditorComponent::DRowAudioEditorComponent (DRowAudioFilter* const ownerFilter)
-    : AudioProcessorEditor (ownerFilter),
-	noButtons(3)
+    : AudioProcessorEditor (ownerFilter)
 {
 	// set look and feel
 	customLookAndFeel = new dRowLookAndFeel;
+        customLookAndFeel->setColour(Label::textColourId, (Colours::black).withBrightness(0.9f));
 	setLookAndFeel(customLookAndFeel);
-	customLookAndFeel->setColour(Label::textColourId, (Colours::black).withBrightness(0.9f));
-	
-	// load title image to memory cache
-//	cachedTitleImage = ImageCache::getFromMemory (Resource::flanger_title, Resource::flanger_title_size);
-	
-	addAndMakeVisible( comboBox = new ComboBox("comboBox") );
-	
+
 	for (int i = 0; i < noParams; i++)
 	{
-		sliders.add( new Slider(String("param") + String(i)) );
-		addAndMakeVisible( sliders[i]);
-		
-		String labelName = ownerFilter->getParameterName(i);
-		
-		if (labelName == "Input Gain")
-			labelName == "In Gain";
-		else if (labelName == "Output Gain")
-			labelName == "Out Gain";
-		
-		sliderLabels.add(new Label(String("Label") + String(i), labelName));
-		addAndMakeVisible(sliderLabels[i]);
-		sliderLabels[i]->setJustificationType(Justification::left);
-		sliderLabels[i]->attachToComponent(sliders[i], false);
-			
-		sliders[i]->addListener (this);
-		ownerFilter->getParameterPointer(i)->setupSlider(*sliders[i]);
-		
-		sliders[i]->setTextBoxStyle(Slider::TextBoxRight, false, 60, 18);
-		sliders[i]->setColour (Slider::thumbColourId, Colours::grey);
-		sliders[i]->setColour (Slider::textBoxTextColourId, Colour (0xff78f4ff));
-		sliders[i]->setColour (Slider::textBoxBackgroundColourId, Colour(0xFF455769).withBrightness(0.15f));
-		sliders[i]->setColour (Slider::textBoxOutlineColourId, (Colour (0xffffffff)).withBrightness(0.5f));
+            Slider* const slider = new Slider(String("param") + String(i));
+
+            String labelName = ownerFilter->getParameterName(i);
+
+            if (labelName == "Input Gain")
+                labelName = "In Gain";
+            else if (labelName == "Output Gain")
+                labelName = "Out Gain";
+
+            slider->addListener (this);
+            slider->setTextBoxStyle (Slider::TextBoxRight, false, 60, 18);
+            slider->setColour (Slider::thumbColourId, Colours::grey);
+            slider->setColour (Slider::textBoxTextColourId, Colour (0xff78f4ff));
+            slider->setColour (Slider::textBoxBackgroundColourId, Colour(0xFF455769).withBrightness(0.15f));
+            slider->setColour (Slider::textBoxOutlineColourId, (Colour (0xffffffff)).withBrightness(0.5f));
+
+            Label* const label = new Label(String("Label") + String(i), labelName);
+            label->setJustificationType(Justification::left);
+            label->attachToComponent(slider, false);
+
+            ownerFilter->getParameterPointer(i)->setupSlider(*slider);
+
+            addAndMakeVisible(slider);
+            addAndMakeVisible(label);
+
+            sliders.add(slider);
+            sliderLabels.add(label);
 	}
+
 	sliders[INGAIN]->setSliderStyle(Slider::RotaryVerticalDrag);
 	sliders[INGAIN]->setColour(Slider::rotarySliderFillColourId, Colours::grey);
 	sliders[INGAIN]->setTextBoxStyle(Slider::TextBoxBelow, false, 60, 18);
@@ -88,22 +87,6 @@ DRowAudioEditorComponent::DRowAudioEditorComponent (DRowAudioFilter* const owner
 	sliderLabels[OUTGAIN]->attachToComponent(sliders[OUTGAIN], false);
 	sliderLabels[OUTGAIN]->setJustificationType(Justification::centred);
 
-
-		
-	for ( int i = 0; i < noButtons; i++ )
-	{
-		buttons.add(new TextButton(String("Button ") + String(i)));
-		addAndMakeVisible(buttons[i]);
-	}
-	buttons[0]->setClickingTogglesState(true);
-	buttons[0]->addListener(this);
-	
-	buttons[1]->setClickingTogglesState(true);
-	buttons[1]->addListener(this);
-	
-	buttons[2]->setClickingTogglesState(true);
-	buttons[2]->addListener(this);
-	
     // set our component's initial size to be the last one that was stored in the filter's settings
     setSize (250, 200);
 
@@ -116,44 +99,30 @@ DRowAudioEditorComponent::DRowAudioEditorComponent (DRowAudioFilter* const owner
 DRowAudioEditorComponent::~DRowAudioEditorComponent()
 {
     getFilter()->removeChangeListener (this);
-//	ImageCache::release (cachedTitleImage);
-	sliders.clear();
-	sliderLabels.clear();
-	buttons.clear();
+    sliders.clear();
+    sliderLabels.clear();
     deleteAllChildren();
-	delete customLookAndFeel;
 }
 
 //==============================================================================
 void DRowAudioEditorComponent::paint (Graphics& g)
 {
-	// just clear the window
 	Colour backgroundColour(0xFF455769);
-//	Colour backgroundColour(Colours::royalblue);
 	backgroundColour = backgroundColour.withBrightness(0.4f);
-//	ColourGradient backgroundGradient(backgroundColour.withBrightness(0.0f),
-//									  0, 40,
-//									  backgroundColour.withBrightness(0.0f),
-//									  0, getHeight(),
-//									  false);
-//	backgroundGradient.addColour(0.025f, backgroundColour);
-//	backgroundGradient.addColour(0.975f, backgroundColour);
-//	GradientBrush backgroundBrush(backgroundGradient);
-//	g.setBrush(&backgroundBrush);
-//	g.fillRect(0, 40, getWidth(), getHeight()-40);
+
 	g.setColour(backgroundColour);
 	g.fillRoundedRectangle(0, 0, getWidth(), getHeight(), 10);
-	
+
 	ColourGradient topHighlight(Colours::white.withAlpha(0.3f),
 								0, 0,
 								Colours::white.withAlpha(0.0f),
 								0, 0 + 15,
 								false);
-	
+
 	ColourGradient topColor(topHighlight);
 	g.setGradientFill(topColor);
 	g.fillRoundedRectangle(0, 0, getWidth(), 30, 10);
-	
+
 	ColourGradient outlineGradient(Colours::white,
 								  0, 0,
 								  backgroundColour.withBrightness(0.5f),
@@ -161,80 +130,57 @@ void DRowAudioEditorComponent::paint (Graphics& g)
 								  false);
 	g.setGradientFill(outlineGradient);
 	g.drawRoundedRectangle(0, 0, getWidth(), getHeight(), 10, 1.0f);
-		
-	
-//	g.setColour(Colour(0xFFE9E9F4));
-//	g.setFont(30);
-//	g.drawFittedText(T("Distortion"),
-//					 getWidth()/2 - (getWidth()/2), 5,
-//					 getWidth(), getHeight(),
-//					 Justification::centredTop,
-//					 1);
-//	g.drawImageWithin (cachedTitleImage,
-//                       0, 0, 250, 40,
-//                       RectanglePlacement::centred | RectanglePlacement::onlyReduceInSize,
-//                       false);
 }
 
 void DRowAudioEditorComponent::resized()
 {
-//    comboBox->setBounds (getWidth()/2 - 100, 40,
-//						200, 20);
-	
-//	for (int i = 0; i < noParams; i++)
-//		sliders[i]->setBounds (70, 70 + (30*i), getWidth()-140, 20);
 	sliders[PRE]->setBounds(5, 30, getWidth()-10, 20);
 	sliders[INGAIN]->setBounds(getWidth()*0.5f - 110, 75, 70, 70);
 	sliders[COLOUR]->setBounds(getWidth()*0.5f - 35, 75, 70, 70);
 	sliders[OUTGAIN]->setBounds(getWidth()*0.5f + 40, 75, 70, 70);
 	sliders[POST]->setBounds(5, getHeight()-25, getWidth()-10, 20);
-	
-	
-//	meterLeft->setBounds(getWidth()-65, 70, 25, 290);
-//	meterRight->setBounds(getWidth()-35, 70, 25, 290);
-		
-//	for ( int i = 0; i < noButtons; i++ )
-//		buttons[i]->setBounds( 10 + (i * ((getWidth()-20)/noButtons) + ((noButtons-1)*5)), 370,
-//							  ((getWidth()-20)/noButtons)-(((noButtons-1)*5)), 20);
 }
 
 //==============================================================================
 void DRowAudioEditorComponent::sliderValueChanged (Slider* changedSlider)
 {
     DRowAudioFilter* currentFilter = getFilter();
-	
+
 	for (int i = 0; i < noParams; i++)
+        {
 		if ( changedSlider == sliders[i] )
+                {
 			currentFilter->setScaledParameterNotifyingHost (i, (float) sliders[i]->getValue());
+                        break;
+                }
+        }
 }
 
 void DRowAudioEditorComponent::sliderDragStarted(Slider* changedSlider)
 {
 	DRowAudioFilter* currentFilter = getFilter();
-	
+
 	for (int i = 0; i < noParams; i++)
+        {
 		if ( changedSlider == sliders[i] )
+                {
 			currentFilter->beginParameterChangeGesture(i);
+                        break;
+                }
+        }
 }
 void DRowAudioEditorComponent::sliderDragEnded(Slider* changedSlider)
 {
 	DRowAudioFilter* currentFilter = getFilter();
-	
-	for (int i = 0; i < noParams; i++)
-		if ( changedSlider == sliders[i] )
-			currentFilter->endParameterChangeGesture(i);
-}
 
-void DRowAudioEditorComponent::buttonClicked(Button* clickedButton)
-{
-//	DRowAudioFilter* currentFilter = getFilter();
-	
-	if (clickedButton == buttons[0])
-	{
-	}
-	if (clickedButton == buttons[2])
-	{
-	}
+	for (int i = 0; i < noParams; i++)
+        {
+		if ( changedSlider == sliders[i] )
+                {
+			currentFilter->endParameterChangeGesture(i);
+                        break;
+                }
+        }
 }
 
 void DRowAudioEditorComponent::changeListenerCallback (ChangeBroadcaster* source)
@@ -248,15 +194,15 @@ void DRowAudioEditorComponent::changeListenerCallback (ChangeBroadcaster* source
 void DRowAudioEditorComponent::updateParametersFromFilter()
 {
     DRowAudioFilter* const filter = getFilter();
-	
-	float tempParamVals[noParams];
-	
+
+    float tempParamVals[noParams];
+
     // we use this lock to make sure the processBlock() method isn't writing
-	// to variables while we're trying to read it them
+    // to variables while we're trying to read it them
     filter->getCallbackLock().enter();
 
-	for(int i = 0; i < noParams; i++)
-		tempParamVals[i] =  filter->getScaledParameter (i);
+    for (int i = 0; i < noParams; i++)
+         tempParamVals[i] =  filter->getScaledParameter (i);
 
     // ..release the lock ASAP
     filter->getCallbackLock().exit();
@@ -268,6 +214,6 @@ void DRowAudioEditorComponent::updateParametersFromFilter()
        message, because that would cause it to call the filter with a parameter
        change message again, and the values would drift out.
     */
-	for(int i = 0; i < noParams; i++)
-		sliders[i]->setValue (tempParamVals[i], dontSendNotification);
+    for (int i = 0; i < noParams; i++)
+         sliders[i]->setValue (tempParamVals[i], dontSendNotification);
 }

@@ -52,9 +52,8 @@
     a message and this editor responds by updating its display.
 */
 class DRowAudioEditorComponent   : public AudioProcessorEditor,
-                              public ChangeListener,
-                              public SliderListener,
-							  public ButtonListener
+                                   public ChangeListener,
+                                   public SliderListener
 {
 public:
     /** Constructor.
@@ -74,11 +73,9 @@ public:
     void changeListenerCallback (ChangeBroadcaster* source) override;
 
     void sliderValueChanged (Slider*) override;
-	void sliderDragStarted(Slider*) override;
-	void sliderDragEnded(Slider*) override;
-	
-	void buttonClicked(Button* clickedButton) override;
-	
+    void sliderDragStarted(Slider*) override;
+    void sliderDragEnded(Slider*) override;
+
     //==============================================================================
     /** Standard Juce paint callback. */
     void paint (Graphics& g) override;
@@ -89,21 +86,9 @@ public:
 
 private:
     //==============================================================================
-	dRowLookAndFeel* customLookAndFeel;
-	
-	ComboBox* comboBox;
-	OwnedArray <Slider> sliders;
-	OwnedArray <Label> sliderLabels;
-	OwnedArray <TextButton> buttons;
-
-	int noButtons;
-
-	// Binary resources:
-    static const char* flanger_title;
-    static const int flanger_title_size;
-	Image* cachedTitleImage;
-	
-    TooltipWindow tooltipWindow;
+    ScopedPointer<dRowLookAndFeel> customLookAndFeel;
+    OwnedArray <Slider> sliders;
+    OwnedArray <Label> sliderLabels;
 
     void updateParametersFromFilter();
 
