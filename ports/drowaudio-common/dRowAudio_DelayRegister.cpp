@@ -33,7 +33,7 @@ void DelayRegister::setBufferSize (int newBufferSize) throw()
 	delayRegister = new float[registerSize];
 	// zero register
 	for (int i = 0; i < registerSize; i++)
-		delayRegister[i] = 0;	
+		delayRegister[i] = 0;
 }
 
 void DelayRegister::setMaxDelayTime(double sampleRate, float maxDelayTimeMs) throw()
@@ -45,9 +45,9 @@ void DelayRegister::setMaxDelayTime(double sampleRate, float maxDelayTimeMs) thr
 void DelayRegister::setDelayTime(double sampleRate, float newDelayTime) throw()
 {
 	delayTime = newDelayTime;
-	
+
 	delaySamples = (delayTime * (sampleRate * 0.001));
-	
+
 	if ((int)delaySamples >= registerSize)
 	{
 		jassert(delaySamples < registerSize);
@@ -57,14 +57,14 @@ void DelayRegister::setDelayTime(double sampleRate, float newDelayTime) throw()
 
 float DelayRegister::processSingleSample(float newSample) throw()
 {
-	bufferWritePos = ++bufferWritePos & registerSizeMask;
-	
+	bufferWritePos = (bufferWritePos+1) & registerSizeMask;
+
 	bufferReadPos = bufferWritePos - delaySamples;
 	if (bufferReadPos < 0)
 		bufferReadPos += registerSize;
-	
+
 	delayRegister[bufferWritePos] = newSample;
-	
+
 	return delayRegister[bufferReadPos];
 }
 
@@ -72,19 +72,19 @@ void DelayRegister::processSamples (float* const samples,
 								 const int numSamples) throw()
 {
     const ScopedLock sl (processLock);
-	
+
 	for (int i = 0; i < numSamples; ++i)
 	{
 		const float in = samples[i];
-		
-		bufferWritePos = ++bufferWritePos & registerSizeMask;
-		
+
+		bufferWritePos = (bufferWritePos+1) & registerSizeMask;
+
 		bufferReadPos = bufferWritePos - delaySamples;
 		if (bufferReadPos < 0)
 			bufferReadPos += registerSize;
-		
+
 		delayRegister[bufferWritePos] = in;
-				
+
 		samples[i] = delayRegister[bufferReadPos];
 	}
 }

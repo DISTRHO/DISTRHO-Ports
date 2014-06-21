@@ -66,41 +66,37 @@ public:
     DRowAudioEditorComponent (DRowAudioFilter* const ownerFilter);
 
     /** Destructor. */
-    ~DRowAudioEditorComponent();
+    ~DRowAudioEditorComponent() override;
 
     //==============================================================================
     /** Our demo filter is a ChangeBroadcaster, and will call us back when one of
         its parameters changes.
     */
-    void changeListenerCallback (ChangeBroadcaster* source);
+    void changeListenerCallback (ChangeBroadcaster* source) override;
 
-    void sliderValueChanged (Slider*);
-	void sliderDragStarted(Slider*);
-	void sliderDragEnded(Slider*);
-	
+    void sliderValueChanged (Slider*) override;
+    void sliderDragStarted(Slider*) override;
+    void sliderDragEnded(Slider*) override;
+
     //==============================================================================
     /** Standard Juce paint callback. */
-    void paint (Graphics& g);
+    void paint (Graphics& g) override;
 
     /** Standard Juce resize callback. */
-    void resized();
+    void resized() override;
 
 private:
     //==============================================================================
-	dRowLookAndFeel* customLookAndFeel;
-	
-	OwnedArray <Slider> sliders;
-	OwnedArray <Label> sliderLabels;
-	
-	int noButtons;
-		
-    TooltipWindow tooltipWindow;
+    ScopedPointer<dRowLookAndFeel> customLookAndFeel;
+
+    OwnedArray <Slider> sliders;
+    OwnedArray <Label> sliderLabels;
 
     void updateParametersFromFilter();
 
     // handy wrapper method to avoid having to cast the filter to a DRowAudioFilter
     // every time we need it..
-    DRowAudioFilter* getFilter() const throw()       { return (DRowAudioFilter*) getAudioProcessor(); }
+    DRowAudioFilter* getFilter() const noexcept       { return (DRowAudioFilter*) getAudioProcessor(); }
 };
 
 

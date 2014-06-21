@@ -14,16 +14,16 @@ AllpassFilter::AllpassFilter() throw()
 {
 	registerSize = BUFFERSIZE;
 	registerSizeMask = registerSize - 1;
-	
+
 	delayRegister = new float[BUFFERSIZE];
 	// zero register
 	for (int i = 0; i < BUFFERSIZE; i++)
-		delayRegister[i] = 0;	
+		delayRegister[i] = 0;
 }
 
 AllpassFilter::~AllpassFilter() throw()
 {
-	delete[] delayRegister;	
+	delete[] delayRegister;
 }
 
 void AllpassFilter::setGain(float newGain) throw()
@@ -34,28 +34,28 @@ void AllpassFilter::setGain(float newGain) throw()
 void AllpassFilter::setDelayTime(double sampleRate, float newDelayTime) throw()
 {
 	delayTime = newDelayTime;
-	
+
 	delaySamples = (int)(delayTime * (sampleRate * 0.001));
-	
+
 	if (delaySamples >= BUFFERSIZE)
 	{
 		jassert(delaySamples < BUFFERSIZE);
 		delaySamples = BUFFERSIZE;
-	}	
+	}
 }
 
 float AllpassFilter::processSingleSample(float newSample) throw()
 {
-	bufferWritePos = ++bufferWritePos & registerSizeMask;
-	
+	bufferWritePos = (bufferWritePos+1) & registerSizeMask;
+
 	bufferReadPos = bufferWritePos - delaySamples;
 	if (bufferReadPos < 0)
 		bufferReadPos += BUFFERSIZE;
-	
+
 	float fDel = delayRegister[bufferReadPos];
 	delayRegister[bufferWritePos] = (gain * fDel) + newSample;
 	float fOut = fDel - (gain * delayRegister[bufferWritePos]);
-	
+
 	return fOut;
 }
 
@@ -63,21 +63,21 @@ void AllpassFilter::processSamples (float* const samples,
 									const int numSamples) throw()
 {
 	const ScopedLock sl (processLock);
-	
+
 	for (int i = 0; i < numSamples; ++i)
 	{
 		const float in = samples[i];
 
-		bufferWritePos = ++bufferWritePos & registerSizeMask;
-		
+		bufferWritePos = (bufferWritePos+1) & registerSizeMask;
+
 		bufferReadPos = bufferWritePos - delaySamples;
 		if (bufferReadPos < 0)
 			bufferReadPos += BUFFERSIZE;
-		
+
 		float fDel = delayRegister[bufferReadPos];
 		delayRegister[bufferWritePos] = (gain * fDel) + in;
 		float fOut = fDel - (gain * delayRegister[bufferWritePos]);
-		
+
 		samples[i] = fOut;
 	}
 }

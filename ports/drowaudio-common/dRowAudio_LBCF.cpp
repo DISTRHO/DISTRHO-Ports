@@ -14,7 +14,7 @@ LBCF::LBCF() throw()
 {
 	registerSize = BUFFERSIZE;
 	registerSizeMask = registerSize - 1;
-	
+
 	delayRegister = new float[BUFFERSIZE];
 	// zero register
 	for (int i = 0; i < BUFFERSIZE; i++)
@@ -34,9 +34,9 @@ void LBCF::setFBCoeff(float newFBCoeff) throw()
 void LBCF::setDelayTime(double sampleRate, float newDelayTime) throw()
 {
 	delayTime = newDelayTime;
-	
+
 	delaySamples = (int)(delayTime * (sampleRate * 0.001));
-	
+
 	if (delaySamples >= BUFFERSIZE)
 	{
 //		jassert(delaySamples < BUFFERSIZE);
@@ -51,13 +51,13 @@ void LBCF::setLowpassCutoff(double sampleRate, float cutoffFrequency) throw()
 
 float LBCF::processSingleSample(float newSample) throw()
 {
-	bufferWritePos = ++bufferWritePos & registerSizeMask;
-	
+	bufferWritePos = (bufferWritePos+1) & registerSizeMask;
+
 	bufferReadPos = bufferWritePos - delaySamples;
 	if (bufferReadPos < 0)
 		bufferReadPos += BUFFERSIZE;
-	
-	float fOut = newSample + delayRegister[bufferReadPos];	
+
+	float fOut = newSample + delayRegister[bufferReadPos];
 
 	// feedback and lowpass
 	delayRegister[bufferWritePos] = lowpassFilter.processSingleSample(fbCoeff *fOut);
@@ -69,46 +69,46 @@ void LBCF::processSamples (float* const samples,
 						   const int numSamples) throw()
 {
 	const ScopedLock sl (processLock);
-	
+
 	for (int i = 0; i < numSamples; ++i)
 	{
 		const float in = samples[i];
-		
-		bufferWritePos = ++bufferWritePos & registerSizeMask;
-		
+
+		bufferWritePos = (bufferWritePos+1) & registerSizeMask;
+
 		bufferReadPos = bufferWritePos - delaySamples;
 		if (bufferReadPos < 0)
 			bufferReadPos += BUFFERSIZE;
-		
-		float fOut = in + delayRegister[bufferReadPos];	
-		
+
+		float fOut = in + delayRegister[bufferReadPos];
+
 		// feedback and lowpass
 		delayRegister[bufferWritePos] = lowpassFilter.processSingleSample(fbCoeff * fOut);
-		
+
 		samples[i] = fOut;
-	}	
+	}
 }
 
 void LBCF::processSamplesAdding (float* const sourceSamples, float* const destSamples,
 								 const int numSamples) throw()
 {
 	const ScopedLock sl (processLock);
-	
+
 	for (int i = 0; i < numSamples; ++i)
 	{
 		const float in = sourceSamples[i];
-		
-		bufferWritePos = ++bufferWritePos & registerSizeMask;
-		
+
+		bufferWritePos = (bufferWritePos+1) & registerSizeMask;
+
 		bufferReadPos = bufferWritePos - delaySamples;
 		if (bufferReadPos < 0)
 			bufferReadPos += BUFFERSIZE;
-		
-		float fOut = in + delayRegister[bufferReadPos];	
-		
+
+		float fOut = in + delayRegister[bufferReadPos];
+
 		// feedback and lowpass
 		delayRegister[bufferWritePos] = lowpassFilter.processSingleSample(fbCoeff * fOut);
-		
+
 		destSamples[i] += fOut;
-	}	
+	}
 }

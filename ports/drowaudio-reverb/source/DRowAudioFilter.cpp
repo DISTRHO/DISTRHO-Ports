@@ -136,6 +136,7 @@ void DRowAudioFilter::setParameter (int index, float newValue)
 				params[i].setNormalisedValue(newValue);
 				sendChangeMessage ();
 			}
+			break;
 		}
 	}
 }
@@ -149,6 +150,7 @@ void DRowAudioFilter::setScaledParameter (int index, float newValue)
 				params[i].setValue(newValue);
 				sendChangeMessage ();
 			}
+                        break;
 		}
 	}
 }
@@ -156,9 +158,14 @@ void DRowAudioFilter::setScaledParameter (int index, float newValue)
 void DRowAudioFilter::setScaledParameterNotifyingHost(int index, float newValue)
 {
 	for (int i = 0; i < noParams; i++)
+        {
 		if (index == i)
+                {
 			if (params[i].getValue() != newValue)
 				setParameterNotifyingHost(index, params[i].normaliseValue(newValue));
+                        break;
+                }
+        }
 }
 
 const String DRowAudioFilter::getParameterName (int index)
@@ -281,6 +288,9 @@ void DRowAudioFilter::prepareToPlay (double sampleRate, int samplesPerBlock)
 	// make sure the delay register has enough memory for teh whole range of the parameter
 	preDelayFilterL.setMaxDelayTime(currentSampleRate, params[PREDELAY].getMax());
 	preDelayFilterR.setMaxDelayTime(currentSampleRate, params[PREDELAY].getMax());
+
+        wetBuffer.setSize(2, samplesPerBlock);
+        wetBuffer.clear();
 }
 
 void DRowAudioFilter::releaseResources()
@@ -386,13 +396,12 @@ void DRowAudioFilter::processBlock (AudioSampleBuffer& buffer,
 		int noChannels = buffer.getNumChannels();
 
 		// create a copy of the input buffer so we can apply a wet/dry mix later
-		AudioSampleBuffer wetBuffer(noChannels, noSamples);
 		wetBuffer.copyFrom(0, 0, buffer, 0, 0, noSamples);
 		wetBuffer.copyFrom(1, 0, buffer, 1, 0, noSamples);
 
 		// mono mix wet buffer (used for stereo spread later)
-		float *pfWetL = wetBuffer.getSampleData(0);
-		float *pfWetR = wetBuffer.getSampleData(1);
+		float *pfWetL = wetBuffer.getWritePointer(0);
+		float *pfWetR = wetBuffer.getWritePointer(1);
 		while (--numSamples >= 0)
 		{
 			*pfWetL = *pfWetR = (0.5f * (*pfWetL + *pfWetR));
@@ -402,8 +411,8 @@ void DRowAudioFilter::processBlock (AudioSampleBuffer& buffer,
 		numSamples = buffer.getNumSamples();
 
 		// apply the pre-delay to the wet buffer
-		preDelayFilterL.processSamples(wetBuffer.getSampleData(0), noSamples);
-		preDelayFilterR.processSamples(wetBuffer.getSampleData(1), noSamples);
+		preDelayFilterL.processSamples(wetBuffer.getWritePointer(0), noSamples);
+		preDelayFilterR.processSamples(wetBuffer.getWritePointer(1), noSamples);
 
 
 		// create a buffer to hold the early reflections
@@ -412,18 +421,18 @@ void DRowAudioFilter::processBlock (AudioSampleBuffer& buffer,
 		earlyReflections.copyFrom(1, 0, wetBuffer, 1, 0, noSamples);
 
 		// and process the early reflections
-		delayLineL.processSamples(earlyReflections.getSampleData(0), noSamples);
-		delayLineR.processSamples(earlyReflections.getSampleData(1), noSamples);
+		delayLineL.processSamples(earlyReflections.getWritePointer(0), noSamples);
+		delayLineR.processSamples(earlyReflections.getWritePointer(1), noSamples);
 
 
 		// create a buffer to hold the late reverb
 		AudioSampleBuffer lateReverb(noChannels, noSamples);
 		lateReverb.clear();
 
-		float *pfLateL = lateReverb.getSampleData(0);
-		float *pfLateR = lateReverb.getSampleData(1);
-		pfWetL = wetBuffer.getSampleData(0);
-		pfWetR = wetBuffer.getSampleData(1);
+		float *pfLateL = lateReverb.getWritePointer(0);
+		float *pfLateR = lateReverb.getWritePointer(1);
+		pfWetL = wetBuffer.getWritePointer(0);
+		pfWetR = wetBuffer.getWritePointer(1);
 
 		// comb filter section
 		for (int i = 0; i < 8; ++i)
@@ -435,8 +444,8 @@ void DRowAudioFilter::processBlock (AudioSampleBuffer& buffer,
 		// allpass filter section
 		for (int i = 0; i < 4; ++i)
 		{
-			allpassFilterL[i].processSamples(lateReverb.getSampleData(0), noSamples);
-			allpassFilterR[i].processSamples(lateReverb.getSampleData(1), noSamples);
+			allpassFilterL[i].processSamples(lateReverb.getWritePointer(0), noSamples);
+			allpassFilterR[i].processSamples(lateReverb.getWritePointer(1), noSamples);
 		}
 
 

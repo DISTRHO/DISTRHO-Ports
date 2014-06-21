@@ -45,9 +45,9 @@ AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 
 //==============================================================================
 DRowAudioFilter::DRowAudioFilter()
-    : pfLookupTable(nullptr),
-      pfCircularBufferL(nullptr),
-      pfCircularBufferR(nullptr)
+    : pfCircularBufferL(nullptr),
+      pfCircularBufferR(nullptr),
+      pfLookupTable(nullptr)
 {
     setupParams();
 }
@@ -64,9 +64,6 @@ const String DRowAudioFilter::getName() const
 
 void DRowAudioFilter::setupParams()
 {
-/*	void init(const String& name_, ParameterUnit unit_, String description_,
-			  double value_, double min_ =0.0f, double max_ =1.0f, double default_ =0.0f);*/
-
 	params[RATE].init(parameterNames[RATE], UnitHertz, "Changes the rate",
 					  0.5, 0.0, 20.0, 0.5);
 	params[RATE].setSkewFactor(0.5f);
@@ -115,6 +112,7 @@ void DRowAudioFilter::setParameter (int index, float newValue)
 				params[i].setNormalisedValue(newValue);
 				sendChangeMessage ();
 			}
+			break;
 		}
 	}
 
@@ -130,6 +128,7 @@ void DRowAudioFilter::setScaledParameter (int index, float newValue)
 				params[i].setValue(newValue);
 				sendChangeMessage ();
 			}
+                        break;
 		}
 	}
 
@@ -139,9 +138,14 @@ void DRowAudioFilter::setScaledParameter (int index, float newValue)
 void DRowAudioFilter::setScaledParameterNotifyingHost(int index, float newValue)
 {
 	for (int i = 0; i < noParams; i++)
+        {
 		if (index == i)
+                {
 			if (params[i].getValue() != newValue)
 				setParameterNotifyingHost(index, params[i].normaliseValue(newValue));
+                        break;
+                }
+        }
 }
 
 const String DRowAudioFilter::getParameterName (int index)
@@ -324,7 +328,7 @@ void DRowAudioFilter::processBlock (AudioSampleBuffer& buffer,
 	int numSamples = buffer.getNumSamples();
 	float* pfSample[numInputChannels];
 	for (int channel = 0; channel < numInputChannels; channel++)
-		pfSample[channel] = buffer.getSampleData(channel);
+		pfSample[channel] = buffer.getWritePointer(channel);
 
 	if (numInputChannels == 2)
 	{
