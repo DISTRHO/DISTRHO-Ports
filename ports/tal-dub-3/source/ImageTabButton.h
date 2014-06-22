@@ -1,7 +1,7 @@
 class ImageTabButton : public Button, public Timer
 {
 public:
-	ImageTabButton(const String& componentName, Image imageOff, Image imageOn) 
+	ImageTabButton(const String& componentName, Image imageOff, Image imageOn)
 		: Button(componentName), imageOn(imageOn), imageOff(imageOff)
 	{
 		frameHeight = imageOff.getHeight();
@@ -12,34 +12,34 @@ public:
 
 		maxDelay = 40000;
 
-		// 
+		//
 		lastTimeInMs = 0;
 		deltaTimeInMs = 0;
 	}
 
-    void timerCallback()
+    void timerCallback() override
     {
 		lastTimeInMs = 0;
 		deltaTimeInMs = 0;
 		stopTimer();
-		setToggleState(false, false);
+		setToggleState(false, dontSendNotification);
 		repaint();
 	}
 
     juce::int64 setClick()
-    { 
+    {
 		if (lastTimeInMs > 0)
 		{
 			deltaTimeInMs = (juce::int64)Time::currentTimeMillis() - lastTimeInMs;
 		}
 		lastTimeInMs = (juce::int64)Time::currentTimeMillis();
 		startTimer(4000);
-		setToggleState(true, false);
+		setToggleState(true, dontSendNotification);
 		repaint();
 		return deltaTimeInMs;
 	}
 
-	void paintButton(Graphics& g, bool isMouseOverButton, bool isButtonDown)
+	void paintButton(Graphics& g, bool isMouseOverButton, bool isButtonDown) override
 	{
 		if (this->getToggleState())
 		{

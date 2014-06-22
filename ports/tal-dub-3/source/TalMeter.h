@@ -15,7 +15,7 @@ public:
 		this->verticalDistance = verticalDistance;
 
 		ledColour = ledColour.fromRGBA(
-			(const juce::uint8)60, 
+			(const juce::uint8)60,
 			(const juce::uint8)60,
 			(const juce::uint8)255,
 			(const juce::uint8)255);
@@ -24,7 +24,7 @@ public:
 		this->ownerFilter = ownerFilter;
 	}
 
-    void timerCallback()
+    void timerCallback() override
     {
 		bool mustRepaint = false;
 		float* newLevels = ownerFilter->getPeakReductionValue();
@@ -72,7 +72,7 @@ public:
 			{
 				valueR = 0.0f;
 				mustRepaint = true;
-			}		
+			}
 		}
 		if (mustRepaint)
 		{
@@ -80,7 +80,7 @@ public:
 		}
     }
 
-	void paint(Graphics& g)
+	void paint(Graphics& g) override
 	{
 		g.setColour(Colour((const juce::uint8)0, (const juce::uint8)0, (const juce::uint8)0));
 		g.fillRoundedRectangle(0.0f, 1.0f, (float)totalWith, (float)totalHeight, 5.0f);
@@ -116,7 +116,7 @@ public:
 	}
 
 private:
-	int totalWith; 
+	int totalWith;
 	int totalHeight;
 	int verticalDistance;
 

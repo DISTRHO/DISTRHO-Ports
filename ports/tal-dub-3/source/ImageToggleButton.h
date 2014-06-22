@@ -1,7 +1,7 @@
 class ImageToggleButton : public Button
 {
 public:
-	ImageToggleButton(const String& componentName, Image imageOff, Image imageOn) 
+	ImageToggleButton(const String& componentName, Image imageOff, Image imageOn)
 		: Button(componentName), imageOn(imageOn), imageOff(imageOff)
 	{
 		frameHeight = imageOff.getHeight();
@@ -14,15 +14,15 @@ public:
 	{
 		if (value > 0.0f)
 		{
-			setToggleState(true, notifyHost);
+			setToggleState(true, notifyHost ? sendNotification : dontSendNotification);
 		}
 		else
 		{
-			setToggleState(false, notifyHost);
+			setToggleState(false, notifyHost ? sendNotification : dontSendNotification);
 		}
 	}
 
-	void paintButton(Graphics& g, bool isMouseOverButton, bool isButtonDown)
+	void paintButton(Graphics& g, bool isMouseOverButton, bool isButtonDown) override
 	{
 		if (this->getToggleState())
 		{

@@ -1,7 +1,7 @@
 class ImageTriggerButton : public Button
 {
 public:
-	ImageTriggerButton(const String& componentName, Image* imageOff, Image* imageOn) 
+	ImageTriggerButton(const String& componentName, Image* imageOff, Image* imageOn)
 		: Button(componentName), imageOn(imageOn), imageOff(imageOff)
 	{
 		frameHeight = imageOff->getHeight();
@@ -11,21 +11,21 @@ public:
 		setTriggeredOnMouseDown (true);
 	}
 
-	void setTriggeredOnMouseDown (const bool isTriggeredOnMouseDown)   	
+	void setTriggeredOnMouseDown (const bool isTriggeredOnMouseDown)
 	{
 		if (isTriggeredOnMouseDown)
 		{
-			this->setToggleState(true, false);
+			this->setToggleState(true, dontSendNotification);
 			repaint();
 		}
 		else
 		{
-			this->setToggleState(false, false);
+			this->setToggleState(false, dontSendNotification);
 			repaint();
 		}
 	}
 
-	void paintButton(Graphics& g, bool isMouseOverButton, bool isButtonDown)
+	void paintButton(Graphics& g, bool isMouseOverButton, bool isButtonDown) override
 	{
 		if (this->getToggleState())
 		{

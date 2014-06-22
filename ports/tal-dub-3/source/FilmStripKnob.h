@@ -17,12 +17,7 @@ public:
 		}
 	}
 
-        ~FilmStripKnob()
-        {
-                deleteAllChildren();
-        }
-
-	void paint(Graphics& g)
+	void paint(Graphics& g) override
 	{
 		if(filmStrip.isValid()) {
 			int value = (int)((getValue() - getMinimum()) / (getMaximum() - getMinimum()) * (numFrames_ - 1));

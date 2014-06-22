@@ -53,7 +53,6 @@ TalComponent::TalComponent (TalCore* const ownerFilter)
 	delaySyncComboBox->addItem("1/1T",18);
 	delaySyncComboBox->addItem("2/1T",19);
 	delaySyncComboBox->addItem("-",20);
-	delaySyncComboBox->setSelectedId(ownerFilter->getParameter(DELAYTIMESYNC), true);
 	delaySyncComboBox->addListener (this);
 
 	// Version info
@@ -66,6 +65,8 @@ TalComponent::TalComponent (TalCore* const ownerFilter)
 
 	delayTwiceLButton = addToggleButton(209, 58, ownerFilter, bmp00134_png, bmp00134_pngSize, bmp00135_png, bmp00135_pngSize, DELAYTWICE_L);
 	delayTwiceRButton = addToggleButton(209, 93, ownerFilter, bmp00134_png, bmp00134_pngSize, bmp00135_png, bmp00135_pngSize, DELAYTWICE_R);
+
+        updateParametersFromFilter();
 
 	// set our component's initial size to be the last one that was stored in the filter's settings
     setSize (internalCachedBackgroundImage.getWidth(), internalCachedBackgroundImage.getHeight());
@@ -92,7 +93,6 @@ FilmStripKnob* TalComponent::addNormalKnob(int x, int y, TalCore* const ownerFil
 									 knobImage.getHeight() / knobImage.getWidth(),
 									 false, parameter));
     filmStripKnob->setBounds(x, y, knobImage.getWidth(), knobImage.getWidth());
-	filmStripKnob->setValue(ownerFilter->getParameter(parameter), dontSendNotification);
 	filmStripKnob->addListener (this);
 	return filmStripKnob;
 }
@@ -107,8 +107,6 @@ ImageToggleButton* TalComponent::addToggleButton(int x, int y, TalCore* const ow
 	ImageToggleButton *toggleButton = new ImageToggleButton("Toggle Button", toggleImgOff, toggleImgOn);
 	toggleButton->setBounds(x, y, toggleImgOff.getWidth(), toggleImgOff.getHeight());
 	addAndMakeVisible(toggleButton, 0);
-	if (parameter >= 0)
-		toggleButton->setToggleState(ownerFilter->getParameter(parameter), false);
 	toggleButton->addListener (this);
 	return toggleButton;
 }
@@ -122,8 +120,6 @@ ImageTabButton* TalComponent::addTabButton(int x, int y, TalCore* const ownerFil
 	ImageTabButton *tabButton = new ImageTabButton("Tab Button", tabImgOff, tabImgOn);
 	tabButton->setBounds(x, y, tabImgOff.getWidth(), tabImgOff.getHeight());
 	addAndMakeVisible(tabButton, 0);
-	if (parameter >= 0)
-		tabButton->setToggleState(ownerFilter->getParameter(parameter), false);
 	tabButton->addListener (this);
 	return tabButton;
 }
@@ -189,7 +185,7 @@ void TalComponent::setTooltip(Slider* slider)
 void TalComponent::comboBoxChanged (ComboBox* caller)
 {
     TalCore* const filter = getFilter();
-	if (caller == delaySyncComboBox) filter->setParameterNotifyingHost(DELAYTIMESYNC, float(delaySyncComboBox->getSelectedId())/19.0f-0.001f);
+	if (caller == delaySyncComboBox) filter->setParameterNotifyingHost(DELAYTIMESYNC, float(delaySyncComboBox->getSelectedId()-1)/19.0f);
 }
 
 void TalComponent::buttonClicked (Button* caller)
@@ -197,28 +193,12 @@ void TalComponent::buttonClicked (Button* caller)
     TalCore* const filter = getFilter();
 	if (caller == delayTwiceLButton)
 	{
-		float value = 0.0f;
-		if (caller->getToggleState() == true)
-		{
-			value = 1.0f;
-		}
-		else
-		{
-			value = 0.0f;
-		}
+		float value = caller->getToggleState() ? 1.0f : 0.0f;
 		filter->setParameterNotifyingHost(DELAYTWICE_L, value);
 	}
 	if (caller == delayTwiceRButton)
 	{
-		float value = 0.0f;
-		if (caller->getToggleState() == true)
-		{
-			value = 1.0f;
-		}
-		else
-		{
-			value = 0.0f;
-		}
+		float value = caller->getToggleState() ? 1.0f : 0.0f;
 		filter->setParameterNotifyingHost(DELAYTWICE_R, value);
 	}
 	if (caller == tabButton)
@@ -255,7 +235,7 @@ void TalComponent::updateParametersFromFilter()
 
 	float delayTimeTwiceL = filter->getParameter(DELAYTWICE_L);
 	float delayTimeTwiceR = filter->getParameter(DELAYTWICE_R);
-	float delaySync = filter->getParameter(DELAYTIMESYNC);
+	float delaySync = filter->getParameter(DELAYTIMESYNC)*19.0f+1.0f;
 
 	//float lfoSync = filter->getParameter(LFOSYNC);
 
@@ -273,7 +253,7 @@ void TalComponent::updateParametersFromFilter()
 	delayTwiceLButton->setValue(delayTimeTwiceL, dontSendNotification);
 	delayTwiceRButton->setValue(delayTimeTwiceR, dontSendNotification);
 
-	delaySyncComboBox->setSelectedId((int)delaySync, true);
+	delaySyncComboBox->setSelectedId((int)delaySync, dontSendNotification);
 
 	// update tooltips
 	setTooltip(inputDriveKnob);

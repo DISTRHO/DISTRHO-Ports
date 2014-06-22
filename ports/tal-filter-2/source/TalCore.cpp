@@ -63,6 +63,7 @@ TalCore::TalCore()
     talPresets = new TalPreset*[NUMPROGRAMS];
     for (int i = 0; i < NUMPROGRAMS; i++) talPresets[i] = new TalPreset();
     curProgram = 0;
+    loadingProgram = false;
 
     ProgramChunk chunk;
     setStateInformationString(chunk.getXmlChunk());

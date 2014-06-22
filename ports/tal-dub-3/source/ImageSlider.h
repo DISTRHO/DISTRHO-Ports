@@ -16,7 +16,7 @@
 
         You should have received a copy of the GPL along with this
         program. If not, go to http://www.gnu.org/licenses/gpl.html
-        or write to the Free Software Foundation, Inc.,  
+        or write to the Free Software Foundation, Inc.,
         51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
         ==============================================================================
  */
@@ -44,12 +44,7 @@ public:
         getProperties().set(Identifier("index"), index);
         }
 
-    ~ImageSlider()
-    {
-        deleteAllChildren();
-    }
-
-        void paint(Graphics& g)
+        void paint(Graphics& g) override
         {
                 double value = (getValue() - getMinimum()) / (getMaximum() - getMinimum());
                 g.drawImage(sliderImage, 0, (int)((1.0f - value) * length), frameWidth, frameHeight,

@@ -60,15 +60,11 @@ TalCore::TalCore()
 
 	for (int i = 0; i < NUMPROGRAMS; i++) talPresets[i] = new TalPreset();
 	curProgram = 0;
+        loadingProgram = false;
 
 	// load factory presets
-	ProgramChunk *chunk = new ProgramChunk();
-	XmlDocument myDocument (chunk->getXmlChunk());
-	XmlElement* mainElement = myDocument.getDocumentElement();
-
-	MemoryBlock* destData = new MemoryBlock();
-	copyXmlToBinary(*mainElement, *destData);
-	setStateInformation(destData->getData(), destData->getSize());
+	ProgramChunk chunk;
+	setStateInformationString(chunk.getXmlChunk());
 	setCurrentProgram(curProgram);
 
 	peakReductionValue[0] = 0.0f;
@@ -93,10 +89,15 @@ int TalCore::getNumParameters()
 
 float TalCore::getParameter (int index)
 {
-	if (index < NUMPARAM)
-		return talPresets[curProgram]->programData[index];
-	else
-		return 0;
+    if (index >= NUMPARAM)
+        return 0.0f;
+
+    float value = talPresets[curProgram]->programData[index];
+
+    if (index == DELAYTIMESYNC)
+        value = (value-1.0f)/19.0f;
+
+    return value;
 }
 
 float* TalCore::getPeakReductionValue()
@@ -148,8 +149,7 @@ void TalCore::setParameter (int index, float newValue)
 			engine->setHighCut(newValue);
 			break;
 		case DELAYTIMESYNC:
-			if (newValue < 1.0f)
-			    newValue = newValue * 19.0f + 1.0f;
+			if (! loadingProgram) newValue = newValue * 19.0f + 1.0f;
 			engine->setDelay(
 				talPresets[curProgram]->programData[DELAYTIME],
 				(int)newValue,
@@ -267,12 +267,12 @@ void TalCore::processBlock (AudioSampleBuffer& buffer,
     // for each of our input channels, we'll attenuate its level by the
     // amount that our volume parameter is set to.
 	int numberOfChannels = getNumInputChannels();
-	int bufferSize = buffer.getNumSamples();
+	//int bufferSize = buffer.getNumSamples();
 
 	if (numberOfChannels == 2)
 	{
-		float *samples0 = buffer.getSampleData(0, 0);
-		float *samples1 = buffer.getSampleData(1, 0);
+		float *samples0 = buffer.getWritePointer(0, 0);
+		float *samples1 = buffer.getWritePointer(1, 0);
 
 		int samplePos = 0;
 		int numSamples = buffer.getNumSamples();
@@ -286,8 +286,8 @@ void TalCore::processBlock (AudioSampleBuffer& buffer,
 	}
 	if (numberOfChannels == 1)
 	{
-		float *samples0 = buffer.getSampleData(0, 0);
-		float *samples1 = buffer.getSampleData(0, 0);
+		float *samples0 = buffer.getWritePointer(0, 0);
+		float *samples1 = buffer.getWritePointer(0, 0);
 
 		int samplePos = 0;
 		int numSamples = buffer.getNumSamples();
@@ -486,10 +486,10 @@ void TalCore::setCurrentProgram (int index)
 	if (index < NUMPROGRAMS)
 	{
 		curProgram = index;
+                loadingProgram = true;
 		for (int i = 0; i < NUMPARAM; i++)
-		{
 			setParameter(i, talPresets[index]->programData[i]);
-		}
+                loadingProgram = false;
 		sendChangeMessage ();
 	}
 }
