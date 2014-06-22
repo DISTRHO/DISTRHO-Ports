@@ -434,7 +434,7 @@ void TalComponent::updateInfo(Slider* caller)
         if (isSync)
         {
             float value = (float)caller->getValue();
-            char *text = audioUtils.getSyncedRateAndGetText(&value, filter->getBpm());
+            const char* text = audioUtils.getSyncedRateAndGetText(&value, filter->getBpm());
             infoText->setText(juce::String(text), dontSendNotification);
         }
         else
@@ -447,7 +447,7 @@ void TalComponent::updateInfo(Slider* caller)
         if (filter->getParameter(DELAYSYNC) > 0.0f)
         {
             float value = (float)caller->getValue();
-            char *text = audioUtils.getDelaySyncTimeAndText(&value);
+            const char* text = audioUtils.getDelaySyncTimeAndText(&value);
             infoText->setText(juce::String(text), dontSendNotification);
         }
         else

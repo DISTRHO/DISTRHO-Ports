@@ -96,9 +96,9 @@ public:
     //==============================================================================
     void getStateInformation (MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
-    void getXmlPrograms(XmlElement* programList, int programNumber) override;
-    void setXmlPrograms(XmlElement* programList, int programNumber, float version) override;
-    void setStateInformationFromXml(XmlElement* xmlState) override;
+    void getXmlPrograms(XmlElement* programList, int programNumber);
+    void setXmlPrograms(XmlElement* programList, int programNumber, float version);
+    void setStateInformationFromXml(XmlElement* xmlState);
 
     String getStateInformationString () override;
     void setStateInformationString (const String& data) override;

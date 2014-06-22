@@ -197,9 +197,9 @@ public:
 		return answer;
 	}
 
-    char* getSyncedRateAndGetText(float *rate, float bpm)
+    const char* getSyncedRateAndGetText(float *rate, float bpm)
     {
-        char* text = "";
+        const char* text = "";
         int rateSelector = (int)(*rate * 17.0f + 0.001f);
 
         switch (rateSelector)
@@ -228,9 +228,9 @@ public:
         return text;
     }
 
-    char* getDelaySyncTimeAndText(float *value)
+    const char* getDelaySyncTimeAndText(float *value)
     {
-        char *text = "";
+        const char* text = "";
         int selector = (int)(*value * 17.0f);
 
         switch (selector)

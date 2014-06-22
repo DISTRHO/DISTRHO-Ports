@@ -78,7 +78,7 @@ public:
 	void sliderDragEnded (Slider* slider) override;
 
 	void buttonClicked (Button *) override;
-    void handleClickedTabs (Button* caller) override;
+    void handleClickedTabs (Button* caller);
 
     void comboBoxChanged(ComboBox* comboBox) override;
 

@@ -16,7 +16,7 @@
 
 	You should have received a copy of the GPL along with this
 	program. If not, go to http://www.gnu.org/licenses/gpl.html
-	or write to the Free Software Foundation, Inc.,  
+	or write to the Free Software Foundation, Inc.,
 	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 	==============================================================================
  */
@@ -26,12 +26,12 @@
 
 #include "Math.h"
 
-class AudioUtils 
+class AudioUtils
 {
 private:
 
 public:
-	AudioUtils() 
+	AudioUtils()
 	{
 	}
 
@@ -55,7 +55,7 @@ public:
 	float getLogScaledVolume(float inputValue, float maxValue)
 	{
 		return (expf(inputValue * maxValue * logf(20.0f)) - 1.0f) / 19.0f;
-	} 
+	}
 
 	// max value unscalled
 	float getLogScaledValue(float inputValue, float maxValue)
@@ -67,7 +67,7 @@ public:
 	float getLogScaledRate(float inputValue)
 	{
 		return (expf(0.2f + inputValue * 3.0f * logf(20.0f)) - 1.0f) / 19.0f;
-	} 
+	}
 
 	// max value unscalled
 	float getLogScaledValue(float inputValue)
@@ -157,7 +157,7 @@ public:
         return (float)(int)(1.0f + value * 15.0f);
     }
 
-	inline float tanhApp(float x) 
+	inline float tanhApp(float x)
 	{
 		// Original
 		//return tanh(x);
@@ -179,7 +179,7 @@ public:
 	{
 		bool answer = true;
 		if (value == 0) value = 1;
-		for (int i = 2; i <= sqrtf((float)value) ; i++) 
+		for (int i = 2; i <= sqrtf((float)value) ; i++)
 		{
 			if (value % i == 0)
 			{
@@ -190,9 +190,9 @@ public:
 		return answer;
 	}
 
-    char* getSyncedRateAndGetText(float *rate, float bpm)
+    const char* getSyncedRateAndGetText(float *rate, float bpm)
     {
-        char *text;
+        const char* text = "";
         int rateSelector = (int)(*rate * 17.0f + 0.001f);
 
         switch (rateSelector)

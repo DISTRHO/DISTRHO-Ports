@@ -16,7 +16,7 @@
 
 	You should have received a copy of the GPL along with this
 	program. If not, go to http://www.gnu.org/licenses/gpl.html
-	or write to the Free Software Foundation, Inc.,  
+	or write to the Free Software Foundation, Inc.,
 	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 	==============================================================================
  */
@@ -57,7 +57,7 @@ public:
     float amountPositive;
     bool isSync;
 
-    LfoHandler(float sampleRate) 
+    LfoHandler(float sampleRate)
     {
         lfo = new Lfo(sampleRate);
         waveform = SIN;
@@ -69,7 +69,7 @@ public:
         currentPhase = 0.0f;
     }
 
-    ~LfoHandler()
+    virtual ~LfoHandler()
     {
         delete lfo;
     }

@@ -48,7 +48,7 @@ class TalCore  : public AudioProcessor,
 {
 public:
     //==============================================================================
-    TalCore() override;
+    TalCore();
     ~TalCore() override;
 
     bool hasEditor() const override { return true; }

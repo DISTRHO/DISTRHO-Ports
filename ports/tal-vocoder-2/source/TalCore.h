@@ -83,7 +83,7 @@ public:
     bool silenceInProducesSilenceOut() const override { return true; }
     double getTailLengthSeconds() const override { return 0.0; }
 
-    bool doesClip() override;
+    bool doesClip();
 
     // vst preset handling
     int getNumPrograms() override;
@@ -98,8 +98,8 @@ public:
 	void setStateInformation (const void* data, int sizeInBytes) override;
 	void setCurrentProgramStateInformation (const void* data, int sizeInBytes) override;
 
-    void setStateInformationFromXml(XmlElement* xmlState) override;
-    XmlElement* getCurrentProgramStateInformationAsXml() override;
+    void setStateInformationFromXml(XmlElement* xmlState);
+    XmlElement* getCurrentProgramStateInformationAsXml();
 
     void getXmlPrograms(XmlElement *programList, int programNumber);
     void setXmlPrograms(XmlElement *programList, int programNumber, float version);

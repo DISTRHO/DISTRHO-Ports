@@ -16,7 +16,7 @@
 
 	You should have received a copy of the GPL along with this
 	program. If not, go to http://www.gnu.org/licenses/gpl.html
-	or write to the Free Software Foundation, Inc.,  
+	or write to the Free Software Foundation, Inc.,
 	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 	==============================================================================
  */
@@ -50,10 +50,6 @@ public:
 	LfoHandler1(float sampleRate) : LfoHandler(sampleRate)
 	{
 		destination = FILTER;
-	}
-
-	~LfoHandler1()
-	{
 	}
 
 	void setDestination(const Destination destination)

@@ -1505,7 +1505,7 @@ public:
 
                 while (i.getNextEvent (midiEventData, midiEventSize, midiEventPosition))
                 {
-                    jassert (midiEventPosition >= 0 && midiEventPosition < sampleCount);
+                    jassert (midiEventPosition >= 0 && midiEventPosition < (int)sampleCount);
 
                     if (sizeof(LV2_Atom_Event) + midiEventSize > capacity - offset)
                         break;
