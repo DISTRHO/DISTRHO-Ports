@@ -135,7 +135,6 @@ private:
 	ImageToggleButton* addNormalButton(Component *component, int x, int y, TalCore* const ownerFilter, const Image buttonImage, bool isKickButton, int parameter);
 	ImageSlider* addSlider(Component *component, int x, int y, TalCore* const ownerFilter, const Image sliderImage, int height, int parameter);
     void updateInfo(Slider* caller);
-	void setTooltip(Slider* slider);
 
     // handy wrapper method to avoid having to cast the filter to a DemoJuceFilter
     // every time we need it..

@@ -41,12 +41,6 @@ TalComponent::TalComponent (TalCore* const ownerFilter)
 	this->infoLabel->setColour(Label::textColourId, Colour((juce::uint8)200, (juce::uint8)200, (juce::uint8)200, 1.0f));
 	addAndMakeVisible(this->infoLabel);
 
-    this->hyperlinkButton = new HyperlinkButton(T("Support TAL"), URL(T("http://kunz.corrupt.ch/?Support_us")));
-    this->hyperlinkButton->setFont(fontDigital, false, Justification::bottomLeft);
-	this->hyperlinkButton->setBounds(334, 322, 100, 20);
-    this->hyperlinkButton->setColour(HyperlinkButton::textColourId, Colour((juce::uint8)200, (juce::uint8)200, (juce::uint8)200, 1.0f));
-    addAndMakeVisible(this->hyperlinkButton);
-
     this->talMeter = new TalMeter(ownerFilter, 77, 225, 20);
     this->talMeter->setBounds(500, 30, 77, 254);
     addAndMakeVisible(this->talMeter);
@@ -54,14 +48,14 @@ TalComponent::TalComponent (TalCore* const ownerFilter)
     this->splashScreen = new TalSplashScreen(splashImage, 0, 311, 329, 51);
     addAndMakeVisible(this->splashScreen);
 
+    updateParametersFromFilter();
+
     setSize(backgroundImage.getWidth(), backgroundImage.getHeight());
 
     // register ourselves with the filter - it will use its ChangeBroadcaster base
     // class to tell us when something has changed, and this will call our changeListenerCallback()
     // method.
     ownerFilter->addChangeListener (this);
-
-	updateParametersFromFilter();
 }
 
 TalComponent::~TalComponent()
@@ -75,7 +69,6 @@ ImageToggleButton* TalComponent::addNormalButton(Component *component, int x, in
 	ImageToggleButton *imageToggleButton;
 	component->addAndMakeVisible(imageToggleButton = new ImageToggleButton("Toggle Button", buttonImage, false, isKickButton, parameter));
     imageToggleButton->setBounds(x, y, buttonImage.getWidth(), buttonImage.getHeight() / 2);
-	imageToggleButton->setToggleState(ownerFilter->getParameter(parameter) > 0.0f, false);
 	imageToggleButton->addListener(this);
 	return imageToggleButton;
 }
@@ -85,7 +78,6 @@ ImageSlider* TalComponent::addSlider(Component *component, int x, int y, TalCore
 	ImageSlider *imageSlider;
 	component->addAndMakeVisible(imageSlider = new ImageSlider(sliderImage, height, parameter));
 	imageSlider->setBounds(x, y, /*sliderImage->getWidth()*/ 70, height + sliderImage.getHeight());
-	imageSlider->setValue(ownerFilter->getParameter(parameter), dontSendNotification);
 	imageSlider->addListener (this);
 	return imageSlider;
 }
@@ -144,7 +136,7 @@ void TalComponent::sliderValueChanged (Slider* caller)
 
 void TalComponent::updateInfo(Slider* caller)
 {
-    if (caller == this->preDelaySlider) this->infoLabel->setText(juce::String((int)(audioUtils.getLogScaledValue((float)preDelaySlider->getValue()) * 1000.0f)) + T(" ms"), dontSendNotification);
+    if (caller == preDelaySlider) this->infoLabel->setText(juce::String((int)(audioUtils.getLogScaledValue((float)preDelaySlider->getValue()) * 1000.0f)) + T(" ms"), dontSendNotification);
     if (caller == lowShelfGainSlider) this->infoLabel->setText(juce::String(lowShelfGainSlider->getValue(), 4), dontSendNotification);
     if (caller == highShelfGainSlider) this->infoLabel->setText(juce::String(highShelfGainSlider->getValue(), 4), dontSendNotification);
 
@@ -203,8 +195,8 @@ void TalComponent::updateParametersFromFilter()
 	this->drySlider->setValue(dry, dontSendNotification);
 	this->wetSlider->setValue(wet, dontSendNotification);
 
-    this->realStereoModeButton->setToggleState(realStereoMode > 0.0f, true);
-    this->powerButton->setToggleState(power > 0.0f, true);
+    this->realStereoModeButton->setToggleState(realStereoMode > 0.0f, dontSendNotification);
+    this->powerButton->setToggleState(power > 0.0f, dontSendNotification);
 }
 
 //==============================================================================

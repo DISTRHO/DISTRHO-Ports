@@ -62,7 +62,7 @@ public:
     void timerCallback() override
     {
         stopTimer();
-        setToggleState(false, false);
+        setToggleState(false, dontSendNotification);
         repaint();
     }
 
@@ -70,7 +70,7 @@ public:
     {
         if (isKickButton)
         {
-            this->setToggleState(true, false);
+            this->setToggleState(true, dontSendNotification);
             Button::clicked();
             if (true)
             {

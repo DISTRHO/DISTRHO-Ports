@@ -16,7 +16,7 @@
 
 	You should have received a copy of the GPL along with this
 	program. If not, go to http://www.gnu.org/licenses/gpl.html
-	or write to the Free Software Foundation, Inc.,  
+	or write to the Free Software Foundation, Inc.,
 	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 	==============================================================================
  */
@@ -32,19 +32,15 @@ public:
 	{
         this->image = image;
 
-        this->x = x; 
-        this->y = y; 
+        this->x = x;
+        this->y = y;
         this->width = width;
         this->height = height;
 
         this->setCurrentBounds();
 	}
 
-    ~TalSplashScreen()
-    {
-    }
-
-	void paintButton(Graphics& g, bool isMouseOverButton, bool isButtonDown)
+	void paintButton(Graphics& g, bool isMouseOverButton, bool isButtonDown) override
 	{
         if (this->getToggleState())
         {
@@ -52,9 +48,9 @@ public:
         }
 	}
 
-	void mouseDown(const MouseEvent &e)
+	void mouseDown(const MouseEvent &e) override
     {
-        this->setToggleState(!this->getToggleState(), true);
+        this->setToggleState(!this->getToggleState(), sendNotification);
         this->setCurrentBounds();
         repaint();
     }
@@ -74,8 +70,8 @@ public:
 private:
     Image image;
 
-    int x; 
-    int y; 
+    int x;
+    int y;
     int width;
     int height;
 };
