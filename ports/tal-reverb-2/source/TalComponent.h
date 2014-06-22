@@ -125,7 +125,6 @@ private:
 
     void updateParametersFromFilter();
 	FilmStripKnob* addNormalKnob(int x, int y, TalCore* const ownerFilter, Image knobImage, const int parameter);
-	void setTooltip(Slider* slider);
 
     // handy wrapper method to avoid having to cast the filter to a DemoJuceFilter
     // every time we need it..

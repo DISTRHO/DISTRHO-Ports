@@ -62,7 +62,7 @@ ReverbComponent::ReverbComponent (TalCore* const ownerFilter)
 	dampKnob->setValue(ownerFilter->getParameter(DAMP), dontSendNotification);
 	lowPassKnob->setValue(ownerFilter->getParameter(HIGHCUT), dontSendNotification);
 	highPassKnob->setValue(ownerFilter->getParameter(LOWCUT), dontSendNotification);
-	stereoWithKnob->setValue(ownerFilter->getParameter(STEREO));
+	stereoWithKnob->setValue(ownerFilter->getParameter(STEREO), dontSendNotification);
 	drySlider->setValue(ownerFilter->getParameter(DRY), dontSendNotification);
 	wetSlider->setValue(ownerFilter->getParameter(WET), dontSendNotification);
 
@@ -99,18 +99,6 @@ void ReverbComponent::paint (Graphics& g)
                  0, 0, 800, 285,
                  0, 0, internalCachedBackgroundImage.getWidth(), internalCachedBackgroundImage.getHeight());
 }
-
-//void DemoEditorComponent::resized()
-//{
-//    //gainSlider->setBounds (10, 10, 200, 22);
-//
-//    //// resizer->setBounds (getWidth() - 16, getHeight() - 16, 16, 16);
-//
-//    //// if we've been resized, tell the filter so that it can store the new size
-//    //// in its settings
-//    //getFilter()->lastUIWidth = getWidth();
-//    //getFilter()->lastUIHeight = getHeight();
-//}
 
 //==============================================================================
 void ReverbComponent::changeListenerCallback (ChangeBroadcaster* source)

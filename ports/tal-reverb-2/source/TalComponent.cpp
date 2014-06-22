@@ -39,6 +39,8 @@ TalComponent::TalComponent (TalCore* const ownerFilter)
 	realStereoModeButton->setBounds(373, 170, 71, 52);
 	addAndMakeVisible(realStereoModeButton);
 
+        updateParametersFromFilter();
+
     // set our component's initial size to be the last one that was stored in the filter's settings
     setSize (backgroundImage.getWidth(), backgroundImage.getHeight());
 
@@ -51,8 +53,6 @@ TalComponent::TalComponent (TalCore* const ownerFilter)
     // class to tell us when something has changed, and this will call our changeListenerCallback()
     // method.
     ownerFilter->addChangeListener (this);
-
-	updateParametersFromFilter();
 }
 
 TalComponent::~TalComponent()
@@ -69,7 +69,6 @@ FilmStripKnob* TalComponent::addNormalKnob(int x, int y, TalCore* const ownerFil
 									 knobImage.getHeight() / knobImage.getWidth(),
 									 false));
     filmStripKnob->setBounds(x, y, knobImage.getWidth() + 16, knobImage.getWidth() + 20);
-	filmStripKnob->setValue(ownerFilter->getParameter(parameter), dontSendNotification);
 	filmStripKnob->addListener (this);
 	return filmStripKnob;
 }
@@ -85,18 +84,6 @@ void TalComponent::paint (Graphics& g)
                  0, 0, backgroundImage.getWidth(), backgroundImage.getHeight(),
                  0, 0, backgroundImage.getWidth(), backgroundImage.getHeight());
 }
-
-//void DemoEditorComponent::resized()
-//{
-//    //gainSlider->setBounds (10, 10, 200, 22);
-//
-//    //// resizer->setBounds (getWidth() - 16, getHeight() - 16, 16, 16);
-//
-//    //// if we've been resized, tell the filter so that it can store the new size
-//    //// in its settings
-//    //getFilter()->lastUIWidth = getWidth();
-//    //getFilter()->lastUIHeight = getHeight();
-//}
 
 //==============================================================================
 void TalComponent::changeListenerCallback (ChangeBroadcaster* source)
@@ -130,8 +117,7 @@ void TalComponent::buttonClicked (Button* caller)
     TalCore* const filter = getFilter();
 	if (caller == realStereoModeButton)
 	{
-		float realStereoMode = 0.0f;
-		if (caller->getToggleState() == true) realStereoMode = 1.0f;
+		float realStereoMode = caller->getToggleState() ? 1.0f : 0.0f;
 		filter->setParameterNotifyingHost(REALSTEREOMODE, realStereoMode);
 	}
 }
@@ -195,18 +181,11 @@ void TalComponent::updateParametersFromFilter()
 
 	drySlider->setValue(dry, dontSendNotification);
 	drySlider->setTextValue(juce::String(audioUtils.getLogScaledValueInDecibel(dry, 2), 1) + T("dB"));
-	
+
 	wetSlider->setValue(wet, dontSendNotification);
 	wetSlider->setTextValue(juce::String(audioUtils.getLogScaledValueInDecibel(wet, 2), 1) + T("dB"));
 
-	if (realStereoMode > 0.0f)
-	{
-		realStereoModeButton->setToggleState(true, false);
-	}
-	else
-	{
-		realStereoModeButton->setToggleState(false, false);
-	}
+	realStereoModeButton->setToggleState((realStereoMode > 0.0f), dontSendNotification);
 }
 
 //==============================================================================
