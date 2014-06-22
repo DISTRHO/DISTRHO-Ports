@@ -10,7 +10,7 @@ Implementation file for LFO.hpp
 #include <cmath>
 #include "Lfo.h"
 
-Lfo::Lfo(float samplerate) : samplerate(samplerate), phase(0), inc(0) {
+Lfo::Lfo(float samplerate_) : phase(0), inc(0), samplerate(samplerate_) {
 	setWaveform(0);   
 	setWaveform(1);   
 	setWaveform(2);   

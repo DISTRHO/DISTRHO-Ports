@@ -63,15 +63,11 @@ TalCore::TalCore()
 
 	for (int i = 0; i < NUMPROGRAMS; i++) talPresets[i] = new TalPreset();
 	curProgram = 0;
+        loadingProgram = false;
 
 	// load factory presets
-	ProgramChunk *chunk = new ProgramChunk();
-	XmlDocument myDocument (chunk->getXmlChunk());
-	XmlElement* mainElement = myDocument.getDocumentElement();
-
-	MemoryBlock* destData = new MemoryBlock();
-	copyXmlToBinary(*mainElement, *destData);
-	setStateInformation(destData->getData(), destData->getSize());
+	ProgramChunk chunk;
+        setStateInformationString(chunk.getXmlChunk());
 	setCurrentProgram(curProgram);
 }
 
@@ -93,10 +89,25 @@ int TalCore::getNumParameters()
 
 float TalCore::getParameter (int index)
 {
-	if (index < NUMPARAM)
-		return talPresets[curProgram]->programData[index];
-	else
-		return 0;
+    if (index >= NUMPARAM)
+        return 0.0f;
+
+    float value = talPresets[curProgram]->programData[index];
+
+    switch (index)
+    {
+    case FILTERTYPE:
+        value = (value-1.0f)/7.0f;
+        break;
+    case LFOWAVEFORM:
+        value = (value-1.0f)/6.0f;
+        break;
+    case LFOSYNC:
+        value = (value-1.0f)/19.0f;
+        break;
+    }
+
+    return value;
 }
 
 void TalCore::setParameter (int index, float newValue)
@@ -109,16 +120,13 @@ void TalCore::setParameter (int index, float newValue)
 			engine->setSync((int)talPresets[curProgram]->programData[LFOSYNC], newValue);
 			break;
 		case FILTERTYPE:
-			if (newValue < 1.0f)
-			    newValue = newValue * 7.0f + 1.0f;
+			if (! loadingProgram) newValue = newValue * 7.0f + 1.0f;
 			break;
 		case LFOWAVEFORM:
-			if (newValue < 1.0f)
-			    newValue = newValue * 6.0f + 1.0f;
+			if (! loadingProgram) newValue = newValue * 6.0f + 1.0f;
 			break;
 		case LFOSYNC:
-			if (newValue < 1.0f)
-			    newValue = newValue * 19.0f + 1.0f;
+			if (! loadingProgram) newValue = newValue * 19.0f + 1.0f;
 			engine->setSync((int)newValue, talPresets[curProgram]->programData[LFORATE]);
 			break;
 		case VOLUME:
@@ -259,7 +267,7 @@ void TalCore::processBlock (AudioSampleBuffer& buffer,
     // for each of our input channels, we'll attenuate its level by the
     // amount that our volume parameter is set to.
 	int numberOfChannels = getNumInputChannels();
-	int bufferSize = buffer.getNumSamples();
+	//int bufferSize = buffer.getNumSamples();
 
 	// midi buffer
 	MidiMessage controllerMidiMessage (0xF0);
@@ -268,8 +276,8 @@ void TalCore::processBlock (AudioSampleBuffer& buffer,
 
 	if (numberOfChannels == 2)
 	{
-		float *samples0 = buffer.getSampleData(0, 0);
-		float *samples1 = buffer.getSampleData(1, 0);
+		float *samples0 = buffer.getWritePointer(0, 0);
+		float *samples1 = buffer.getWritePointer(1, 0);
 
 		int samplePos = 0;
 		int numSamples = buffer.getNumSamples();
@@ -283,8 +291,8 @@ void TalCore::processBlock (AudioSampleBuffer& buffer,
 	}
 	if (numberOfChannels == 1)
 	{
-		float *samples0 = buffer.getSampleData(0, 0);
-		float *samples1 = buffer.getSampleData(0, 0);
+		float *samples0 = buffer.getWritePointer(0, 0);
+		float *samples1 = buffer.getWritePointer(0, 0);
 
 		int samplePos = 0;
 		int numSamples = buffer.getNumSamples();
@@ -338,7 +346,8 @@ void TalCore::getStateInformation (MemoryBlock& destData)
 	tal.setAttribute (T("version"), 1);
 
 	// programs
-    XmlElement *programList = new XmlElement ("programs");
+        XmlElement* programList = new XmlElement ("programs");
+
 	for (int i = 0; i < NUMPROGRAMS; i++)
 	{
 		XmlElement* program = new XmlElement ("program");
@@ -367,11 +376,11 @@ void TalCore::getStateInformation (MemoryBlock& destData)
 
 void TalCore::setStateInformation (const void* data, int sizeInBytes)
 {
-	// use this helper function to get the XML from this binary blob..
-    XmlElement* const xmlState = getXmlFromBinary (data, sizeInBytes);
+    // use this helper function to get the XML from this binary blob..
+    ScopedPointer<XmlElement> xmlState = getXmlFromBinary (data, sizeInBytes);
 
 	curProgram = 0;
-	if (xmlState != 0 && xmlState->hasTagName(T("tal")))
+	if (xmlState != nullptr && xmlState->hasTagName(T("tal")))
 	{
 		curProgram = xmlState->getIntAttribute (T("curprogram"), 0.8f);
 		XmlElement* programs = xmlState->getFirstChildElement();
@@ -401,18 +410,17 @@ void TalCore::setStateInformation (const void* data, int sizeInBytes)
 			}
 		}
 
-		delete xmlState;
 		setCurrentProgram(curProgram);
-		sendChangeMessage ();
+		sendChangeMessage();
 	}
 }
 
 void TalCore::setStateInformationString (const String& data)
 {
-    XmlElement* const xmlState = XmlDocument::parse(data);
+    ScopedPointer<XmlElement> xmlState = XmlDocument::parse(data);
 
     curProgram = 0;
-    if (xmlState != 0 && xmlState->hasTagName(T("tal")))
+    if (xmlState != nullptr && xmlState->hasTagName(T("tal")))
     {
             curProgram = xmlState->getIntAttribute (T("curprogram"), 0.8f);
             XmlElement* programs = xmlState->getFirstChildElement();
@@ -442,7 +450,6 @@ void TalCore::setStateInformationString (const String& data)
                     }
             }
 
-            delete xmlState;
             setCurrentProgram(curProgram);
             sendChangeMessage ();
     }
@@ -497,10 +504,10 @@ void TalCore::setCurrentProgram (int index)
 	if (index < NUMPROGRAMS)
 	{
 		curProgram = index;
+                loadingProgram = true;
 		for (int i = 0; i < NUMPARAM; i++)
-		{
 			setParameter(i, talPresets[index]->programData[i]);
-		}
+                loadingProgram = false;
 
 		sendChangeMessage ();
 	}

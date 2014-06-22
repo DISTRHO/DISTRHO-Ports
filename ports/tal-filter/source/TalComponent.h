@@ -65,22 +65,22 @@ public:
     TalComponent(TalCore* const ownerFilter);
 
     /** Destructor. */
-    ~TalComponent();
+    ~TalComponent() override;
 
     //==============================================================================
     /** Our demo filter is a ChangeBroadcaster, and will call us back when one of
         its parameters changes.
     */
-    void changeListenerCallback (ChangeBroadcaster* source);
+    void changeListenerCallback (ChangeBroadcaster* source) override;
 
-    void sliderValueChanged (Slider*);
-    void comboBoxChanged (ComboBox*);
+    void sliderValueChanged (Slider*) override;
+    void comboBoxChanged (ComboBox*) override;
 
-	void buttonClicked (Button *);
+	void buttonClicked (Button *) override;
 
     //==============================================================================
     /** Standard Juce paint callback. */
-    void paint (Graphics& g);
+    void paint (Graphics& g) override;
 
     /** Standard Juce resize callback. */
     //void resized();

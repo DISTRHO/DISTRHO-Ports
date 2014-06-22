@@ -206,9 +206,9 @@ void TalComponent::sliderValueChanged (Slider* caller)
 void TalComponent::comboBoxChanged (ComboBox* caller)
 {
     TalCore* const filter = getFilter();
-	if (caller == filterTypeComboBox) filter->setParameterNotifyingHost(FILTERTYPE, float(filterTypeComboBox->getSelectedId())/7.0f-0.001f);
-	if (caller == lfoWaveformComboBox) filter->setParameterNotifyingHost(LFOWAVEFORM, float(lfoWaveformComboBox->getSelectedId())/6.0f-0.001f);
-	if (caller == lfoSyncComboBox) filter->setParameterNotifyingHost(LFOSYNC, float(lfoSyncComboBox->getSelectedId())/19.0f-0.001f);
+	if (caller == filterTypeComboBox) filter->setParameterNotifyingHost(FILTERTYPE, float(filterTypeComboBox->getSelectedId()-1)/7.0f);
+	if (caller == lfoWaveformComboBox) filter->setParameterNotifyingHost(LFOWAVEFORM, float(lfoWaveformComboBox->getSelectedId()-1)/6.0f);
+	if (caller == lfoSyncComboBox) filter->setParameterNotifyingHost(LFOSYNC, float(lfoSyncComboBox->getSelectedId()-1)/19.0f);
 }
 
 void TalComponent::buttonClicked (Button* caller)
@@ -240,9 +240,9 @@ void TalComponent::updateParametersFromFilter()
 	float volume = filter->getParameter(VOLUME);
 	float inputDrive = filter->getParameter(INPUTDRIVE);
 
-	float filtertype = filter->getParameter(FILTERTYPE);
-	float lfoWaveform = filter->getParameter(LFOWAVEFORM);
-	float lfoSync = filter->getParameter(LFOSYNC);
+	float filtertype = filter->getParameter(FILTERTYPE) * 7.0f + 1.0f;
+	float lfoWaveform = filter->getParameter(LFOWAVEFORM) * 6.0f + 1.0f;
+	float lfoSync = filter->getParameter(LFOSYNC)*19.0f + 1.0f;
 
 	float envelopeIntesity = filter->getParameter(ENVELOPEINTENSITY);
 	float envelopeSpeed = filter->getParameter(ENVELOPESPEED);
@@ -264,9 +264,9 @@ void TalComponent::updateParametersFromFilter()
 	envelopeSpeedKnob->setValue(envelopeSpeed, dontSendNotification);
 	lfoWidthKnob->setValue(lfoWidth, dontSendNotification);
 
-	filterTypeComboBox->setSelectedId(filtertype, true);
-	lfoWaveformComboBox->setSelectedId(lfoWaveform, true);
-	lfoSyncComboBox->setSelectedId(lfoSync, true);
+	filterTypeComboBox->setSelectedId(filtertype, dontSendNotification);
+	lfoWaveformComboBox->setSelectedId(lfoWaveform, dontSendNotification);
+	lfoSyncComboBox->setSelectedId(lfoSync, dontSendNotification);
 
 	midiTriggerButton->setValue(midiTrigger, dontSendNotification);
 }
