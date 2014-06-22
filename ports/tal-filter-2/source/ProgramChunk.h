@@ -46,8 +46,8 @@ public:
         //File *file = new File("c:/presets.txt");
         //file->replaceWithText(String::fromUTF8 (data, 171085 + 1));
         
-        int sizeInBytes = 21291 + 1;
-		const int stringLength = (int)ByteOrder::littleEndianInt (((const char*) data) + 4);
+        const int sizeInBytes = 21291 + 1;
+	//const int stringLength = (int)ByteOrder::littleEndianInt (((const char*) data) + 4);
 
 		// XmlDocument doc (String::fromUTF8 (((const char*) data) + 8, jmin ((sizeInBytes - 8), stringLength)));
         return String::fromUTF8(data, sizeInBytes);

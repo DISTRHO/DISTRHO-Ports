@@ -51,67 +51,68 @@ class TalCore  : public AudioProcessor,
 public:
     //==============================================================================
     TalCore();
-    ~TalCore();
+    ~TalCore() override;
 
-    bool hasEditor() const { return true; }
-
-    //==============================================================================
-    void prepareToPlay (double sampleRate, int samplesPerBlock);
-    void releaseResources();
-
-    void processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages);
+    bool hasEditor() const override { return true; }
 
     //==============================================================================
-    AudioProcessorEditor* createEditor();
+    void prepareToPlay (double sampleRate, int samplesPerBlock) override;
+    void releaseResources() override;
+
+    void processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages) override;
 
     //==============================================================================
-    const String getName() const;
-
-    int getNumParameters();
-
-    float getParameter (int index);
-    void setParameter (int index, float newValue);
-
-    const String getParameterName (int index);
-    const String getParameterText (int index);
-
-    const String getInputChannelName (const int channelIndex) const;
-    const String getOutputChannelName (const int channelIndex) const;
-    bool isInputChannelStereoPair (int index) const;
-    bool isOutputChannelStereoPair (int index) const;
-
-    bool acceptsMidi() const;
-    bool producesMidi() const;
-
-    bool silenceInProducesSilenceOut() const { return false; }
-    double getTailLengthSeconds() const { return 0.0; }
+    AudioProcessorEditor* createEditor() override;
 
     //==============================================================================
-    int getNumPrograms();
-    int getCurrentProgram();
-    void setCurrentProgram (int index);
-    const String getProgramName (int index);
-    void changeProgramName (int index, const String& newName);
+    const String getName() const override;
+
+    int getNumParameters() override;
+
+    float getParameter (int index) override;
+    void setParameter (int index, float newValue) override;
+
+    const String getParameterName (int index) override;
+    const String getParameterText (int index) override;
+
+    const String getInputChannelName (const int channelIndex) const override;
+    const String getOutputChannelName (const int channelIndex) const override;
+    bool isInputChannelStereoPair (int index) const override;
+    bool isOutputChannelStereoPair (int index) const override;
+
+    bool acceptsMidi() const override;
+    bool producesMidi() const override;
+
+    bool silenceInProducesSilenceOut() const override { return true; }
+    double getTailLengthSeconds() const override { return 0.0; }
 
     //==============================================================================
-    void getStateInformation (MemoryBlock& destData);
-    void setStateInformation (const void* data, int sizeInBytes);
-    void getXmlPrograms(XmlElement* programList, int programNumber);
-    void setXmlPrograms(XmlElement* programList, int programNumber, float version);
-    void setStateInformationFromXml(XmlElement* xmlState);
+    int getNumPrograms() override;
+    int getCurrentProgram() override;
+    void setCurrentProgram (int index) override;
+    const String getProgramName (int index) override;
+    void changeProgramName (int index, const String& newName) override;
 
-    String getStateInformationString ();
-    void setStateInformationString (const String& data);
+    //==============================================================================
+    void getStateInformation (MemoryBlock& destData) override;
+    void setStateInformation (const void* data, int sizeInBytes) override;
+    void getXmlPrograms(XmlElement* programList, int programNumber) override;
+    void setXmlPrograms(XmlElement* programList, int programNumber, float version) override;
+    void setStateInformationFromXml(XmlElement* xmlState) override;
+
+    String getStateInformationString () override;
+    void setStateInformationString (const String& data) override;
 
     EnvelopeEditor * getEnvelopeEditor();
     void envelopeChanged();
 
 private:
-	Engine *engine;
-	float sampleRate;
+    Engine *engine;
+    float sampleRate;
 
-	TalPreset **talPresets;
-	int curProgram;
+    TalPreset **talPresets;
+    int curProgram;
+    bool loadingProgram;
 
     AudioPlayHead::CurrentPositionInfo pos;
     float bpm;

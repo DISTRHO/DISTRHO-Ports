@@ -128,11 +128,6 @@ private:
 
 	Label *versionLabel;
 
-    //Slider* gainSlider;
-    //ResizableCornerComponent* resizer;
-    //ComponentBoundsConstrainer resizeLimits;
-    TooltipWindow tooltipWindow;
-
     void updateParametersFromFilter();
 
     // handy wrapper method to avoid having to cast the filter to a DemoJuceFilter

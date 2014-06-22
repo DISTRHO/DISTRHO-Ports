@@ -39,7 +39,7 @@ public:
         getProperties().set(Identifier("index"), index);
 	}
 
-	void paint(Graphics& g)
+	void paint(Graphics& g) override
 	{
 			int value = (int)((getValue() - getMinimum()) / (getMaximum() - getMinimum()) * (numFrames_ - 1));
 			if(isHorizontal_) 

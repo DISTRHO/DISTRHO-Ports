@@ -26,7 +26,6 @@ TalComponent::TalComponent (TalCore* const ownerFilter) : AudioProcessorEditor (
 	speedFactorComboBox->addItem(T("x16"),5);
 	speedFactorComboBox->addItem(T("x32"),6);
 	speedFactorComboBox->addItem(T("-"),7);
-    speedFactorComboBox->setSelectedId((int)filter->getParameter(SPEEDFACTOR), true);
 
     filtertypeComboBox = addComboBox(110, height + 20, 80, ownerFilter, FILTERTYPE);
 	filtertypeComboBox->addItem(T("LP 24dB"),1);
@@ -39,7 +38,6 @@ TalComponent::TalComponent (TalCore* const ownerFilter) : AudioProcessorEditor (
 	filtertypeComboBox->addItem(T("Volume"),8);
 	filtertypeComboBox->addItem(T("Pan"),9);
 	filtertypeComboBox->addItem(T("-"),10);
-    filtertypeComboBox->setSelectedId((int)filter->getParameter(FILTERTYPE), true);
 
 	const Image knobImage = ImageCache::getFromMemory(bmp00135_png, bmp00135_pngSize);
 	int numberOfImages = knobImage.getHeight() / knobImage.getWidth();
@@ -54,10 +52,7 @@ TalComponent::TalComponent (TalCore* const ownerFilter) : AudioProcessorEditor (
 	versionLabel->setColour(Label::textColourId, Colour((juce::uint8)100, (juce::uint8)100, (juce::uint8)100, 0.9f));
     addAndMakeVisible(versionLabel);
 
-    hyperlinkButtoon = new HyperlinkButton(T("Support TAL"), URL(T("http://kunz.corrupt.ch/?Support_us")));
-	hyperlinkButtoon->setBounds(image.getWidth() - 210, image.getHeight() - 88, 80, 20);
-    hyperlinkButtoon->setColour(HyperlinkButton::textColourId, Colour((juce::uint8)100, (juce::uint8)100, (juce::uint8)100, 0.9f));
-    addAndMakeVisible(hyperlinkButtoon);
+    updateParametersFromFilter();
 
     setSize (image.getWidth(), image.getHeight());
     ownerFilter->addChangeListener (this);
@@ -78,8 +73,7 @@ ComboBox* TalComponent::addComboBox(int x, int y, int width, TalCore* const owne
 	comboBox->setColour(ComboBox::textColourId, Colour::greyLevel(1.0f));
 	comboBox->setColour(ComboBox::buttonColourId, Colour((juce::uint8)8, (juce::uint8)11, (juce::uint8)58, 0.0f));
 	comboBox->setColour(ComboBox::arrowColourId, Colour((juce::uint8)8, (juce::uint8)11, (juce::uint8)58, 0.0f));
-    comboBox->setSelectedId((int)ownerFilter->getParameter(parameter), true);
-    comboBox->addListener (this);
+        comboBox->addListener (this);
 	return comboBox;
 }
 
@@ -143,13 +137,8 @@ void TalComponent::sliderValueChanged (Slider* caller)
 void TalComponent::comboBoxChanged (ComboBox* caller)
 {
     TalCore* const filter = getFilter();
-	if (caller == speedFactorComboBox) filter->setParameterNotifyingHost(SPEEDFACTOR, float(speedFactorComboBox->getSelectedId())/6.0f-0.001f);
-	if (caller == filtertypeComboBox) filter->setParameterNotifyingHost(FILTERTYPE, float(filtertypeComboBox->getSelectedId())/9.0f-0.001f);
-}
-
-void TalComponent::buttonClicked (Button* caller)
-{
-    TalCore* const filter = getFilter();
+	if (caller == speedFactorComboBox) filter->setParameterNotifyingHost(SPEEDFACTOR, float(speedFactorComboBox->getSelectedId()-1)/6.0f);
+	if (caller == filtertypeComboBox) filter->setParameterNotifyingHost(FILTERTYPE, float(filtertypeComboBox->getSelectedId()-1)/9.0f);
 }
 
 //==============================================================================
@@ -158,16 +147,16 @@ void TalComponent::updateParametersFromFilter()
     TalCore* const filter = getFilter();
 
     filter->getCallbackLock().enter();
-	float speedFactor = filter->getParameter(SPEEDFACTOR);
-	float filterType = filter->getParameter(FILTERTYPE);
+	float speedFactor = filter->getParameter(SPEEDFACTOR)*6.0f+1.0f;
+	float filterType = filter->getParameter(FILTERTYPE)*9.0f+1.0f;
 	float resonance = filter->getParameter(RESONANCE);
 	float volumeIn = filter->getParameter(VOLUMEIN);
 	float volumeOut = filter->getParameter(VOLUMEOUT);
 	float depth = filter->getParameter(DEPTH);
     filter->getCallbackLock().exit();
 
-    speedFactorComboBox->setSelectedId((int)speedFactor, true);
-    filtertypeComboBox->setSelectedId((int)filterType, true);
+    speedFactorComboBox->setSelectedId((int)speedFactor, dontSendNotification);
+    filtertypeComboBox->setSelectedId((int)filterType, dontSendNotification);
 
     resonanceKnob->setValue(resonance, dontSendNotification);
     volumeInKnob->setValue(volumeIn, dontSendNotification);

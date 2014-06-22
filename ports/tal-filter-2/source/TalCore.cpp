@@ -64,10 +64,8 @@ TalCore::TalCore()
     for (int i = 0; i < NUMPROGRAMS; i++) talPresets[i] = new TalPreset();
     curProgram = 0;
 
-    ProgramChunk *chunk = new ProgramChunk();
-    XmlDocument myDocument(chunk->getXmlChunk());
-    XmlElement* mainElement = myDocument.getDocumentElement();
-    setStateInformationFromXml(mainElement);
+    ProgramChunk chunk;
+    setStateInformationString(chunk.getXmlChunk());
     setCurrentProgram(curProgram);
 }
 
@@ -89,48 +87,55 @@ int TalCore::getNumParameters()
 
 float TalCore::getParameter (int index)
 {
-	if (index < NUMPARAM)
-		return talPresets[curProgram]->programData[index];
-	else
-		return 0;
+    if (index >= NUMPARAM)
+        return 0.0f;
+
+    float value = talPresets[curProgram]->programData[index];
+
+    switch (index)
+    {
+    case SPEEDFACTOR:
+        value = (value-1.0f)/6.0f;
+        break;
+    case FILTERTYPE:
+        value = (value-1.0f)/9.0f;
+        break;
+    }
+
+    return value;
 }
 
 void TalCore::setParameter (int index, float newValue)
 {
-	if (index < NUMPARAM)
-	{
-		switch(index)
-		{
-		case SPEEDFACTOR:
-            if (newValue < 1.0f)
-            {
-                newValue = newValue * 6.0f + 1.0f;
-            }
-			engine->setSpeedFactor((int)newValue);
-			break;
-		case FILTERTYPE:
-            if (newValue < 1.0f)
-            {
-                newValue = newValue * 9.0f + 1.0f;
-            }
-			engine->setFilterType((int)newValue);
-			break;
-		case RESONANCE:
-			engine->setResonance(newValue);
-			break;
-		case VOLUMEIN:
-			engine->setVolumeIn(newValue);
-			break;
-		case VOLUMEOUT:
-			engine->setVolumeOut(newValue);
-			break;
-		case DEPTH:
-			engine->setDepth(newValue);
-			break;
-		}
-		talPresets[curProgram]->programData[index] = newValue;
-		sendChangeMessage ();
-	}
+    if (index >= NUMPARAM)
+        return;
+
+    switch (index)
+    {
+    case SPEEDFACTOR:
+        if (! loadingProgram) newValue = newValue * 6.0f + 1.0f;
+        engine->setSpeedFactor((int)newValue);
+        break;
+    case FILTERTYPE:
+        if (! loadingProgram) newValue = newValue * 9.0f + 1.0f;
+        engine->setFilterType((int)newValue);
+        break;
+    case RESONANCE:
+        engine->setResonance(newValue);
+        break;
+    case VOLUMEIN:
+        engine->setVolumeIn(newValue);
+        break;
+    case VOLUMEOUT:
+        engine->setVolumeOut(newValue);
+        break;
+    case DEPTH:
+        engine->setDepth(newValue);
+        break;
+    }
+
+    talPresets[curProgram]->programData[index] = newValue;
+    sendChangeMessage ();
 }
 
 const String TalCore::getParameterName (int index)
@@ -225,12 +230,12 @@ void TalCore::processBlock (AudioSampleBuffer& buffer,
     // for each of our input channels, we'll attenuate its level by the
     // amount that our volume parameter is set to.
 	int numberOfChannels = getNumInputChannels();
-	int bufferSize = buffer.getNumSamples();
+	//int bufferSize = buffer.getNumSamples();
 
 	if (numberOfChannels == 2)
 	{
-		float *samples0 = buffer.getSampleData(0, 0);
-		float *samples1 = buffer.getSampleData(1, 0);
+		float *samples0 = buffer.getWritePointer(0, 0);
+		float *samples1 = buffer.getWritePointer(1, 0);
 
 		int samplePos = 0;
 		int numSamples = buffer.getNumSamples();
@@ -243,8 +248,8 @@ void TalCore::processBlock (AudioSampleBuffer& buffer,
 	}
 	if (numberOfChannels == 1)
 	{
-		float *samples0 = buffer.getSampleData(0, 0);
-		float *samples1 = buffer.getSampleData(0, 0);
+		float *samples0 = buffer.getWritePointer(0, 0);
+		float *samples1 = buffer.getWritePointer(0, 0);
 
 		int samplePos = 0;
 		int numSamples = buffer.getNumSamples();
@@ -404,10 +409,10 @@ void TalCore::setCurrentProgram (int index)
 
         this->engine->setPoints(talPresets[index]->getPoints());
 
+                loadingProgram = true;
 		for (int i = 0; i < NUMPARAM; i++)
-		{
 			this->setParameter(i, talPresets[index]->programData[i]);
-        }
+                loadingProgram = false;
 
 		sendChangeMessage ();
 	}

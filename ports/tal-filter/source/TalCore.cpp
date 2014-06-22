@@ -112,40 +112,41 @@ float TalCore::getParameter (int index)
 
 void TalCore::setParameter (int index, float newValue)
 {
-	if (index < NUMPARAM)
-	{
-		switch(index)
-		{
-		case LFORATE:
-			engine->setSync((int)talPresets[curProgram]->programData[LFOSYNC], newValue);
-			break;
-		case FILTERTYPE:
-			if (! loadingProgram) newValue = newValue * 7.0f + 1.0f;
-			break;
-		case LFOWAVEFORM:
-			if (! loadingProgram) newValue = newValue * 6.0f + 1.0f;
-			break;
-		case LFOSYNC:
-			if (! loadingProgram) newValue = newValue * 19.0f + 1.0f;
-			engine->setSync((int)newValue, talPresets[curProgram]->programData[LFORATE]);
-			break;
-		case VOLUME:
-			engine->setVolume(newValue);
-			break;
-		case INPUTDRIVE:
-			engine->setInputDrive(newValue);
-			break;
-		case ENVELOPEINTENSITY:
-			engine->setEnvelopeAmount(newValue);
-			break;
-		case LFOINTENSITY:
-			engine->setLfoAmount(newValue);
-			break;
-		}
-		params[index] = newValue;
-		talPresets[curProgram]->programData[index] = newValue;
-		sendChangeMessage ();
-	}
+    if (index >= NUMPARAM)
+        return;
+
+    switch (index)
+    {
+    case LFORATE:
+        engine->setSync((int)talPresets[curProgram]->programData[LFOSYNC], newValue);
+        break;
+    case FILTERTYPE:
+        if (! loadingProgram) newValue = newValue * 7.0f + 1.0f;
+        break;
+    case LFOWAVEFORM:
+        if (! loadingProgram) newValue = newValue * 6.0f + 1.0f;
+        break;
+    case LFOSYNC:
+        if (! loadingProgram) newValue = newValue * 19.0f + 1.0f;
+        engine->setSync((int)newValue, talPresets[curProgram]->programData[LFORATE]);
+        break;
+    case VOLUME:
+        engine->setVolume(newValue);
+        break;
+    case INPUTDRIVE:
+        engine->setInputDrive(newValue);
+        break;
+    case ENVELOPEINTENSITY:
+        engine->setEnvelopeAmount(newValue);
+        break;
+    case LFOINTENSITY:
+        engine->setLfoAmount(newValue);
+        break;
+    }
+
+    params[index] = newValue;
+    talPresets[curProgram]->programData[index] = newValue;
+    sendChangeMessage ();
 }
 
 const String TalCore::getParameterName (int index)

@@ -52,7 +52,7 @@ public:
         startTimer(20);
 	}
 
-    ~EnvelopeEditorView()
+    ~EnvelopeEditorView() override
     {
         stopTimer();
         deleteAllChildren();
@@ -75,7 +75,7 @@ public:
         this->splineColor = splineColor;
     }
 
-    void timerCallback()
+    void timerCallback() override
     {
         EnvelopeEditor *envelopeEditor = this->filter->getEnvelopeEditor();
         if (this->oldPhase != envelopeEditor->getPhase() || envelopeEditor->isDirty())
@@ -85,7 +85,7 @@ public:
         }
     }
 
-    void paint(Graphics& g)
+    void paint(Graphics& g) override
     {
         EnvelopeEditor *envelopeEditor = this->filter->getEnvelopeEditor();
         this->paintBackground(g, envelopeEditor);
@@ -273,7 +273,7 @@ public:
         return false;
     }
 
-    void mouseDoubleClick(const MouseEvent &e)
+    void mouseDoubleClick(const MouseEvent &e) override
     {
         EnvelopeEditor *envelopeEditor = this->filter->getEnvelopeEditor();
         SplinePoint *selectedPoint = envelopeEditor->getSelectedSplinePoint();
@@ -288,7 +288,7 @@ public:
         }
     }
 
-    void mouseDrag(const MouseEvent &e)
+    void mouseDrag(const MouseEvent &e) override
     {
         EnvelopeEditor *envelopeEditor = this->filter->getEnvelopeEditor();
         SplinePoint *selectedPoint = envelopeEditor->getSelectedSplinePoint();
@@ -352,7 +352,7 @@ public:
         }
     }
 
-    void mouseExit(const MouseEvent &e)
+    void mouseExit(const MouseEvent &e) override
     {
         EnvelopeEditor *envelopeEditor = this->filter->getEnvelopeEditor();
         envelopeEditor->deselect();

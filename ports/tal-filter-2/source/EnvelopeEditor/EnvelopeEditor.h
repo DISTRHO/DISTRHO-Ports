@@ -79,7 +79,7 @@ public:
         startTimer(TIMER_INTERVALL);
     }
 
-    ~EnvelopeEditor()
+    ~EnvelopeEditor() override
     {
         stopTimer();
         this->splineDataBuffer.clear();
@@ -233,7 +233,7 @@ public:
         this->startTimer(TIMER_INTERVALL);
     }
 
-    void timerCallback()
+    void timerCallback() override
     {
         if (this->dirty)
         {

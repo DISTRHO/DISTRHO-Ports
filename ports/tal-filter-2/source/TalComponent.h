@@ -39,26 +39,24 @@
 class TalComponent   : public AudioProcessorEditor,
                           public ChangeListener,
                           public SliderListener,
-						  public ComboBoxListener,
-						  public ButtonListener
+						  public ComboBoxListener
 {
 public:
     TalComponent(TalCore* const ownerFilter);
-    ~TalComponent();
+    ~TalComponent() override;
 
     ComboBox* addComboBox(int x, int y, int width, TalCore* const ownerFilter, int parameter);
     FilmStripKnob* addNormalKnob(int x, int y, TalCore* const ownerFilter, const Image knobImage, int numOfFrames, const int parameter);
 
-    void sliderDragStarted (Slider* slider);
-    void sliderDragEnded (Slider* slider);
+    void sliderDragStarted (Slider* slider) override;
+    void sliderDragEnded (Slider* slider) override;
 
-    void changeListenerCallback (ChangeBroadcaster* source);
+    void changeListenerCallback (ChangeBroadcaster* source) override;
 
-    void sliderValueChanged (Slider*);
-    void comboBoxChanged (ComboBox*);
+    void sliderValueChanged (Slider*) override;
+    void comboBoxChanged (ComboBox*) override;
 
-    void buttonClicked (Button *);
-    void paint (Graphics& g);
+    void paint (Graphics& g) override;
 
     static const char* bmp00128_png;
     static const int bmp00128_pngSize;
@@ -78,10 +76,7 @@ private:
     FilmStripKnob* volumeInKnob;
     FilmStripKnob* volumeOutKnob;
 
-    TooltipWindow tooltipWindow;
-
     Label *versionLabel;
-    HyperlinkButton *hyperlinkButtoon;
 
     void updateParametersFromFilter();
 
