@@ -24,11 +24,11 @@ lv2: libs
 	$(MAKE) -C cabbage/LV2-fx
 	$(MAKE) -C cabbage/LV2-ins
 	$(MAKE) -C cabbage/LV2-midi
-# 	$(MAKE) -C drowaudio-distortion/LV2
-# 	$(MAKE) -C drowaudio-distortionshaper/LV2
-# 	$(MAKE) -C drowaudio-flanger/LV2
-# 	$(MAKE) -C drowaudio-reverb/LV2
-# 	$(MAKE) -C drowaudio-tremolo/LV2
+	$(MAKE) -C drowaudio-distortion/LV2
+	$(MAKE) -C drowaudio-distortionshaper/LV2
+	$(MAKE) -C drowaudio-flanger/LV2
+	$(MAKE) -C drowaudio-reverb/LV2
+	$(MAKE) -C drowaudio-tremolo/LV2
 # 	$(MAKE) -C drumsynth/LV2
 # 	$(MAKE) -C eqinox/LV2
 	$(MAKE) -C juce-demo-plugin/LV2
@@ -55,11 +55,11 @@ vst: libs
 	$(MAKE) -C cabbage/VST-fx
 	$(MAKE) -C cabbage/VST-ins
 	$(MAKE) -C cabbage/VST-midi
-# 	$(MAKE) -C drowaudio-distortion/VST
-# 	$(MAKE) -C drowaudio-distortionshaper/VST
-# 	$(MAKE) -C drowaudio-flanger/VST
-# 	$(MAKE) -C drowaudio-reverb/VST
-# 	$(MAKE) -C drowaudio-tremolo/VST
+	$(MAKE) -C drowaudio-distortion/VST
+	$(MAKE) -C drowaudio-distortionshaper/VST
+	$(MAKE) -C drowaudio-flanger/VST
+	$(MAKE) -C drowaudio-reverb/VST
+	$(MAKE) -C drowaudio-tremolo/VST
 # 	$(MAKE) -C drumsynth/VST
 # 	$(MAKE) -C eqinox/VST
 	$(MAKE) -C juce-demo-plugin/VST
