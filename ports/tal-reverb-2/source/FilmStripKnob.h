@@ -16,7 +16,7 @@ public:
 		valueTextHeight = 10;
 	}
 
-	void paint(Graphics& g)
+	void paint(Graphics& g) override
 	{
 		int value = (getValue() - getMinimum()) / (getMaximum() - getMinimum()) * (numFrames_ - 1);
 		if(isHorizontal_) {
@@ -30,7 +30,7 @@ public:
 		g.setColour(Colour((const juce::uint8)10, (const juce::uint8)10, (const juce::uint8)10));
 		g.fillRoundedRectangle(0, getWidth() + 6 - 16, getWidth(), valueTextHeight + 4, 6.0f);
 
-		g.setColour(Colour((const juce::uint8)200, (const juce::uint8)200, (const juce::uint8)200));	
+		g.setColour(Colour((const juce::uint8)200, (const juce::uint8)200, (const juce::uint8)200));
 
 		g.setFont(12.0f);
 		if (!customValueText)

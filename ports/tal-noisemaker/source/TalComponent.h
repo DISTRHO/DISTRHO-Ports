@@ -65,30 +65,27 @@ class TalComponent   : public AudioProcessorEditor,
 {
 public:
     TalComponent(TalCore* const ownerFilter);
-    ~TalComponent();
+    ~TalComponent() override;
 
     //==============================================================================
     /** Our demo filter is a ChangeBroadcaster, and will call us back when one of
         its parameters changes.
     */
-    void changeListenerCallback (ChangeBroadcaster* source);
-    void sliderValueChanged (Slider*);
+    void changeListenerCallback (ChangeBroadcaster* source) override;
+    void sliderValueChanged (Slider*) override;
 
-	void sliderDragStarted (Slider* slider);
-	void sliderDragEnded (Slider* slider);
+	void sliderDragStarted (Slider* slider) override;
+	void sliderDragEnded (Slider* slider) override;
 
-	void buttonClicked (Button *);
-    void handleClickedTabs (Button* caller);
+	void buttonClicked (Button *) override;
+    void handleClickedTabs (Button* caller) override;
 
-    void comboBoxChanged(ComboBox* comboBox);
+    void comboBoxChanged(ComboBox* comboBox) override;
 
     //==============================================================================
     /** Standard Juce paint callback. */
-    void paint (Graphics& g);
-    void resized();
-
-    /** Standard Juce resize callback. */
-    //void resized();
+    void paint (Graphics& g) override;
+    void resized() override;
 
     static const char* bmp00128_png;
     static const int bmp00128_pngSize;
@@ -128,20 +125,20 @@ private:
     AccordeonTab *controlAccordeonTab;
     LogoPanel *logoPanel;
 
-    EnvelopeEditorView *envelopeEditorView; 
+    EnvelopeEditorView *envelopeEditorView;
 
 	FilmStripKnob *volumeKnob;
 
     TalComboBox *filtertypeTalComboBox;
 	FilmStripKnob *cutoffKnob;
-	FilmStripKnob *resonanceKnob; 
-	FilmStripKnob *filterContourKnob; 
-	FilmStripKnob *keyfollowKnob; 
+	FilmStripKnob *resonanceKnob;
+	FilmStripKnob *filterContourKnob;
+	FilmStripKnob *keyfollowKnob;
 
-	FilmStripKnob *osc1VolumeKnob; 
-	FilmStripKnob *osc2VolumeKnob; 
-	FilmStripKnob *osc3VolumeKnob; 
-	FilmStripKnob *portamentoKnob; 
+	FilmStripKnob *osc1VolumeKnob;
+	FilmStripKnob *osc2VolumeKnob;
+	FilmStripKnob *osc3VolumeKnob;
+	FilmStripKnob *portamentoKnob;
 
 	TalComboBox *osc1WaveformTalComboBox;
 	TalComboBox *osc2WaveformTalComboBox;
@@ -152,15 +149,15 @@ private:
 	FilmStripKnob *osc1FineTuneKnob;
 	FilmStripKnob *osc2FineTuneKnob;
 
-	ImageSlider *filterAttackKnob; 
-	ImageSlider *filterDecayKnob; 
-	ImageSlider *filterSustainKnob; 
+	ImageSlider *filterAttackKnob;
+	ImageSlider *filterDecayKnob;
+	ImageSlider *filterSustainKnob;
 	ImageSlider *filterReleaseKnob;
 
-	ImageSlider *ampAttackKnob; 
-	ImageSlider *ampDecayKnob; 
-	ImageSlider *ampSustainKnob; 
-	ImageSlider *ampReleaseKnob; 
+	ImageSlider *ampAttackKnob;
+	ImageSlider *ampDecayKnob;
+	ImageSlider *ampSustainKnob;
+	ImageSlider *ampReleaseKnob;
 
     ImageSlider *velocityVolumeKnob;
     ImageSlider *velocityContourKnob;
@@ -185,7 +182,7 @@ private:
 
 	FilmStripKnob *lfo1RateKnob;
 	FilmStripKnob *lfo2RateKnob;
-	
+
 	FilmStripKnob *lfo1AmountKnob;
 	FilmStripKnob *lfo2AmountKnob;
 
@@ -244,18 +241,14 @@ private:
     ImageToggleButton *saveButton;
 
 	AudioUtils audioUtils;
-    TooltipWindow tooltipWindow;
-
-    HyperlinkButton *hyperlinkButtoon;
 
     void updateParametersFromFilter();
 	FilmStripKnob* addNormalKnob(Component *component, int x, int y, TalCore* const ownerFilter, const Image knobImage, int numOfFrames, const int parameter);
-	ImageToggleButton* addNormalButton(Component *component, int x, int y, TalCore* const ownerFilter, const Image buttonImage, bool isKickButton, int parameter);	
+	ImageToggleButton* addNormalButton(Component *component, int x, int y, TalCore* const ownerFilter, const Image buttonImage, bool isKickButton, int parameter);
 	ImageSlider* addSlider(Component *component, int x, int y, TalCore* const ownerFilter, const Image sliderImage, int height, int parameter);
 	TalComboBox* addTalComboBox(Component *component, int x, int y, int width, TalCore* const ownerFilter, int parameter);
 
     void updateInfo(Slider* caller);
-	void setTooltip(Slider* slider);
 
     // handy wrapper method to avoid having to cast the filter to a DemoJuceFilter
     // every time we need it..

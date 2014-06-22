@@ -16,7 +16,7 @@ governing rights and limitations.
 
 You should have received a copy of the GPL along with this
 program. If not, go to http://www.gnu.org/licenses/gpl.html
-or write to the Free Software Foundation, Inc.,  
+or write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 ==============================================================================
 */
@@ -35,12 +35,7 @@ public:
         startTimer(20);
     }
 
-    ~PeakLed()
-    {
-        deleteAllChildren();
-    }
-
-    void paint(Graphics& g)
+    void paint(Graphics& g) override
     {
         int value = 0;
 
@@ -52,7 +47,7 @@ public:
         g.drawImage(filmStrip, 0, 0, getWidth(), getHeight(), 0, value * frameHeight, frameWidth, frameHeight);
     }
 
-    void timerCallback()
+    void timerCallback() override
     {
         bool clipps = ownerFilter->doesClip();
 
@@ -70,5 +65,5 @@ private:
 
     TalCore* ownerFilter;
 
-    bool ledEnabled; 
+    bool ledEnabled;
 };

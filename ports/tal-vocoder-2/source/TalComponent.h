@@ -69,29 +69,29 @@ public:
         safe to assume that the filter won't be deleted before this object is.
     */
     TalComponent(TalCore* const ownerFilter);
-    ~TalComponent();
+    ~TalComponent() override;
 
     //==============================================================================
     /** Our demo filter is a ChangeBroadcaster, and will call us back when one of
         its parameters changes.
     */
-    void changeListenerCallback (ChangeBroadcaster* processor);
+    void changeListenerCallback (ChangeBroadcaster* processor) override;
 
-    void sliderValueChanged (Slider*);
-	void buttonClicked (Button *);
-    void comboBoxChanged(ComboBox* comboBox);
+    void sliderValueChanged (Slider*) override;
+    void buttonClicked (Button *) override;
+    void comboBoxChanged(ComboBox* comboBox) override;
 
-	void sliderDragStarted (Slider* slider);
-	void sliderDragEnded (Slider* slider);
+    void sliderDragStarted (Slider* slider) override;
+    void sliderDragEnded (Slider* slider) override;
 
-    TalCore* getProcessor() const      
-    { 
-        return static_cast <TalCore*> (getAudioProcessor()); 
+    TalCore* getProcessor() const
+    {
+        return static_cast <TalCore*> (getAudioProcessor());
     }
 
     //==============================================================================
     /** Standard Juce paint callback. */
-    void paint (Graphics& g);
+    void paint (Graphics& g) override;
 
     static const char* electronichighwaysign;
     static const int electronichighwaysignSize = 10309;
@@ -130,7 +130,7 @@ private:
     FilmStripKnob *harmonicsKnob;
 
     FilmStripKnob *oscTransposeKnob;
-    
+
     FilmStripKnob *portamentoKnob;
     FilmStripKnob *tuneKnob;
     FilmStripKnob *envelopeReleaseKnob;
@@ -166,19 +166,15 @@ private:
 
 	Label *versionLabel;
 	Label *infoLabel;
-    HyperlinkButton *hyperlinkButton;
 
 	AudioUtils audioUtils;
-    TooltipWindow tooltipWindow;
 
     void updateParametersFromFilter();
 
     FilmStripKnob* addNormalKnob(Component *component, int x, int y, TalCore* const ownerFilter, const Image knobImage, int numOfFrames, const int parameter);
-	ImageToggleButton* addNormalButton(Component *component, int x, int y, TalCore* const ownerFilter, const Image buttonImage, bool isKickButton, int parameter);	
+	ImageToggleButton* addNormalButton(Component *component, int x, int y, TalCore* const ownerFilter, const Image buttonImage, bool isKickButton, int parameter);
 	ImageSlider* addSlider(Component *component, int x, int y, TalCore* const ownerFilter, const Image sliderImage, int height, int parameter);
-    TalComboBox* addTalComboBox(Component *component, int x, int y, int width, TalCore* const ownerFilter, int parameter); 
-    
-	void setTooltip(Slider* slider);
+    TalComboBox* addTalComboBox(Component *component, int x, int y, int width, TalCore* const ownerFilter, int parameter);
 };
 
 

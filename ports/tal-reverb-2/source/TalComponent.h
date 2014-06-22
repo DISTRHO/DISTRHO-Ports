@@ -66,27 +66,22 @@ public:
     */
     TalComponent(TalCore* const ownerFilter);
 
-
-
     /** Destructor. */
-    ~TalComponent();
+    ~TalComponent() override;
 
     //==============================================================================
     /** Our demo filter is a ChangeBroadcaster, and will call us back when one of
         its parameters changes.
     */
-    void changeListenerCallback (ChangeBroadcaster* source);
+    void changeListenerCallback (ChangeBroadcaster* source) override;
 
-    void sliderValueChanged (Slider*);
+    void sliderValueChanged (Slider*) override;
 
-	void buttonClicked (Button *);
+    void buttonClicked (Button *) override;
 
     //==============================================================================
     /** Standard Juce paint callback. */
-    void paint (Graphics& g);
-
-    /** Standard Juce resize callback. */
-    //void resized();
+    void paint (Graphics& g) override;
 
     static const char* bmp00128_png;
     static const int bmp00128_pngSize;
@@ -105,21 +100,21 @@ public:
 
 private:
     //==============================================================================
-	FilmStripKnob *decayTimeKnob; 
+	FilmStripKnob *decayTimeKnob;
 	FilmStripKnob *preDelayKnob;
 
 
-	FilmStripKnob *lowShelfFrequencyKnob; 
-	FilmStripKnob *highShelfFrequencyKnob; 
+	FilmStripKnob *lowShelfFrequencyKnob;
+	FilmStripKnob *highShelfFrequencyKnob;
 	FilmStripKnob *peakFrequencyKnob;
 
-	FilmStripKnob *lowShelfGainKnob; 
-	FilmStripKnob *highShelfGainKnob; 
+	FilmStripKnob *lowShelfGainKnob;
+	FilmStripKnob *highShelfGainKnob;
 	FilmStripKnob *peakGainKnob;
-	
-	FilmStripKnob *stereoWithKnob; 
 
-	ImageSlider *drySlider; 
+	FilmStripKnob *stereoWithKnob;
+
+	ImageSlider *drySlider;
 	ImageSlider *wetSlider;
 
 	ImageToggleButton *realStereoModeButton;
@@ -127,7 +122,6 @@ private:
 	Label *versionLabel;
 
 	AudioUtils audioUtils;
-    TooltipWindow tooltipWindow;
 
     void updateParametersFromFilter();
 	FilmStripKnob* addNormalKnob(int x, int y, TalCore* const ownerFilter, Image knobImage, const int parameter);

@@ -16,7 +16,7 @@
 
 	You should have received a copy of the GPL along with this
 	program. If not, go to http://www.gnu.org/licenses/gpl.html
-	or write to the Free Software Foundation, Inc.,  
+	or write to the Free Software Foundation, Inc.,
 	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 	==============================================================================
  */
@@ -29,7 +29,7 @@
 class AccordeonTab : public Button
 {
 private:
-    int tabHeight; 
+    int tabHeight;
 
     Image image;
     int startY;
@@ -47,11 +47,6 @@ public:
        this->setBufferedToImage(true);
 	}
 
-    ~AccordeonTab()
-    {
-        deleteAllChildren();
-    }
-
     void setTabY(int y, bool refresh)
     {
         if (y != this->getY() || getTotalHeight() != getWidth() || refresh)
@@ -60,7 +55,7 @@ public:
         }
     }
 
-    void paintButton(Graphics& g, bool isMouseOverButton, bool isButtonDown)
+    void paintButton(Graphics& g, bool isMouseOverButton, bool isButtonDown) override
     {
         g.drawImage (image,
                      0, 0, image.getWidth(), this->getTotalHeight(),
@@ -94,7 +89,7 @@ public:
         return getToggleState();
     }
 
-	void mouseDown(const MouseEvent &e)
+    void mouseDown(const MouseEvent &e) override
     {
         if (e.getPosition().getY() < this->tabHeight)
         {

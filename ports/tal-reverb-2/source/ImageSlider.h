@@ -23,7 +23,7 @@ public:
 		this->setSliderSnapsToMousePosition(false);
 	}
 
-	void paint(Graphics& g)
+	void paint(Graphics& g) override
 	{
 		double value = (getValue() - getMinimum()) / (getMaximum() - getMinimum());
 		g.drawImage(imageKnob, 0, (1.0f - value) * length, frameWidth, frameHeight,
@@ -32,7 +32,7 @@ public:
 		g.setColour(Colour((const juce::uint8)10, (const juce::uint8)10, (const juce::uint8)10));
 		g.fillRoundedRectangle(8, length + frameHeight - 14, getWidth() - 16, valueTextHeight + 4, 6.0f);
 
-		g.setColour(Colour((const juce::uint8)200, (const juce::uint8)200, (const juce::uint8)200));	
+		g.setColour(Colour((const juce::uint8)200, (const juce::uint8)200, (const juce::uint8)200));
 
 		g.setFont(12.0f);
 		if (!customValueText)

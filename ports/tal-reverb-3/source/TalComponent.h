@@ -68,22 +68,20 @@ public:
     */
     TalComponent(TalCore* const ownerFilter);
 
-
-
     /** Destructor. */
-    ~TalComponent();
+    ~TalComponent() override;
 
     //==============================================================================
     /** Our demo filter is a ChangeBroadcaster, and will call us back when one of
         its parameters changes.
     */
-    void changeListenerCallback (ChangeBroadcaster* source);
+    void changeListenerCallback (ChangeBroadcaster* source) override;
 
-    void sliderValueChanged (Slider*);
-	void buttonClicked (Button *);
+    void sliderValueChanged (Slider*) override;
+	void buttonClicked (Button *) override;
 
-	void sliderDragStarted (Slider* slider);
-	void sliderDragEnded (Slider* slider);
+	void sliderDragStarted (Slider* slider) override;
+	void sliderDragEnded (Slider* slider) override;
 
 
     //==============================================================================
@@ -114,15 +112,15 @@ private:
     TalMeter* talMeter;
     TalSplashScreen *splashScreen;
 
-	ImageSlider *decayTimeSlider; 
+	ImageSlider *decayTimeSlider;
 	ImageSlider *preDelaySlider;
 
-	ImageSlider *lowShelfGainSlider; 
-	ImageSlider *highShelfGainSlider; 
-	
-	ImageSlider *stereoWidthSlider; 
+	ImageSlider *lowShelfGainSlider;
+	ImageSlider *highShelfGainSlider;
 
-	ImageSlider *drySlider; 
+	ImageSlider *stereoWidthSlider;
+
+	ImageSlider *drySlider;
 	ImageSlider *wetSlider;
 
 	ImageToggleButton *realStereoModeButton;
@@ -130,13 +128,11 @@ private:
 
 	Label *versionLabel;
 	Label *infoLabel;
-    HyperlinkButton *hyperlinkButton;
 
 	AudioUtils audioUtils;
-    TooltipWindow tooltipWindow;
 
     void updateParametersFromFilter();
-	ImageToggleButton* addNormalButton(Component *component, int x, int y, TalCore* const ownerFilter, const Image buttonImage, bool isKickButton, int parameter);	
+	ImageToggleButton* addNormalButton(Component *component, int x, int y, TalCore* const ownerFilter, const Image buttonImage, bool isKickButton, int parameter);
 	ImageSlider* addSlider(Component *component, int x, int y, TalCore* const ownerFilter, const Image sliderImage, int height, int parameter);
     void updateInfo(Slider* caller);
 	void setTooltip(Slider* slider);

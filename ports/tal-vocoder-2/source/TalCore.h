@@ -49,63 +49,63 @@ class TalCore  : public AudioProcessor,
 public:
     //==============================================================================
     TalCore();
-    ~TalCore();
+    ~TalCore() override;
 
     //==============================================================================
-    void prepareToPlay (double sampleRate, int samplesPerBlock);
-    void releaseResources();
+    void prepareToPlay (double sampleRate, int samplesPerBlock) override;
+    void releaseResources() override;
 
-	void processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages);
+    void processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages) override;
 
     //==============================================================================
-    bool hasEditor() const                  { return true; }
-    AudioProcessorEditor* createEditor();
+    bool hasEditor() const override                  { return true; }
+    AudioProcessorEditor* createEditor() override;
 
     // vst
-    const String getName() const;
+    const String getName() const override;
 
-    int getNumParameters();
+    int getNumParameters() override;
 
-    float getParameter (int index);
-    void setParameter (int index, float newValue);
+    float getParameter (int index) override;
+    void setParameter (int index, float newValue) override;
 
-    const String getParameterName (int index);
-    const String getParameterText (int index);
+    const String getParameterName (int index) override;
+    const String getParameterText (int index) override;
 
-    const String getInputChannelName (int channelIndex) const;
-    const String getOutputChannelName (int channelIndex) const;
-    bool isInputChannelStereoPair (int index) const;
-    bool isOutputChannelStereoPair (int index) const;
+    const String getInputChannelName (int channelIndex) const override;
+    const String getOutputChannelName (int channelIndex) const override;
+    bool isInputChannelStereoPair (int index) const override;
+    bool isOutputChannelStereoPair (int index) const override;
 
-    bool acceptsMidi() const;
-    bool producesMidi() const;
+    bool acceptsMidi() const override;
+    bool producesMidi() const override;
 
-    bool silenceInProducesSilenceOut() const { return false; }
-    double getTailLengthSeconds() const { return 0.0; }
+    bool silenceInProducesSilenceOut() const override { return true; }
+    double getTailLengthSeconds() const override { return 0.0; }
 
-    bool doesClip();
+    bool doesClip() override;
 
     // vst preset handling
-    int getNumPrograms();
-    int getCurrentProgram();
-    void setCurrentProgram (int index);
-    const String getProgramName (int index);
-    void changeProgramName (int index, const String& newName);
+    int getNumPrograms() override;
+    int getCurrentProgram() override;
+    void setCurrentProgram (int index) override;
+    const String getProgramName (int index) override;
+    void changeProgramName (int index, const String& newName) override;
 
     // preset chunk save load
-	void getStateInformation (MemoryBlock& destData);
-	void getCurrentProgramStateInformation (MemoryBlock& destData);
-	void setStateInformation (const void* data, int sizeInBytes);
-	void setCurrentProgramStateInformation (const void* data, int sizeInBytes);
+	void getStateInformation (MemoryBlock& destData) override;
+	void getCurrentProgramStateInformation (MemoryBlock& destData) override;
+	void setStateInformation (const void* data, int sizeInBytes) override;
+	void setCurrentProgramStateInformation (const void* data, int sizeInBytes) override;
 
-    void setStateInformationFromXml(XmlElement* xmlState);
-    XmlElement* getCurrentProgramStateInformationAsXml();
+    void setStateInformationFromXml(XmlElement* xmlState) override;
+    XmlElement* getCurrentProgramStateInformationAsXml() override;
 
     void getXmlPrograms(XmlElement *programList, int programNumber);
     void setXmlPrograms(XmlElement *programList, int programNumber, float version);
 
-    String getStateInformationString ();
-    void setStateInformationString (const String& data);
+    String getStateInformationString () override;
+    void setStateInformationString (const String& data) override;
 
     // midi
     bool getNextEvent(MidiBuffer::Iterator *midiIterator, const int samplePos);

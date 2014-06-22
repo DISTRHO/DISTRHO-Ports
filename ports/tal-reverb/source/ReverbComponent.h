@@ -64,24 +64,19 @@ public:
     ReverbComponent(TalCore* const ownerFilter);
 
     /** Destructor. */
-    ~ReverbComponent();
+    ~ReverbComponent() override;
 
     //==============================================================================
     /** Our demo filter is a ChangeBroadcaster, and will call us back when one of
         its parameters changes.
     */
-    void changeListenerCallback (ChangeBroadcaster* source);
+    void changeListenerCallback (ChangeBroadcaster* source) override;
 
-    void sliderValueChanged (Slider*);
-
-	void buttonClicked (Button *);
+    void sliderValueChanged (Slider*) override;
 
     //==============================================================================
     /** Standard Juce paint callback. */
-    void paint (Graphics& g);
-
-    /** Standard Juce resize callback. */
-    //void resized();
+    void paint (Graphics& g) override;
 
     static const char* bmp00128_png;
     static const int bmp00128_pngSize;
@@ -101,22 +96,17 @@ public:
 private:
     //==============================================================================
     Image internalCachedBackgroundImage;
-	FilmStripKnob *roomSizeKnob; 
-	FilmStripKnob *preDelayKnob; 
-	FilmStripKnob *dampKnob; 
-	FilmStripKnob *lowPassKnob; 
-	FilmStripKnob *highPassKnob; 
-	FilmStripKnob *stereoWithKnob; 
+	FilmStripKnob *roomSizeKnob;
+	FilmStripKnob *preDelayKnob;
+	FilmStripKnob *dampKnob;
+	FilmStripKnob *lowPassKnob;
+	FilmStripKnob *highPassKnob;
+	FilmStripKnob *stereoWithKnob;
 
-	ImageSlider *drySlider; 
+	ImageSlider *drySlider;
 	ImageSlider *wetSlider;
 
 	Label *versionLabel;
-
-    //Slider* gainSlider;
-    //ResizableCornerComponent* resizer;
-    //ComponentBoundsConstrainer resizeLimits;
-    TooltipWindow tooltipWindow;
 
     void updateParametersFromFilter();
 

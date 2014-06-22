@@ -16,7 +16,7 @@
 
 	You should have received a copy of the GPL along with this
 	program. If not, go to http://www.gnu.org/licenses/gpl.html
-	or write to the Free Software Foundation, Inc.,  
+	or write to the Free Software Foundation, Inc.,
 	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 	==============================================================================
  */
@@ -39,7 +39,7 @@ public:
 		valueTextHeight = 10;
 	}
 
-	void paint(Graphics& g)
+	void paint(Graphics& g) override
 	{
 		int value = (int)((getValue() - getMinimum()) / (getMaximum() - getMinimum()) * (numFrames_ - 1));
 		if(isHorizontal_) {
@@ -53,7 +53,7 @@ public:
 		g.setColour(Colour((const juce::uint8)10, (const juce::uint8)10, (const juce::uint8)10));
 		g.fillRoundedRectangle(0.0f, (float)getWidth() + 6.0f - 16.0f, (float)getWidth(), valueTextHeight + 4.0f, 6.0f);
 
-		g.setColour(Colour((const juce::uint8)200, (const juce::uint8)200, (const juce::uint8)200));	
+		g.setColour(Colour((const juce::uint8)200, (const juce::uint8)200, (const juce::uint8)200));
 
 		g.setFont(12.0f);
 		if (!customValueText)

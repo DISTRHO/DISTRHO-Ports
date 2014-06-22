@@ -16,7 +16,7 @@
 
 	You should have received a copy of the GPL along with this
 	program. If not, go to http://www.gnu.org/licenses/gpl.html
-	or write to the Free Software Foundation, Inc.,  
+	or write to the Free Software Foundation, Inc.,
 	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 	==============================================================================
  */
@@ -24,7 +24,7 @@
 class FilmStripKnob : public Slider
 {
 public:
-	FilmStripKnob(Image image, const int numFrames, const bool stripIsHorizontal, int index) 
+	FilmStripKnob(Image image, const int numFrames, const bool stripIsHorizontal, int index)
         : Slider(juce::String(index)),
 		filmStrip(image),
 		numFrames_(numFrames),
@@ -39,20 +39,15 @@ public:
         getProperties().set(Identifier("index"), index);
 	}
 
-    ~FilmStripKnob()
-    {
-        deleteAllChildren();
-    }
-
-	void paint(Graphics& g)
+	void paint(Graphics& g) override
 	{
 			int value = (int)((getValue() - getMinimum()) / (getMaximum() - getMinimum()) * (numFrames_ - 1));
-			if(isHorizontal_) 
+			if(isHorizontal_)
 			{
 				g.drawImage(filmStrip, 0, 0, getWidth(), getHeight(),
 					value * frameWidth, 0, frameWidth, frameHeight);
-			} 
-			else 
+			}
+			else
 			{
 				g.drawImage(filmStrip, 0, 0, getWidth(), getHeight(),
 					0, value * frameHeight, frameWidth, frameHeight);
