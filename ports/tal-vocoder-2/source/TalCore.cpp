@@ -67,18 +67,9 @@ TalCore::TalCore()
 	curProgram = 0;
 
 	// load factory presets
-	ProgramChunk *chunk = new ProgramChunk();
-	XmlDocument myDocument (chunk->getXmlChunk());
-	XmlElement* mainElement = myDocument.getDocumentElement();
-
-	MemoryBlock* destData = new MemoryBlock();
-	copyXmlToBinary(*mainElement, *destData);
-	setStateInformation(destData->getData(), destData->getSize());
+	ProgramChunk chunk;
+	setStateInformationString(chunk.getXmlChunk());
 	setCurrentProgram(curProgram);
-
-    delete chunk;
-    delete destData;
-    delete mainElement;
 
     nextMidiMessage = new MidiMessage(0xF0);
     midiMessage = new MidiMessage(0xF0);
@@ -333,7 +324,7 @@ void TalCore::processBlock (AudioSampleBuffer& buffer,
     // for each of our input channels, we'll attenuate its level by the
     // amount that our volume parameter is set to.
 	int numberOfChannels = getNumInputChannels();
-	int bufferSize = buffer.getNumSamples();
+	//int bufferSize = buffer.getNumSamples();
 
 	// midi buffer
     MidiBuffer::Iterator midiIterator(midiMessages);
@@ -341,8 +332,8 @@ void TalCore::processBlock (AudioSampleBuffer& buffer,
 
 	if (numberOfChannels == 2)
 	{
-		float *samples0 = buffer.getSampleData(0, 0);
-		float *samples1 = buffer.getSampleData(1, 0);
+		float *samples0 = buffer.getWritePointer(0, 0);
+		float *samples1 = buffer.getWritePointer(1, 0);
 
 		int samplePos = 0;
 		int numSamples = buffer.getNumSamples();
@@ -357,8 +348,8 @@ void TalCore::processBlock (AudioSampleBuffer& buffer,
 	}
 	if (numberOfChannels == 1)
 	{
-		float *samples0 = buffer.getSampleData(0, 0);
-		float *samples1 = buffer.getSampleData(0, 0);
+		float *samples0 = buffer.getWritePointer(0, 0);
+		float *samples1 = buffer.getWritePointer(0, 0);
 
 		int samplePos = 0;
 		int numSamples = buffer.getNumSamples();

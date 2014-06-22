@@ -76,18 +76,13 @@ TalComponent::TalComponent (TalCore* const ownerFilter) : AudioProcessorEditor (
 	this->infoLabel->setColour(Label::textColourId, Colour((juce::uint8)200, (juce::uint8)200, (juce::uint8)200, 1.0f));
 	addAndMakeVisible(this->infoLabel);
 
-    this->hyperlinkButton = new HyperlinkButton(T("Support TAL"), URL(T("http://kunz.corrupt.ch/?Support_us")));
-    this->hyperlinkButton->setFont(fontDigital, false, Justification::bottomLeft);
-	this->hyperlinkButton->setBounds(308, 201, 100, 20);
-    this->hyperlinkButton->setColour(HyperlinkButton::textColourId, Colour((juce::uint8)100, (juce::uint8)100, (juce::uint8)100, 1.0f));
-    addAndMakeVisible(this->hyperlinkButton);
-
     this->splashScreen = new TalSplashScreen(splashImage, 0, 0, 80, backgroundImage.getHeight());
     addAndMakeVisible(this->splashScreen);
 
-    setSize(backgroundImage.getWidth(), backgroundImage.getHeight());
-
+        panicButton->setToggleState(false, dontSendNotification);
 	this->updateParametersFromFilter();
+
+    setSize(backgroundImage.getWidth(), backgroundImage.getHeight());
 
     // register ourselves with the filter - it will use its ChangeBroadcaster base
     // class to tell us when something has changed, and this will call our changeListenerCallback()
@@ -109,7 +104,6 @@ FilmStripKnob* TalComponent::addNormalKnob(Component *component, int x, int y, T
 									 false,
                                      parameter));
     filmStripKnob->setBounds(x, y, knobImage.getWidth(), knobImage.getHeight() / numOfFrames);
-	filmStripKnob->setValue(ownerFilter->getParameter(parameter), dontSendNotification);
 	filmStripKnob->addListener(this);
 	return filmStripKnob;
 }
@@ -119,7 +113,6 @@ ImageToggleButton* TalComponent::addNormalButton(Component *component, int x, in
 	ImageToggleButton *imageToggleButton;
 	component->addAndMakeVisible(imageToggleButton = new ImageToggleButton("Toggle Button", buttonImage, false, isKickButton, parameter));
     imageToggleButton->setBounds(x, y, buttonImage.getWidth(), buttonImage.getHeight() / 2);
-	imageToggleButton->setToggleState(ownerFilter->getParameter(parameter) > 0.0f, false);
 	imageToggleButton->addListener(this);
 	return imageToggleButton;
 }
@@ -129,23 +122,8 @@ ImageSlider* TalComponent::addSlider(Component *component, int x, int y, TalCore
 	ImageSlider *imageSlider;
 	component->addAndMakeVisible(imageSlider = new ImageSlider(sliderImage, height, parameter));
 	imageSlider->setBounds(x, y, sliderImage.getWidth(), height + sliderImage.getHeight());
-	imageSlider->setValue(ownerFilter->getParameter(parameter), dontSendNotification);
 	imageSlider->addListener(this);
 	return imageSlider;
-}
-
-TalComboBox* TalComponent::addTalComboBox(Component *component, int x, int y, int width, TalCore* const ownerFilter, int parameter)
-{
-	TalComboBox *comboBox;
-	component->addAndMakeVisible(comboBox = new TalComboBox(parameter));
-	comboBox->setBounds(x, y, width, 20);
-	comboBox->setColour(TalComboBox::backgroundColourId, Colour((juce::uint8)8, (juce::uint8)11, (juce::uint8)58, 0.0f));
-	comboBox->setColour(TalComboBox::textColourId, Colour::greyLevel(1.0f));
-	comboBox->setColour(TalComboBox::buttonColourId, Colour((juce::uint8)8, (juce::uint8)11, (juce::uint8)58, 0.0f));
-	comboBox->setColour(TalComboBox::arrowColourId, Colour((juce::uint8)8, (juce::uint8)11, (juce::uint8)58, 0.0f));
-    comboBox->setSelectedId((int)ownerFilter->getParameter(parameter), true);
-    comboBox->addListener(this);
-	return comboBox;
 }
 
 //==============================================================================
@@ -205,19 +183,6 @@ void TalComponent::buttonClicked (Button* caller)
     {
         TalCore* const filter = getProcessor();
         filter->setParameterNotifyingHost(values["index"], (float)caller->getToggleState());
-    }
-}
-
-void TalComponent::comboBoxChanged(ComboBox* caller)
-{
-    TalComboBox* talCaller = (TalComboBox*)caller;
-
-    TalCore* const filter = getProcessor();
-    NamedValueSet values = talCaller->getProperties();
-    if (values.contains(Identifier("index")))
-    {
-        TalCore* const filter = getProcessor();
-        filter->setParameterNotifyingHost(values["index"], talCaller->getNormalizedSelectedId());
     }
 }
 
@@ -301,13 +266,13 @@ void TalComponent::updateParametersFromFilter()
     this->band09Slider->setValue(band09, dontSendNotification);
     this->band10Slider->setValue(band10, dontSendNotification);
 
-    this->inputModeButton->setToggleState(inputMode > 0.0f, false);
-    this->chorusButton->setToggleState(chorus > 0.0f, false);
-    this->polyModeButton->setToggleState(polyMode > 0.0f, false);
-    this->oscSyncButton->setToggleState(oscSync > 0.0f, false);
+    this->inputModeButton->setToggleState(inputMode > 0.0f, dontSendNotification);
+    this->chorusButton->setToggleState(chorus > 0.0f, dontSendNotification);
+    this->polyModeButton->setToggleState(polyMode > 0.0f, dontSendNotification);
+    this->oscSyncButton->setToggleState(oscSync > 0.0f, dontSendNotification);
 
     if (panic == 0.0f)
-    this->panicButton->setToggleState(false, false);
+    this->panicButton->setToggleState(false, dontSendNotification);
 }
 
 //==============================================================================

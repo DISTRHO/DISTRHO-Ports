@@ -37,7 +37,6 @@
 #include "./components/ImageSlider.h"
 #include "./components/ImageToggleButton.h"
 #include "./components/TalSplashScreen.h"
-#include "./components/talcombobox.h"
 #include "./components/PeakLed.h"
 
 #include "./Engine/audioutils.h"
@@ -58,8 +57,7 @@
 */
 class TalComponent   : public AudioProcessorEditor,
                           public SliderListener,
-						  public ButtonListener,
-                          public ComboBoxListener,
+                          public ButtonListener,
                           public ChangeListener
 {
 public:
@@ -79,7 +77,6 @@ public:
 
     void sliderValueChanged (Slider*) override;
     void buttonClicked (Button *) override;
-    void comboBoxChanged(ComboBox* comboBox) override;
 
     void sliderDragStarted (Slider* slider) override;
     void sliderDragEnded (Slider* slider) override;
@@ -174,7 +171,6 @@ private:
     FilmStripKnob* addNormalKnob(Component *component, int x, int y, TalCore* const ownerFilter, const Image knobImage, int numOfFrames, const int parameter);
 	ImageToggleButton* addNormalButton(Component *component, int x, int y, TalCore* const ownerFilter, const Image buttonImage, bool isKickButton, int parameter);
 	ImageSlider* addSlider(Component *component, int x, int y, TalCore* const ownerFilter, const Image sliderImage, int height, int parameter);
-    TalComboBox* addTalComboBox(Component *component, int x, int y, int width, TalCore* const ownerFilter, int parameter);
 };
 
 

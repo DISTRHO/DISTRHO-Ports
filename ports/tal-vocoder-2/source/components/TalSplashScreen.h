@@ -50,7 +50,7 @@ public:
 
 	void mouseDown(const MouseEvent &e) override
     {
-        this->setToggleState(!this->getToggleState(), true);
+        this->setToggleState(!this->getToggleState(), sendNotification);
         this->setCurrentBounds();
         repaint();
     }
