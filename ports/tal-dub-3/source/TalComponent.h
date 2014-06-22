@@ -76,7 +76,7 @@ public:
     /** Our demo filter is a ChangeBroadcaster, and will call us back when one of
         its parameters changes.
     */
-    void changeListenerCallback (ChangeBroadcaster* source override);
+    void changeListenerCallback (ChangeBroadcaster* source) override;
 
     void sliderValueChanged (Slider*) override;
     void comboBoxChanged (ComboBox*) override;
