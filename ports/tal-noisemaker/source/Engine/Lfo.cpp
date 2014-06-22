@@ -10,12 +10,12 @@ Implementation file for LFO.hpp
 #include <cmath>
 #include "Lfo.h"
 
-Lfo::Lfo(float samplerate) : samplerate(samplerate), phase(0), inc(0) {
-	setWaveform(0);   
-	setWaveform(1);   
-	setWaveform(2);   
-	setWaveform(3);   
-	setWaveform(4);   
+Lfo::Lfo(float samplerate_) : phase(0), inc(0), samplerate(samplerate_) {
+	setWaveform(0);
+	setWaveform(1);
+	setWaveform(2);
+	setWaveform(3);
+	setWaveform(4);
 	setRate(1.0f); //1Hz
 
 	noiseOsc= new OscNoise(samplerate);
@@ -35,7 +35,7 @@ float Lfo::tick(int waveform)
 {
 	freqWrap= false;
 
-	if (phase > 255.0f) 
+	if (phase > 255.0f)
     {
 		phase -= 255.0f;
 		freqWrap= true;
@@ -63,17 +63,17 @@ float Lfo::tick(int waveform)
     {
 		result = tableRec[i]*(1.0f-frac) + tableRec[i+1]*frac;
     }
-	else if (waveform == 4) 
+	else if (waveform == 4)
     {
 		// Random
-		if (freqWrap) 
+		if (freqWrap)
         {
 			randomValue = ((float)rand() / (float)RAND_MAX - 0.5f) * 2.0f;
 		}
 
 		result = randomValue;
-	} 
-    else 
+	}
+    else
     {
 		result = noiseOsc->getNextSample();
 	}
@@ -160,5 +160,5 @@ void Lfo::setWaveform(int index)
 		{
 			break;
 		}
-	} 
+	}
 }

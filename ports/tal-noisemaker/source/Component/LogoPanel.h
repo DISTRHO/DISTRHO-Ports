@@ -41,6 +41,11 @@ public:
        setPanelY(0);
 	}
 
+    ~LogoPanel() override
+    {
+        deleteAllChildren();
+    }
+
     void setPanelY(int y)
     {
         setBounds(0, y, image.getWidth(), height);

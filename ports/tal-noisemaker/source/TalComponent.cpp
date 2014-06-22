@@ -245,13 +245,8 @@ TalComponent::TalComponent (TalCore* const ownerFilter)
 	versionLabel->setColour(Label::textColourId, Colour((juce::uint8)100, (juce::uint8)100, (juce::uint8)100, 0.9f));
     this->logoPanel->addAndMakeVisible(versionLabel);
 
-    hyperlinkButtoon = new HyperlinkButton("Support TAL", URL("http://kunz.corrupt.ch/?Support_us"));
-	hyperlinkButtoon->setBounds(340, 15, 80, 20);
-    hyperlinkButtoon->setColour(HyperlinkButton::textColourId, Colour((juce::uint8)100, (juce::uint8)100, (juce::uint8)100, 0.9f));
-    this->logoPanel->addAndMakeVisible(hyperlinkButtoon);
-
     infoText = new Label("Info Text", "-");
-	infoText->setBounds(480, 30, 62, 20);
+    infoText->setBounds(480, 30, 62, 20);
     infoText->setJustificationType(juce::Justification::centred);
     infoText->setColour(Label::textColourId, Colour::greyLevel(0.8f));
     infoText->setColour(Label::backgroundColourId, Colour((juce::uint8)100, (juce::uint8)100, (juce::uint8)100, (juce::uint8)0));
@@ -263,15 +258,16 @@ TalComponent::TalComponent (TalCore* const ownerFilter)
     panicButton = addNormalButton(this->logoPanel, 620, 5, ownerFilter, buttonImage, true, PANIC);
     this->accordeonTabContainer->add(this->logoPanel);
 
+    this->setBufferedToImage(true);
+
+    this->updateParametersFromFilter();
+
+    ownerFilter->addChangeListener (this);
+
     this->envelopeEditorAccordeonTab->addListener (this);
     this->synth1AccordeonTab->addListener (this);
     this->synth2AccordeonTab->addListener (this);
     this->controlAccordeonTab->addListener (this);
-
-    this->setBufferedToImage(true);
-
-    ownerFilter->addChangeListener (this);
-	this->updateParametersFromFilter();
 
     this->accordeonTabContainer->resizeComponent();
     this->addAndMakeVisible(this->accordeonTabContainer);
@@ -294,7 +290,6 @@ FilmStripKnob* TalComponent::addNormalKnob(Component *component, int x, int y, T
 									 false,
                                      parameter));
     filmStripKnob->setBounds(x, y + this->synth1AccordeonTab->getTabHeight(), knobImage.getWidth(), knobImage.getHeight() / numOfFrames);
-	filmStripKnob->setValue(ownerFilter->getParameter(parameter), dontSendNotification);
 	filmStripKnob->addListener (this);
 	return filmStripKnob;
 }
@@ -304,7 +299,6 @@ ImageToggleButton* TalComponent::addNormalButton(Component *component, int x, in
 	ImageToggleButton *imageToggleButton;
 	component->addAndMakeVisible(imageToggleButton = new ImageToggleButton("Toggle Button", buttonImage, false, isKickButton, parameter));
     imageToggleButton->setBounds(x, y + this->synth1AccordeonTab->getTabHeight(), buttonImage.getWidth(), buttonImage.getHeight() / 2);
-	imageToggleButton->setToggleState(ownerFilter->getParameter(parameter) > 0.0f, false);
 	imageToggleButton->addListener(this);
 	return imageToggleButton;
 }
@@ -314,7 +308,6 @@ ImageSlider* TalComponent::addSlider(Component *component, int x, int y, TalCore
 	ImageSlider *imageSlider;
 	component->addAndMakeVisible(imageSlider = new ImageSlider(sliderImage, height, parameter));
 	imageSlider->setBounds(x, y + this->synth1AccordeonTab->getTabHeight(), /*sliderImage->getWidth()*/ 40, height + sliderImage.getHeight());
-	imageSlider->setValue(ownerFilter->getParameter(parameter), dontSendNotification);
 	imageSlider->addListener (this);
 	return imageSlider;
 }
@@ -328,7 +321,6 @@ TalComboBox* TalComponent::addTalComboBox(Component *component, int x, int y, in
 	comboBox->setColour(TalComboBox::textColourId, Colour::greyLevel(1.0f));
 	comboBox->setColour(TalComboBox::buttonColourId, Colour((juce::uint8)8, (juce::uint8)11, (juce::uint8)58, 0.0f));
 	comboBox->setColour(TalComboBox::arrowColourId, Colour((juce::uint8)8, (juce::uint8)11, (juce::uint8)58, 0.0f));
-    comboBox->setSelectedId((int)ownerFilter->getParameter(parameter), true);
     comboBox->addListener (this);
 	return comboBox;
 }
@@ -435,8 +427,7 @@ void TalComponent::updateInfo(Slider* caller)
     else if (caller == lfo1RateKnob || caller == lfo2RateKnob)
     {
         float isSync = false;
-        if (filter->getParameter(LFO1SYNC) > 0.0f && caller == lfo1RateKnob
-            || filter->getParameter(LFO2SYNC) > 0.0f && caller == lfo2RateKnob)
+        if ((filter->getParameter(LFO1SYNC) > 0.0f && caller == lfo1RateKnob) || (filter->getParameter(LFO2SYNC) > 0.0f && caller == lfo2RateKnob))
         {
             isSync = true;
         }
@@ -785,33 +776,33 @@ void TalComponent::updateParametersFromFilter()
     delayFeedbackKnob->setValue(delayFeedback, dontSendNotification);
 
 	// Buttons
-	oscSyncButton->setToggleState(oscSync, false);
-	lfo1SyncButton->setToggleState(lfo1Sync > 0, false);
-	lfo1KeyTriggerButton->setToggleState(lfo1KeyTrigger > 0, false);
-	lfo2SyncButton->setToggleState(lfo2Sync > 0, false);
-	lfo2KeyTriggerButton->setToggleState(lfo2KeyTrigger > 0, false);
-    chorus1Button->setToggleState(chorus1 > 0, false);
-    chorus2Button->setToggleState(chorus2 > 0, false);
+	oscSyncButton->setToggleState(oscSync, dontSendNotification);
+	lfo1SyncButton->setToggleState(lfo1Sync > 0, dontSendNotification);
+	lfo1KeyTriggerButton->setToggleState(lfo1KeyTrigger > 0, dontSendNotification);
+	lfo2SyncButton->setToggleState(lfo2Sync > 0, dontSendNotification);
+	lfo2KeyTriggerButton->setToggleState(lfo2KeyTrigger > 0, dontSendNotification);
+    chorus1Button->setToggleState(chorus1 > 0, dontSendNotification);
+    chorus2Button->setToggleState(chorus2 > 0, dontSendNotification);
 
-    delaySyncButton->setToggleState(delaySync > 0, false);
-    delayFactorLButton->setToggleState(delayFactorL > 0, false);
-    delayFactorRButton->setToggleState(delayFactorR > 0, false);
-    envelopeOneShotButton->setToggleState(envelopeOneShot > 0, false);
-    envelopeFixTempoButton->setToggleState(envelopeFixTempo > 0, false);
+    delaySyncButton->setToggleState(delaySync > 0, dontSendNotification);
+    delayFactorLButton->setToggleState(delayFactorL > 0, dontSendNotification);
+    delayFactorRButton->setToggleState(delayFactorR > 0, dontSendNotification);
+    envelopeOneShotButton->setToggleState(envelopeOneShot > 0, dontSendNotification);
+    envelopeFixTempoButton->setToggleState(envelopeFixTempo > 0, dontSendNotification);
 
 	// TalComboBox
-	voicesTalComboBox->setNormalizedSelectedId(voices, true);
-	portamentoModeTalComboBox->setNormalizedSelectedId(portamentoMode, true);
-	lfo1DestinationTalComboBox->setNormalizedSelectedId(lfo1Destination, true);
-	lfo2DestinationTalComboBox->setNormalizedSelectedId(lfo2Destination, true);
-	freeAdDestinationTalComboBox->setNormalizedSelectedId(freeAdDestination, true);
-	filtertypeTalComboBox->setNormalizedSelectedId(filtertype, true);
+	voicesTalComboBox->setNormalizedSelectedId(voices);
+	portamentoModeTalComboBox->setNormalizedSelectedId(portamentoMode);
+	lfo1DestinationTalComboBox->setNormalizedSelectedId(lfo1Destination);
+	lfo2DestinationTalComboBox->setNormalizedSelectedId(lfo2Destination);
+	freeAdDestinationTalComboBox->setNormalizedSelectedId(freeAdDestination);
+	filtertypeTalComboBox->setNormalizedSelectedId(filtertype);
 
-	osc1WaveformTalComboBox->setNormalizedSelectedId(osc1Waveform, true);
-	osc2WaveformTalComboBox->setNormalizedSelectedId(osc2Waveform, true);
+	osc1WaveformTalComboBox->setNormalizedSelectedId(osc1Waveform);
+	osc2WaveformTalComboBox->setNormalizedSelectedId(osc2Waveform);
 
-    envelopeEditorSpeedTalComboBox->setNormalizedSelectedId(envelopeEditorSpeed, true);
-    envelopeEditorDest1TalComboBox->setNormalizedSelectedId(envelopeEditorDest1, true);
+    envelopeEditorSpeedTalComboBox->setNormalizedSelectedId(envelopeEditorSpeed);
+    envelopeEditorDest1TalComboBox->setNormalizedSelectedId(envelopeEditorDest1);
 
     // Tabs
     synth1AccordeonTab->setExpanded(tab1Open > 0);

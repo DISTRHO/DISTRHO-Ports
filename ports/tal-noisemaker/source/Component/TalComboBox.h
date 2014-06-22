@@ -38,10 +38,10 @@ public:
         getProperties().set(Identifier("index"), index);
 	}
 
-    void setNormalizedSelectedId(float normalizedSelectedId, bool dontSendChangeMessage)
+    void setNormalizedSelectedId(float normalizedSelectedId)
     {
         int selectedId = audioUtils.calcComboBoxValue(normalizedSelectedId, index);
-        setSelectedId(selectedId, dontSendChangeMessage);
+        setSelectedId(selectedId, dontSendNotification);
     }
 
     float getNormalizedSelectedId()

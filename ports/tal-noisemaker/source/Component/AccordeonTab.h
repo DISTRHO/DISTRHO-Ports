@@ -47,6 +47,11 @@ public:
        this->setBufferedToImage(true);
 	}
 
+    ~AccordeonTab() override
+    {
+        deleteAllChildren();
+    }
+
     void setTabY(int y, bool refresh)
     {
         if (y != this->getY() || getTotalHeight() != getWidth() || refresh)
@@ -93,13 +98,13 @@ public:
     {
         if (e.getPosition().getY() < this->tabHeight)
         {
-            setToggleState(!getToggleState(), true);
+            setToggleState(!getToggleState(), sendNotification);
         }
     }
 
     void setExpanded(bool expanded)
     {
-        setToggleState(expanded, true);
+        setToggleState(expanded, sendNotification);
     }
 };
 #endif

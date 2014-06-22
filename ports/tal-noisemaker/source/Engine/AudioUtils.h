@@ -16,7 +16,7 @@
 
 	You should have received a copy of the GPL along with this
 	program. If not, go to http://www.gnu.org/licenses/gpl.html
-	or write to the Free Software Foundation, Inc.,  
+	or write to the Free Software Foundation, Inc.,
 	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 	==============================================================================
  */
@@ -27,12 +27,12 @@
 #include "Math.h"
 #include "Params.h"
 
-class AudioUtils 
+class AudioUtils
 {
 private:
 
 public:
-	AudioUtils() 
+	AudioUtils()
 	{
 	}
 
@@ -56,7 +56,7 @@ public:
 	float getLogScaledVolume(float inputValue, float maxValue)
 	{
 		return (expf(inputValue * maxValue * logf(20.0f)) - 1.0f) / 19.0f;
-	} 
+	}
 
 	// max value unscalled
 	float getLogScaledValue(float inputValue, float maxValue)
@@ -68,7 +68,7 @@ public:
 	float getLogScaledRate(float inputValue)
 	{
 		return (expf(0.2f + inputValue * 3.0f * logf(20.0f)) - 1.0f) / 19.0f;
-	} 
+	}
 
 	// max value unscalled
 	float getLogScaledValue(float inputValue)
@@ -164,7 +164,7 @@ public:
         return (int)(1.0f + value * 15.0f);
     }
 
-	inline float tanhApp(float x) 
+	inline float tanhApp(float x)
 	{
 		// Original
 		//return tanh(x);
@@ -186,7 +186,7 @@ public:
 	{
 		bool answer = true;
 		if (value == 0) value = 1;
-		for (int i = 2; i <= sqrtf((float)value) ; i++) 
+		for (int i = 2; i <= sqrtf((float)value) ; i++)
 		{
 			if (value % i == 0)
 			{
@@ -199,31 +199,31 @@ public:
 
     char* getSyncedRateAndGetText(float *rate, float bpm)
     {
-        char *text;
+        char* text = "";
         int rateSelector = (int)(*rate * 17.0f + 0.001f);
 
         switch (rateSelector)
         {
-        case 0: *rate = bpm/60.0f*4.0f; text = "1/16"; break;                   
-        case 1: *rate = bpm/60.0f*2.0f; text = "1/8"; break;                	
-        case 2: *rate = bpm/60.0f*1.00f; text = "1/4"; break;					
-        case 3: *rate = bpm/60.0f*0.5f; text = "1/2"; break;                   
-        case 4: *rate = bpm/60.0f*0.25f; text = "1/1"; break;					
-        case 5: *rate = bpm/60.0f*0.125f; text = "2/1"; break;					
+        case 0: *rate = bpm/60.0f*4.0f; text = "1/16"; break;
+        case 1: *rate = bpm/60.0f*2.0f; text = "1/8"; break;
+        case 2: *rate = bpm/60.0f*1.00f; text = "1/4"; break;
+        case 3: *rate = bpm/60.0f*0.5f; text = "1/2"; break;
+        case 4: *rate = bpm/60.0f*0.25f; text = "1/1"; break;
+        case 5: *rate = bpm/60.0f*0.125f; text = "2/1"; break;
 
-        case 6: *rate = bpm/60.0f*4.0f*1.5f; text = "1/16T"; break;				
-        case 7: *rate = bpm/60.0f*2.0f*1.5f; text = "1/8T"; break;				
-        case 8: *rate = bpm/60.0f*1.00f*1.5f; text = "1/4T"; break;				
-        case 9: *rate = bpm/60.0f*0.5f*1.5f; text = "1/2T"; break;				
-        case 10: *rate = bpm/60.0f*0.25f*1.5f; text = "1/1T"; break;			
-        case 11: *rate = bpm/60.0f*0.125f*1.5f; text = "2/1T"; break;			
+        case 6: *rate = bpm/60.0f*4.0f*1.5f; text = "1/16T"; break;
+        case 7: *rate = bpm/60.0f*2.0f*1.5f; text = "1/8T"; break;
+        case 8: *rate = bpm/60.0f*1.00f*1.5f; text = "1/4T"; break;
+        case 9: *rate = bpm/60.0f*0.5f*1.5f; text = "1/2T"; break;
+        case 10: *rate = bpm/60.0f*0.25f*1.5f; text = "1/1T"; break;
+        case 11: *rate = bpm/60.0f*0.125f*1.5f; text = "2/1T"; break;
 
-        case 12: *rate = bpm/60.0f*4.0f*1.33333333f; text = "1/16."; break;		
-        case 13: *rate = bpm/60.0f*2.0f*1.33333333f; text = "1/8."; break;		
-        case 14: *rate = bpm/60.0f*1.00f*1.33333333f; text = "1/4."; break;		
-        case 15: *rate = bpm/60.0f*0.5f*1.33333333f; text = "1/2."; break;		
-        case 16: *rate = bpm/60.0f*0.25f*1.33333333f; text = "1/1."; break;		
-        case 17: *rate = bpm/60.0f*0.125f*1.33333333f; text = "2/1."; break;	
+        case 12: *rate = bpm/60.0f*4.0f*1.33333333f; text = "1/16."; break;
+        case 13: *rate = bpm/60.0f*2.0f*1.33333333f; text = "1/8."; break;
+        case 14: *rate = bpm/60.0f*1.00f*1.33333333f; text = "1/4."; break;
+        case 15: *rate = bpm/60.0f*0.5f*1.33333333f; text = "1/2."; break;
+        case 16: *rate = bpm/60.0f*0.25f*1.33333333f; text = "1/1."; break;
+        case 17: *rate = bpm/60.0f*0.125f*1.33333333f; text = "2/1."; break;
         }
         return text;
     }
@@ -236,7 +236,7 @@ public:
         switch (selector)
         {
         case 0: *value =  0.5f*(60.0f/16.0f)*4.0f; text = "1/16"; break;
-		case 1: *value =  0.5f*(60.0f/8.0f)*4.0f; text = "1/8"; break;  
+		case 1: *value =  0.5f*(60.0f/8.0f)*4.0f; text = "1/8"; break;
 		case 2: *value =  0.5f*(60.0f/4.0f)*4.0f; text = "1/4"; break;
 		case 3: *value =  0.5f*(60.0f/2.0f)*4.0f; text = "1/2"; break;
 		case 4: *value =  0.5f*(60.0f/1.0f)*4.0f; text = "1/1"; break;
@@ -245,7 +245,7 @@ public:
 		case 7: *value =  0.5f*(60.0f/8.0f)*1.5f*4.0f; text = "1/8T"; break;
 		case 8: *value =  0.5f*(60.0f/4.0f)*1.5f*4.0f; text = "1/4T"; break;
 		case 9: *value =  0.5f*(60.0f/2.0f)*1.5f*4.0f; text = "1/2T"; break;
-		case 10: *value = 0.5f*(60.0f/1.0f)*1.5f*4.0f; text = "1/1T"; break;	
+		case 10: *value = 0.5f*(60.0f/1.0f)*1.5f*4.0f; text = "1/1T"; break;
 		case 11: *value = 0.5f*(60.0f/0.5f)*1.5f*4.0f; text = "2/1T"; break;
 		case 12: *value = (60.0f/16.0f)* 1.3333333f; text = "1/16."; break;
 		case 13: *value = (60.0f/8.0f)* 1.3333333f; text = "1/8."; break;

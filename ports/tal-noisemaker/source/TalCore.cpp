@@ -62,12 +62,9 @@ TalCore::TalCore()
     curProgram = 0;
 
     // load factory presets
-    ProgramChunk *chunk = new ProgramChunk();
-    XmlDocument myDocument(chunk->getXmlChunk());
-    XmlElement* mainElement = myDocument.getDocumentElement();
-    setStateInformationFromXml(mainElement);
+    ProgramChunk chunk;
+    setStateInformationString(chunk.getXmlChunk());
     setCurrentProgram(curProgram);
-    delete chunk;
 
     nextMidiMessage = new MidiMessage(0xF0);
     midiMessage = new MidiMessage(0xF0);
@@ -482,7 +479,7 @@ const String TalCore::getParameterName (int index)
     case DELAYHIGHSHELF: return "delayhighshelf";
     case DELAYLOWSHELF: return "delaylowshelf";
     case DELAYFEEDBACK: return "delayfeedback";
-    
+
     case UNUSED1:
     case UNUSED2:
         return "unused";
@@ -594,8 +591,8 @@ void TalCore::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
     int numberOfChannels = getNumOutputChannels();
     if (numberOfChannels == 2)
     {
-        float *samples0 = buffer.getSampleData(0);
-        float *samples1 = buffer.getSampleData(1);
+        float *samples0 = buffer.getWritePointer(0);
+        float *samples1 = buffer.getWritePointer(1);
 
         int samplePos = 0;
         int numSamples = buffer.getNumSamples();

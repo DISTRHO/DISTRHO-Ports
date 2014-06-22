@@ -16,7 +16,7 @@
 
 	You should have received a copy of the GPL along with this
 	program. If not, go to http://www.gnu.org/licenses/gpl.html
-	or write to the Free Software Foundation, Inc.,  
+	or write to the Free Software Foundation, Inc.,
 	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 	==============================================================================
  */
@@ -48,17 +48,17 @@ public:
 	float phaseFM;
 
 	OscSin(float sampleRate, int oversampling) :
-				sampleRate(sampleRate),
-				sampleRateInv(1.0f / sampleRate),
-				oversampling(64.0f / oversampling),
-				n(32 * (int)oversampling)
+                                oversampling(64.0f / oversampling),
+                                n(32 * (int)oversampling),
+                                sampleRate(sampleRate),
+				sampleRateInv(1.0f / sampleRate)
 	{
 		this->sampleRate= sampleRate;
 		pi      = 3.1415926535897932384626433832795f;
 		pi2     = 2.0f*pi;
 		x		= 0.0f;
-		phaseFM = -pi;		
-		
+		phaseFM = -pi;
+
 		BlepData *blepData= new BlepData();
 		minBlep = blepData->getBlep();
         delete blepData;
@@ -79,15 +79,15 @@ public:
 		x = phase;
 		phaseFM = 0.0f;
 		bufferPos= 0;
-		for (int i=0; i<n; i++) 
+		for (int i=0; i<n; i++)
 		{
 			buffer[i]= 0.0f;
 		}
 	}
 
-	inline float getNextSample(float freq, float fm, float fmFreq, bool reset, float resetFrac, float masterFreq) 
+	inline float getNextSample(float freq, float fm, float fmFreq, bool reset, float resetFrac, float masterFreq)
 	{
-		if (fm > 0.0f) 
+		if (fm > 0.0f)
 		{
 			phaseFM += fmFreq / sampleRate;
 			freq +=  fm * 10.0f * fmFreq * (1.0f + sinf(phaseFM * pi2));
@@ -106,7 +106,7 @@ public:
 		}
         float value = calcCos(x);
 		x += fs;
-		if(x >= 1.0f) 
+		if(x >= 1.0f)
 		{
 			x -= 1.0f;
 		}
@@ -118,13 +118,13 @@ public:
 		return -0.5f * cosf(x * pi2) + 0.5f;
 	}
 
-	inline float getNextBlep() 
+	inline float getNextBlep()
 	{
 		buffer[bufferPos]= 0.0f;
 		bufferPos++;
 
 		// Wrap pos
-		if (bufferPos>=n) 
+		if (bufferPos>=n)
 		{
 			bufferPos -= n;
 		}
@@ -132,11 +132,11 @@ public:
 	}
 
 	#define LERP(A,B,F) ((B-A)*F+A)
-	inline void mixInBlep(float offset, float scale) 
+	inline void mixInBlep(float offset, float scale)
 	{
 		int lpIn = (int)(oversampling*offset);
 		float frac = fmod(offset * oversampling, 1.0f);
-		for (int i = 0; i < n; i++, lpIn += (int)oversampling) 
+		for (int i = 0; i < n; i++, lpIn += (int)oversampling)
 		{
 			buffer[(bufferPos + i) & (n - 1)] += scale - LERP(minBlep[lpIn], minBlep[lpIn+1], frac) * scale;
 		}
