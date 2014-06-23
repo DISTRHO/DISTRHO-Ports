@@ -50,6 +50,18 @@ DRowAudioFilter::DRowAudioFilter()
       pfLookupTable(nullptr)
 {
     setupParams();
+
+    // make sure to initialize everything
+    int blockSize = getBlockSize();
+    if (blockSize <= 0)
+        blockSize = 512;
+
+    double sampleRate = getSampleRate();
+    if (sampleRate <= 0.0)
+        sampleRate = 44100.0;
+
+    prepareToPlay(blockSize, sampleRate);
+    releaseResources();
 }
 
 DRowAudioFilter::~DRowAudioFilter()

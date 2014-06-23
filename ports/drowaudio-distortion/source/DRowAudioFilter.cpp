@@ -51,7 +51,19 @@ DRowAudioFilter::DRowAudioFilter()
 		peakRight(0)
 
 {
-	setupParams();
+    setupParams();
+
+    // make sure to initialize everything
+    int blockSize = getBlockSize();
+    if (blockSize <= 0)
+        blockSize = 512;
+
+    double sampleRate = getSampleRate();
+    if (sampleRate <= 0.0)
+        sampleRate = 44100.0;
+
+    prepareToPlay(blockSize, sampleRate);
+    releaseResources();
 }
 
 DRowAudioFilter::~DRowAudioFilter()
@@ -66,9 +78,6 @@ const String DRowAudioFilter::getName() const
 
 void DRowAudioFilter::setupParams()
 {
-/*	void init(const String& name_, ParameterUnit unit_, String description_,
-			  double value_, double min_ =0.0f, double max_ =1.0f, double default_ =0.0f);*/
-
 	params[PRE].init(parameterNames[PRE], UnitHertz, "Changes the input filtering",
 					 500.0, 50.0, 5000.0, 500.0);
 	params[PRE].setSkewFactor(0.5);
@@ -277,7 +286,7 @@ bool DRowAudioFilter::producesMidi() const
 void DRowAudioFilter::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
 	currentSampleRate = sampleRate;
-	oneOverCurrentSampleRate = 1.0f/currentSampleRate;
+	oneOverCurrentSampleRate = 1.0/currentSampleRate;
 
 	// update the filters
 	fPreCf = params[PRE].getSmoothedValue();
