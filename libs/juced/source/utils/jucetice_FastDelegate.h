@@ -305,6 +305,8 @@ inline OutputClass horrible_cast(const InputClass input){
 		&& sizeof(InputClass)==sizeof(OutputClass) ? 1 : -1];
 	u.in = input;
 	return u.out;
+        // unused
+        ERROR_CantUseHorrible_cast a; (void)a;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -420,6 +422,8 @@ struct SimplifyMemFunc {
 	    // (it's illegal to have a array with negative size).
 		typedef char ERROR_Unsupported_member_function_pointer_on_this_compiler[N-100];
 		return 0;
+                // unused
+                ERROR_Unsupported_member_function_pointer_on_this_compiler a; (void)a;
 	}
 };
 
@@ -910,6 +914,8 @@ public:
 //		m_pthis = static_cast<GenericClass *>(static_cast<void *>(function_to_bind));
 		// BCC32, Comeau and DMC accept this method. MSVC7.1 needs __int64 instead of long
 //		m_pthis = reinterpret_cast<GenericClass *>(reinterpret_cast<long>(function_to_bind));
+                // unused
+                return; ERROR_CantUseEvilMethod a; (void)a;
 	}
 	// ******** EVIL, EVIL CODE! *******
 	// This function will be called with an invalid 'this' pointer!!
@@ -921,6 +927,8 @@ public:
 		// If you get this error, you need to #undef FASTDELEGATE_USESTATICFUNCTIONHACK.
 		typedef int ERROR_CantUseEvilMethod[sizeof(UnvoidStaticFuncPtr)==sizeof(this) ? 1 : -1];
 		return horrible_cast<UnvoidStaticFuncPtr>(this);
+                // unused
+                ERROR_CantUseEvilMethod a; (void)a;
 	}
 #endif // !defined(FASTDELEGATE_USESTATICFUNCTIONHACK)
 

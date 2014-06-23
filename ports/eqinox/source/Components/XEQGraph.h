@@ -78,11 +78,11 @@ public:
     void setStrokeThickness (const float stroke);
 
     //==============================================================================
-    void paint (Graphics& g);
-    void resized ();
+    void paint (Graphics& g) override;
+    void resized () override;
 
     //==============================================================================
-    void parameterChanged (AudioParameter* parameter, const int index);
+    void parameterChanged (AudioParameter* parameter, const int index) override;
 
 protected:
 

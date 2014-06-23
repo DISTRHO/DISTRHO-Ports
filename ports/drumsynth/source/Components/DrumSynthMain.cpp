@@ -84,13 +84,13 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
       exportBankButton (0)
 {
     addAndMakeVisible (importButton = new TextButton (String::empty));
-    importButton->setButtonText (T("preset"));
+    importButton->setButtonText ("preset");
     importButton->setConnectedEdges (Button::ConnectedOnBottom);
     importButton->addListener (this);
     importButton->setColour (TextButton::buttonColourId, Colour (0xffc8c8c8));
 
     addAndMakeVisible (exportButton = new TextButton (String::empty));
-    exportButton->setButtonText (T("preset"));
+    exportButton->setButtonText ("preset");
     exportButton->setConnectedEdges (Button::ConnectedOnBottom);
     exportButton->addListener (this);
     exportButton->setColour (TextButton::buttonColourId, Colour (0xff7c7c7c));
@@ -108,7 +108,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
                                                              *(plugin->getKeyboardState())));
 
     addAndMakeVisible (labelDrum = new Label (String::empty,
-                                              T("Drum\n")));
+                                              "Drum\n"));
     labelDrum->setFont (Font (13.6000f, Font::bold | Font::italic));
     labelDrum->setJustificationType (Justification::centredLeft);
     labelDrum->setEditable (false, false, false);
@@ -119,7 +119,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     labelDrum->setColour (TextEditor::backgroundColourId, Colour (0xffffff));
 
     addAndMakeVisible (labelDrumName = new Label (String::empty,
-                                                  T("Preset")));
+                                                  "Preset"));
     labelDrumName->setFont (Font (13.6000f, Font::bold | Font::italic));
     labelDrumName->setJustificationType (Justification::centredLeft);
     labelDrumName->setEditable (false, false, false);
@@ -135,10 +135,10 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     drumName->setScrollbarsShown (false);
     drumName->setCaretVisible (true);
     drumName->setPopupMenuEnabled (false);
-    drumName->setText (T("Unset"));
+    drumName->setText ("Unset");
 
     addAndMakeVisible (versionLabel = new Label (String::empty,
-                                                 T("v0.1.0")));
+                                                 "v0.1.0"));
     versionLabel->setFont (Font (Font::getDefaultMonospacedFontName(), 9.3000f, Font::plain));
     versionLabel->setJustificationType (Justification::centredLeft);
     versionLabel->setEditable (false, false, false);
@@ -146,7 +146,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     versionLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
     addAndMakeVisible (tuningSlider = new ParameterSlider (String::empty));
-    tuningSlider->setTooltip (T("Tuning"));
+    tuningSlider->setTooltip ("Tuning");
     tuningSlider->setRange (-24, 24, 0.0001);
     tuningSlider->setSliderStyle (Slider::RotaryVerticalDrag);
     tuningSlider->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
@@ -156,7 +156,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     tuningSlider->addListener (this);
 
     addAndMakeVisible (stretchSlider = new ParameterSlider (String::empty));
-    stretchSlider->setTooltip (T("Stretch"));
+    stretchSlider->setTooltip ("Stretch");
     stretchSlider->setRange (10, 200, 0.0001);
     stretchSlider->setSliderStyle (Slider::RotaryVerticalDrag);
     stretchSlider->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
@@ -166,7 +166,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     stretchSlider->addListener (this);
 
     addAndMakeVisible (gainSlider = new ParameterSlider (String::empty));
-    gainSlider->setTooltip (T("Overall gain"));
+    gainSlider->setTooltip ("Overall gain");
     gainSlider->setRange (-60, 10, 0.0001);
     gainSlider->setSliderStyle (Slider::RotaryVerticalDrag);
     gainSlider->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
@@ -176,7 +176,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     gainSlider->addListener (this);
 
     addAndMakeVisible (resonanceSlider = new ParameterSlider (String::empty));
-    resonanceSlider->setTooltip (T("Filter resonance"));
+    resonanceSlider->setTooltip ("Filter resonance");
     resonanceSlider->setRange (0, 100, 0.0001);
     resonanceSlider->setSliderStyle (Slider::RotaryVerticalDrag);
     resonanceSlider->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
@@ -197,22 +197,22 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
 
     addAndMakeVisible (envelopeTabs = new TabbedComponent (TabbedButtonBar::TabsAtBottom));
     envelopeTabs->setTabBarDepth (21);
-    envelopeTabs->addTab (T("Tone"), Colour (0xff9ba6da), new DrumSynthEnvelope (PP_TONE_ENV_T1TIME, this, plugin), true);
-    envelopeTabs->addTab (T("Overtone 1"), Colour (0xffd9def3), new DrumSynthEnvelope (PP_OTON1_ENV_T1TIME, this, plugin), true);
-    envelopeTabs->addTab (T("Overtone 2"), Colour (0xffd9def3), new DrumSynthEnvelope (PP_OTON2_ENV_T1TIME, this, plugin), true);
-    envelopeTabs->addTab (T("Noise"), Colour (0xfffdde0c), new DrumSynthEnvelope (PP_NOIZ_ENV_T1TIME, this, plugin), true);
-    envelopeTabs->addTab (T("Band 1"), Colour (0xfff2843d), new DrumSynthEnvelope (PP_NBA1_ENV_T1TIME, this, plugin), true);
-    envelopeTabs->addTab (T("Band 2"), Colour (0xfff2843d), new DrumSynthEnvelope (PP_NBA2_ENV_T1TIME, this, plugin), true);
-    envelopeTabs->addTab (T("Filter"), Colour (0xff69c369), new DrumSynthEnvelope (PP_MAIN_ENV_T1TIME, this, plugin), true);
+    envelopeTabs->addTab ("Tone", Colour (0xff9ba6da), new DrumSynthEnvelope (PP_TONE_ENV_T1TIME, this, plugin), true);
+    envelopeTabs->addTab ("Overtone 1", Colour (0xffd9def3), new DrumSynthEnvelope (PP_OTON1_ENV_T1TIME, this, plugin), true);
+    envelopeTabs->addTab ("Overtone 2", Colour (0xffd9def3), new DrumSynthEnvelope (PP_OTON2_ENV_T1TIME, this, plugin), true);
+    envelopeTabs->addTab ("Noise", Colour (0xfffdde0c), new DrumSynthEnvelope (PP_NOIZ_ENV_T1TIME, this, plugin), true);
+    envelopeTabs->addTab ("Band 1", Colour (0xfff2843d), new DrumSynthEnvelope (PP_NBA1_ENV_T1TIME, this, plugin), true);
+    envelopeTabs->addTab ("Band 2", Colour (0xfff2843d), new DrumSynthEnvelope (PP_NBA2_ENV_T1TIME, this, plugin), true);
+    envelopeTabs->addTab ("Filter", Colour (0xff69c369), new DrumSynthEnvelope (PP_MAIN_ENV_T1TIME, this, plugin), true);
     envelopeTabs->setCurrentTabIndex (0);
 
     addAndMakeVisible (panicButton = new TextButton (String::empty));
-    panicButton->setButtonText (T("Panic"));
+    panicButton->setButtonText ("Panic");
     panicButton->addListener (this);
     panicButton->setColour (TextButton::buttonColourId, Colour (0xffedb292));
 
     addAndMakeVisible (toneLevelSlider = new ParameterSlider (String::empty));
-    toneLevelSlider->setTooltip (T("Tone Level"));
+    toneLevelSlider->setTooltip ("Tone Level");
     toneLevelSlider->setRange (0, 200, 0.0001);
     toneLevelSlider->setSliderStyle (Slider::RotaryVerticalDrag);
     toneLevelSlider->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
@@ -222,7 +222,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     toneLevelSlider->addListener (this);
 
     addAndMakeVisible (toneFreq1Slider = new ParameterSlider (String::empty));
-    toneFreq1Slider->setTooltip (T("Tone Frequency 2"));
+    toneFreq1Slider->setTooltip ("Tone Frequency 2");
     toneFreq1Slider->setRange (20, 22050, 0.0001);
     toneFreq1Slider->setSliderStyle (Slider::RotaryVerticalDrag);
     toneFreq1Slider->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
@@ -232,7 +232,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     toneFreq1Slider->addListener (this);
 
     addAndMakeVisible (toneFreq2Slider = new ParameterSlider (String::empty));
-    toneFreq2Slider->setTooltip (T("Tone Frequency 2"));
+    toneFreq2Slider->setTooltip ("Tone Frequency 2");
     toneFreq2Slider->setRange (20, 22050, 0.0001);
     toneFreq2Slider->setSliderStyle (Slider::RotaryVerticalDrag);
     toneFreq2Slider->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
@@ -242,7 +242,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     toneFreq2Slider->addListener (this);
 
     addAndMakeVisible (toneDroopSlider = new ParameterSlider (String::empty));
-    toneDroopSlider->setTooltip (T("Tone Droop"));
+    toneDroopSlider->setTooltip ("Tone Droop");
     toneDroopSlider->setRange (0, 100, 0.0001);
     toneDroopSlider->setSliderStyle (Slider::RotaryVerticalDrag);
     toneDroopSlider->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
@@ -252,7 +252,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     toneDroopSlider->addListener (this);
 
     addAndMakeVisible (tonePhaseSlider = new ParameterSlider (String::empty));
-    tonePhaseSlider->setTooltip (T("Phase"));
+    tonePhaseSlider->setTooltip ("Phase");
     tonePhaseSlider->setRange (0, 90, 0.0001);
     tonePhaseSlider->setSliderStyle (Slider::RotaryVerticalDrag);
     tonePhaseSlider->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
@@ -272,7 +272,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     overOnButton->setColour (TextButton::buttonColourId, Colour (0xab000000));
 
     addAndMakeVisible (overLevelSlider = new ParameterSlider (String::empty));
-    overLevelSlider->setTooltip (T("Overtone Level"));
+    overLevelSlider->setTooltip ("Overtone Level");
     overLevelSlider->setRange (0, 200, 0.0001);
     overLevelSlider->setSliderStyle (Slider::RotaryVerticalDrag);
     overLevelSlider->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
@@ -282,7 +282,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     overLevelSlider->addListener (this);
 
     addAndMakeVisible (overParamSlider = new ParameterSlider (String::empty));
-    overParamSlider->setTooltip (T("Overtone Param"));
+    overParamSlider->setTooltip ("Overtone Param");
     overParamSlider->setRange (0, 100, 0.0001);
     overParamSlider->setSliderStyle (Slider::RotaryVerticalDrag);
     overParamSlider->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
@@ -312,7 +312,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     overMethod3Button->setColour (TextButton::buttonColourId, Colour (0xab000000));
 
     addAndMakeVisible (overFreq1Slider = new ParameterSlider (String::empty));
-    overFreq1Slider->setTooltip (T("Overtone 1 Frequency"));
+    overFreq1Slider->setTooltip ("Overtone 1 Frequency");
     overFreq1Slider->setRange (20, 22050, 0.0001);
     overFreq1Slider->setSliderStyle (Slider::RotaryVerticalDrag);
     overFreq1Slider->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
@@ -322,7 +322,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     overFreq1Slider->addListener (this);
 
     addAndMakeVisible (overFreq2Slider = new ParameterSlider (String::empty));
-    overFreq2Slider->setTooltip (T("Overtone 2 Frequency"));
+    overFreq2Slider->setTooltip ("Overtone 2 Frequency");
     overFreq2Slider->setRange (20, 22050, 0.0001);
     overFreq2Slider->setSliderStyle (Slider::RotaryVerticalDrag);
     overFreq2Slider->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
@@ -342,7 +342,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     overTrack2Button->setColour (TextButton::buttonColourId, Colour (0xab000000));
 
     addAndMakeVisible (overWave1Slider = new ParameterSlider (String::empty));
-    overWave1Slider->setTooltip (T("Overtone 1 Wave"));
+    overWave1Slider->setTooltip ("Overtone 1 Wave");
     overWave1Slider->setRange (0, 4, 1);
     overWave1Slider->setSliderStyle (Slider::RotaryVerticalDrag);
     overWave1Slider->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
@@ -352,7 +352,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     overWave1Slider->addListener (this);
 
     addAndMakeVisible (overWave2Slider = new ParameterSlider (String::empty));
-    overWave2Slider->setTooltip (T("Overtone 2 Wave"));
+    overWave2Slider->setTooltip ("Overtone 2 Wave");
     overWave2Slider->setRange (0, 4, 1);
     overWave2Slider->setSliderStyle (Slider::RotaryVerticalDrag);
     overWave2Slider->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
@@ -362,7 +362,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     overWave2Slider->addListener (this);
 
     addAndMakeVisible (band1LevelSlider = new ParameterSlider (String::empty));
-    band1LevelSlider->setTooltip (T("Noise Band 1 Level"));
+    band1LevelSlider->setTooltip ("Noise Band 1 Level");
     band1LevelSlider->setRange (0, 200, 0.0001);
     band1LevelSlider->setSliderStyle (Slider::RotaryVerticalDrag);
     band1LevelSlider->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
@@ -372,7 +372,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     band1LevelSlider->addListener (this);
 
     addAndMakeVisible (band1FreqSlider = new ParameterSlider (String::empty));
-    band1FreqSlider->setTooltip (T("Noise Band 1 Frequency"));
+    band1FreqSlider->setTooltip ("Noise Band 1 Frequency");
     band1FreqSlider->setRange (20, 22050, 0.0001);
     band1FreqSlider->setSliderStyle (Slider::RotaryVerticalDrag);
     band1FreqSlider->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
@@ -382,7 +382,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     band1FreqSlider->addListener (this);
 
     addAndMakeVisible (band1DeltaSlider = new ParameterSlider (String::empty));
-    band1DeltaSlider->setTooltip (T("Noise Band 1 Delta Frequency"));
+    band1DeltaSlider->setTooltip ("Noise Band 1 Delta Frequency");
     band1DeltaSlider->setRange (0, 100, 0.0001);
     band1DeltaSlider->setSliderStyle (Slider::RotaryVerticalDrag);
     band1DeltaSlider->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
@@ -402,7 +402,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     band2OnButton->setColour (TextButton::buttonColourId, Colour (0xab000000));
 
     addAndMakeVisible (band2LevelSlider = new ParameterSlider (String::empty));
-    band2LevelSlider->setTooltip (T("Noise Band 2 Level"));
+    band2LevelSlider->setTooltip ("Noise Band 2 Level");
     band2LevelSlider->setRange (0, 200, 0.0001);
     band2LevelSlider->setSliderStyle (Slider::RotaryVerticalDrag);
     band2LevelSlider->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
@@ -412,7 +412,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     band2LevelSlider->addListener (this);
 
     addAndMakeVisible (band2FreqSlider = new ParameterSlider (String::empty));
-    band2FreqSlider->setTooltip (T("Noise Band 2 Frequency"));
+    band2FreqSlider->setTooltip ("Noise Band 2 Frequency");
     band2FreqSlider->setRange (20, 22050, 0.0001);
     band2FreqSlider->setSliderStyle (Slider::RotaryVerticalDrag);
     band2FreqSlider->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
@@ -422,7 +422,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     band2FreqSlider->addListener (this);
 
     addAndMakeVisible (band2DeltaSlider = new ParameterSlider (String::empty));
-    band2DeltaSlider->setTooltip (T("Noise Band 2 Delta Frequency"));
+    band2DeltaSlider->setTooltip ("Noise Band 2 Delta Frequency");
     band2DeltaSlider->setRange (0, 100, 0.0001);
     band2DeltaSlider->setSliderStyle (Slider::RotaryVerticalDrag);
     band2DeltaSlider->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
@@ -437,7 +437,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     noiseOnButton->setColour (TextButton::buttonColourId, Colour (0xab000000));
 
     addAndMakeVisible (noiseLevelSlider = new ParameterSlider (String::empty));
-    noiseLevelSlider->setTooltip (T("Noise Level"));
+    noiseLevelSlider->setTooltip ("Noise Level");
     noiseLevelSlider->setRange (0, 200, 0.0001);
     noiseLevelSlider->setSliderStyle (Slider::RotaryVerticalDrag);
     noiseLevelSlider->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
@@ -447,7 +447,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     noiseLevelSlider->addListener (this);
 
     addAndMakeVisible (noiseSlopeSlider = new ParameterSlider (String::empty));
-    noiseSlopeSlider->setTooltip (T("Noise Slope"));
+    noiseSlopeSlider->setTooltip ("Noise Slope");
     noiseSlopeSlider->setRange (-100, 100, 1);
     noiseSlopeSlider->setSliderStyle (Slider::RotaryVerticalDrag);
     noiseSlopeSlider->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
@@ -457,13 +457,13 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     noiseSlopeSlider->addListener (this);
 
     addAndMakeVisible (importBankButton = new TextButton (String::empty));
-    importBankButton->setButtonText (T("bank"));
+    importBankButton->setButtonText ("bank");
     importBankButton->setConnectedEdges (Button::ConnectedOnTop);
     importBankButton->addListener (this);
     importBankButton->setColour (TextButton::buttonColourId, Colour (0xffc8c8c8));
 
     addAndMakeVisible (exportBankButton = new TextButton (String::empty));
-    exportBankButton->setButtonText (T("bank"));
+    exportBankButton->setButtonText ("bank");
     exportBankButton->setConnectedEdges (Button::ConnectedOnTop);
     exportBankButton->addListener (this);
     exportBankButton->setColour (TextButton::buttonColourId, Colour (0xff7c7c7c));
@@ -616,7 +616,7 @@ void DrumSynthMain::paint (Graphics& g)
 
     g.setColour (Colour (0xff737272));
     g.setFont (Font (Font::getDefaultMonospacedFontName(), 35.7000f, Font::bold));
-    g.drawText (T("DRUMSYNTH"),
+    g.drawText ("DRUMSYNTH",
                 1, 2, 184, 32,
                 Justification::centred, true);
 
@@ -625,37 +625,37 @@ void DrumSynthMain::paint (Graphics& g)
 
     g.setColour (Colour (0x99ffffff));
     g.setFont (Font (14.3000f, Font::bold | Font::italic));
-    g.drawText (T("Noise"),
+    g.drawText ("Noise",
                 204, 90, 36, 14,
                 Justification::centred, true);
 
     g.setColour (Colour (0x99ffffff));
     g.setFont (Font (14.3000f, Font::bold | Font::italic));
-    g.drawText (T("Noise Band 1"),
+    g.drawText ("Noise Band 1",
                 204, 167, 86, 13,
                 Justification::centred, true);
 
     g.setColour (Colour (0x99ffffff));
     g.setFont (Font (14.3000f, Font::bold | Font::italic));
-    g.drawText (T("Noise Band 2"),
+    g.drawText ("Noise Band 2",
                 204, 246, 86, 14,
                 Justification::centred, true);
 
     g.setColour (Colour (0x99ffffff));
     g.setFont (Font (14.3000f, Font::bold | Font::italic));
-    g.drawText (T("Overtones"),
+    g.drawText ("Overtones",
                 9, 167, 73, 14,
                 Justification::centred, true);
 
     g.setColour (Colour (0x99ffffff));
     g.setFont (Font (14.3000f, Font::bold | Font::italic));
-    g.drawText (T("Master"),
+    g.drawText ("Master",
                 399, 90, 45, 14,
                 Justification::centred, true);
 
     g.setColour (Colour (0x99ffffff));
     g.setFont (Font (14.3000f, Font::bold | Font::italic));
-    g.drawText (T("Envelopes"),
+    g.drawText ("Envelopes",
                 399, 167, 66, 14,
                 Justification::centred, true);
 
@@ -664,49 +664,49 @@ void DrumSynthMain::paint (Graphics& g)
 
     g.setColour (Colour (0x99ffffff));
     g.setFont (Font (14.3000f, Font::bold | Font::italic));
-    g.drawText (T("Tone"),
+    g.drawText ("Tone",
                 9, 89, 32, 14,
                 Justification::centred, true);
 
     g.setColour (Colour (0x99ffffff));
     g.setFont (Font (11.0000f, Font::bold));
-    g.drawText (T("Gain"),
+    g.drawText ("Gain",
                 9, 138, 39, 14,
                 Justification::centred, true);
 
     g.setColour (Colour (0x99ffffff));
     g.setFont (Font (11.0000f, Font::bold));
-    g.drawText (T("Freq1"),
+    g.drawText ("Freq1",
                 47, 138, 39, 14,
                 Justification::centred, true);
 
     g.setColour (Colour (0x99ffffff));
     g.setFont (Font (11.0000f, Font::bold));
-    g.drawText (T("Freq2"),
+    g.drawText ("Freq2",
                 83, 138, 39, 14,
                 Justification::centred, true);
 
     g.setColour (Colour (0x99ffffff));
     g.setFont (Font (11.0000f, Font::bold));
-    g.drawText (T("Droop"),
+    g.drawText ("Droop",
                 118, 138, 39, 14,
                 Justification::centred, true);
 
     g.setColour (Colour (0x99ffffff));
     g.setFont (Font (11.0000f, Font::bold));
-    g.drawText (T("Phase"),
+    g.drawText ("Phase",
                 155, 138, 39, 14,
                 Justification::centred, true);
 
     g.setColour (Colour (0x99ffffff));
     g.setFont (Font (11.0000f, Font::bold));
-    g.drawText (T("Activity"),
+    g.drawText ("Activity",
                 138, 89, 45, 14,
                 Justification::centred, true);
 
     g.setColour (Colour (0x99ffffff));
     g.setFont (Font (11.0000f, Font::bold));
-    g.drawText (T("Activity"),
+    g.drawText ("Activity",
                 138, 166, 45, 14,
                 Justification::centred, true);
 
@@ -718,37 +718,37 @@ void DrumSynthMain::paint (Graphics& g)
 
     g.setColour (Colour (0x99ffffff));
     g.setFont (Font (10.0000f, Font::bold | Font::italic));
-    g.drawText (T("Filter"),
+    g.drawText ("Filter",
                 136, 187, 38, 14,
                 Justification::centredLeft, true);
 
     g.setColour (Colour (0x99ffffff));
     g.setFont (Font (10.0000f, Font::bold | Font::italic));
-    g.drawText (T("Method"),
+    g.drawText ("Method",
                 136, 200, 38, 14,
                 Justification::centredLeft, true);
 
     g.setColour (Colour (0x99ffffff));
     g.setFont (Font (11.0000f, Font::bold));
-    g.drawText (T("Gain"),
+    g.drawText ("Gain",
                 9, 214, 39, 14,
                 Justification::centred, true);
 
     g.setColour (Colour (0x99ffffff));
     g.setFont (Font (11.0000f, Font::bold));
-    g.drawText (T("Param"),
+    g.drawText ("Param",
                 46, 214, 39, 14,
                 Justification::centred, true);
 
     g.setColour (Colour (0x99ffffff));
     g.setFont (Font (11.0000f, Font::bold));
-    g.drawText (T("Freq1"),
+    g.drawText ("Freq1",
                 11, 258, 39, 14,
                 Justification::centred, true);
 
     g.setColour (Colour (0x99ffffff));
     g.setFont (Font (11.0000f, Font::bold));
-    g.drawText (T("Freq2"),
+    g.drawText ("Freq2",
                 11, 301, 39, 14,
                 Justification::centred, true);
 
@@ -757,7 +757,7 @@ void DrumSynthMain::paint (Graphics& g)
 
     g.setColour (Colour (0x99ffffff));
     g.setFont (Font (10.0000f, Font::bold | Font::italic));
-    g.drawText (T("Track 1"),
+    g.drawText ("Track 1",
                 136, 232, 38, 14,
                 Justification::centredLeft, true);
 
@@ -766,103 +766,103 @@ void DrumSynthMain::paint (Graphics& g)
 
     g.setColour (Colour (0x99ffffff));
     g.setFont (Font (10.0000f, Font::bold | Font::italic));
-    g.drawText (T("Track 2"),
+    g.drawText ("Track 2",
                 136, 274, 38, 14,
                 Justification::centredLeft, true);
 
     g.setColour (Colour (0x99ffffff));
     g.setFont (Font (11.0000f, Font::bold));
-    g.drawText (T("Wave1"),
+    g.drawText ("Wave1",
                 48, 258, 39, 14,
                 Justification::centred, true);
 
     g.setColour (Colour (0x99ffffff));
     g.setFont (Font (11.0000f, Font::bold));
-    g.drawText (T("Wave2"),
+    g.drawText ("Wave2",
                 47, 301, 39, 14,
                 Justification::centred, true);
 
     g.setColour (Colour (0x99ffffff));
     g.setFont (Font (11.0000f, Font::bold));
-    g.drawText (T("Gain"),
+    g.drawText ("Gain",
                 236, 219, 39, 14,
                 Justification::centred, true);
 
     g.setColour (Colour (0x99ffffff));
     g.setFont (Font (11.0000f, Font::bold));
-    g.drawText (T("Freq"),
+    g.drawText ("Freq",
                 273, 219, 39, 14,
                 Justification::centred, true);
 
     g.setColour (Colour (0x99ffffff));
     g.setFont (Font (11.0000f, Font::bold));
-    g.drawText (T("deltaF"),
+    g.drawText ("deltaF",
                 310, 219, 39, 14,
                 Justification::centred, true);
 
     g.setColour (Colour (0x99ffffff));
     g.setFont (Font (11.0000f, Font::bold));
-    g.drawText (T("Activity"),
+    g.drawText ("Activity",
                 333, 166, 45, 14,
                 Justification::centred, true);
 
     g.setColour (Colour (0x99ffffff));
     g.setFont (Font (11.0000f, Font::bold));
-    g.drawText (T("Activity"),
+    g.drawText ("Activity",
                 332, 246, 45, 14,
                 Justification::centred, true);
 
     g.setColour (Colour (0x99ffffff));
     g.setFont (Font (11.0000f, Font::bold));
-    g.drawText (T("Gain"),
+    g.drawText ("Gain",
                 237, 297, 39, 14,
                 Justification::centred, true);
 
     g.setColour (Colour (0x99ffffff));
     g.setFont (Font (11.0000f, Font::bold));
-    g.drawText (T("Freq"),
+    g.drawText ("Freq",
                 274, 297, 39, 14,
                 Justification::centred, true);
 
     g.setColour (Colour (0x99ffffff));
     g.setFont (Font (11.0000f, Font::bold));
-    g.drawText (T("deltaF"),
+    g.drawText ("deltaF",
                 311, 297, 39, 14,
                 Justification::centred, true);
 
     g.setColour (Colour (0x99ffffff));
     g.setFont (Font (11.0000f, Font::bold));
-    g.drawText (T("Activity"),
+    g.drawText ("Activity",
                 334, 89, 45, 14,
                 Justification::centred, true);
 
     g.setColour (Colour (0x99ffffff));
     g.setFont (Font (11.0000f, Font::bold));
-    g.drawText (T("Gain"),
+    g.drawText ("Gain",
                 253, 138, 39, 14,
                 Justification::centred, true);
 
     g.setColour (Colour (0x99ffffff));
     g.setFont (Font (11.0000f, Font::bold));
-    g.drawText (T("Gain"),
+    g.drawText ("Gain",
                 399, 139, 39, 14,
                 Justification::centred, true);
 
     g.setColour (Colour (0x99ffffff));
     g.setFont (Font (11.0000f, Font::bold));
-    g.drawText (T("Tune"),
+    g.drawText ("Tune",
                 434, 139, 39, 14,
                 Justification::centred, true);
 
     g.setColour (Colour (0x99ffffff));
     g.setFont (Font (11.0000f, Font::bold));
-    g.drawText (T("Stretch"),
+    g.drawText ("Stretch",
                 470, 139, 39, 14,
                 Justification::centred, true);
 
     g.setColour (Colour (0x99ffffff));
     g.setFont (Font (11.0000f, Font::bold));
-    g.drawText (T("Reso"),
+    g.drawText ("Reso",
                 506, 139, 39, 14,
                 Justification::centred, true);
 
@@ -871,7 +871,7 @@ void DrumSynthMain::paint (Graphics& g)
 
     g.setColour (Colour (0x99ffffff));
     g.setFont (Font (10.0000f, Font::bold | Font::italic));
-    g.drawText (T("Filter"),
+    g.drawText ("Filter",
                 606, 111, 38, 14,
                 Justification::centredLeft, true);
 
@@ -880,19 +880,19 @@ void DrumSynthMain::paint (Graphics& g)
 
     g.setColour (Colour (0x99ffffff));
     g.setFont (Font (10.0000f, Font::bold | Font::italic));
-    g.drawText (T("Hipass"),
+    g.drawText ("Hipass",
                 606, 124, 38, 14,
                 Justification::centredLeft, true);
 
     g.setColour (Colour (0x99ffffff));
     g.setFont (Font (11.0000f, Font::bold));
-    g.drawText (T("Slope"),
+    g.drawText ("Slope",
                 290, 138, 39, 14,
                 Justification::centred, true);
 
     g.setColour (Colours::black);
     g.setFont (Font (11.2000f, Font::bold | Font::italic));
-    g.drawText (T("Import   Export"),
+    g.drawText ("Import   Export",
                 585, 34, 89, 14,
                 Justification::centred, true);
 
@@ -963,7 +963,7 @@ void DrumSynthMain::buttonClicked (Button* buttonThatWasClicked)
     if (buttonThatWasClicked == importButton)
     {
         //[UserButtonCode_importButton] -- add your button handler code here..
-        FileChooser myChooser (T("Import a DS file..."), File::nonexistent, "*.ds", false);
+        FileChooser myChooser ("Import a DS file...", File::nonexistent, "*.ds", false);
         if (myChooser.browseForFileToOpen())
         {
             File fileToLoad = myChooser.getResult();
@@ -978,7 +978,7 @@ void DrumSynthMain::buttonClicked (Button* buttonThatWasClicked)
     else if (buttonThatWasClicked == exportButton)
     {
         //[UserButtonCode_exportButton] -- add your button handler code here..
-        FileChooser myChooser (T("Export a DS file..."), File::nonexistent, "*.ds", false);
+        FileChooser myChooser ("Export a DS file...", File::nonexistent, "*.ds", false);
         if (myChooser.browseForFileToSave(true))
         {
             File fileToSave = myChooser.getResult().withFileExtension ("ds");
@@ -1103,7 +1103,7 @@ void DrumSynthMain::buttonClicked (Button* buttonThatWasClicked)
     else if (buttonThatWasClicked == importBankButton)
     {
         //[UserButtonCode_importBankButton] -- add your button handler code here..
-        FileChooser myChooser (T("Import a DS bank file..."), File::nonexistent, "*.bds", false);
+        FileChooser myChooser ("Import a DS bank file...", File::nonexistent, "*.bds", false);
         if (myChooser.browseForFileToOpen())
         {
             MemoryBlock fileData;
@@ -1121,7 +1121,7 @@ void DrumSynthMain::buttonClicked (Button* buttonThatWasClicked)
     else if (buttonThatWasClicked == exportBankButton)
     {
         //[UserButtonCode_exportBankButton] -- add your button handler code here..
-        FileChooser myChooser (T("Save a DS bank file..."), File::nonexistent, "*.bds", false);
+        FileChooser myChooser ("Save a DS bank file...", File::nonexistent, "*.bds", false);
         if (myChooser.browseForFileToSave (true))
         {
             MemoryBlock fileData;

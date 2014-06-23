@@ -56,23 +56,23 @@ public:
     DrumSynthComponent (DrumSynthPlugin* const ownerFilter);
 
     /** Destructor. */
-    ~DrumSynthComponent ();
+    ~DrumSynthComponent () override;
 
     //==============================================================================
     /** Standard Juce paint callback. */
-    void paint (Graphics& g);
+    void paint (Graphics& g) override;
 
     /** Standard Juce resize callback. */
-    void resized ();
+    void resized () override;
 
     //==============================================================================
     /** Our demo filter is a ChangeBroadcaster, and will call us back when one of
         its parameters changes.
     */
-    void changeListenerCallback (ChangeBroadcaster* source);
+    void changeListenerCallback (ChangeBroadcaster* source) override;
 
     /** Parameter listener callback */
-    void parameterChanged (AudioParameter* parameter, const int index);
+    void parameterChanged (AudioParameter* parameter, const int index) override;
 
 private:
 
@@ -80,12 +80,11 @@ private:
     friend class DrumSynthPlugin;
 
     DrumSynthMain* mainComponent;
-
-    TooltipWindow tooltipWindow;
+    JuceticeLookAndFeel juceticeLookAndFeel;
 
     // handy wrapper method to avoid having to cast the filter to a DemoJuceFilter
     // every time we need it..
-    DrumSynthPlugin* getFilter() const throw()  { return (DrumSynthPlugin*) getAudioProcessor(); }
+    DrumSynthPlugin* getFilter() const noexcept  { return (DrumSynthPlugin*) getAudioProcessor(); }
 };
 
 

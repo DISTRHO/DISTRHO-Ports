@@ -239,17 +239,17 @@ void Equalizer::setPreset (uint8 npreset)
 //==============================================================================
 void Equalizer::addToXML (XmlElement* xml)
 {
-    xml->setAttribute (T("prst"), Ppreset);
+    xml->setAttribute ("prst", Ppreset);
 
     {
-    XmlElement* e = new XmlElement (T("fxpar"));
+    XmlElement* e = new XmlElement ("fxpar");
     for (int n = 0; n < 128; n++)
     {
         int par = getParameter (n);
         if (par == 0) continue;
 
-        XmlElement* pe = new XmlElement (T("p") + String (n));
-        pe->setAttribute (T("v"), par);
+        XmlElement* pe = new XmlElement ("p" + String (n));
+        pe->setAttribute ("v", par);
         e->addChildElement (pe);
     }
     xml->addChildElement (e);
@@ -258,18 +258,18 @@ void Equalizer::addToXML (XmlElement* xml)
 
 void Equalizer::updateFromXML (XmlElement *xml)
 {
-    Ppreset = xml->getIntAttribute (T("prst"), Ppreset);
+    Ppreset = xml->getIntAttribute ("prst", Ppreset);
 
-    XmlElement* e = xml->getChildByName (T("fxpar"));
+    XmlElement* e = xml->getChildByName ("fxpar");
     if (e)
     {
         for (int n = 0; n < 128; n++)
         {
             setParameter (n, 0);
 
-            XmlElement* pe = e->getChildByName (T("p") + String (n));
+            XmlElement* pe = e->getChildByName ("p" + String (n));
             if (pe)
-                setParameter (n, pe->getIntAttribute (T("v"), getParameter (n)));
+                setParameter (n, pe->getIntAttribute ("v", getParameter (n)));
         }
     }
 

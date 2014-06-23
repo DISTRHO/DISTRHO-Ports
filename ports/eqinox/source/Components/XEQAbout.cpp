@@ -33,10 +33,10 @@ XEQAbout::XEQAbout ()
     : anticoreLink (0),
       cachedImage_equalizer_png (0)
 {
-    addAndMakeVisible (anticoreLink = new HyperlinkButton (T("Visit JUCETICE @ www.anticore.org !"),
-                                                           URL (T("http://www.anticore.org/jucetice"))));
-    anticoreLink->setTooltip (T("http://www.anticore.org/jucetice"));
-    anticoreLink->setButtonText (T("Visit JUCETICE @ www.anticore.org !"));
+    addAndMakeVisible (anticoreLink = new HyperlinkButton ("Visit JUCETICE @ www.anticore.org !",
+                                                           URL("http://www.anticore.org/jucetice")));
+    anticoreLink->setTooltip ("http://www.anticore.org/jucetice");
+    anticoreLink->setButtonText ("Visit JUCETICE @ www.anticore.org !");
     anticoreLink->setColour (HyperlinkButton::textColourId, Colour (0xccffffff));
 
     cachedImage_equalizer_png = ImageCache::getFromMemory (equalizer_png, equalizer_pngSize);
@@ -92,13 +92,13 @@ void XEQAbout::paint (Graphics& g)
 
     g.setColour (Colours::black);
     g.setFont (Font (32.4000f, Font::bold | Font::italic));
-    g.drawText (T("EQinox v0.2.3"),
+    g.drawText ("EQinox v0.2.3",
                 217, 123, 250, 25,
                 Justification::centred, true);
 
     g.setColour (Colours::black);
     g.setFont (Font (12.4000f, Font::plain));
-    g.drawText (T("Equal-inspiration 4 EnergyXT2"),
+    g.drawText ("Equal-inspiration 4 EnergyXT2",
                 284, 145, 200, 15,
                 Justification::centred, true);
 

@@ -50,7 +50,7 @@ class DrumSynthMain  : public Component,
 public:
     //==============================================================================
     DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* editor_);
-    ~DrumSynthMain();
+    ~DrumSynthMain() override;
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
@@ -58,16 +58,16 @@ public:
                                const bool updateAllControls);
     void updateControls ();
 
-    void textEditorTextChanged (TextEditor &editor);
-    void textEditorReturnKeyPressed (TextEditor &editor);
-    void textEditorEscapeKeyPressed (TextEditor &editor);
-    void textEditorFocusLost (TextEditor &editor);
+    void textEditorTextChanged (TextEditor &editor) override;
+    void textEditorReturnKeyPressed (TextEditor &editor) override;
+    void textEditorEscapeKeyPressed (TextEditor &editor) override;
+    void textEditorFocusLost (TextEditor &editor) override;
     //[/UserMethods]
 
-    void paint (Graphics& g);
-    void resized();
-    void buttonClicked (Button* buttonThatWasClicked);
-    void sliderValueChanged (Slider* sliderThatWasMoved);
+    void paint (Graphics& g) override;
+    void resized() override;
+    void buttonClicked (Button* buttonThatWasClicked) override;
+    void sliderValueChanged (Slider* sliderThatWasMoved) override;
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.

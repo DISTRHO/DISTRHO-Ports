@@ -92,34 +92,33 @@ public:
 
     //==============================================================================
     XEQPlugin();
-    ~XEQPlugin();
+    ~XEQPlugin() override;
 
-    bool hasEditor() const { return true; }
+    bool hasEditor() const override { return true; }
 
-    bool silenceInProducesSilenceOut() const { return true; }
-    double getTailLengthSeconds() const { return 0.0; }
-
-    //==============================================================================
-    const String getName() const          { return JucePlugin_Name; }
-    bool acceptsMidi() const              { return JucePlugin_WantsMidiInput; }
-    bool producesMidi() const             { return JucePlugin_ProducesMidiOutput; }
+    bool silenceInProducesSilenceOut() const override { return true; }
+    double getTailLengthSeconds() const override { return 0.0; }
 
     //==============================================================================
-    AudioProcessorEditor* createEditor();
+    const String getName() const override          { return JucePlugin_Name; }
+    bool acceptsMidi() const override              { return JucePlugin_WantsMidiInput; }
+    bool producesMidi() const override             { return JucePlugin_ProducesMidiOutput; }
+
+    //==============================================================================
+    AudioProcessorEditor* createEditor() override;
     XEQComponent* getEditor();
 
     Equalizer* getEqualizer ();
     Limiter* getLimiter ();
 
     //==============================================================================
-    void prepareToPlay (double sampleRate, int samplesPerBlock);
-    void releaseResources();
-    void processBlock (AudioSampleBuffer& buffer,
-                       MidiBuffer& midiMessages);
+    void prepareToPlay (double sampleRate, int samplesPerBlock) override;
+    void releaseResources() override;
+    void processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages) override;
 
     //==============================================================================
-    void getStateInformation (MemoryBlock& destData);
-    void setStateInformation (const void* data, int sizeInBytes);
+    void getStateInformation (MemoryBlock& destData) override;
+    void setStateInformation (const void* data, int sizeInBytes) override;
 
     void initialiseToDefault ();
 

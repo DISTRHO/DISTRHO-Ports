@@ -47,7 +47,7 @@ plugin (0)
 {
     zeromem (paramName, AudioParameterMaxNameLength * sizeof (char));
     zeromem (paramLabel, AudioParameterMaxLabelLength * sizeof (char));
-	
+
     getValueFunction = MakeDelegate (this, &AudioParameter::defaultGetFunction);
     setValueFunction = MakeDelegate (this, &AudioParameter::defaultSetFunction);
     getTextFunction = MakeDelegate (this, &AudioParameter::defaultGetTextFunction);
@@ -62,36 +62,36 @@ AudioParameter::~AudioParameter ()
 AudioParameter& AudioParameter::id (const int newIndex)
 {
     index = newIndex;
-	
+
     return *this;
 }
 
 AudioParameter& AudioParameter::part (const int newPartNumber)
 {
     partNumber = newPartNumber;
-	
+
     return *this;
 }
 
 AudioParameter& AudioParameter::name (const String& newName)
 {
 #if JUCE_WIN32
-    _snprintf (paramName, AudioParameterMaxNameLength, "%s", (const char*) newName.toUTF8());
+    _snprintf (paramName, AudioParameterMaxNameLength, "%s", newName.toRawUTF8());
 #else
-    //snprintf (paramName, AudioParameterMaxNameLength, "%s", (const char*) newName);
+    snprintf (paramName, AudioParameterMaxNameLength, "%s", newName.toRawUTF8());
 #endif
-	
+
     return *this;
 }
 
 AudioParameter& AudioParameter::unit (const String& newLabel)
 {
 #if JUCE_WIN32
-    _snprintf (paramLabel, AudioParameterMaxLabelLength, "%s", (const char*) newLabel.toUTF8());
+    _snprintf (paramLabel, AudioParameterMaxLabelLength, "%s", newLabel.toRawUTF8());
 #else
-    //snprintf (paramLabel, AudioParameterMaxLabelLength, "%s", (const char*) newLabel);
+    snprintf (paramLabel, AudioParameterMaxLabelLength, "%s", newLabel.toRawUTF8());
 #endif
-	
+
     return *this;
 }
 
@@ -101,7 +101,7 @@ AudioParameter& AudioParameter::mapping (TransferFunction newFunction,
 {
     transferFunction = newFunction;
     transferData = additionalData;
-	
+
     return *this;
 }
 #endif
@@ -110,35 +110,35 @@ AudioParameter& AudioParameter::range (const float min, const float max)
 {
     minValue = min;
     maxValue = max;
-	
+
     return *this;
 }
 
 AudioParameter& AudioParameter::base (const float newBaseValue)
 {
     baseValue = newBaseValue;
-	
+
     return *this;
 }
 
 AudioParameter& AudioParameter::set (SetValueDelegate newSetFunction)
 {
     setValueFunction = newSetFunction;
-	
+
     return *this;
 }
 
 AudioParameter& AudioParameter::get (GetValueDelegate newGetFunction)
 {
     getValueFunction = newGetFunction;
-	
+
     return *this;
 }
 
 AudioParameter& AudioParameter::text (GetTextDelegate newGetTextFunction)
 {
     getTextFunction = newGetTextFunction;
-	
+
     return *this;
 }
 
@@ -151,7 +151,7 @@ float AudioParameter::getValue () const
         default:
             return (getValueFunction (partNumber) - minValue) / (maxValue - minValue);
         case RangeSquared:
-            return sqrtf ((getValueFunction (partNumber) - minValue) / (maxValue - minValue));                
+            return sqrtf ((getValueFunction (partNumber) - minValue) / (maxValue - minValue));
         case RangeCubed:
             return powf ((getValueFunction (partNumber) - minValue) / (maxValue - minValue), 1.0f / 3.0f);
         case RangePow:
@@ -163,7 +163,7 @@ float AudioParameter::getValue () const
         case Frequency:
             return (logf (getValueFunction (partNumber) / 20.0f) / logf (2.0f))
 			/ 9.965784284662088765571752446703612804412841796875f;
-    } 
+    }
 #else
     return (getValueFunction (partNumber) - minValue) / (maxValue - minValue);
 #endif
@@ -188,7 +188,7 @@ void AudioParameter::setValue (const float newValue)
             setValueFunction (partNumber, (float) roundFloatToInt (newValue * (transferData - 0.01f)));
         case Frequency:
             setValueFunction (partNumber, 20.0f * powf (2.0f, newValue * 9.965784284662088765571752446703612804412841796875f));
-    } 
+    }
 #else
     setValueFunction (partNumber, minValue + newValue * (maxValue - minValue));
 #endif
@@ -199,7 +199,7 @@ void AudioParameter::setValue (const float newValue)
 void AudioParameter::addListener (AudioParameterListener* const listener)
 {
     listeners.addIfNotAlreadyThere (listener);
-	
+
     if (plugin)
     {
         const ScopedLock sl (plugin->getParameterLock());
@@ -233,7 +233,7 @@ void AudioParameter::removeAllListeners ()
     if (plugin)
     {
         const ScopedLock sl (plugin->getParameterLock());
-		
+
         for (int i = listeners.size (); --i >= 0;)
             listeners.getUnchecked (i)->detachedFromParameter (this, index);
     }
@@ -242,7 +242,7 @@ void AudioParameter::removeAllListeners ()
         for (int i = listeners.size (); --i >= 0;)
             listeners.getUnchecked (i)->detachedFromParameter (this, index);
     }
-	
+
     listeners.clear ();
 }
 
@@ -257,7 +257,7 @@ void AudioParameter::setAudioPlugin (AudioPlugin* newPlugin, const int newIndex)
 void AudioParameter::handleAsyncUpdate ()
 {
     const ScopedLock sl (plugin->getParameterLock());
-	
+
     for (int i = listeners.size (); --i >= 0;)
         listeners.getUnchecked (i)->parameterChanged (this, index);
 }
@@ -266,9 +266,9 @@ void AudioParameter::handleAsyncUpdate ()
 bool AudioParameter::handleMidiMessage (const MidiMessage& message)
 {
     // TODO - handle parameters changes by midi notes and not only cc.
-	
+
     plugin->setParameter (index, message.getControllerValue () * float_MidiScaler);
-	
+
     return true;
 }
 
@@ -287,13 +287,13 @@ const String AudioParameter::defaultGetTextFunction (int partNumber, float value
 {
     int decimalNumber = 0;
     float absValue = fabsf (value);
-	
+
     if (absValue < 10) decimalNumber = 4;
     else if (absValue < 100) decimalNumber = 3;
     else if (absValue < 1000) decimalNumber = 2;
     else if (absValue < 10000) decimalNumber = 1;
     else if (absValue < 100000) decimalNumber = 0;
-	
+
     return String (value, jmin (jmax (decimalNumber, 0), 4))
 	+ " "
 	+ (String)paramLabel;
@@ -313,14 +313,14 @@ changeChecksPerSecond (50)
 }
 
 AudioParameterThread::~AudioParameterThread ()
-{  
+{
     stopThread (5000);
 }
 
 void AudioParameterThread::sendParameterChange (AudioParameter* parameter)
 {
     parameterChanges.put (parameter);
-    
+
     notify ();
 }
 
@@ -331,29 +331,29 @@ int AudioParameterThread::getParametersChangeChecksPerSecond () const
 
 void AudioParameterThread::setParametersChangeChecksPerSecond (const int howManyCheckPerSecond)
 {
-    changeChecksPerSecond = jmax (1, jmin (100, howManyCheckPerSecond));   
+    changeChecksPerSecond = jmax (1, jmin (100, howManyCheckPerSecond));
 }
 
 void AudioParameterThread::run()
 {
     AudioParameter* parameter;
-	
+
     while (! threadShouldExit ())
     {
         int32 currentWaitTime = Time::getMillisecondCounter ();
-		
+
         while (! parameterChanges.isEmpty ())
         {
             parameter = (AudioParameter*) parameterChanges.get ();
             if (parameter)
                 parameter->triggerAsyncUpdate ();
         }
-		
+
         currentWaitTime = 1000 / changeChecksPerSecond
 		- (Time::getMillisecondCounter () - currentWaitTime);
-		
+
 		//        wait (jmax (1, jmin (1000, currentWaitTime)));
-		
+
         Thread::sleep (jmax (1, jmin (1000, currentWaitTime)));
     }
 }

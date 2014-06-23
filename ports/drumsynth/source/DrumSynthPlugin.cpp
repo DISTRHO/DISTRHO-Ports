@@ -124,454 +124,454 @@ void DrumSynthPlugin::processBlock (AudioSampleBuffer& buffer,
 void DrumSynthPlugin::registerNoteDrumParameters (const int noteNumber)
 {
     int n;
-    
+
     // main --------------------------------------------------------------------
     n = PPAR(noteNumber, PP_MAIN_TUNING);
-    PREG(n, params[n].part (n).name (T("Tuning")).unit (T("st")).range (-24.0f, 24.0f));
+    PREG(n, params[n].part (n).name ("Tuning").unit ("st").range (-24.0f, 24.0f));
     setParameterMapped (n, 0.0f);
 
     n = PPAR(noteNumber, PP_MAIN_STRETCH);
-    PREG(n, params[n].part (n).name (T("Stretch")).unit (T("%")).range (10.0f, 200.0f));
+    PREG(n, params[n].part (n).name ("Stretch").unit ("%").range (10.0f, 200.0f));
     setParameterMapped (n, 100.0f);
 
     n = PPAR(noteNumber, PP_MAIN_GAIN);
-    PREG(n, params[n].part (n).name (T("Gain")).unit (T("%")).range (-60.0f, 10.0f));
+    PREG(n, params[n].part (n).name ("Gain").unit ("%").range (-60.0f, 10.0f));
     setParameterMapped (n, 0.0f);
 
     n = PPAR(noteNumber, PP_MAIN_FILTER);
-    PREG(n, params[n].part (n).name (T("Filter")).unit (T("%")).range (0, 1));
+    PREG(n, params[n].part (n).name ("Filter").unit ("%").range (0, 1));
     setParameterMapped (n, 0.0f);
 
     n = PPAR(noteNumber, PP_MAIN_HIGHPASS);
-    PREG(n, params[n].part (n).name (T("HP")).unit (T("%")).range (0, 1));
+    PREG(n, params[n].part (n).name ("HP").unit ("%").range (0, 1));
     setParameterMapped (n, 0.0f);
 
     n = PPAR(noteNumber, PP_MAIN_RESONANCE);
-    PREG(n, params[n].part (n).name (T("Resonance")).unit (T("%")).range (0.0f, 100.0f));
+    PREG(n, params[n].part (n).name ("Resonance").unit ("%").range (0.0f, 100.0f));
     setParameterMapped (n, 0.0f);
 
     // -------------------------------------------------------------------------
     n = PPAR(noteNumber, PP_MAIN_ENV_T1TIME);
-    PREG(n, params[n].part (n).name (T("F-Env-T1")).unit (T("%")).range (0.0f, 44100.0f * 5));
+    PREG(n, params[n].part (n).name ("F-Env-T1").unit ("%").range (0.0f, 44100.0f * 5));
     setParameterMapped (n, 0.0f);
 
     n = PPAR(noteNumber, PP_MAIN_ENV_T1GAIN);
-    PREG(n, params[n].part (n).name (T("F-Env-G1")).unit (T("%")).range (0.0f, 100.0f));
+    PREG(n, params[n].part (n).name ("F-Env-G1").unit ("%").range (0.0f, 100.0f));
     setParameterMapped (n, 100.0f);
 
     n = PPAR(noteNumber, PP_MAIN_ENV_T2TIME);
-    PREG(n, params[n].part (n).name (T("F-Env-T2")).unit (T("%")).range (0.0f, 44100.0f * 5));
+    PREG(n, params[n].part (n).name ("F-Env-T2").unit ("%").range (0.0f, 44100.0f * 5));
     setParameterMapped (n, 44100.0f);
 
     n = PPAR(noteNumber, PP_MAIN_ENV_T2GAIN);
-    PREG(n, params[n].part (n).name (T("F-Env-G2")).unit (T("%")).range (0.0f, 100.0f));
+    PREG(n, params[n].part (n).name ("F-Env-G2").unit ("%").range (0.0f, 100.0f));
     setParameterMapped (n, 100.0f);
 
     n = PPAR(noteNumber, PP_MAIN_ENV_T3TIME);
-    PREG(n, params[n].part (n).name (T("F-Env-T3")).unit (T("%")).range (0.0f, 44100.0f * 5));
+    PREG(n, params[n].part (n).name ("F-Env-T3").unit ("%").range (0.0f, 44100.0f * 5));
     setParameterMapped (n, 50000.0f);
 
     n = PPAR(noteNumber, PP_MAIN_ENV_T3GAIN);
-    PREG(n, params[n].part (n).name (T("F-Env-G3")).unit (T("%")).range (0.0f, 100.0f));
+    PREG(n, params[n].part (n).name ("F-Env-G3").unit ("%").range (0.0f, 100.0f));
     setParameterMapped (n, 0.0f);
 
     n = PPAR(noteNumber, PP_MAIN_ENV_T4TIME);
-    PREG(n, params[n].part (n).name (T("F-Env-T4")).unit (T("%")).range (0.0f, 44100.0f * 5));
+    PREG(n, params[n].part (n).name ("F-Env-T4").unit ("%").range (0.0f, 44100.0f * 5));
     setParameterMapped (n, 51000.0f);
 
     n = PPAR(noteNumber, PP_MAIN_ENV_T4GAIN);
-    PREG(n, params[n].part (n).name (T("F-Env-G4")).unit (T("%")).range (0.0f, 100.0f));
+    PREG(n, params[n].part (n).name ("F-Env-G4").unit ("%").range (0.0f, 100.0f));
     setParameterMapped (n, 0.0f);
 
     n = PPAR(noteNumber, PP_MAIN_ENV_T5TIME);
-    PREG(n, params[n].part (n).name (T("F-Env-T5")).unit (T("%")).range (0.0f, 44100.0f * 5));
+    PREG(n, params[n].part (n).name ("F-Env-T5").unit ("%").range (0.0f, 44100.0f * 5));
     setParameterMapped (n, 51000.0f);
 
     n = PPAR(noteNumber, PP_MAIN_ENV_T5GAIN);
-    PREG(n, params[n].part (n).name (T("F-Env-G5")).unit (T("%")).range (0.0f, 100.0f));
+    PREG(n, params[n].part (n).name ("F-Env-G5").unit ("%").range (0.0f, 100.0f));
     setParameterMapped (n, 0.0f);
 
     // tone --------------------------------------------------------------------
     n = PPAR(noteNumber, PP_TONE_ON);
-    PREG(n, params[n].part (n).name (T("Tone On")).unit (T("?")).range (0, 1));
+    PREG(n, params[n].part (n).name ("Tone On").unit ("?").range (0, 1));
     setParameterMapped (n, 1);
 
     n = PPAR(noteNumber, PP_TONE_LEVEL);
-    PREG(n, params[n].part (n).name (T("Tone Amt")).unit (T("%")).range (0.0f, 200.0f));
+    PREG(n, params[n].part (n).name ("Tone Amt").unit ("%").range (0.0f, 200.0f));
     setParameterMapped (n, 128.0f);
 
     n = PPAR(noteNumber, PP_TONE_F1);
-    PREG(n, params[n].part (n).name (T("Freq1")).unit (T("hz")).range (20.0f, 11025.0f));
+    PREG(n, params[n].part (n).name ("Freq1").unit ("hz").range (20.0f, 11025.0f));
     setParameterMapped (n, 200.0f);
 
     n = PPAR(noteNumber, PP_TONE_F2);
-    PREG(n, params[n].part (n).name (T("Freq2")).unit (T("hz")).range (20.0f, 11025.0f));
+    PREG(n, params[n].part (n).name ("Freq2").unit ("hz").range (20.0f, 11025.0f));
     setParameterMapped (n, 50.0f);
 
     n = PPAR(noteNumber, PP_TONE_DROOP);
-    PREG(n, params[n].part (n).name (T("Droop")).unit (T("%")).range (0.0f, 100.0f));
+    PREG(n, params[n].part (n).name ("Droop").unit ("%").range (0.0f, 100.0f));
     setParameterMapped (n, 0.0f);
 
     n = PPAR(noteNumber, PP_TONE_PHASE);
-    PREG(n, params[n].part (n).name (T("Phase")).unit (T("°")).range (0.0f, 90.0f));
+    PREG(n, params[n].part (n).name ("Phase").unit (CharPointer_UTF8("º")).range (0.0f, 90.0f));
     setParameterMapped (n, 0.0f);
 
     // -------------------------------------------------------------------------
     n = PPAR(noteNumber, PP_TONE_ENV_T1TIME);
-    PREG(n, params[n].part (n).name (T("T-Env-T1")).unit (T("%")).range (0.0f, 44100.0f * 5));
+    PREG(n, params[n].part (n).name ("T-Env-T1").unit ("%").range (0.0f, 44100.0f * 5));
     setParameterMapped (n, 0.0f);
 
     n = PPAR(noteNumber, PP_TONE_ENV_T1GAIN);
-    PREG(n, params[n].part (n).name (T("T-Env-G1")).unit (T("%")).range (0.0f, 100.0f));
+    PREG(n, params[n].part (n).name ("T-Env-G1").unit ("%").range (0.0f, 100.0f));
     setParameterMapped (n, 100.0f);
 
     n = PPAR(noteNumber, PP_TONE_ENV_T2TIME);
-    PREG(n, params[n].part (n).name (T("T-Env-T2")).unit (T("%")).range (0.0f, 44100.0f * 5));
+    PREG(n, params[n].part (n).name ("T-Env-T2").unit ("%").range (0.0f, 44100.0f * 5));
     setParameterMapped (n, 44100.0f);
 
     n = PPAR(noteNumber, PP_TONE_ENV_T2GAIN);
-    PREG(n, params[n].part (n).name (T("T-Env-G2")).unit (T("%")).range (0.0f, 100.0f));
+    PREG(n, params[n].part (n).name ("T-Env-G2").unit ("%").range (0.0f, 100.0f));
     setParameterMapped (n, 100.0f);
 
     n = PPAR(noteNumber, PP_TONE_ENV_T3TIME);
-    PREG(n, params[n].part (n).name (T("T-Env-T3")).unit (T("%")).range (0.0f, 44100.0f * 5));
+    PREG(n, params[n].part (n).name ("T-Env-T3").unit ("%").range (0.0f, 44100.0f * 5));
     setParameterMapped (n, 50000.0f);
 
     n = PPAR(noteNumber, PP_TONE_ENV_T3GAIN);
-    PREG(n, params[n].part (n).name (T("T-Env-G3")).unit (T("%")).range (0.0f, 100.0f));
+    PREG(n, params[n].part (n).name ("T-Env-G3").unit ("%").range (0.0f, 100.0f));
     setParameterMapped (n, 0.0f);
 
     n = PPAR(noteNumber, PP_TONE_ENV_T4TIME);
-    PREG(n, params[n].part (n).name (T("T-Env-T4")).unit (T("%")).range (0.0f, 44100.0f * 5));
+    PREG(n, params[n].part (n).name ("T-Env-T4").unit ("%").range (0.0f, 44100.0f * 5));
     setParameterMapped (n, 51000.0f);
 
     n = PPAR(noteNumber, PP_TONE_ENV_T4GAIN);
-    PREG(n, params[n].part (n).name (T("T-Env-G4")).unit (T("%")).range (0.0f, 100.0f));
+    PREG(n, params[n].part (n).name ("T-Env-G4").unit ("%").range (0.0f, 100.0f));
     setParameterMapped (n, 0.0f);
 
     n = PPAR(noteNumber, PP_TONE_ENV_T5TIME);
-    PREG(n, params[n].part (n).name (T("T-Env-T5")).unit (T("%")).range (0.0f, 44100.0f * 5));
+    PREG(n, params[n].part (n).name ("T-Env-T5").unit ("%").range (0.0f, 44100.0f * 5));
     setParameterMapped (n, 51000.0f);
 
     n = PPAR(noteNumber, PP_TONE_ENV_T5GAIN);
-    PREG(n, params[n].part (n).name (T("T-Env-G5")).unit (T("%")).range (0.0f, 100.0f));
+    PREG(n, params[n].part (n).name ("T-Env-G5").unit ("%").range (0.0f, 100.0f));
     setParameterMapped (n, 0.0f);
 
     // noise ------------------------------------------------------------------
     n = PPAR(noteNumber, PP_NOIZ_ON);
-    PREG(n, params[n].part (n).name (T("Noise On")).unit (T("?")).range (0, 1));
+    PREG(n, params[n].part (n).name ("Noise On").unit ("?").range (0, 1));
     setParameterMapped (n, 0);
 
     n = PPAR(noteNumber, PP_NOIZ_LEVEL);
-    PREG(n, params[n].part (n).name (T("Noise Amt")).unit (T("%")).range (0, 200.0f));
+    PREG(n, params[n].part (n).name ("Noise Amt").unit ("%").range (0, 200.0f));
     setParameterMapped (n, 128.0f);
 
     n = PPAR(noteNumber, PP_NOIZ_SLOPE);
-    PREG(n, params[n].part (n).name (T("Slope Amt")).unit (T("%")).range (-100, 100.0f));
+    PREG(n, params[n].part (n).name ("Slope Amt").unit ("%").range (-100, 100.0f));
     setParameterMapped (n, 0.0f);
 
     n = PPAR(noteNumber, PP_NOIZ_FIXEDSEQ);
-    PREG(n, params[n].part (n).name (T("Fixed Seq")).unit (T("?")).range (0, 1));
+    PREG(n, params[n].part (n).name ("Fixed Seq").unit ("?").range (0, 1));
     setParameterMapped (n, 1);
 
     // -------------------------------------------------------------------------
     n = PPAR(noteNumber, PP_NOIZ_ENV_T1TIME);
-    PREG(n, params[n].part (n).name (T("N-Env-T1")).unit (T("%")).range (0.0f, 44100.0f * 5));
+    PREG(n, params[n].part (n).name ("N-Env-T1").unit ("%").range (0.0f, 44100.0f * 5));
     setParameterMapped (n, 0.0f);
 
     n = PPAR(noteNumber, PP_NOIZ_ENV_T1GAIN);
-    PREG(n, params[n].part (n).name (T("N-Env-G1")).unit (T("%")).range (0.0f, 100.0f));
+    PREG(n, params[n].part (n).name ("N-Env-G1").unit ("%").range (0.0f, 100.0f));
     setParameterMapped (n, 100.0f);
 
     n = PPAR(noteNumber, PP_NOIZ_ENV_T2TIME);
-    PREG(n, params[n].part (n).name (T("N-Env-T2")).unit (T("%")).range (0.0f, 44100.0f * 5));
+    PREG(n, params[n].part (n).name ("N-Env-T2").unit ("%").range (0.0f, 44100.0f * 5));
     setParameterMapped (n, 44100.0f);
 
     n = PPAR(noteNumber, PP_NOIZ_ENV_T2GAIN);
-    PREG(n, params[n].part (n).name (T("N-Env-G2")).unit (T("%")).range (0.0f, 100.0f));
+    PREG(n, params[n].part (n).name ("N-Env-G2").unit ("%").range (0.0f, 100.0f));
     setParameterMapped (n, 100.0f);
 
     n = PPAR(noteNumber, PP_NOIZ_ENV_T3TIME);
-    PREG(n, params[n].part (n).name (T("N-Env-T3")).unit (T("%")).range (0.0f, 44100.0f * 5));
+    PREG(n, params[n].part (n).name ("N-Env-T3").unit ("%").range (0.0f, 44100.0f * 5));
     setParameterMapped (n, 50000.0f);
 
     n = PPAR(noteNumber, PP_NOIZ_ENV_T3GAIN);
-    PREG(n, params[n].part (n).name (T("N-Env-G3")).unit (T("%")).range (0.0f, 100.0f));
+    PREG(n, params[n].part (n).name ("N-Env-G3").unit ("%").range (0.0f, 100.0f));
     setParameterMapped (n, 0.0f);
 
     n = PPAR(noteNumber, PP_NOIZ_ENV_T4TIME);
-    PREG(n, params[n].part (n).name (T("N-Env-T4")).unit (T("%")).range (0.0f, 44100.0f * 5));
+    PREG(n, params[n].part (n).name ("N-Env-T4").unit ("%").range (0.0f, 44100.0f * 5));
     setParameterMapped (n, 51000.0f);
 
     n = PPAR(noteNumber, PP_NOIZ_ENV_T4GAIN);
-    PREG(n, params[n].part (n).name (T("N-Env-G4")).unit (T("%")).range (0.0f, 100.0f));
+    PREG(n, params[n].part (n).name ("N-Env-G4").unit ("%").range (0.0f, 100.0f));
     setParameterMapped (n, 0.0f);
 
     n = PPAR(noteNumber, PP_NOIZ_ENV_T5TIME);
-    PREG(n, params[n].part (n).name (T("N-Env-T5")).unit (T("%")).range (0.0f, 44100.0f * 5));
+    PREG(n, params[n].part (n).name ("N-Env-T5").unit ("%").range (0.0f, 44100.0f * 5));
     setParameterMapped (n, 51000.0f);
 
     n = PPAR(noteNumber, PP_NOIZ_ENV_T5GAIN);
-    PREG(n, params[n].part (n).name (T("N-Env-G5")).unit (T("%")).range (0.0f, 100.0f));
+    PREG(n, params[n].part (n).name ("N-Env-G5").unit ("%").range (0.0f, 100.0f));
     setParameterMapped (n, 0.0f);
 
     // overtones --------------------------------------------------------------
     n = PPAR(noteNumber, PP_OTON_ON);
-    PREG(n, params[n].part (n).name (T("Over On")).unit (T("?")).range (0, 1));
+    PREG(n, params[n].part (n).name ("Over On").unit ("?").range (0, 1));
     setParameterMapped (n, 0);
 
     n = PPAR(noteNumber, PP_OTON_LEVEL);
-    PREG(n, params[n].part (n).name (T("Over Amt")).unit (T("%")).range (0, 200.0f));
+    PREG(n, params[n].part (n).name ("Over Amt").unit ("%").range (0, 200.0f));
     setParameterMapped (n, 128.0f);
 
     n = PPAR(noteNumber, PP_OTON_F1);
-    PREG(n, params[n].part (n).name (T("Over F1")).unit (T("%")).range (20, 22050.0f));
+    PREG(n, params[n].part (n).name ("Over F1").unit ("%").range (20, 22050.0f));
     setParameterMapped (n, 4600);
 
     n = PPAR(noteNumber, PP_OTON_WAVE1);
-    PREG(n, params[n].part (n).name (T("Over Wave1")).unit (T("n")).range (0, 4));
+    PREG(n, params[n].part (n).name ("Over Wave1").unit ("n").range (0, 4));
     setParameterMapped (n, 0);
 
     n = PPAR(noteNumber, PP_OTON_TRACK1);
-    PREG(n, params[n].part (n).name (T("Over Track1")).unit (T("?")).range (0, 1));
+    PREG(n, params[n].part (n).name ("Over Track1").unit ("?").range (0, 1));
     setParameterMapped (n, 1);
 
     n = PPAR(noteNumber, PP_OTON_F2);
-    PREG(n, params[n].part (n).name (T("Over F2")).unit (T("hz")).range (20, 22050.0f));
+    PREG(n, params[n].part (n).name ("Over F2").unit ("hz").range (20, 22050.0f));
     setParameterMapped (n, 1600);
 
     n = PPAR(noteNumber, PP_OTON_WAVE2);
-    PREG(n, params[n].part (n).name (T("Over Wave2")).unit (T("n")).range (0, 4));
+    PREG(n, params[n].part (n).name ("Over Wave2").unit ("n").range (0, 4));
     setParameterMapped (n, 1);
 
     n = PPAR(noteNumber, PP_OTON_TRACK2);
-    PREG(n, params[n].part (n).name (T("Over Track2")).unit (T("?")).range (0, 1));
+    PREG(n, params[n].part (n).name ("Over Track2").unit ("?").range (0, 1));
     setParameterMapped (n, 1);
 
     n = PPAR(noteNumber, PP_OTON_METHOD);
-    PREG(n, params[n].part (n).name (T("Over Method")).unit (T("n")).range (0, 2));
+    PREG(n, params[n].part (n).name ("Over Method").unit ("n").range (0, 2));
     setParameterMapped (n, 0);
 
     n = PPAR(noteNumber, PP_OTON_PARAM);
-    PREG(n, params[n].part (n).name (T("Over Param")).unit (T("%")).range (0, 100));
+    PREG(n, params[n].part (n).name ("Over Param").unit ("%").range (0, 100));
     setParameterMapped (n, 0);
 
     n = PPAR(noteNumber, PP_OTON_FILTER);
-    PREG(n, params[n].part (n).name (T("Over Filter")).unit (T("%")).range (0, 1));
+    PREG(n, params[n].part (n).name ("Over Filter").unit ("%").range (0, 1));
     setParameterMapped (n, 0);
 
     // -------------------------------------------------------------------------
     n = PPAR(noteNumber, PP_OTON1_ENV_T1TIME);
-    PREG(n, params[n].part (n).name (T("O-Env-T1")).unit (T("%")).range (0.0f, 44100.0f * 5));
+    PREG(n, params[n].part (n).name ("O-Env-T1").unit ("%").range (0.0f, 44100.0f * 5));
     setParameterMapped (n, 0.0f);
 
     n = PPAR(noteNumber, PP_OTON1_ENV_T1GAIN);
-    PREG(n, params[n].part (n).name (T("O-Env-G1")).unit (T("%")).range (0.0f, 100.0f));
+    PREG(n, params[n].part (n).name ("O-Env-G1").unit ("%").range (0.0f, 100.0f));
     setParameterMapped (n, 100.0f);
 
     n = PPAR(noteNumber, PP_OTON1_ENV_T2TIME);
-    PREG(n, params[n].part (n).name (T("O-Env-T2")).unit (T("%")).range (0.0f, 44100.0f * 5));
+    PREG(n, params[n].part (n).name ("O-Env-T2").unit ("%").range (0.0f, 44100.0f * 5));
     setParameterMapped (n, 44100.0f);
 
     n = PPAR(noteNumber, PP_OTON1_ENV_T2GAIN);
-    PREG(n, params[n].part (n).name (T("O-Env-G2")).unit (T("%")).range (0.0f, 100.0f));
+    PREG(n, params[n].part (n).name ("O-Env-G2").unit ("%").range (0.0f, 100.0f));
     setParameterMapped (n, 100.0f);
 
     n = PPAR(noteNumber, PP_OTON1_ENV_T3TIME);
-    PREG(n, params[n].part (n).name (T("O-Env-T3")).unit (T("%")).range (0.0f, 44100.0f * 5));
+    PREG(n, params[n].part (n).name ("O-Env-T3").unit ("%").range (0.0f, 44100.0f * 5));
     setParameterMapped (n, 50000.0f);
 
     n = PPAR(noteNumber, PP_OTON1_ENV_T3GAIN);
-    PREG(n, params[n].part (n).name (T("O-Env-G3")).unit (T("%")).range (0.0f, 100.0f));
+    PREG(n, params[n].part (n).name ("O-Env-G3").unit ("%").range (0.0f, 100.0f));
     setParameterMapped (n, 0.0f);
 
     n = PPAR(noteNumber, PP_OTON1_ENV_T4TIME);
-    PREG(n, params[n].part (n).name (T("O-Env-T4")).unit (T("%")).range (0.0f, 44100.0f * 5));
+    PREG(n, params[n].part (n).name ("O-Env-T4").unit ("%").range (0.0f, 44100.0f * 5));
     setParameterMapped (n, 51000.0f);
 
     n = PPAR(noteNumber, PP_OTON1_ENV_T4GAIN);
-    PREG(n, params[n].part (n).name (T("O-Env-G4")).unit (T("%")).range (0.0f, 100.0f));
+    PREG(n, params[n].part (n).name ("O-Env-G4").unit ("%").range (0.0f, 100.0f));
     setParameterMapped (n, 0.0f);
 
     n = PPAR(noteNumber, PP_OTON1_ENV_T5TIME);
-    PREG(n, params[n].part (n).name (T("O-Env-T5")).unit (T("%")).range (0.0f, 44100.0f * 5));
+    PREG(n, params[n].part (n).name ("O-Env-T5").unit ("%").range (0.0f, 44100.0f * 5));
     setParameterMapped (n, 51000.0f);
 
     n = PPAR(noteNumber, PP_OTON1_ENV_T5GAIN);
-    PREG(n, params[n].part (n).name (T("O-Env-G5")).unit (T("%")).range (0.0f, 100.0f));
+    PREG(n, params[n].part (n).name ("O-Env-G5").unit ("%").range (0.0f, 100.0f));
     setParameterMapped (n, 0.0f);
 
     n = PPAR(noteNumber, PP_OTON2_ENV_T1TIME);
-    PREG(n, params[n].part (n).name (T("O-Env-T1")).unit (T("%")).range (0.0f, 44100.0f * 5));
+    PREG(n, params[n].part (n).name ("O-Env-T1").unit ("%").range (0.0f, 44100.0f * 5));
     setParameterMapped (n, 0.0f);
 
     n = PPAR(noteNumber, PP_OTON2_ENV_T1GAIN);
-    PREG(n, params[n].part (n).name (T("O-Env-G1")).unit (T("%")).range (0.0f, 100.0f));
+    PREG(n, params[n].part (n).name ("O-Env-G1").unit ("%").range (0.0f, 100.0f));
     setParameterMapped (n, 100.0f);
 
     n = PPAR(noteNumber, PP_OTON2_ENV_T2TIME);
-    PREG(n, params[n].part (n).name (T("O-Env-T2")).unit (T("%")).range (0.0f, 44100.0f * 5));
+    PREG(n, params[n].part (n).name ("O-Env-T2").unit ("%").range (0.0f, 44100.0f * 5));
     setParameterMapped (n, 44100.0f);
 
     n = PPAR(noteNumber, PP_OTON2_ENV_T2GAIN);
-    PREG(n, params[n].part (n).name (T("O-Env-G2")).unit (T("%")).range (0.0f, 100.0f));
+    PREG(n, params[n].part (n).name ("O-Env-G2").unit ("%").range (0.0f, 100.0f));
     setParameterMapped (n, 100.0f);
 
     n = PPAR(noteNumber, PP_OTON2_ENV_T3TIME);
-    PREG(n, params[n].part (n).name (T("O-Env-T3")).unit (T("%")).range (0.0f, 44100.0f * 5));
+    PREG(n, params[n].part (n).name ("O-Env-T3").unit ("%").range (0.0f, 44100.0f * 5));
     setParameterMapped (n, 50000.0f);
 
     n = PPAR(noteNumber, PP_OTON2_ENV_T3GAIN);
-    PREG(n, params[n].part (n).name (T("O-Env-G3")).unit (T("%")).range (0.0f, 100.0f));
+    PREG(n, params[n].part (n).name ("O-Env-G3").unit ("%").range (0.0f, 100.0f));
     setParameterMapped (n, 0.0f);
 
     n = PPAR(noteNumber, PP_OTON2_ENV_T4TIME);
-    PREG(n, params[n].part (n).name (T("O-Env-T4")).unit (T("%")).range (0.0f, 44100.0f * 5));
+    PREG(n, params[n].part (n).name ("O-Env-T4").unit ("%").range (0.0f, 44100.0f * 5));
     setParameterMapped (n, 51000.0f);
 
     n = PPAR(noteNumber, PP_OTON2_ENV_T4GAIN);
-    PREG(n, params[n].part (n).name (T("O-Env-G4")).unit (T("%")).range (0.0f, 100.0f));
+    PREG(n, params[n].part (n).name ("O-Env-G4").unit ("%").range (0.0f, 100.0f));
     setParameterMapped (n, 0.0f);
 
     n = PPAR(noteNumber, PP_OTON2_ENV_T5TIME);
-    PREG(n, params[n].part (n).name (T("O-Env-T5")).unit (T("%")).range (0.0f, 44100.0f * 5));
+    PREG(n, params[n].part (n).name ("O-Env-T5").unit ("%").range (0.0f, 44100.0f * 5));
     setParameterMapped (n, 51000.0f);
 
     n = PPAR(noteNumber, PP_OTON2_ENV_T5GAIN);
-    PREG(n, params[n].part (n).name (T("O-Env-G5")).unit (T("%")).range (0.0f, 100.0f));
+    PREG(n, params[n].part (n).name ("O-Env-G5").unit ("%").range (0.0f, 100.0f));
     setParameterMapped (n, 0.0f);
 
     // noise band 1 -----------------------------------------------------------
     n = PPAR(noteNumber, PP_NBA1_ON);
-    PREG(n, params[n].part (n).name (T("NzBnd1 On")).unit (T("?")).range (0, 1));
+    PREG(n, params[n].part (n).name ("NzBnd1 On").unit ("?").range (0, 1));
     setParameterMapped (n, 0);
 
     n = PPAR(noteNumber, PP_NBA1_LEVEL);
-    PREG(n, params[n].part (n).name (T("NzBnd1 Amt")).unit (T("%")).range (0.0f, 200.0f));
+    PREG(n, params[n].part (n).name ("NzBnd1 Amt").unit ("%").range (0.0f, 200.0f));
     setParameterMapped (n, 128);
 
     n = PPAR(noteNumber, PP_NBA1_F);
-    PREG(n, params[n].part (n).name (T("NzBnd1 F")).unit (T("hz")).range (30, 22050.0f));
+    PREG(n, params[n].part (n).name ("NzBnd1 F").unit ("hz").range (30, 22050.0f));
     setParameterMapped (n, 3000);
 
     n = PPAR(noteNumber, PP_NBA1_DF);
-    PREG(n, params[n].part (n).name (T("NzBnd1 DF")).unit (T("%")).range (0, 50));
+    PREG(n, params[n].part (n).name ("NzBnd1 DF").unit ("%").range (0, 50));
     setParameterMapped (n, 0);
 
     // -------------------------------------------------------------------------
     n = PPAR(noteNumber, PP_NBA1_ENV_T1TIME);
-    PREG(n, params[n].part (n).name (T("N-Env-T1")).unit (T("%")).range (0.0f, 44100.0f * 5));
+    PREG(n, params[n].part (n).name ("N-Env-T1").unit ("%").range (0.0f, 44100.0f * 5));
     setParameterMapped (n, 0.0f);
 
     n = PPAR(noteNumber, PP_NBA1_ENV_T1GAIN);
-    PREG(n, params[n].part (n).name (T("N-Env-G1")).unit (T("%")).range (0.0f, 100.0f));
+    PREG(n, params[n].part (n).name ("N-Env-G1").unit ("%").range (0.0f, 100.0f));
     setParameterMapped (n, 100.0f);
 
     n = PPAR(noteNumber, PP_NBA1_ENV_T2TIME);
-    PREG(n, params[n].part (n).name (T("N-Env-T2")).unit (T("%")).range (0.0f, 44100.0f * 5));
+    PREG(n, params[n].part (n).name ("N-Env-T2").unit ("%").range (0.0f, 44100.0f * 5));
     setParameterMapped (n, 44100.0f);
 
     n = PPAR(noteNumber, PP_NBA1_ENV_T2GAIN);
-    PREG(n, params[n].part (n).name (T("N-Env-G2")).unit (T("%")).range (0.0f, 100.0f));
+    PREG(n, params[n].part (n).name ("N-Env-G2").unit ("%").range (0.0f, 100.0f));
     setParameterMapped (n, 100.0f);
 
     n = PPAR(noteNumber, PP_NBA1_ENV_T3TIME);
-    PREG(n, params[n].part (n).name (T("N-Env-T3")).unit (T("%")).range (0.0f, 44100.0f * 5));
+    PREG(n, params[n].part (n).name ("N-Env-T3").unit ("%").range (0.0f, 44100.0f * 5));
     setParameterMapped (n, 50000.0f);
 
     n = PPAR(noteNumber, PP_NBA1_ENV_T3GAIN);
-    PREG(n, params[n].part (n).name (T("N-Env-G3")).unit (T("%")).range (0.0f, 100.0f));
+    PREG(n, params[n].part (n).name ("N-Env-G3").unit ("%").range (0.0f, 100.0f));
     setParameterMapped (n, 0.0f);
 
     n = PPAR(noteNumber, PP_NBA1_ENV_T4TIME);
-    PREG(n, params[n].part (n).name (T("N-Env-T4")).unit (T("%")).range (0.0f, 44100.0f * 5));
+    PREG(n, params[n].part (n).name ("N-Env-T4").unit ("%").range (0.0f, 44100.0f * 5));
     setParameterMapped (n, 51000.0f);
 
     n = PPAR(noteNumber, PP_NBA1_ENV_T4GAIN);
-    PREG(n, params[n].part (n).name (T("N-Env-G4")).unit (T("%")).range (0.0f, 100.0f));
+    PREG(n, params[n].part (n).name ("N-Env-G4").unit ("%").range (0.0f, 100.0f));
     setParameterMapped (n, 0.0f);
 
     n = PPAR(noteNumber, PP_NBA1_ENV_T5TIME);
-    PREG(n, params[n].part (n).name (T("N-Env-T5")).unit (T("%")).range (0.0f, 44100.0f * 5));
+    PREG(n, params[n].part (n).name ("N-Env-T5").unit ("%").range (0.0f, 44100.0f * 5));
     setParameterMapped (n, 51000.0f);
 
     n = PPAR(noteNumber, PP_NBA1_ENV_T5GAIN);
-    PREG(n, params[n].part (n).name (T("N-Env-G5")).unit (T("%")).range (0.0f, 100.0f));
+    PREG(n, params[n].part (n).name ("N-Env-G5").unit ("%").range (0.0f, 100.0f));
     setParameterMapped (n, 0.0f);
 
     // noise band 2 -----------------------------------------------------------
     n = PPAR(noteNumber, PP_NBA2_ON);
-    PREG(n, params[n].part (n).name (T("NzBnd2 On")).unit (T("?")).range (0, 1));
+    PREG(n, params[n].part (n).name ("NzBnd2 On").unit ("?").range (0, 1));
     setParameterMapped (n, 0);
 
     n = PPAR(noteNumber, PP_NBA2_LEVEL);
-    PREG(n, params[n].part (n).name (T("NzBnd2 Amt")).unit (T("%")).range (0.0f, 200.0f));
+    PREG(n, params[n].part (n).name ("NzBnd2 Amt").unit ("%").range (0.0f, 200.0f));
     setParameterMapped (n, 128);
 
     n = PPAR(noteNumber, PP_NBA2_F);
-    PREG(n, params[n].part (n).name (T("NzBnd2 F")).unit (T("hz")).range (30, 22050.0f));
+    PREG(n, params[n].part (n).name ("NzBnd2 F").unit ("hz").range (30, 22050.0f));
     setParameterMapped (n, 6000);
 
     n = PPAR(noteNumber, PP_NBA2_DF);
-    PREG(n, params[n].part (n).name (T("NzBnd2 DF")).unit (T("%")).range (0, 50));
+    PREG(n, params[n].part (n).name ("NzBnd2 DF").unit ("%").range (0, 50));
     setParameterMapped (n, 0);
 
     // -------------------------------------------------------------------------
     n = PPAR(noteNumber, PP_NBA2_ENV_T1TIME);
-    PREG(n, params[n].part (n).name (T("N-Env-T1")).unit (T("%")).range (0.0f, 44100.0f * 5));
+    PREG(n, params[n].part (n).name ("N-Env-T1").unit ("%").range (0.0f, 44100.0f * 5));
     setParameterMapped (n, 0.0f);
 
     n = PPAR(noteNumber, PP_NBA2_ENV_T1GAIN);
-    PREG(n, params[n].part (n).name (T("N-Env-G1")).unit (T("%")).range (0.0f, 100.0f));
+    PREG(n, params[n].part (n).name ("N-Env-G1").unit ("%").range (0.0f, 100.0f));
     setParameterMapped (n, 100.0f);
 
     n = PPAR(noteNumber, PP_NBA2_ENV_T2TIME);
-    PREG(n, params[n].part (n).name (T("N-Env-T2")).unit (T("%")).range (0.0f, 44100.0f * 5));
+    PREG(n, params[n].part (n).name ("N-Env-T2").unit ("%").range (0.0f, 44100.0f * 5));
     setParameterMapped (n, 44100.0f);
 
     n = PPAR(noteNumber, PP_NBA2_ENV_T2GAIN);
-    PREG(n, params[n].part (n).name (T("N-Env-G2")).unit (T("%")).range (0.0f, 100.0f));
+    PREG(n, params[n].part (n).name ("N-Env-G2").unit ("%").range (0.0f, 100.0f));
     setParameterMapped (n, 100.0f);
 
     n = PPAR(noteNumber, PP_NBA2_ENV_T3TIME);
-    PREG(n, params[n].part (n).name (T("N-Env-T3")).unit (T("%")).range (0.0f, 44100.0f * 5));
+    PREG(n, params[n].part (n).name ("N-Env-T3").unit ("%").range (0.0f, 44100.0f * 5));
     setParameterMapped (n, 50000.0f);
 
     n = PPAR(noteNumber, PP_NBA2_ENV_T3GAIN);
-    PREG(n, params[n].part (n).name (T("N-Env-G3")).unit (T("%")).range (0.0f, 100.0f));
+    PREG(n, params[n].part (n).name ("N-Env-G3").unit ("%").range (0.0f, 100.0f));
     setParameterMapped (n, 0.0f);
 
     n = PPAR(noteNumber, PP_NBA2_ENV_T4TIME);
-    PREG(n, params[n].part (n).name (T("N-Env-T4")).unit (T("%")).range (0.0f, 44100.0f * 5));
+    PREG(n, params[n].part (n).name ("N-Env-T4").unit ("%").range (0.0f, 44100.0f * 5));
     setParameterMapped (n, 51000.0f);
 
     n = PPAR(noteNumber, PP_NBA2_ENV_T4GAIN);
-    PREG(n, params[n].part (n).name (T("N-Env-G4")).unit (T("%")).range (0.0f, 100.0f));
+    PREG(n, params[n].part (n).name ("N-Env-G4").unit ("%").range (0.0f, 100.0f));
     setParameterMapped (n, 0.0f);
 
     n = PPAR(noteNumber, PP_NBA2_ENV_T5TIME);
-    PREG(n, params[n].part (n).name (T("N-Env-T5")).unit (T("%")).range (0.0f, 44100.0f * 5));
+    PREG(n, params[n].part (n).name ("N-Env-T5").unit ("%").range (0.0f, 44100.0f * 5));
     setParameterMapped (n, 51000.0f);
 
     n = PPAR(noteNumber, PP_NBA2_ENV_T5GAIN);
-    PREG(n, params[n].part (n).name (T("N-Env-G5")).unit (T("%")).range (0.0f, 100.0f));
+    PREG(n, params[n].part (n).name ("N-Env-G5").unit ("%").range (0.0f, 100.0f));
     setParameterMapped (n, 0.0f);
 
     // dist ------------------------------------------------------------------
     n = PPAR(noteNumber, PP_DIST_ON);
-    PREG(n, params[n].part (n).name (T("Dist On")).unit (T("?")).range (0, 1));
+    PREG(n, params[n].part (n).name ("Dist On").unit ("?").range (0, 1));
     setParameterMapped (n, 0);
 
     n = PPAR(noteNumber, PP_DIST_CLIPPING);
-    PREG(n, params[n].part (n).name (T("Clipping")).unit (T("%")).range (0, 16));
+    PREG(n, params[n].part (n).name ("Clipping").unit ("%").range (0, 16));
     setParameterMapped (n, 0);
 
     n = PPAR(noteNumber, PP_DIST_BITS);
-    PREG(n, params[n].part (n).name (T("Bits")).unit (T("bits")).range (0, 16));
+    PREG(n, params[n].part (n).name ("Bits").unit ("bits").range (0, 16));
     setParameterMapped (n, 0);
 
     n = PPAR(noteNumber, PP_DIST_RATE);
-    PREG(n, params[n].part (n).name (T("Rate")).unit (T("hz")).range (0, 10));
+    PREG(n, params[n].part (n).name ("Rate").unit ("hz").range (0, 10));
     setParameterMapped (n, 0);
 }
 
@@ -584,22 +584,22 @@ void DrumSynthPlugin::getStateInformation (MemoryBlock& destData)
 #endif
 
         MemoryBlock tempBlock;
-        XmlElement xml (T("preset"));
-        // xml.setAttribute (T("version"), JucePlugin_VersionCode);
+        XmlElement xml ("preset");
+        // xml.setAttribute ("version", JucePlugin_VersionCode);
 
         for (int i = 0; i < getNumParameters (); i++)
         {
-            XmlElement* e = new XmlElement (T("p"));
-            e->setAttribute (T("key"), i);
-            e->setAttribute (T("value"), (double) getParameter (i));
+            XmlElement* e = new XmlElement ("p");
+            e->setAttribute ("key", i);
+            e->setAttribute ("value", (double) getParameter (i));
             xml.addChildElement (e);
         }
 
         for (int i = 0; i < TOTAL_DRUM_NOTES; i++)
         {
-            XmlElement* e = new XmlElement (T("n"));
-            e->setAttribute (T("key"), i);
-            e->setAttribute (T("name"), getDrumName (i));
+            XmlElement* e = new XmlElement ("n");
+            e->setAttribute ("key", i);
+            e->setAttribute ("name", getDrumName (i));
             xml.addChildElement (e);
         }
 
@@ -611,8 +611,8 @@ void DrumSynthPlugin::getStateInformation (MemoryBlock& destData)
     catch (...)
     {
         AlertWindow::showMessageBox (AlertWindow::WarningIcon,
-                                     T("Error !"),
-                                     T("Something bad occurred while saving presets data !"));
+                                     "Error !",
+                                     "Something bad occurred while saving presets data !");
     }
 #endif
 }
@@ -631,7 +631,7 @@ void DrumSynthPlugin::setStateInformation (const void* data, int sizeInBytes)
             XmlDocument xmlDoc ((char*) data);
 
             XmlElement* xml = xmlDoc.getDocumentElement();
-            if (xml == 0 || ! xml->hasTagName (T("preset")))
+            if (xml == 0 || ! xml->hasTagName ("preset"))
             {
                 String errString = xmlDoc.getLastParseError();
                 printf ("Error restoring preset: %s \n", (const char*) errString.toUTF8());
@@ -639,23 +639,23 @@ void DrumSynthPlugin::setStateInformation (const void* data, int sizeInBytes)
             else
             {
                 // TODO - take care of versioning
-                // int version = xml->getIntAttribute (T("version"), -1);
+                // int version = xml->getIntAttribute ("version", -1);
 
                 forEachXmlChildElement (*xml, e)
                 {
-                    if (e->hasTagName (T("p")))
+                    if (e->hasTagName ("p"))
                     {
-                        int key = e->getIntAttribute (T("key"), -1);
-                        double value = e->getDoubleAttribute (T("value"), 0.0f);
-                        
+                        int key = e->getIntAttribute ("key", -1);
+                        double value = e->getDoubleAttribute ("value", 0.0f);
+
                         if (key >= 0 && key < getNumParameters ())
                             setParameter (key, (float) value);
                     }
-                    else if (e->hasTagName (T("n")))
+                    else if (e->hasTagName ("n"))
                     {
-                        int key = e->getIntAttribute (T("key"), -1);
-                        String name = e->getStringAttribute (T("name"), T("Unset"));
-                        
+                        int key = e->getIntAttribute ("key", -1);
+                        String name = e->getStringAttribute ("name", "Unset");
+
                         if (key >= 0 && key < TOTAL_DRUM_NOTES)
                             setDrumName (key, name);
                     }
@@ -672,8 +672,8 @@ void DrumSynthPlugin::setStateInformation (const void* data, int sizeInBytes)
     catch (...)
     {
         AlertWindow::showMessageBox (AlertWindow::WarningIcon,
-                                     T("Error !"),
-                                     T("Something bad occurred while restoring presets data !"));
+                                    "Error !",
+                                    "Something bad occurred while restoring presets data !");
     }
 #endif
 
@@ -683,22 +683,22 @@ void DrumSynthPlugin::setStateInformation (const void* data, int sizeInBytes)
 //==============================================================================
 String DrumSynthPlugin::getStateInformationString ()
 {
-    XmlElement xml (T("preset"));
-    // xml.setAttribute (T("version"), JucePlugin_VersionCode);
+    XmlElement xml ("preset");
+    // xml.setAttribute ("version", JucePlugin_VersionCode);
 
     for (int i = 0; i < getNumParameters (); i++)
     {
-        XmlElement* e = new XmlElement (T("p"));
-        e->setAttribute (T("key"), i);
-        e->setAttribute (T("value"), (double) getParameter (i));
+        XmlElement* e = new XmlElement ("p");
+        e->setAttribute ("key", i);
+        e->setAttribute ("value", (double) getParameter (i));
         xml.addChildElement (e);
     }
 
     for (int i = 0; i < TOTAL_DRUM_NOTES; i++)
     {
-        XmlElement* e = new XmlElement (T("n"));
-        e->setAttribute (T("key"), i);
-        e->setAttribute (T("name"), getDrumName (i));
+        XmlElement* e = new XmlElement ("n");
+        e->setAttribute ("key", i);
+        e->setAttribute ("name", getDrumName (i));
         xml.addChildElement (e);
     }
 
@@ -713,23 +713,23 @@ void DrumSynthPlugin::setStateInformationString (const String& data)
     if (xml != 0)
     {
         // TODO - take care of versioning
-        // int version = xml->getIntAttribute (T("version"), -1);
+        // int version = xml->getIntAttribute ("version", -1);
 
         forEachXmlChildElement (*xml, e)
         {
-            if (e->hasTagName (T("p")))
+            if (e->hasTagName ("p"))
             {
-                int key = e->getIntAttribute (T("key"), -1);
-                double value = e->getDoubleAttribute (T("value"), 0.0f);
-                
+                int key = e->getIntAttribute ("key", -1);
+                double value = e->getDoubleAttribute ("value", 0.0f);
+
                 if (key >= 0 && key < getNumParameters ())
                     setParameter (key, (float) value);
             }
-            else if (e->hasTagName (T("n")))
+            else if (e->hasTagName ("n"))
             {
-                int key = e->getIntAttribute (T("key"), -1);
-                String name = e->getStringAttribute (T("name"), T("Unset"));
-                
+                int key = e->getIntAttribute ("key", -1);
+                String name = e->getStringAttribute ("name", "Unset");
+
                 if (key >= 0 && key < TOTAL_DRUM_NOTES)
                     setDrumName (key, name);
             }
@@ -747,7 +747,7 @@ void DrumSynthPlugin::setStateInformationString (const String& data)
 void DrumSynthPlugin::triggerPanic ()
 {
     for (int i = 1; i <= 16; i++)
-        synth.allNotesOff (i, false);    
+        synth.allNotesOff (i, false);
 }
 
 //==============================================================================
@@ -825,7 +825,7 @@ void DrumSynthPlugin::importDS (const int drumNumber, const File& file)
     setParameterMapped (PPAR (drumNumber, PP_DIST_RATE),      iniparser_getint    (ini, "dist:rate", 0));
 
 	iniparser_freedict (ini);
-	
+
 	// trigger update for the editor !
 	sendChangeMessage ();
 }
@@ -833,8 +833,8 @@ void DrumSynthPlugin::importDS (const int drumNumber, const File& file)
 void DrumSynthPlugin::exportDS (const int drumNumber, const File& file)
 {
     String content;
-    
-    content << 
+
+    content <<
         "[General]"     << "\n" <<
         "Version="      << "DrumSynth v2.0" << "\n" <<
         "Comment="      << notesNames[drumNumber] << "\n" <<
@@ -911,19 +911,19 @@ void DrumSynthPlugin::readEnvelopeFromString (const int drumNumber, const int pa
 
     while (currentPos < envelope.length())
     {
-        int nextPos = envelope.indexOf (currentPos, T(","));
+        int nextPos = envelope.indexOf (currentPos, ",");
         String timeValue = envelope.substring (currentPos, nextPos);
-        
+
         currentPos = nextPos + 1;
-        
-        nextPos = envelope.indexOf (currentPos, T(" "));
+
+        nextPos = envelope.indexOf (currentPos, " ");
         String gainValue = envelope.substring (currentPos, nextPos < 0 ? envelope.length() : nextPos);
-        
+
         setParameterMapped (PPAR (drumNumber, currentParameter++), timeValue.getFloatValue ());
         setParameterMapped (PPAR (drumNumber, currentParameter++), gainValue.getFloatValue ());
-        
+
         currentPos = nextPos + 1;
-        
+
         if (++currentEnvelopePoint == 5 || nextPos < 0)
             break;
     }
@@ -941,7 +941,7 @@ String DrumSynthPlugin::writeEnvelopeToString (const int drumNumber, const int p
         envelope << (int) getParameterMapped (PPAR (drumNumber, currentParameter++)) << ",";
         envelope << (int) getParameterMapped (PPAR (drumNumber, currentParameter++)) << " ";
     }
-    
+
     return envelope.trim ();
 }
 

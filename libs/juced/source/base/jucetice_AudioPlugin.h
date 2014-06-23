@@ -57,7 +57,7 @@ public:
     }
 
     /** Destructor */
-    ~AudioPlugin()
+    ~AudioPlugin() override
     {
         removeAllParameters ();
 
@@ -65,17 +65,17 @@ public:
     }
 
     //==============================================================================
-    const String getName() const
+    const String getName() const override
     {
         return "AudioPlugin";
     }
-    
-    bool acceptsMidi() const
+
+    bool acceptsMidi() const override
     {
         return false;
     }
-    
-    bool producesMidi() const
+
+    bool producesMidi() const override
     {
         return false;
     }
@@ -83,10 +83,10 @@ public:
     //==============================================================================
     /**
         Sets the current size of the parameters
-      
+
         This has to be done at least once before registering parameters in the
         audio plugin. It will allocate space for every parameter pointer
-        
+
         @see AudioProcessor
     */
     void setNumParameters (int numParameters)
@@ -96,19 +96,19 @@ public:
 
     /**
         Add a new parameter to the list of the parameter
-        
+
         You should call setNumParameters at least once before you start adding
         parameters to the plugin. We do this in order to make it possible to
-        register only some parameters, while keeping the total amount of 
+        register only some parameters, while keeping the total amount of
         parameters fixed (and so you don't have problem restoring presets, unless
         you change the total number of parameters and their order at the same time)
-        
+
         @see removeParameter
     */
     void registerParameter (const int index, AudioParameter* parameter)
     {
         // You must call setNumParameters before registering a parameter !
-        jassert (parameters.size () != 0); 
+        jassert (parameters.size () != 0);
 
         if (parameter)
         {
@@ -122,7 +122,7 @@ public:
 
     /**
         Remove parameter at the specified index
-        
+
         @see registerParameter
     */
     void removeParameter (const int index, const bool deleteObject = false)
@@ -142,13 +142,13 @@ public:
 
     /**
         Remove a parameter pointer if it is present in our list
-        
+
         @see registerParameter
     */
     void removeParameter (AudioParameter* parameter, const bool deleteObject = false)
     {
         const int index = parameters.indexOf (parameter);
-        
+
         if (parameter)
         {
             midiAutomatorManager.removeMidiAutomatable (parameter);
@@ -162,7 +162,7 @@ public:
 
     /**
         Remove a parameter pointer if it is present in our list
-        
+
         @see registerParameter
     */
     void removeAllParameters (const bool deleteObjects = false)
@@ -184,7 +184,7 @@ public:
 
     /**
         Returns a parameter object
-        
+
         @see registerParameter
     */
     AudioParameter* getParameterObject (const int index)
@@ -201,7 +201,7 @@ public:
 
         @see AudioProcessor
     */
-    int getNumParameters()
+    int getNumParameters() override
     {
         return parameters.size ();
     }
@@ -213,7 +213,7 @@ public:
 
         @see AudioProcessor
     */
-    float getParameter (int index)
+    float getParameter (int index) override
     {
         AudioParameter* parameter = parameters [index];
 
@@ -255,7 +255,7 @@ public:
 
         @see AudioProcessor
     */
-    void setParameter (int index, float newValue)
+    void setParameter (int index, float newValue) override
     {
         AudioParameter* parameter = parameters [index];
 
@@ -306,7 +306,7 @@ public:
 
         @see AudioProcessor
     */
-    const String getParameterName (int index)
+    const String getParameterName (int index) override
     {
         AudioParameter* parameter = parameters [index];
 
@@ -321,7 +321,7 @@ public:
 
         @see AudioProcessor
     */
-    const String getParameterText (int index)
+    const String getParameterText (int index) override
     {
         AudioParameter* parameter = parameters [index];
 
@@ -380,23 +380,23 @@ public:
 
         @param index        index of the parameter
         @param listener     ParameterListener to register
-        
+
         @see ParameterManager
     */
     void addListenerToParameter (const int index,
                                  AudioParameterListener* const listener)
     {
         AudioParameter* parameter = parameters [index];
-    
+
         if (parameter)
-            parameter->addListener (listener);        
+            parameter->addListener (listener);
     }
 
     /**
         Add a new ParameterListener listening to all parameters
 
         @param listener     ParameterListener that will listen to all parameter
-        
+
         @see AudioParameter, AudioParameterListener
     */
     void addListenerToParameters (AudioParameterListener* const listener)
@@ -412,23 +412,23 @@ public:
 
         @param index        index of the parameter
         @param listener     ParameterListener to unregister
-        
+
         @see AudioParameter, AudioParameterListener
     */
     void removeListenerToParameter (const int index,
                                     AudioParameterListener* const listener)
     {
         AudioParameter* parameter = parameters [index];
-    
+
         if (parameter)
-            parameter->removeListener (listener);        
+            parameter->removeListener (listener);
     }
 
     /**
         Remove a ParameterListener listening to all parameters
 
         @param listener     ParameterListener to unregister
-        
+
         @see AudioParameter, AudioParameterListener
     */
     void removeListenerToParameters (AudioParameterListener* listener)
@@ -450,9 +450,9 @@ public:
         for (int i = parameters.size (); --i >= 0;)
         {
             AudioParameter* parameter = parameters.getUnchecked (i);
-        
+
             if (parameter)
-                parameter->removeAllListeners (); 
+                parameter->removeAllListeners ();
         }
     }
 
@@ -476,12 +476,12 @@ public:
     //==============================================================================
     /**
         Write the current parameters state to an XML element
-        
+
         This should take care about mapping and additional stuff, but actually it
         should not take care of the actual value.
-        
+
         TODO - We have to fix this as soon as possible.
-        
+
         @see readParametersFromXmlElement
     */
     void writeParametersToXmlElement (XmlElement* xml)
@@ -489,7 +489,7 @@ public:
         for (int i = 0; i < parameters.size(); i++)
         {
             AudioParameter* parameter = parameters.getUnchecked (i);
-            
+
             if (parameter)
             {
                 XmlElement* e = new XmlElement ("parameter");
@@ -507,12 +507,12 @@ public:
 
     /**
         Read the parameters state from an XML element
-        
+
         This should take care about mapping and additional stuff, but actually it
         should not take care of the actual value.
-        
+
         TODO - We have to fix this as soon as possible.
-        
+
         @see writeParametersToXmlElement
      */
     void readParametersFromXmlElement (XmlElement* xml,
@@ -548,10 +548,10 @@ public:
     //==============================================================================
     /**
         Returns the number of actual presets
-        
+
         @see AudioProcessor
     */
-    int getNumPrograms()
+    int getNumPrograms() override
     {
         return programs.size ();
     }
@@ -561,7 +561,7 @@ public:
 
         @see AudioProcessor
     */
-    int getCurrentProgram()
+    int getCurrentProgram() override
     {
         return currentProgram;
     }
@@ -573,7 +573,7 @@ public:
 
         @see AudioProcessor
     */
-    void setCurrentProgram (int index)
+    void setCurrentProgram (int index) override
     {
         if (currentProgram != index
             && index >= 0 && index < programs.size())
@@ -595,7 +595,7 @@ public:
 
         @see AudioProcessor
     */
-    const String getProgramName (int index)
+    const String getProgramName (int index) override
     {
         AudioProgram* thisProgram = programs[index];
 
@@ -610,7 +610,7 @@ public:
 
         @see AudioProcessor
     */
-    void changeProgramName (int index, const String& newName)
+    void changeProgramName (int index, const String& newName) override
     {
         AudioProgram* thisProgram = programs[index];
 
@@ -627,7 +627,7 @@ public:
 
         @see AudioProcessor
     */
-    void getStateInformation (MemoryBlock& destData)
+    void getStateInformation (MemoryBlock& destData) override
     {
     }
 
@@ -642,7 +642,7 @@ public:
 
         @see AudioProcessor
     */
-    void setStateInformation (const void* data, int sizeInBytes)
+    void setStateInformation (const void* data, int sizeInBytes) override
     {
     }
 
@@ -650,10 +650,10 @@ public:
     /**
        This function lets you add a new preset based on the current state of
        the passed parameter manager.
-      
+
        It's easy to setup your filter in a well known state for its internal
        parameters, then just call this to save that setup.
-      
+
        @return the preset index that was added
     */
     bool restoreProgramFromFile (const File& file, const bool addProgram = true)
@@ -687,7 +687,7 @@ public:
                         {
                             MemoryBlock mb;
                             mb.fromBase64Encoding (dataElement->getAllSubText ());
-                            
+
                             setStateInformation (mb.getData (), mb.getSize ());
 
                             if (addProgram)
@@ -695,7 +695,7 @@ public:
                                                                 file));
                             break;
                         }
-                        
+
                         if (dataElement->hasTagName ("params"))
                         {
                             readParametersFromXmlElement (dataElement, false);
@@ -713,10 +713,10 @@ public:
     /**
        This function lets you add a new preset based on the current state of
        the passed parameter manager.
-      
+
        It's easy to setup your filter in a well known state for its internal
        parameters, then just call this to save that setup.
-      
+
        @return the preset index that was added
     */
     bool storeProgramToFile (const File& file, const bool addProgram = true)
@@ -770,8 +770,8 @@ public:
 
     /**
         Scan directory and search for programs
-        
-        The programs found will be added 
+
+        The programs found will be added
     */
     void scanDirectoryForPrograms (const File& programsDirectory,
                                    const String& wildCard = "*.xml",
@@ -805,69 +805,69 @@ public:
     {
         for (int i = programs.size(); --i >= 0;)
             delete programs.getUnchecked (i);
-            
+
         programs.clear ();
     }
-                                  
+
     //==============================================================================
     /**
         Returns the name of the specified input channel
-        
+
         @param channelIndex     index of the channel to query
 
         @see AudioProcessor
     */
-    const String getInputChannelName (const int channelIndex) const
+    const String getInputChannelName (const int channelIndex) const override
     {
         return String (channelIndex + 1);
     }
 
     /**
         Returns the name of the specified output channel
-        
+
         @param channelIndex     index of the channel to query
 
         @see AudioProcessor
     */
-    const String getOutputChannelName (const int channelIndex) const
+    const String getOutputChannelName (const int channelIndex) const override
     {
         return String (channelIndex + 1);
     }
 
     /**
         Returns true if the specified input channel is part of a stereo pair
-        
+
         @param index            index of the channel to query
 
         @see AudioProcessor
     */
-    bool isInputChannelStereoPair (int index) const
+    bool isInputChannelStereoPair (int index) const override
     {
         return true;
     }
 
     /**
         Returns true if the specified output channel is part of a stereo pair
-        
+
         @param index            index of the channel to query
 
         @see AudioProcessor
     */
-    bool isOutputChannelStereoPair (int index) const
+    bool isOutputChannelStereoPair (int index) const override
     {
         return true;
     }
 
     //==============================================================================
-    void prepareToPlay (double sampleRate, int blockSize)
+    void prepareToPlay (double sampleRate, int blockSize) override
     {
     }
-    
-    void releaseResources ()
+
+    void releaseResources () override
     {
     }
-    
-    void processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
+
+    void processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages) override
     {
     }
 
@@ -876,17 +876,17 @@ public:
         Returns a reference to the internal keyboard state
     */
     MidiKeyboardState& getKeyboardState ()             { return keyboardState; }
-    
+
     //==============================================================================
     /**
         Create the default editor for the processor
-        
+
         If you don't override this, no editor will be created, and you should
         rely on the host default plugin editor (if it's capable of doing it)
-        
+
         TODO - create a default plugin editor "AudioPluginDefaultEditor"
     */
-    virtual AudioProcessorEditor* createEditor()
+    virtual AudioProcessorEditor* createEditor() override
     {
         return 0;
     }
@@ -899,10 +899,10 @@ protected:
     CriticalSection parameterLock;
     Array<AudioParameter*> parameters;
     AudioParameterThread* parameterThread;
-    
+
     Array<AudioProgram*> programs;
     int currentProgram;
-    
+
     MidiKeyboardState keyboardState;
     MidiAutomatorManager midiAutomatorManager;
 };

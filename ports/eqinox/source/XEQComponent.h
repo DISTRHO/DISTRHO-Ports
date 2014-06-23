@@ -57,23 +57,23 @@ public:
     XEQComponent (XEQPlugin* const ownerFilter);
 
     /** Destructor. */
-    ~XEQComponent ();
+    ~XEQComponent () override;
 
     //==============================================================================
     /** Standard Juce paint callback. */
-    void paint (Graphics& g);
+    void paint (Graphics& g) override;
 
     /** Standard Juce resize callback. */
-    void resized ();
+    void resized () override;
 
     //==============================================================================
     /** Our demo filter is a ChangeBroadcaster, and will call us back when one of
         its parameters changes.
     */
-    void changeListenerCallback (ChangeBroadcaster* source);
+    void changeListenerCallback (ChangeBroadcaster* source) override;
 
     /** Parameter listener callback */
-    void parameterChanged (AudioParameter* parameter, const int index);
+    void parameterChanged (AudioParameter* parameter, const int index) override;
 
 private:
 
@@ -82,11 +82,9 @@ private:
 
     XEQTabPanel* tabComponent;
 
-    TooltipWindow tooltipWindow;
-
     // handy wrapper method to avoid having to cast the filter to a DemoJuceFilter
     // every time we need it..
-    XEQPlugin* getFilter() const throw()  { return (XEQPlugin*) getAudioProcessor(); }
+    XEQPlugin* getFilter() const noexcept  { return (XEQPlugin*) getAudioProcessor(); }
 };
 
 

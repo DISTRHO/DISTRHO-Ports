@@ -49,8 +49,8 @@ public:
 
     void setCurrentNoteNumber (const int midiNoteNumber);
 
-    bool mouseDownOnKey (int midiNoteNumber, const MouseEvent &e);
-    void mouseDraggedToKey (int midiNoteNumber, const MouseEvent& e);
+    bool mouseDownOnKey (int midiNoteNumber, const MouseEvent &e) override;
+    void mouseDraggedToKey (int midiNoteNumber, const MouseEvent& e) override;
 
 protected:
 
@@ -58,12 +58,12 @@ protected:
                         Graphics& g, int x, int y, int w, int h,
                         bool isDown, bool isOver,
                         const Colour& lineColour,
-                        const Colour& textColour);
+                        const Colour& textColour) override;
 
     void drawBlackNote (int midiNoteNumber,
                         Graphics& g, int x, int y, int w, int h,
                         bool isDown, bool isOver,
-                        const Colour& noteFillColour);
+                        const Colour& noteFillColour) override;
 
     DrumSynthMain* owner;
     int currentNote;

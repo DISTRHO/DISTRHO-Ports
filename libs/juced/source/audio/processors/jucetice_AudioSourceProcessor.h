@@ -40,43 +40,43 @@ public:
     AudioSourceProcessor (AudioSource* const inputSource,
                          const bool deleteInputWhenDeleted);
 
-    ~AudioSourceProcessor ();
+    ~AudioSourceProcessor () override;
 
-    void prepareToPlay (double sampleRate, int estimatedSamplesPerBlock);
-    void processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages);
-    void releaseResources();
+    void prepareToPlay (double sampleRate, int estimatedSamplesPerBlock) override;
+    void processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages) override;
+    void releaseResources() override;
 
-    const String getName() const;
-    const String getInputChannelName (const int channelIndex) const;
-    const String getOutputChannelName (const int channelIndex) const;
+    const String getName() const override;
+    const String getInputChannelName (const int channelIndex) const override;
+    const String getOutputChannelName (const int channelIndex) const override;
 
-    bool isInputChannelStereoPair (int index)   const             { return false; }
-    bool isOutputChannelStereoPair (int index)   const            { return false; }
-    bool acceptsMidi() const                                      { return false; }
-    bool producesMidi() const                                     { return false; }
+    bool isInputChannelStereoPair (int index)   const override             { return false; }
+    bool isOutputChannelStereoPair (int index)   const override            { return false; }
+    bool acceptsMidi() const override                                      { return false; }
+    bool producesMidi() const override                                     { return false; }
 
-    int getNumParameters()                                        { return 0; }
-    const String getParameterName (int parameterIndex)            { return String::empty; }
-    float getParameter (int parameterIndex)                       { return 0.0; }
-    const String getParameterText (int parameterIndex)            { return String::empty; }
-    void setParameter (int parameterIndex, float newValue)        { }
+    int getNumParameters() override                                        { return 0; }
+    const String getParameterName (int parameterIndex) override            { return String::empty; }
+    float getParameter (int parameterIndex) override                       { return 0.0; }
+    const String getParameterText (int parameterIndex) override            { return String::empty; }
+    void setParameter (int parameterIndex, float newValue) override        { }
 
-    int getNumPrograms()                                          { return 0; }
-    int getCurrentProgram()                                       { return 0; }
-    void setCurrentProgram (int index)                            { }
-    const String getProgramName (int index)                       { return String::empty; }
-    void changeProgramName (int index, const String& newName)     { }
+    int getNumPrograms() override                                          { return 0; }
+    int getCurrentProgram() override                                       { return 0; }
+    void setCurrentProgram (int index) override                            { }
+    const String getProgramName (int index) override                       { return String::empty; }
+    void changeProgramName (int index, const String& newName) override     { }
 
-    void getStateInformation (MemoryBlock& destData)              { }
-    void setStateInformation (const void* data,int sizeInBytes)   { }
+    void getStateInformation (MemoryBlock& destData) override              { }
+    void setStateInformation (const void* data,int sizeInBytes) override   { }
 
-    AudioProcessorEditor* createEditor()                          { return 0; }
+    AudioProcessorEditor* createEditor() override                          { return 0; }
 
 private:
 
     AudioSource* const input;
     const bool deleteInputWhenDeleted;
-}; 
+};
 
 #endif
 

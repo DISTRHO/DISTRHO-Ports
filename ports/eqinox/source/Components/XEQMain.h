@@ -45,7 +45,7 @@ class XEQMain  : public Component,
 public:
     //==============================================================================
     XEQMain (XEQPlugin* plugin_);
-    ~XEQMain();
+    ~XEQMain() override;
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
@@ -53,9 +53,9 @@ public:
     void updateScope ();
     //[/UserMethods]
 
-    void paint (Graphics& g);
-    void resized();
-    void sliderValueChanged (Slider* sliderThatWasMoved);
+    void paint (Graphics& g) override;
+    void resized() override;
+    void sliderValueChanged (Slider* sliderThatWasMoved) override;
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.

@@ -58,14 +58,14 @@ XEQMain::XEQMain (XEQPlugin* plugin_)
     addAndMakeVisible (eqgraph = new EQGraph());
 
     addAndMakeVisible (eq1Gain = new ImageSlider (String::empty));
-    eq1Gain->setTooltip (T("Band 1 Gain"));
+    eq1Gain->setTooltip ("Band 1 Gain");
     eq1Gain->setRange (0, 1, 0.0001);
     eq1Gain->setSliderStyle (Slider::LinearVertical);
     eq1Gain->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     eq1Gain->addListener (this);
 
     addAndMakeVisible (eq1Bw = new ParameterSlider (String::empty));
-    eq1Bw->setTooltip (T("Band 1 Q"));
+    eq1Bw->setTooltip ("Band 1 Q");
     eq1Bw->setRange (0, 1, 0.0001);
     eq1Bw->setSliderStyle (Slider::RotaryVerticalDrag);
     eq1Bw->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
@@ -73,7 +73,7 @@ XEQMain::XEQMain (XEQPlugin* plugin_)
     eq1Bw->addListener (this);
 
     addAndMakeVisible (eq1Freq = new ParameterSlider (String::empty));
-    eq1Freq->setTooltip (T("Band 1 Frequency"));
+    eq1Freq->setTooltip ("Band 1 Frequency");
     eq1Freq->setRange (0, 1, 0.0001);
     eq1Freq->setSliderStyle (Slider::RotaryVerticalDrag);
     eq1Freq->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
@@ -81,14 +81,14 @@ XEQMain::XEQMain (XEQPlugin* plugin_)
     eq1Freq->addListener (this);
 
     addAndMakeVisible (eq2Gain = new ImageSlider (String::empty));
-    eq2Gain->setTooltip (T("Band 2 Gain"));
+    eq2Gain->setTooltip ("Band 2 Gain");
     eq2Gain->setRange (0, 1, 0.0001);
     eq2Gain->setSliderStyle (Slider::LinearVertical);
     eq2Gain->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     eq2Gain->addListener (this);
 
     addAndMakeVisible (eq2Bw = new ParameterSlider (String::empty));
-    eq2Bw->setTooltip (T("Band 2 Q"));
+    eq2Bw->setTooltip ("Band 2 Q");
     eq2Bw->setRange (0, 1, 0.0001);
     eq2Bw->setSliderStyle (Slider::RotaryVerticalDrag);
     eq2Bw->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
@@ -96,7 +96,7 @@ XEQMain::XEQMain (XEQPlugin* plugin_)
     eq2Bw->addListener (this);
 
     addAndMakeVisible (eq2Freq = new ParameterSlider (String::empty));
-    eq2Freq->setTooltip (T("Band 2 Frequency"));
+    eq2Freq->setTooltip ("Band 2 Frequency");
     eq2Freq->setRange (0, 1, 0.0001);
     eq2Freq->setSliderStyle (Slider::RotaryVerticalDrag);
     eq2Freq->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
@@ -104,14 +104,14 @@ XEQMain::XEQMain (XEQPlugin* plugin_)
     eq2Freq->addListener (this);
 
     addAndMakeVisible (eq3Gain = new ImageSlider (String::empty));
-    eq3Gain->setTooltip (T("Band 3 Gain"));
+    eq3Gain->setTooltip ("Band 3 Gain");
     eq3Gain->setRange (0, 1, 0.0001);
     eq3Gain->setSliderStyle (Slider::LinearVertical);
     eq3Gain->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     eq3Gain->addListener (this);
 
     addAndMakeVisible (eq3Bw = new ParameterSlider (String::empty));
-    eq3Bw->setTooltip (T("Band 3 Q"));
+    eq3Bw->setTooltip ("Band 3 Q");
     eq3Bw->setRange (0, 1, 0.0001);
     eq3Bw->setSliderStyle (Slider::RotaryVerticalDrag);
     eq3Bw->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
@@ -119,7 +119,7 @@ XEQMain::XEQMain (XEQPlugin* plugin_)
     eq3Bw->addListener (this);
 
     addAndMakeVisible (eq3Freq = new ParameterSlider (String::empty));
-    eq3Freq->setTooltip (T("Band 3 Frequency"));
+    eq3Freq->setTooltip ("Band 3 Frequency");
     eq3Freq->setRange (0, 1, 0.0001);
     eq3Freq->setSliderStyle (Slider::RotaryVerticalDrag);
     eq3Freq->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
@@ -127,14 +127,14 @@ XEQMain::XEQMain (XEQPlugin* plugin_)
     eq3Freq->addListener (this);
 
     addAndMakeVisible (eq4Gain = new ImageSlider (String::empty));
-    eq4Gain->setTooltip (T("Band 4 Gain"));
+    eq4Gain->setTooltip ("Band 4 Gain");
     eq4Gain->setRange (0, 1, 0.0001);
     eq4Gain->setSliderStyle (Slider::LinearVertical);
     eq4Gain->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     eq4Gain->addListener (this);
 
     addAndMakeVisible (eq4Bw = new ParameterSlider (String::empty));
-    eq4Bw->setTooltip (T("Band 4 Q"));
+    eq4Bw->setTooltip ("Band 4 Q");
     eq4Bw->setRange (0, 1, 0.0001);
     eq4Bw->setSliderStyle (Slider::RotaryVerticalDrag);
     eq4Bw->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
@@ -142,7 +142,7 @@ XEQMain::XEQMain (XEQPlugin* plugin_)
     eq4Bw->addListener (this);
 
     addAndMakeVisible (eq4Freq = new ParameterSlider (String::empty));
-    eq4Freq->setTooltip (T("Band 4 Frequency"));
+    eq4Freq->setTooltip ("Band 4 Frequency");
     eq4Freq->setRange (0, 1, 0.0001);
     eq4Freq->setSliderStyle (Slider::RotaryVerticalDrag);
     eq4Freq->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
@@ -150,14 +150,14 @@ XEQMain::XEQMain (XEQPlugin* plugin_)
     eq4Freq->addListener (this);
 
     addAndMakeVisible (eq5Gain = new ImageSlider (String::empty));
-    eq5Gain->setTooltip (T("Band 5 Gain"));
+    eq5Gain->setTooltip ("Band 5 Gain");
     eq5Gain->setRange (0, 1, 0.0001);
     eq5Gain->setSliderStyle (Slider::LinearVertical);
     eq5Gain->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     eq5Gain->addListener (this);
 
     addAndMakeVisible (eq5Bw = new ParameterSlider (String::empty));
-    eq5Bw->setTooltip (T("Band 5 Q"));
+    eq5Bw->setTooltip ("Band 5 Q");
     eq5Bw->setRange (0, 1, 0.0001);
     eq5Bw->setSliderStyle (Slider::RotaryVerticalDrag);
     eq5Bw->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
@@ -165,7 +165,7 @@ XEQMain::XEQMain (XEQPlugin* plugin_)
     eq5Bw->addListener (this);
 
     addAndMakeVisible (eq5Freq = new ParameterSlider (String::empty));
-    eq5Freq->setTooltip (T("Band 5 Frequency"));
+    eq5Freq->setTooltip ("Band 5 Frequency");
     eq5Freq->setRange (0, 1, 0.0001);
     eq5Freq->setSliderStyle (Slider::RotaryVerticalDrag);
     eq5Freq->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
@@ -173,14 +173,14 @@ XEQMain::XEQMain (XEQPlugin* plugin_)
     eq5Freq->addListener (this);
 
     addAndMakeVisible (eq6Gain = new ImageSlider (String::empty));
-    eq6Gain->setTooltip (T("Band 6 Gain"));
+    eq6Gain->setTooltip ("Band 6 Gain");
     eq6Gain->setRange (0, 1, 0.0001);
     eq6Gain->setSliderStyle (Slider::LinearVertical);
     eq6Gain->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     eq6Gain->addListener (this);
 
     addAndMakeVisible (eq6Bw = new ParameterSlider (String::empty));
-    eq6Bw->setTooltip (T("Band 6 Q"));
+    eq6Bw->setTooltip ("Band 6 Q");
     eq6Bw->setRange (0, 1, 0.0001);
     eq6Bw->setSliderStyle (Slider::RotaryVerticalDrag);
     eq6Bw->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
@@ -188,15 +188,15 @@ XEQMain::XEQMain (XEQPlugin* plugin_)
     eq6Bw->addListener (this);
 
     addAndMakeVisible (eq6Freq = new ParameterSlider (String::empty));
-    eq6Freq->setTooltip (T("Band 6 Frequency"));
+    eq6Freq->setTooltip ("Band 6 Frequency");
     eq6Freq->setRange (0, 1, 0.0001);
     eq6Freq->setSliderStyle (Slider::RotaryVerticalDrag);
     eq6Freq->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     eq6Freq->setColour (Slider::rotarySliderFillColourId, Colours::azure);
     eq6Freq->addListener (this);
 
-    addAndMakeVisible (label = new Label (T("new label"),
-                                          T("1     2     3     4     5     6")));
+    addAndMakeVisible (label = new Label ("new label",
+                                          "1     2     3     4     5     6"));
     label->setFont (Font (15.0000f, Font::bold));
     label->setJustificationType (Justification::centred);
     label->setEditable (false, false, false);
@@ -218,8 +218,8 @@ XEQMain::XEQMain (XEQPlugin* plugin_)
     drywetSlider->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     drywetSlider->addListener (this);
 
-    addAndMakeVisible (label2 = new Label (T("new label"),
-                                           T("D/W   GAIN\n")));
+    addAndMakeVisible (label2 = new Label ("new label",
+                                           "D/W   GAIN\n"));
     label2->setFont (Font (9.3000f, Font::bold));
     label2->setJustificationType (Justification::centred);
     label2->setEditable (false, false, false);

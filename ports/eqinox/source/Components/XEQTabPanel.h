@@ -53,12 +53,11 @@ public:
     XEQTabPanel (XEQPlugin* plugin_);
 
     /** Destructor. */
-    ~XEQTabPanel ();
+    ~XEQTabPanel () override;
 
     //==============================================================================
     /**     */
-    void currentTabChanged (const int newCurrentTabIndex,
-                            const String &newCurrentTabName);
+    void currentTabChanged (const int newCurrentTabIndex, const String &newCurrentTabName) override;
 
     //==============================================================================
     void updateControls ();

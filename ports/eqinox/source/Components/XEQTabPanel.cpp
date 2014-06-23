@@ -43,8 +43,8 @@ XEQTabPanel::XEQTabPanel (XEQPlugin* plugin_)
     mainComponent = new XEQMain (plugin);
     aboutComponent = new XEQAbout ();
 
-    addTab (T("EQualizer"), Colour (0xff575f7d), mainComponent, false);
-    addTab (T("About"), Colour (0xff575f7d), aboutComponent, false);
+    addTab ("EQualizer", Colour (0xff575f7d), mainComponent, false);
+    addTab ("About", Colour (0xff575f7d), aboutComponent, false);
     setCurrentTabIndex (0);
 }
 

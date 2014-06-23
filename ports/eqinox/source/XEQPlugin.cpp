@@ -47,119 +47,119 @@ XEQPlugin::XEQPlugin()
     setNumParameters (NUM_PARAMETERS);
 
     // GAIN
-    registerParameter (PAR_GAIN, &params[PAR_GAIN].name (T("Gain")).unit (T("%"))
+    registerParameter (PAR_GAIN, &params[PAR_GAIN].name ("Gain").unit ("%")
                                  .set (MakeDelegate (this, &XEQPlugin::setGain))
                                  .get (MakeDelegate (this, &XEQPlugin::getGain)));
 
     // DRY WET
-    registerParameter (PAR_DRYWET, &params[PAR_DRYWET].name (T("Dry/Wet")).unit (T("%"))
+    registerParameter (PAR_DRYWET, &params[PAR_DRYWET].name ("Dry/Wet").unit ("%")
                                    .set (MakeDelegate (this, &XEQPlugin::setDryWet))
                                    .get (MakeDelegate (this, &XEQPlugin::getDryWet)));
 
 #if 1
 
     // THRESHOLD
-    registerParameter (PAR_THRESHOLD, &params[PAR_THRESHOLD].part (0).name (T("Threshold")).unit (T("%"))
+    registerParameter (PAR_THRESHOLD, &params[PAR_THRESHOLD].part (0).name ("Threshold").unit ("%")
                                       .set (MakeDelegate (&limiter, &Limiter::setParameter))
                                       .get (MakeDelegate (&limiter, &Limiter::getParameter)));
 
     // KNEE
-    registerParameter (PAR_KNEE, &params[PAR_KNEE].part (4).name (T("Knee")).unit (T("%"))
+    registerParameter (PAR_KNEE, &params[PAR_KNEE].part (4).name ("Knee").unit ("%")
                                  .set (MakeDelegate (&limiter, &Limiter::setParameter))
                                  .get (MakeDelegate (&limiter, &Limiter::getParameter)));
 
     // TRIM
-    registerParameter (PAR_TRIM, &params[PAR_TRIM].part (1).name (T("Trim")).unit (T("%"))
+    registerParameter (PAR_TRIM, &params[PAR_TRIM].part (1).name ("Trim").unit ("%")
                                  .set (MakeDelegate (&limiter, &Limiter::setParameter))
                                  .get (MakeDelegate (&limiter, &Limiter::getParameter)));
 
     // ATTACK
-    registerParameter (PAR_ATTACK, &params[PAR_ATTACK].part (2).name (T("Attack")).unit (T("%"))
+    registerParameter (PAR_ATTACK, &params[PAR_ATTACK].part (2).name ("Attack").unit ("%")
                                    .set (MakeDelegate (&limiter, &Limiter::setParameter))
                                    .get (MakeDelegate (&limiter, &Limiter::getParameter)));
 
     // RELEASE
-    registerParameter (PAR_RELEASE, &params[PAR_RELEASE].part (3).name (T("Release")).unit (T("%"))
+    registerParameter (PAR_RELEASE, &params[PAR_RELEASE].part (3).name ("Release").unit ("%")
                                     .set (MakeDelegate (&limiter, &Limiter::setParameter))
                                     .get (MakeDelegate (&limiter, &Limiter::getParameter)));
 
 #endif
 
     // BAND 1
-    registerParameter (PAR_BAND1GAIN, &params[PAR_BAND1GAIN].part (0).name (T("B-1 Gain")).unit (T("%"))
+    registerParameter (PAR_BAND1GAIN, &params[PAR_BAND1GAIN].part (0).name ("B-1 Gain").unit ("%")
                                       .set (MakeDelegate (this, &XEQPlugin::setBandGain))
                                       .get (MakeDelegate (this, &XEQPlugin::getBandGain)));
 
-    registerParameter (PAR_BAND1FREQ, &params[PAR_BAND1FREQ].part (0).name (T("B-1 Freq")).unit (T("%"))
+    registerParameter (PAR_BAND1FREQ, &params[PAR_BAND1FREQ].part (0).name ("B-1 Freq").unit ("%")
                                       .set (MakeDelegate (this, &XEQPlugin::setBandFreq))
                                       .get (MakeDelegate (this, &XEQPlugin::getBandFreq)));
 
-    registerParameter (PAR_BAND1BW, &params[PAR_BAND1BW].part (0).name (T("B-1 Bw")).unit (T("%"))
+    registerParameter (PAR_BAND1BW, &params[PAR_BAND1BW].part (0).name ("B-1 Bw").unit ("%")
                                     .set (MakeDelegate (this, &XEQPlugin::setBandBw))
                                     .get (MakeDelegate (this, &XEQPlugin::getBandBw)));
 
     // BAND 2
-    registerParameter (PAR_BAND2GAIN, &params[PAR_BAND2GAIN].part (1).name (T("B-2 Gain")).unit (T("%"))
+    registerParameter (PAR_BAND2GAIN, &params[PAR_BAND2GAIN].part (1).name ("B-2 Gain").unit ("%")
                                       .set (MakeDelegate (this, &XEQPlugin::setBandGain))
                                       .get (MakeDelegate (this, &XEQPlugin::getBandGain)));
 
-    registerParameter (PAR_BAND2FREQ, &params[PAR_BAND2FREQ].part (1).name (T("B-2 Freq")).unit (T("%"))
+    registerParameter (PAR_BAND2FREQ, &params[PAR_BAND2FREQ].part (1).name ("B-2 Freq").unit ("%")
                                       .set (MakeDelegate (this, &XEQPlugin::setBandFreq))
                                       .get (MakeDelegate (this, &XEQPlugin::getBandFreq)));
 
-    registerParameter (PAR_BAND2BW, &params[PAR_BAND2BW].part (1).name (T("B-2 Bw")).unit (T("%"))
+    registerParameter (PAR_BAND2BW, &params[PAR_BAND2BW].part (1).name ("B-2 Bw").unit ("%")
                                     .set (MakeDelegate (this, &XEQPlugin::setBandBw))
                                     .get (MakeDelegate (this, &XEQPlugin::getBandBw)));
 
     // BAND 3
-    registerParameter (PAR_BAND3GAIN, &params[PAR_BAND3GAIN].part (2).name (T("B-3 Gain")).unit (T("%"))
+    registerParameter (PAR_BAND3GAIN, &params[PAR_BAND3GAIN].part (2).name ("B-3 Gain").unit ("%")
                                       .set (MakeDelegate (this, &XEQPlugin::setBandGain))
                                       .get (MakeDelegate (this, &XEQPlugin::getBandGain)));
 
-    registerParameter (PAR_BAND3FREQ, &params[PAR_BAND3FREQ].part (2).name (T("B-3 Freq")).unit (T("%"))
+    registerParameter (PAR_BAND3FREQ, &params[PAR_BAND3FREQ].part (2).name ("B-3 Freq").unit ("%")
                                       .set (MakeDelegate (this, &XEQPlugin::setBandFreq))
                                       .get (MakeDelegate (this, &XEQPlugin::getBandFreq)));
 
-    registerParameter (PAR_BAND3BW, &params[PAR_BAND3BW].part (2).name (T("B-3 Bw")).unit (T("%"))
+    registerParameter (PAR_BAND3BW, &params[PAR_BAND3BW].part (2).name ("B-3 Bw").unit ("%")
                                     .set (MakeDelegate (this, &XEQPlugin::setBandBw))
                                     .get (MakeDelegate (this, &XEQPlugin::getBandBw)));
 
     // BAND 4
-    registerParameter (PAR_BAND4GAIN, &params[PAR_BAND4GAIN].part (3).name (T("B-4 Gain")).unit (T("%"))
+    registerParameter (PAR_BAND4GAIN, &params[PAR_BAND4GAIN].part (3).name ("B-4 Gain").unit ("%")
                                       .set (MakeDelegate (this, &XEQPlugin::setBandGain))
                                       .get (MakeDelegate (this, &XEQPlugin::getBandGain)));
 
-    registerParameter (PAR_BAND4FREQ, &params[PAR_BAND4FREQ].part (3).name (T("B-4 Freq")).unit (T("%"))
+    registerParameter (PAR_BAND4FREQ, &params[PAR_BAND4FREQ].part (3).name ("B-4 Freq").unit ("%")
                                       .set (MakeDelegate (this, &XEQPlugin::setBandFreq))
                                       .get (MakeDelegate (this, &XEQPlugin::getBandFreq)));
 
-    registerParameter (PAR_BAND4BW, &params[PAR_BAND4BW].part (3).name (T("B-4 Bw")).unit (T("%"))
+    registerParameter (PAR_BAND4BW, &params[PAR_BAND4BW].part (3).name ("B-4 Bw").unit ("%")
                                     .set (MakeDelegate (this, &XEQPlugin::setBandBw))
                                     .get (MakeDelegate (this, &XEQPlugin::getBandBw)));
 
     // BAND 5
-    registerParameter (PAR_BAND5GAIN, &params[PAR_BAND5GAIN].part (4).name (T("B-5 Gain")).unit (T("%"))
+    registerParameter (PAR_BAND5GAIN, &params[PAR_BAND5GAIN].part (4).name ("B-5 Gain").unit ("%")
                                       .set (MakeDelegate (this, &XEQPlugin::setBandGain))
                                       .get (MakeDelegate (this, &XEQPlugin::getBandGain)));
 
-    registerParameter (PAR_BAND5FREQ, &params[PAR_BAND5FREQ].part (4).name (T("B-5 Freq")).unit (T("%"))
+    registerParameter (PAR_BAND5FREQ, &params[PAR_BAND5FREQ].part (4).name ("B-5 Freq").unit ("%")
                                       .set (MakeDelegate (this, &XEQPlugin::setBandFreq))
                                       .get (MakeDelegate (this, &XEQPlugin::getBandFreq)));
 
-    registerParameter (PAR_BAND5BW, &params[PAR_BAND5BW].part (4).name (T("B-5 Bw")).unit (T("%"))
+    registerParameter (PAR_BAND5BW, &params[PAR_BAND5BW].part (4).name ("B-5 Bw").unit ("%")
                                     .set (MakeDelegate (this, &XEQPlugin::setBandBw))
                                     .get (MakeDelegate (this, &XEQPlugin::getBandBw)));
 
     // BAND 6
-    registerParameter (PAR_BAND6GAIN, &params[PAR_BAND6GAIN].part (5).name (T("B-6 Gain")).unit (T("%"))
+    registerParameter (PAR_BAND6GAIN, &params[PAR_BAND6GAIN].part (5).name ("B-6 Gain").unit ("%")
                                       .set (MakeDelegate (this, &XEQPlugin::setBandGain))
                                       .get (MakeDelegate (this, &XEQPlugin::getBandGain)));
 
-    registerParameter (PAR_BAND6FREQ, &params[PAR_BAND6FREQ].part (5).name (T("B-6 Freq")).unit (T("%"))
+    registerParameter (PAR_BAND6FREQ, &params[PAR_BAND6FREQ].part (5).name ("B-6 Freq").unit ("%")
                                       .set (MakeDelegate (this, &XEQPlugin::setBandFreq))
                                       .get (MakeDelegate (this, &XEQPlugin::getBandFreq)));
 
-    registerParameter (PAR_BAND6BW, &params[PAR_BAND6BW].part (5).name (T("B-6 Bw")).unit (T("%"))
+    registerParameter (PAR_BAND6BW, &params[PAR_BAND6BW].part (5).name ("B-6 Bw").unit ("%")
                                     .set (MakeDelegate (this, &XEQPlugin::setBandBw))
                                     .get (MakeDelegate (this, &XEQPlugin::getBandBw)));
 
@@ -200,7 +200,7 @@ void XEQPlugin::prepareToPlay (double sampleRate, int samplesPerBlock)
     denormalBuffer.setSize (1, numSamples, false, true);
 
     for (int i = 0; i < numSamples; i++)
-        *denormalBuffer.getSampleData (0, i) = ((rand() / (float) RAND_MAX) - 0.5) * 1e-16;
+        *denormalBuffer.getWritePointer (0, i) = ((rand() / (float) RAND_MAX) - 0.5) * 1e-16;
 
     equalizer.prepareToPlay (sampleRate, samplesPerBlock);
 }
@@ -218,16 +218,16 @@ void XEQPlugin::processBlock (AudioSampleBuffer& buffer,
     // process incoming midi
     midiAutomatorManager.handleMidiMessageBuffer (midiMessages);
 
-    // overall samples to process    
+    // overall samples to process
     int blockSamples = buffer.getNumSamples();
 
     // get buffers
-    float* inl = buffer.getSampleData (0);
-    float* inr = buffer.getSampleData (1);
-    float* inputL = inputBuffers.getSampleData (0);
-    float* inputR = inputBuffers.getSampleData (1);
-    float* denL = denormalBuffer.getSampleData (0);
-    float* denR = denormalBuffer.getSampleData (0);
+    const float* inl = buffer.getReadPointer (0);
+    const float* inr = buffer.getReadPointer (1);
+    float* inputL = inputBuffers.getWritePointer (0);
+    float* inputR = inputBuffers.getWritePointer (1);
+    float* denL = denormalBuffer.getWritePointer (0);
+    float* denR = denormalBuffer.getWritePointer (0);
 
     // this is needed when using jack buffers directly
     for (int i = 0; i < blockSamples; i++)
@@ -237,12 +237,12 @@ void XEQPlugin::processBlock (AudioSampleBuffer& buffer,
     }
 
     // process equalizer
-    equalizer.out (inputBuffers.getSampleData (0),
-                   inputBuffers.getSampleData (1),
-                   buffer.getSampleData (0),
-                   buffer.getSampleData (1),
-                   tempBuffers.getSampleData (0),
-                   tempBuffers.getSampleData (1),
+    equalizer.out (inputBuffers.getReadPointer (0),
+                   inputBuffers.getReadPointer (1),
+                   buffer.getWritePointer (0),
+                   buffer.getWritePointer (1),
+                   tempBuffers.getWritePointer (0),
+                   tempBuffers.getWritePointer (1),
                    blockSamples);
 #if 0
     // process limiter (if enabled)
@@ -268,8 +268,8 @@ void XEQPlugin::getStateInformation (MemoryBlock& destData)
     catch (...)
     {
         AlertWindow::showMessageBox (AlertWindow::WarningIcon,
-                                     T("Error !"),
-                                     T("Something bad occurred while saving presets data !"));
+                                     "Error !",
+                                     "Something bad occurred while saving presets data !");
     }
 }
 
@@ -286,7 +286,7 @@ void XEQPlugin::setStateInformation (const void* data, int sizeInBytes)
             XmlDocument xmlDoc ((char*) data);
             XmlElement* xml = xmlDoc.getDocumentElement();
 
-            if (xml == 0 || ! xml->hasTagName (T("main")))
+            if (xml == 0 || ! xml->hasTagName ("main"))
             {
                 String errString = xmlDoc.getLastParseError();
                 printf ("Error restoring preset: %s \n", (const char*) errString.toUTF8());
@@ -303,8 +303,8 @@ void XEQPlugin::setStateInformation (const void* data, int sizeInBytes)
     catch (...)
     {
         AlertWindow::showMessageBox (AlertWindow::WarningIcon,
-                                     T("Error !"),
-                                     T("Something bad occurred while restoring presets data !"));
+                                     "Error !",
+                                     "Something bad occurred while restoring presets data !");
     }
 
     suspendProcessing (false);
@@ -337,7 +337,7 @@ void XEQPlugin::initialiseToDefault ()
               equalizer.setParameter ((band * 5 + 13), 46); // bw
               equalizer.setParameter ((band * 5 + 14), 1);  // stages
     // peak --
-    band = 4; equalizer.setParameter ((band * 5 + 10), 7);  
+    band = 4; equalizer.setParameter ((band * 5 + 10), 7);
               equalizer.setParameter ((band * 5 + 11), 80); // freq
               equalizer.setParameter ((band * 5 + 13), 46); // bw
               equalizer.setParameter ((band * 5 + 14), 1);  // stages

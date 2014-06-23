@@ -36,7 +36,7 @@
 
 Limiter::Limiter ()
 {
-	fParam1 = 0.60f; //thresh 		
+	fParam1 = 0.60f; //thresh
     fParam2 = 0.60f; //trim
     fParam3 = 0.15f; //attack
     fParam4 = 0.50f; //release
@@ -129,9 +129,9 @@ void Limiter::getParameterLabel (int index, char *label)
   {
     case 0: strcpy(label, "dB"); break;
     case 1: strcpy(label, "dB"); break;
-    case 3: strcpy(label, "µs"); break; 
-    case 2: strcpy(label, "ms"); break; 
-    case 4: strcpy(label, ""); break; 
+    case 3: strcpy(label, "µs"); break;
+    case 2: strcpy(label, "ms"); break;
+    case 4: strcpy(label, ""); break;
   }
 }
 */
@@ -141,20 +141,20 @@ void Limiter::getParameterLabel (int index, char *label)
 
 void Limiter::out (AudioSampleBuffer& buffer, int sampleFrames)
 {
-	float *in1 = buffer.getSampleData (0);
-	float *in2 = buffer.getSampleData (1);
-	float *out1 = buffer.getSampleData (0);
-	float *out2 = buffer.getSampleData (1);
+	const float *in1 = buffer.getReadPointer (0);
+	const float *in2 = buffer.getReadPointer (1);
+	float *out1 = buffer.getWritePointer (0);
+	float *out2 = buffer.getWritePointer (1);
 	float g, at, re, tr, th, lev, ol, or_;
-  
+
     th = thresh;
     g = gain;
     at = att;
     re = rel;
     tr = trim;
-  
-    --in1;	
-    --in2;	
+
+    --in1;
+    --in2;
     --out1;
     --out2;
 
@@ -168,8 +168,8 @@ void Limiter::out (AudioSampleBuffer& buffer, int sampleFrames)
           lev = (float)(1.0 / (1.0 + th * fabs(ol + or_)));
           if(g>lev) { g=g-at*(g-lev); } else { g=g+re*(lev-g); }
 
-          *++out1 = (ol * tr * g);	
-		  *++out2 = (or_ * tr * g);	
+          *++out1 = (ol * tr * g);
+		  *++out2 = (or_ * tr * g);
 	  }
     }
     else
@@ -178,9 +178,9 @@ void Limiter::out (AudioSampleBuffer& buffer, int sampleFrames)
         {
           ol = *++in1;
           or_ = *++in2;
-		      
+
           lev = (float)(0.5 * g * fabs(ol + or_));
-        
+
           if (lev > th)
           {
             g = g - (at * (lev - th));
@@ -190,8 +190,8 @@ void Limiter::out (AudioSampleBuffer& buffer, int sampleFrames)
             g = g + (float)(re * (1.0 - g));
           }
 
-          *++out1 = (ol * tr * g);	
-		  *++out2 = (or_ * tr * g);	
+          *++out1 = (ol * tr * g);
+		  *++out2 = (or_ * tr * g);
         }
     }
     gain = g;

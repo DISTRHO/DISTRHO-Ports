@@ -130,14 +130,14 @@ OpenSoundMessage::OpenSoundMessage(char *data, const int size)
 
                     ++i;
                 }
-				
+
 				//@TODO
 				//Not sure with this, it was
 				//tempstr[tempstr.length()] = static_cast<char>(NULL); //Terminator.
-				
-				tempstr = tempstr.replaceCharacter (tempstr.getLastCharacter(), 
+
+				tempstr = tempstr.replaceCharacter (tempstr.getLastCharacter(),
 													static_cast<char>(NULL)); //Terminator.
-               
+
                 stringArray.add (tempstr);
 
                 //Handle any padding bytes.
@@ -300,9 +300,10 @@ char *OpenSoundMessage::getData()
                     ++intCount;
                     break;
                 //If we're writing a float to the buffer.
-                case 'f':
+                case 'f': {
                     tempFloat = floatArray[floatCount];
-                    tempInt = htonl(*(int32 *)(&(tempFloat)));
+                    int32* const _i((int32*)&tempFloat);
+                    tempInt = htonl(*_i);
                     tempBytes = reinterpret_cast<GetTheBytes *>(&tempInt);
                     buffer[i] = tempBytes->a;
                     ++i;
@@ -314,6 +315,7 @@ char *OpenSoundMessage::getData()
 
                     ++floatCount;
                     break;
+                }
                 //If we're writing an OSC String to the buffer.
                 case 's':
                     stringLength = static_cast<int32>(stringArray[stringCount].length());

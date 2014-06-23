@@ -38,7 +38,7 @@
 DrumSynthComponent::DrumSynthComponent (DrumSynthPlugin* const ownerFilter_)
     : AudioProcessorEditor (ownerFilter_)
 {
-    static JuceticeLookAndFeel juceticeLookAndFeel;
+    setLookAndFeel (&juceticeLookAndFeel);
     LookAndFeel::setDefaultLookAndFeel (&juceticeLookAndFeel);
 
     // register ourselves with the plugin - it will use its ChangeBroadcaster base
@@ -48,10 +48,10 @@ DrumSynthComponent::DrumSynthComponent (DrumSynthPlugin* const ownerFilter_)
 
     // add the main component
     addAndMakeVisible (mainComponent = new DrumSynthMain (getFilter(), this));
-    
+
     setSize (mainComponent->getWidth(),
              mainComponent->getHeight());
-    
+
     mainComponent->updateControls ();
 }
 

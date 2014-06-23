@@ -56,15 +56,15 @@ public:
                        DrumSynthPlugin* plugin);
 
     //==============================================================================
-    void parameterChanged (AudioParameter* parameter, const int index);
+    void parameterChanged (AudioParameter* parameter, const int index) override;
     void updateParameters (const bool repaintComponent = true);
-    
+
     //==============================================================================
-    void mouseDown (const MouseEvent& e);
-    void mouseDrag (const MouseEvent& e);
-    void mouseUp (const MouseEvent& e);
-    void paint (Graphics& g);
-    void resized ();
+    void mouseDown (const MouseEvent& e) override;
+    void mouseDrag (const MouseEvent& e) override;
+    void mouseUp (const MouseEvent& e) override;
+    void paint (Graphics& g) override;
+    void resized () override;
 
 protected:
 
@@ -73,7 +73,7 @@ protected:
     DrumSynthMain* owner;
     DrumSynthPlugin* plugin;
     int envelopeType;
-    
+
     int draggingPoint;
     float points [MAX_ENVELOPE_POINTS][2];
     float xDelta, yDelta;

@@ -41,14 +41,14 @@ class XEQAbout  : public Component
 public:
     //==============================================================================
     XEQAbout ();
-    ~XEQAbout();
+    ~XEQAbout() override;
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
     //[/UserMethods]
 
-    void paint (Graphics& g);
-    void resized();
+    void paint (Graphics& g) override;
+    void resized() override;
 
     // Binary resources:
     static const char* equalizer_png;

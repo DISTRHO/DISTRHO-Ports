@@ -29,8 +29,8 @@ lv2: libs
 	$(MAKE) -C drowaudio-flanger/LV2
 	$(MAKE) -C drowaudio-reverb/LV2
 	$(MAKE) -C drowaudio-tremolo/LV2
-# 	$(MAKE) -C drumsynth/LV2
-# 	$(MAKE) -C eqinox/LV2
+	$(MAKE) -C drumsynth/LV2
+	$(MAKE) -C eqinox/LV2
 	$(MAKE) -C juce-demo-plugin/LV2
 	$(MAKE) -C klangfalter/LV2
 	$(MAKE) -C pitchedDelay/LV2
@@ -60,8 +60,8 @@ vst: libs
 	$(MAKE) -C drowaudio-flanger/VST
 	$(MAKE) -C drowaudio-reverb/VST
 	$(MAKE) -C drowaudio-tremolo/VST
-# 	$(MAKE) -C drumsynth/VST
-# 	$(MAKE) -C eqinox/VST
+	$(MAKE) -C drumsynth/VST
+	$(MAKE) -C eqinox/VST
 	$(MAKE) -C juce-demo-plugin/VST
 	$(MAKE) -C klangfalter/VST
 	$(MAKE) -C pitchedDelay/VST
