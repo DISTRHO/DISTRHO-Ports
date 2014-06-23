@@ -17,6 +17,10 @@ ThePilgrimAudioProcessor::ThePilgrimAudioProcessor()
 {
     filterParameter.setValue(0.5);
     mixParameter.setValue(1.0);
+
+    globalSampleRate = getSampleRate();
+    if (globalSampleRate <= 0.0)
+        globalSampleRate = 44100.0;
 }
 
 ThePilgrimAudioProcessor::~ThePilgrimAudioProcessor()

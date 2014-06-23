@@ -24,6 +24,7 @@ TheFunctionAudioProcessor::TheFunctionAudioProcessor()
     phaseL = 0.0f;
     phaseR = 0.0f;
     currentPreset = 0;
+    timeSinceChunkCalled = 0;
 }
 
 TheFunctionAudioProcessor::~TheFunctionAudioProcessor()
