@@ -52,7 +52,7 @@ MyLookAndFeel::~MyLookAndFeel()
     delete Topaz;
 }
 
-Font MyLookAndFeel::getComboBoxFont (ComboBox& box)
+Font MyLookAndFeel::getComboBoxFont(ComboBox&)
 {
     return *Topaz;
 }
@@ -108,13 +108,13 @@ void MyLookAndFeel::drawToggleButton(Graphics& g,
                       Justification::centredLeft, 10);
 }
 
-void MyLookAndFeel::drawRotarySlider (Graphics& g,
-                                      int x, int y,
-                                      int width, int height,
-                                      float sliderPos,
-                                      const float rotaryStartAngle,
-                                      const float rotaryEndAngle,
-                                      Slider& slider)
+void MyLookAndFeel::drawRotarySlider(Graphics& g,
+                                     int x, int y,
+                                     int width, int height,
+                                     float sliderPos,
+                                     const float rotaryStartAngle,
+                                     const float rotaryEndAngle,
+                                     Slider& /*slider*/)
 {
     const float radius = jmin (width / 2, height / 2) - 2.0f;
     const float centreX = x + width * 0.5f;
@@ -123,9 +123,9 @@ void MyLookAndFeel::drawRotarySlider (Graphics& g,
     const float ry = centreY - radius;
     const float rw = radius * 2.0f;
     const float angle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
-    //const bool isMouseOver = slider.isMouseOverOrDragging() && slider.isEnabled();
 
-    // const float zeroPos = rotaryStartAngle + fabs((float)slider.getMinimum() / ((float)slider.getMaximum() - (float)slider.getMinimum())) * (rotaryEndAngle - rotaryStartAngle);
+    //const bool isMouseOver = slider.isMouseOverOrDragging() && slider.isEnabled();
+    //const float zeroPos = rotaryStartAngle + fabs((float)slider.getMinimum() / ((float)slider.getMaximum() - (float)slider.getMinimum())) * (rotaryEndAngle - rotaryStartAngle);
 
     Path p;
 

@@ -53,7 +53,7 @@ public:
     ~VexFilter();
 
     bool hasEditor() const override { return true; }
-    bool silenceInProducesSilenceOut() const override { return false; }
+    bool silenceInProducesSilenceOut() const override { return true; }
     double getTailLengthSeconds() const override { return 0.0; }
 
     const String getName() const override { return JucePlugin_Name; }
@@ -99,11 +99,10 @@ private:
     float fParameters[kParamCount];
     bool  fParamsChanged[92];
 
-    ScopedPointer<AudioSampleBuffer> obf;
-    ScopedPointer<AudioSampleBuffer> abf;
-    ScopedPointer<AudioSampleBuffer> dbf1; // delay
-    ScopedPointer<AudioSampleBuffer> dbf2; // chorus
-    ScopedPointer<AudioSampleBuffer> dbf3; // reverb
+    AudioSampleBuffer obf;
+    AudioSampleBuffer dbf1; // delay
+    AudioSampleBuffer dbf2; // chorus
+    AudioSampleBuffer dbf3; // reverb
 
     VexArpSettings fArpSet1, fArpSet2, fArpSet3;
     VexArp fArp1, fArp2, fArp3;

@@ -142,7 +142,7 @@ bool VexFilter::isOutputChannelStereoPair (int index) const
 
 float VexFilter::getParameter (int index)
 {
-    if (index >= kParamCount)
+    if (index >= (int)kParamCount)
         return 0.0f;
 
     return fParameters[index];
@@ -150,7 +150,7 @@ float VexFilter::getParameter (int index)
 
 void VexFilter::setParameter (int index, float newValue)
 {
-    if (index >= kParamCount)
+    if (index >= (int)kParamCount)
         return;
 
     fParameters[index] = newValue;
@@ -340,27 +340,23 @@ const String VexFilter::getParameterText (int index)
 
 void VexFilter::prepareToPlay (double sampleRate, int bufferSize)
 {
-    obf  = new AudioSampleBuffer(2, bufferSize);
-    abf  = new AudioSampleBuffer(2, bufferSize);
-    dbf1 = new AudioSampleBuffer(2, bufferSize);
-    dbf2 = new AudioSampleBuffer(2, bufferSize);
-    dbf3 = new AudioSampleBuffer(2, bufferSize);
+    obf.setSize(2, bufferSize);
+    dbf1.setSize(2, bufferSize);
+    dbf2.setSize(2, bufferSize);
+    dbf3.setSize(2, bufferSize);
 
     fArp1.setSampleRate(sampleRate);
     fArp2.setSampleRate(sampleRate);
     fArp3.setSampleRate(sampleRate);
     fChorus.setSampleRate(sampleRate);
     fDelay.setSampleRate(sampleRate);
+
+    fSynth.setBufferSize(bufferSize);
     fSynth.setSampleRate(sampleRate);
 }
 
 void VexFilter::releaseResources()
 {
-    obf  = nullptr;
-    abf  = nullptr;
-    dbf1 = nullptr;
-    dbf2 = nullptr;
-    dbf3 = nullptr;
 }
 
 void VexFilter::processBlock(AudioSampleBuffer& output, MidiBuffer& midiInBuffer)
@@ -379,9 +375,8 @@ void VexFilter::processBlock(AudioSampleBuffer& output, MidiBuffer& midiInBuffer
 
     int snum;
     MidiMessage midiMessage(0xf4);
-    MidiBuffer::Iterator Iterator1(part1Midi);
 
-    while (Iterator1.getNextEvent(midiMessage, snum))
+    for (MidiBuffer::Iterator Iterator1(part1Midi); Iterator1.getNextEvent(midiMessage, snum);)
     {
         if (midiMessage.isNoteOn())
             fSynth.playNote(midiMessage.getNoteNumber(), midiMessage.getVelocity(), snum, 1);
@@ -393,9 +388,7 @@ void VexFilter::processBlock(AudioSampleBuffer& output, MidiBuffer& midiInBuffer
             fSynth.releaseAll(snum);
     }
 
-    MidiBuffer::Iterator Iterator2(part2Midi);
-
-    while (Iterator2.getNextEvent(midiMessage, snum))
+    for (MidiBuffer::Iterator Iterator2(part2Midi); Iterator2.getNextEvent(midiMessage, snum);)
     {
         if (midiMessage.isNoteOn())
             fSynth.playNote(midiMessage.getNoteNumber(), midiMessage.getVelocity(), snum, 2);
@@ -403,9 +396,7 @@ void VexFilter::processBlock(AudioSampleBuffer& output, MidiBuffer& midiInBuffer
             fSynth.releaseNote(midiMessage.getNoteNumber(), snum, 2 );
     }
 
-    MidiBuffer::Iterator Iterator3(part3Midi);
-
-    while (Iterator3.getNextEvent(midiMessage, snum))
+    for (MidiBuffer::Iterator Iterator3(part3Midi); Iterator3.getNextEvent(midiMessage, snum);)
     {
         if (midiMessage.isNoteOn())
             fSynth.playNote(midiMessage.getNoteNumber(), midiMessage.getVelocity(), snum, 3);
@@ -415,37 +406,44 @@ void VexFilter::processBlock(AudioSampleBuffer& output, MidiBuffer& midiInBuffer
 
     midiInBuffer.clear();
 
-    if (obf->getNumSamples() < frames)
+    if (obf.getNumSamples() < frames)
     {
-        obf->setSize(2,  frames, 0, 0, 1);
-        abf->setSize(2,  frames, 0, 0, 1);
-        dbf1->setSize(2, frames, 0, 0, 1);
-        dbf2->setSize(2, frames, 0, 0, 1);
-        dbf3->setSize(2, frames, 0, 0, 1);
+        obf.setSize(2,  frames, 0, 0, 1);
+        dbf1.setSize(2, frames, 0, 0, 1);
+        dbf2.setSize(2, frames, 0, 0, 1);
+        dbf3.setSize(2, frames, 0, 0, 1);
     }
 
-    obf ->clear();
-    dbf1->clear();
-    dbf2->clear();
-    dbf3->clear();
+    obf .clear();
+    dbf1.clear();
+    dbf2.clear();
+    dbf3.clear();
 
-    fSynth.doProcess(*obf, *abf, *dbf1, *dbf2, *dbf3);
+    fSynth.doProcess(obf, dbf1, dbf2, dbf3);
 
-    if (fParameters[75] > 0.001f) fDelay.processBlock(dbf1, pos.bpm);
-    if (fParameters[78] > 0.001f) fChorus.processBlock(dbf2);
-    if (fParameters[82] > 0.001f) fReverb.processBlock(dbf3);
+    if (fParameters[75] > 0.001f)
+    {
+        fDelay.processBlock(dbf1, pos.bpm);
+        obf.addFrom(0, 0, dbf1, 0, 0, frames, fParameters[75]);
+        obf.addFrom(1, 0, dbf1, 1, 0, frames, fParameters[75]);
+    }
 
-    output.clear();
+    if (fParameters[78] > 0.001f)
+    {
+        fChorus.processBlock(dbf2);
+        obf.addFrom(0, 0, dbf2, 0, 0, frames, fParameters[78]);
+        obf.addFrom(1, 0, dbf2, 1, 0, frames, fParameters[78]);
+    }
 
-    obf->addFrom(0, 0, *dbf1, 0, 0, frames, fParameters[75]);
-    obf->addFrom(1, 0, *dbf1, 1, 0, frames, fParameters[75]);
-    obf->addFrom(0, 0, *dbf2, 0, 0, frames, fParameters[78]);
-    obf->addFrom(1, 0, *dbf2, 1, 0, frames, fParameters[78]);
-    obf->addFrom(0, 0, *dbf3, 0, 0, frames, fParameters[82]);
-    obf->addFrom(1, 0, *dbf3, 1, 0, frames, fParameters[82]);
+    if (fParameters[82] > 0.001f)
+    {
+        fReverb.processBlock(dbf3);
+        obf.addFrom(0, 0, dbf3, 0, 0, frames, fParameters[82]);
+        obf.addFrom(1, 0, dbf3, 1, 0, frames, fParameters[82]);
+    }
 
-    output.addFrom(0, 0, *obf, 0, 0, frames, fParameters[0]);
-    output.addFrom(1, 0, *obf, 1, 0, frames, fParameters[0]);
+    output.copyFrom(0, 0, obf.getReadPointer(0), frames, fParameters[0]);
+    output.copyFrom(1, 0, obf.getReadPointer(1), frames, fParameters[0]);
 }
 
 void VexFilter::setStateInformation (const void* data_, int dataSize)

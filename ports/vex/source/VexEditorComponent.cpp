@@ -412,7 +412,7 @@ void VexEditorComponent::updateParametersFromFilter(const bool all)
         bool params[92];
         fCallback->getChangedParameters(params);
 
-        for (int i=0; i < 89; ++i)
+        for (int i = 0; i < kSliderCount; ++i)
         {
             if (params[i])
                 sliders[i]->setValue(fCallback->getFilterParameterValue(i), dontSendNotification);
