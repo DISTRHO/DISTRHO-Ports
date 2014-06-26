@@ -129,7 +129,7 @@
  #define JucePlugin_AAXDisableBypass       0
 #endif
 
-#define JucePlugin_LV2URI               "https://obxd.wordpress.com"
+#define JucePlugin_LV2URI               "https://github.com/asb2m10/dexed"
 #define JucePlugin_LV2Category          "InstrumentPlugin"
 #define JucePlugin_WantsLV2Presets      1
 #define JucePlugin_WantsLV2State        1
