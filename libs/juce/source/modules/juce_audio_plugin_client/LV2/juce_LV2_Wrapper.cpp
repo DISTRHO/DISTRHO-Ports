@@ -550,17 +550,16 @@ public:
     ~SharedMessageThread()
     {
         signalThreadShouldExit();
-        JUCEApplication::quit();
+        JUCEApplicationBase::quit();
         waitForThreadToExit (5000);
         clearSingletonInstance();
     }
 
-    void run()
+    void run() override
     {
         initialiseJuce_GUI();
-        initialised = true;
-
         MessageManager::getInstance()->setCurrentThreadAsMessageThread();
+        initialised = true;
 
         while ((! threadShouldExit()) && MessageManager::getInstance()->runDispatchLoopUntil (250))
         {}
