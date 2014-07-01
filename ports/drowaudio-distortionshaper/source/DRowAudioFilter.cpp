@@ -341,8 +341,8 @@ void DRowAudioFilter::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiM
 		}
 
 		// post-filter
-		outFilterL->processSamples(channelL, numSamples);
-		outFilterR->processSamples(channelR, numSamples);
+		outFilterL->processSamples(buffer.getWritePointer(0), numSamples);
+		outFilterR->processSamples(buffer.getWritePointer(1), numSamples);
 
 		buffer.applyGain(0, numSamples, outGain);
 	}
@@ -374,7 +374,7 @@ void DRowAudioFilter::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiM
 		}
 
 		// post-filter
-		outFilterL->processSamples(channelL, numSamples);
+		outFilterL->processSamples(buffer.getWritePointer(0), numSamples);
 
 		buffer.applyGain(0, numSamples, outGain);
 	}
