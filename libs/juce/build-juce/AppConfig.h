@@ -201,6 +201,8 @@
 */
 #define JUCE_CATCH_UNHANDLED_EXCEPTIONS 0
 
+#define JUCE_USE_VFORK 1
+
 //=============================================================================
 // juce_data_structures
 
