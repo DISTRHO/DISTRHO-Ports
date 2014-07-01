@@ -1634,8 +1634,8 @@ public:
     {
         jassert (filter != nullptr);
 
-        size_t size;
-        uint32 type;
+        size_t size = 0;
+        uint32 type = 0;
         const void* data = retrieve (stateHandle,
 #if JucePlugin_WantsLV2StateString
                                      uridMap->map(uridMap->handle, JUCE_LV2_STATE_STRING_URI),
@@ -1643,6 +1643,9 @@ public:
                                      uridMap->map(uridMap->handle, JUCE_LV2_STATE_BINARY_URI),
 #endif
                                      &size, &type, &flags);
+
+        if (data == nullptr)
+            return LV2_STATE_ERR_UNKNOWN;
 
 #if JucePlugin_WantsLV2StateString
         if (type == uridMap->map (uridMap->handle, LV2_ATOM__String))
