@@ -1,0 +1,15 @@
+diff --git a/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp b/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
+index 85bf987..68987f5 100644
+--- a/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
++++ b/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
+@@ -211,9 +211,8 @@ public:
+     void run() override
+     {
+         initialiseJuce_GUI();
+-        initialised = true;
+-
+         MessageManager::getInstance()->setCurrentThreadAsMessageThread();
++        initialised = true;
+ 
+         while ((! threadShouldExit()) && MessageManager::getInstance()->runDispatchLoopUntil (250))
+         {}
