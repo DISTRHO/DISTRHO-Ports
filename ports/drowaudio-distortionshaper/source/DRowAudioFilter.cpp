@@ -46,6 +46,8 @@ AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 //==============================================================================
 DRowAudioFilter::DRowAudioFilter()
 {
+	currentSampleRate = 44100.0;
+
 	// set up the parameters with the required limits and units
 
 	params[INGAIN].init(parameterNames[INGAIN], UnitDecibels, "Changes the distortion ammount",
@@ -87,18 +89,6 @@ DRowAudioFilter::DRowAudioFilter()
 	inFilterR = new OnePoleFilter;
 	outFilterL = new OnePoleFilter;
 	outFilterR = new OnePoleFilter;
-
-        // make sure to initialize everything
-        int blockSize = getBlockSize();
-        if (blockSize <= 0)
-            blockSize = 512;
-
-        double sampleRate = getSampleRate();
-        if (sampleRate <= 0.0)
-            sampleRate = 44100.0;
-
-        prepareToPlay(blockSize, sampleRate);
-        releaseResources();
 }
 
 DRowAudioFilter::~DRowAudioFilter()
