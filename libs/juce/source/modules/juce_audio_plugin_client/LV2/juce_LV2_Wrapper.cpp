@@ -261,6 +261,9 @@ const String makePluginFile (AudioProcessor* const filter)
     text += "<" + getPluginURI() + ">\n";
     text += "    a " + getPluginType() + " ;\n";
     text += "    lv2:requiredFeature <" LV2_BUF_SIZE__boundedBlockLength "> ,\n";
+#if JucePlugin_WantsLV2FixedBlockLength
+    text += "                        <" LV2_BUF_SIZE__fixedBlockLength "> ,\n";
+#endif
     text += "                        <" LV2_URID__map "> ;\n";
     text += "    lv2:extensionData <" LV2_OPTIONS__interface "> ,\n";
 #if JucePlugin_WantsLV2State
@@ -332,6 +335,7 @@ const String makePluginFile (AudioProcessor* const filter)
     text += "        lv2:symbol \"lv2_latency\" ;\n";
     text += "        lv2:name \"Latency\" ;\n";
     text += "        lv2:designation <" LV2_CORE__latency "> ;\n";
+    text += "        lv2:portProperty lv2:reportsLatency, lv2:integer ;\n";
     text += "    ] ;\n";
     text += "\n";
 
@@ -1644,7 +1648,7 @@ public:
 #endif
                                      &size, &type, &flags);
 
-        if (data == nullptr)
+        if (data == nullptr || size == 0 || type == 0)
             return LV2_STATE_ERR_UNKNOWN;
 
 #if JucePlugin_WantsLV2StateString

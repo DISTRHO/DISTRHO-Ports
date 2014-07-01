@@ -124,5 +124,6 @@
 #define JucePlugin_LV2Category          "ReverbPlugin"
 #define JucePlugin_WantsLV2State        1
 #define JucePlugin_WantsLV2TimePos      1
+#define JucePlugin_WantsLV2FixedBlockLength 1
 
 #endif  // __JUCE_APPCONFIG_IRCJCT__
