@@ -353,6 +353,10 @@ void VexFilter::prepareToPlay (double sampleRate, int bufferSize)
 
     fSynth.setBufferSize(bufferSize);
     fSynth.setSampleRate(sampleRate);
+
+    // some params depend on sample rate
+    for (unsigned int i = 0; i < kParamCount; ++i)
+        fSynth.update(i);
 }
 
 void VexFilter::releaseResources()
@@ -365,6 +369,8 @@ void VexFilter::processBlock(AudioSampleBuffer& output, MidiBuffer& midiInBuffer
 
     if (AudioPlayHead* const playhead = getPlayHead())
         playhead->getCurrentPosition(pos);
+    else
+        pos.resetToDefault();
 
     const int frames = output.getNumSamples();
 
@@ -381,7 +387,7 @@ void VexFilter::processBlock(AudioSampleBuffer& output, MidiBuffer& midiInBuffer
         if (midiMessage.isNoteOn())
             fSynth.playNote(midiMessage.getNoteNumber(), midiMessage.getVelocity(), snum, 1);
         else if (midiMessage.isNoteOff())
-            fSynth.releaseNote(midiMessage.getNoteNumber(), snum, 1 );
+            fSynth.releaseNote(midiMessage.getNoteNumber(), snum, 1);
         else if (midiMessage.isAllSoundOff())
             fSynth.kill();
         else if (midiMessage.isAllNotesOff())
@@ -393,7 +399,7 @@ void VexFilter::processBlock(AudioSampleBuffer& output, MidiBuffer& midiInBuffer
         if (midiMessage.isNoteOn())
             fSynth.playNote(midiMessage.getNoteNumber(), midiMessage.getVelocity(), snum, 2);
         else if (midiMessage.isNoteOff())
-            fSynth.releaseNote(midiMessage.getNoteNumber(), snum, 2 );
+            fSynth.releaseNote(midiMessage.getNoteNumber(), snum, 2);
     }
 
     for (MidiBuffer::Iterator Iterator3(part3Midi); Iterator3.getNextEvent(midiMessage, snum);)
@@ -401,17 +407,17 @@ void VexFilter::processBlock(AudioSampleBuffer& output, MidiBuffer& midiInBuffer
         if (midiMessage.isNoteOn())
             fSynth.playNote(midiMessage.getNoteNumber(), midiMessage.getVelocity(), snum, 3);
         else if (midiMessage.isNoteOff())
-            fSynth.releaseNote(midiMessage.getNoteNumber(), snum, 3 );
+            fSynth.releaseNote(midiMessage.getNoteNumber(), snum, 3);
     }
 
     midiInBuffer.clear();
 
     if (obf.getNumSamples() < frames)
     {
-        obf.setSize(2,  frames, 0, 0, 1);
-        dbf1.setSize(2, frames, 0, 0, 1);
-        dbf2.setSize(2, frames, 0, 0, 1);
-        dbf3.setSize(2, frames, 0, 0, 1);
+        obf .setSize(2, frames, false, false, true);
+        dbf1.setSize(2, frames, false, false, true);
+        dbf2.setSize(2, frames, false, false, true);
+        dbf3.setSize(2, frames, false, false, true);
     }
 
     obf .clear();

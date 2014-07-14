@@ -57,9 +57,9 @@ public:
     {
         for (int i = 0; i < kNumVoices; ++i)
         {
-            vo1[i] = new VexVoice(p,  0, wr1);
-            vo2[i] = new VexVoice(p, 24, wr2);
-            vo3[i] = new VexVoice(p, 48, wr3);
+            vo1[i] = new VexVoice(p,  0, wr1, sampleRate);
+            vo2[i] = new VexVoice(p, 24, wr2, sampleRate);
+            vo3[i] = new VexVoice(p, 48, wr3, sampleRate);
         }
     }
 
@@ -77,14 +77,18 @@ public:
     {
         const int numSamples = obf.getNumSamples();
 
+        if (tmpBuf.getNumSamples() < numSamples)
+            tmpBuf.setSize(2, numSamples, false, false, true);
+
         tmpBuf.clear();
+
         float* const outPtrL = tmpBuf.getWritePointer(0);
         float* const outPtrR = tmpBuf.getWritePointer(1);
 
         if (part1)
         {
-            float right = parameters[86] * parameters[83];
-            float left  = parameters[86] * (1.0f - parameters[83]);
+            const float right = parameters[86] * parameters[83];
+            const float left  = parameters[86] * (1.0f - parameters[83]);
 
             for (int i = 0; i < kNumVoices; ++i)
             {
@@ -105,8 +109,8 @@ public:
 
         if (part2)
         {
-            float right = parameters[87] * parameters[84];
-            float left  = parameters[87] * (1.0f - parameters[84]);
+            const float right = parameters[87] * parameters[84];
+            const float left  = parameters[87] * (1.0f - parameters[84]);
 
             for (int i = 0; i < kNumVoices; ++i)
             {
@@ -127,8 +131,8 @@ public:
 
         if (part3)
         {
-            float right = parameters[88] * parameters[85];
-            float left  = parameters[88] * (1.0f - parameters[85]);
+            const float right = parameters[88] * parameters[85];
+            const float left  = parameters[88] * (1.0f - parameters[85]);
 
             for (int i = 0; i < kNumVoices; ++i)
             {
@@ -166,9 +170,9 @@ public:
             delete vo2[i];
             delete vo3[i];
 
-            vo1[i] = new VexVoice(parameters,  0, wr1);
-            vo2[i] = new VexVoice(parameters, 24, wr2);
-            vo3[i] = new VexVoice(parameters, 48, wr3);
+            vo1[i] = new VexVoice(parameters,  0, wr1, s);
+            vo2[i] = new VexVoice(parameters, 24, wr2, s);
+            vo3[i] = new VexVoice(parameters, 48, wr3, s);
         }
     }
 

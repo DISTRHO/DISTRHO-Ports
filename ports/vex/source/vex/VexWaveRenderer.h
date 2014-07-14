@@ -278,7 +278,7 @@ public:
         o.phaseInc = float((float)cycle / (s/f));
     }
 
-    void fillBuffer(float* buffer, int bufferSize, OscSet& o)
+    void fillBuffer(float* const buffer, const int bufferSize, OscSet& o)
     {
         if (buffer == nullptr || bufferSize == 0)
             return;

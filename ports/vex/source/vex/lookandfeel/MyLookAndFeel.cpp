@@ -125,7 +125,7 @@ void MyLookAndFeel::drawRotarySlider(Graphics& g,
     const float angle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
 
     //const bool isMouseOver = slider.isMouseOverOrDragging() && slider.isEnabled();
-    //const float zeroPos = rotaryStartAngle + fabs((float)slider.getMinimum() / ((float)slider.getMaximum() - (float)slider.getMinimum())) * (rotaryEndAngle - rotaryStartAngle);
+    //const float zeroPos = rotaryStartAngle + std::abs((float)slider.getMinimum() / ((float)slider.getMaximum() - (float)slider.getMinimum())) * (rotaryEndAngle - rotaryStartAngle);
 
     Path p;
 

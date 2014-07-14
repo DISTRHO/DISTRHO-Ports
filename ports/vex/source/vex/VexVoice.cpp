@@ -64,11 +64,17 @@ VexVoice::VexVoice(const float* const p, int po, WaveRenderer& w, float sr)
       poff(po)
 {
     Ordinal = 1;
+    Avelocity = 0.0f;
+    Fvelocity = 0.0f;
+    BaseFrequency = 0.0f;
     SampleRate = sr;
     isOn = false;
+    isReleased = true;
     note = 0;
 
     lfoC = 2.f * (float)std::sin(float_Pi * 5.0f / SampleRate);
+    LFOA = 0.0f;
+    LFOF = 0.0f;
 
     lfoS[0] = 0.3f;
     lfoS[1] = 0.0f;
@@ -81,6 +87,9 @@ VexVoice::VexVoice(const float* const p, int po, WaveRenderer& w, float sr)
     highR = 0.0f;
     q = 0.0f;
     cut = 0.0f;
+
+    zerostruct(oL);
+    zerostruct(oR);
 }
 
 void VexVoice::updateParameterPtr(const float* const p)
@@ -88,7 +97,7 @@ void VexVoice::updateParameterPtr(const float* const p)
     parameters = p;
 }
 
-void VexVoice::doProcess(float* outBufferL, float* outBufferR, int bufferSize)
+void VexVoice::doProcess(float* const outBufferL, float* const outBufferR, const int bufferSize)
 {
     if (outBufferL == nullptr || outBufferR == nullptr || bufferSize == 0)
         return;
@@ -124,16 +133,16 @@ void VexVoice::doProcess(float* outBufferL, float* outBufferR, int bufferSize)
         bandL = cut * highL + bandL;
         B = (lowL  * ((q * 0.5f) + 0.5f));
         A = (highL * ((q * 0.5f) + 0.5f));
-        outBufferL[i] = A + parameters[7 + poff] * ( B - A );
+        outBufferL[i]  = A + parameters[7 + poff] * ( B - A );
         outBufferL[i] += outBufferL[i] * amod;
 
         //Right
         lowR = lowR + cut * bandR;
-        highR =  outBufferR[i] - lowR - (q * bandR);
+        highR = outBufferR[i] - lowR - (q * bandR);
         bandR = cut * highR + bandR;
         B = (lowR  * ((q * 0.5f) + 0.5f));
         A = (highR * ((q * 0.5f) + 0.5f));
-        outBufferR[i] = A + parameters[7 + poff] * ( B - A );
+        outBufferR[i]  = A + parameters[7 + poff] * ( B - A );
         outBufferR[i] += outBufferR[i] * amod;
     }
 
@@ -231,19 +240,19 @@ void VexVoice::update(const int index)
         break;
 
     case 19:
-        lfoC = 2.f * (float)sin(float_Pi*(parameters[19 + poff] * 10.0f) / SampleRate);
+        lfoC = 2.f * (float)std::sin(float_Pi*(parameters[19 + poff] * 10.0f) / SampleRate);
         break;
 
     case 3:
         p = bipolar(parameters[3 + poff]);
         oL.phaseOffset = p > 0.0f ? p : 0.0f;
-        oR.phaseOffset  = p < 0.0f ? fabs(p) : 0.0f;
+        oR.phaseOffset = p < 0.0f ? std::abs(p) : 0.0f;
         break;
 
     case 4:
         p = bipolar(parameters[4 + poff]);
         oL.phaseIncOffset = p > 0.0f ? p : 0.0f;
-        oR.phaseIncOffset  = p < 0.0f ? fabs(p) : 0.0f;
+        oR.phaseIncOffset = p < 0.0f ? std::abs(p) : 0.0f;
         break;
     }
 }

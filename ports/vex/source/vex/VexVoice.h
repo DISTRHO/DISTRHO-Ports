@@ -47,11 +47,11 @@
 class VexVoice
 {
 public:
-    VexVoice(const float* const p, int poff, WaveRenderer& w, float sr = 44100);
+    VexVoice(const float* const p, int poff, WaveRenderer& w, float sr);
 
     void updateParameterPtr(const float* const p);
 
-    void doProcess(float* outBufferL, float* outBufferR, int bufferSize);
+    void doProcess(float* const outBufferL, float* const outBufferR, const int bufferSize);
     void start(float f, float v, int n, int preroll, double s, long o);
     void release(int p);
     void quickRelease();
