@@ -16,9 +16,9 @@
 #define JucePlugin_Manufacturer             "TAL-Togu Audio Line"
 #define JucePlugin_ManufacturerCode         'TOGU'
 #define JucePlugin_PluginCode               'ncut' // registered
-#define JucePlugin_MaxNumInputChannels              2
+#define JucePlugin_MaxNumInputChannels              0
 #define JucePlugin_MaxNumOutputChannels             2
-#define JucePlugin_PreferredChannelConfigurations   { 2, 2 }
+#define JucePlugin_PreferredChannelConfigurations   { 0, 2 }
 #define JucePlugin_IsSynth                          1
 #define JucePlugin_WantsMidiInput                   1
 #define JucePlugin_ProducesMidiOutput               0
