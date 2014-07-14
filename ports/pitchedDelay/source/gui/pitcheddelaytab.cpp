@@ -584,6 +584,8 @@ void PitchedDelayTab::setDelayRange(bool sendMessage)
 	AudioPlayHead::CurrentPositionInfo info;
 	if (AudioPlayHead* playHead = filter->getPlayHead())
 		playHead->getCurrentPosition(info);
+	else
+		info.resetToDefault();
 
 	const double timePerQuarter = 60. / (info.bpm > 0 ? info.bpm : 120);
 
@@ -721,6 +723,8 @@ void PitchedDelayTab::updateBPM()
 	AudioPlayHead::CurrentPositionInfo info;
 	if (AudioPlayHead* playHead = filter->getPlayHead())
 		playHead->getCurrentPosition(info);
+	else
+		info.resetToDefault();
 
 	if (info.bpm != currentBPM)
 	{
@@ -736,6 +740,8 @@ double PitchedDelayTab::quantizeDelay(double seconds)
 	AudioPlayHead::CurrentPositionInfo info;
 	if (AudioPlayHead* playHead = filter->getPlayHead())
 		playHead->getCurrentPosition(info);
+	else
+		info.resetToDefault();
 
 	const double timePerQuarter = 60. / (info.bpm > 0 ? info.bpm : 120);
 
@@ -787,6 +793,8 @@ double PitchedDelayTab::unQuantizeDelay(double sliderValue)
 	AudioPlayHead::CurrentPositionInfo info;
 	if (AudioPlayHead* playHead = filter->getPlayHead())
 		playHead->getCurrentPosition(info);
+	else
+		info.resetToDefault();
 
 	const double timePerQuarter = 60. / (info.bpm > 0 ? info.bpm : 120);
 
