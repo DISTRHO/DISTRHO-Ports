@@ -235,9 +235,10 @@ static Array<void*> activePlugins;
     This is an AudioEffectX object that holds and wraps our AudioProcessor...
 */
 class JuceVSTWrapper  : public AudioEffectX,
-                        private Timer,
                         public AudioProcessorListener,
-                        public AudioPlayHead
+                        public AudioPlayHead,
+                        private Timer,
+                        private AsyncUpdater
 {
 public:
     //==============================================================================
@@ -323,7 +324,7 @@ public:
         }
     }
 
-    void open()
+    void open() override
     {
         // Note: most hosts call this on the UI thread, but wavelab doesn't, so be careful in here.
         if (filter->hasEditor())
@@ -332,7 +333,7 @@ public:
             cEffect.flags &= ~effFlagsHasEditor;
     }
 
-    void close()
+    void close() override
     {
         // Note: most hosts call this on the UI thread, but wavelab doesn't, so be careful in here.
         stopTimer();
@@ -423,7 +424,7 @@ public:
         return 0;
     }
 
-    bool getInputProperties (VstInt32 index, VstPinProperties* properties)
+    bool getInputProperties (VstInt32 index, VstPinProperties* properties) override
     {
         if (filter == nullptr || index >= JucePlugin_MaxNumInputChannels)
             return false;
@@ -433,7 +434,7 @@ public:
         return true;
     }
 
-    bool getOutputProperties (VstInt32 index, VstPinProperties* properties)
+    bool getOutputProperties (VstInt32 index, VstPinProperties* properties) override
     {
         if (filter == nullptr || index >= JucePlugin_MaxNumOutputChannels)
             return false;
@@ -464,13 +465,13 @@ public:
         }
     }
 
-    bool setBypass (bool b)
+    bool setBypass (bool b) override
     {
         isBypassed = b;
         return true;
     }
 
-    VstInt32 getGetTailSize()
+    VstInt32 getGetTailSize() override
     {
         if (filter != nullptr)
             return (VstInt32) (filter->getTailLengthSeconds() * getSampleRate());
@@ -479,7 +480,7 @@ public:
     }
 
     //==============================================================================
-    VstInt32 processEvents (VstEvents* events)
+    VstInt32 processEvents (VstEvents* events) override
     {
        #if JucePlugin_WantsMidiInput
         VSTMidiEventList::addEventsToMidiBuffer (events, midiEvents);
@@ -508,7 +509,7 @@ public:
             dest.addFrom (i, 0, processTempBuffer, i, 0, numSamples);
     }
 
-    void processReplacing (float** inputs, float** outputs, VstInt32 numSamples)
+    void processReplacing (float** inputs, float** outputs, VstInt32 numSamples) override
     {
         if (firstProcessCallback)
         {
@@ -641,10 +642,10 @@ public:
     }
 
     //==============================================================================
-    VstInt32 startProcess()  { return 0; }
-    VstInt32 stopProcess()   { return 0; }
+    VstInt32 startProcess() override  { return 0; }
+    VstInt32 stopProcess() override   { return 0; }
 
-    void resume()
+    void resume() override
     {
         if (filter != nullptr)
         {
@@ -681,7 +682,7 @@ public:
         }
     }
 
-    void suspend()
+    void suspend() override
     {
         if (filter != nullptr)
         {
@@ -697,7 +698,7 @@ public:
         }
     }
 
-    bool getCurrentPosition (AudioPlayHead::CurrentPositionInfo& info)
+    bool getCurrentPosition (AudioPlayHead::CurrentPositionInfo& info) override
     {
         const VstTimeInfo* const ti = getTimeInfo (kVstPpqPosValid | kVstTempoValid | kVstBarsValid | kVstCyclePosValid
                                                     | kVstTimeSigValid | kVstSmpteValid | kVstClockValid);
@@ -776,30 +777,30 @@ public:
     }
 
     //==============================================================================
-    VstInt32 getProgram()
+    VstInt32 getProgram() override
     {
         return filter != nullptr ? filter->getCurrentProgram() : 0;
     }
 
-    void setProgram (VstInt32 program)
+    void setProgram (VstInt32 program) override
     {
         if (filter != nullptr)
             filter->setCurrentProgram (program);
     }
 
-    void setProgramName (char* name)
+    void setProgramName (char* name) override
     {
         if (filter != nullptr)
             filter->changeProgramName (filter->getCurrentProgram(), name);
     }
 
-    void getProgramName (char* name)
+    void getProgramName (char* name) override
     {
         if (filter != nullptr)
             filter->getProgramName (filter->getCurrentProgram()).copyToUTF8 (name, 24);
     }
 
-    bool getProgramNameIndexed (VstInt32 /*category*/, VstInt32 index, char* text)
+    bool getProgramNameIndexed (VstInt32 /*category*/, VstInt32 index, char* text) override
     {
         if (filter != nullptr && isPositiveAndBelow (index, filter->getNumPrograms()))
         {
@@ -811,7 +812,7 @@ public:
     }
 
     //==============================================================================
-    float getParameter (VstInt32 index)
+    float getParameter (VstInt32 index) override
     {
         if (filter == nullptr)
             return 0.0f;
@@ -820,7 +821,7 @@ public:
         return filter->getParameter (index);
     }
 
-    void setParameter (VstInt32 index, float value)
+    void setParameter (VstInt32 index, float value) override
     {
         if (filter != nullptr)
         {
@@ -829,7 +830,7 @@ public:
         }
     }
 
-    void getParameterDisplay (VstInt32 index, char* text)
+    void getParameterDisplay (VstInt32 index, char* text) override
     {
         if (filter != nullptr)
         {
@@ -838,7 +839,7 @@ public:
         }
     }
 
-    void getParameterName (VstInt32 index, char* text)
+    void getParameterName (VstInt32 index, char* text) override
     {
         if (filter != nullptr)
         {
@@ -847,23 +848,28 @@ public:
         }
     }
 
-    void audioProcessorParameterChanged (AudioProcessor*, int index, float newValue)
+    void audioProcessorParameterChanged (AudioProcessor*, int index, float newValue) override
     {
         if (audioMaster != nullptr)
             audioMaster (&cEffect, audioMasterAutomate, index, 0, 0, newValue);
     }
 
-    void audioProcessorParameterChangeGestureBegin (AudioProcessor*, int index)   { beginEdit (index); }
-    void audioProcessorParameterChangeGestureEnd   (AudioProcessor*, int index)   { endEdit   (index); }
+    void audioProcessorParameterChangeGestureBegin (AudioProcessor*, int index) override   { beginEdit (index); }
+    void audioProcessorParameterChangeGestureEnd   (AudioProcessor*, int index) override   { endEdit   (index); }
 
-    void audioProcessorChanged (AudioProcessor*)
+    void audioProcessorChanged (AudioProcessor*) override
     {
         setInitialDelay (filter->getLatencySamples());
-        ioChanged();
         updateDisplay();
+        triggerAsyncUpdate();
     }
 
-    bool canParameterBeAutomated (VstInt32 index)
+    void handleAsyncUpdate() override
+    {
+        ioChanged();
+    }
+
+    bool canParameterBeAutomated (VstInt32 index) override
     {
         return filter != nullptr && filter->isParameterAutomatable ((int) index);
     }
@@ -881,7 +887,7 @@ public:
     };
 
     bool setSpeakerArrangement (VstSpeakerArrangement* pluginInput,
-                                VstSpeakerArrangement* pluginOutput)
+                                VstSpeakerArrangement* pluginOutput) override
     {
         short channelConfigs[][2] = { JucePlugin_PreferredChannelConfigurations };
 
@@ -958,7 +964,7 @@ public:
     }
 
     //==============================================================================
-    VstInt32 getChunk (void** data, bool onlyStoreCurrentProgramData)
+    VstInt32 getChunk (void** data, bool onlyStoreCurrentProgramData) override
     {
         if (filter == nullptr)
             return 0;
@@ -978,7 +984,7 @@ public:
         return (VstInt32) chunkMemory.getSize();
     }
 
-    VstInt32 setChunk (void* data, VstInt32 byteSize, bool onlyRestoreCurrentProgramData)
+    VstInt32 setChunk (void* data, VstInt32 byteSize, bool onlyRestoreCurrentProgramData) override
     {
         if (filter != nullptr)
         {
@@ -1131,7 +1137,7 @@ public:
         }
     }
 
-    VstIntPtr dispatcher (VstInt32 opCode, VstInt32 index, VstIntPtr value, void* ptr, float opt)
+    VstIntPtr dispatcher (VstInt32 opCode, VstInt32 index, VstIntPtr value, void* ptr, float opt) override
     {
         if (hasShutdown)
             return 0;
