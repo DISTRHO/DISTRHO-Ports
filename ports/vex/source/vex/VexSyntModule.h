@@ -212,13 +212,12 @@ public:
         if (v == nullptr)
             return;
 
-        int OldestOn = kNumVoices-1;
-        int OldestOff = kNumVoices-1;
-        int OldestReleased = kNumVoices-1;
+        int OldestOn = kNumVoices;
+        int OldestOff = kNumVoices;
+        int OldestReleased = kNumVoices;
 
-        int tmpOn = 100000000;
-        //int tmpOff = 100000000;
-        int tmpReleased = 100000000;
+        long tmpOn = 100000000;
+        long tmpReleased = 100000000;
 
         for (int i = 0; i < kNumVoices; ++i)
         {
@@ -234,11 +233,19 @@ public:
             if (v[i]->getIsReleased())
             {
                 OldestReleased = (v[i]->getOrdinal() < tmpReleased) ? i : OldestReleased;
+
+                if (OldestReleased >= kNumVoices)
+                    continue;
+
                 tmpReleased = v[OldestReleased]->getOrdinal();
                 continue;
             }
 
             OldestOn = (v[i]->getOrdinal() < tmpOn) ? i : OldestOn;
+
+            if (OldestOn >= kNumVoices)
+                continue;
+
             tmpOn = v[OldestOn]->getOrdinal();
         }
 
@@ -248,23 +255,18 @@ public:
         if (OldestOff < kNumVoices)
         {
             v[OldestOff]->start(noteInHertz, float(vel)/127.0f, note, preroll, sampleRate, playCount);
-            return;
         }
-
-        if (OldestReleased < kNumVoices)
+        else if (OldestReleased < kNumVoices)
         {
             v[benchwarmer]->start(noteInHertz, float(vel)/127.0f, note, preroll, sampleRate, playCount);
             benchwarmer = OldestReleased;
             v[OldestReleased]->quickRelease();
-            return;
         }
-
-        if (OldestOn < kNumVoices)
+        else if (OldestOn < kNumVoices)
         {
             v[benchwarmer]->start(noteInHertz, float(vel)/127.0f, note, preroll, sampleRate, playCount);
             benchwarmer = OldestOn;
             v[OldestReleased]->quickRelease();
-            return;
         }
     }
 
