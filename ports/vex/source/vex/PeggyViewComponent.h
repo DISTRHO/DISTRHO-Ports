@@ -55,10 +55,9 @@ public:
         virtual void arpParameterChanged(const uint32_t id) = 0;
     };
 
-    PeggyViewComponent(VexArpSettings& arpSet, Callback* const callback, const bool isStandalone = false)
+    PeggyViewComponent(VexArpSettings& arpSet, Callback* const callback)
         : fArpSettings(arpSet),
-          fCallback(callback),
-          fIsStandalone(isStandalone)
+          fCallback(callback)
     {
         addAndMakeVisible(boolGrid = new BoolGridComponent());
         boolGrid->addChangeListener(this);
@@ -135,18 +134,11 @@ public:
         onOffBtn->addListener(this);
         onOffBtn->setClickingTogglesState(true);
 
-        if (isStandalone)
-        {
-            static MyLookAndFeel mlaf;
-            setLookAndFeel(&mlaf);
-        }
-
         update();
     }
 
     ~PeggyViewComponent() override
     {
-        //deleteAllChildren();
         removeAllChildren();
     }
 
@@ -170,17 +162,10 @@ public:
         g.setGradientFill(ColourGradient(Colour(0xffffffff), 0.0f, 0.0f,
                           Colour(0xff888899), (float)getWidth(), (float)getHeight(), false));
 
-        if (fIsStandalone)
-        {
-            g.fillRect(0, 0, getWidth(), getHeight());
-        }
-        else
-        {
-            g.fillRect(0, 0, getWidth() - 5, getHeight() - 5);
+        g.fillRect(0, 0, getWidth() - 5, getHeight() - 5);
 
-            g.setColour(Colours::black);
-            g.drawRect(0, 0, getWidth() - 5, getHeight() - 5);
-        }
+        g.setColour(Colours::black);
+        g.drawRect(0, 0, getWidth() - 5, getHeight() - 5);
     }
 
     void changeListenerCallback(ChangeBroadcaster* caller) override
@@ -260,7 +245,6 @@ public:
 private:
     VexArpSettings& fArpSettings;
     Callback* const fCallback;
-    const bool fIsStandalone;
 
     ScopedPointer<BoolGridComponent> boolGrid;
     ScopedPointer<SliderFieldComponent> sliderField;

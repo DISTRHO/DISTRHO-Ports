@@ -47,7 +47,7 @@
 class VexVoice
 {
 public:
-    VexVoice(const float* const p, int poff, WaveRenderer& w, float sr);
+    VexVoice(const float* const p, const int poff, WaveRenderer& w, float sr);
 
     void updateParameterPtr(const float* const p);
 

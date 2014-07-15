@@ -34,7 +34,7 @@
 
 #include "VexVoice.h"
 
-float convertPitch(float pitch)
+static float convertPitch(const float pitch)
 {
     long convert;
     float *p = (float*)&convert;
@@ -53,7 +53,7 @@ float convertPitch(float pitch)
     return *p;
 }
 
-float bipolar(const float in)
+static float bipolar(const float in)
 {
     return in * 2.0f - 1.0f;
 }
