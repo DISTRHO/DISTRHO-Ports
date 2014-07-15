@@ -77,7 +77,7 @@ public:
     {
         const int numSamples = obf.getNumSamples();
 
-        if (tmpBuf.getNumSamples() < numSamples)
+        if (tmpBuf.getNumSamples() != numSamples)
             tmpBuf.setSize(2, numSamples, false, false, true);
 
         tmpBuf.clear();

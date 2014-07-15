@@ -412,7 +412,7 @@ void VexFilter::processBlock(AudioSampleBuffer& output, MidiBuffer& midiInBuffer
 
     midiInBuffer.clear();
 
-    if (obf.getNumSamples() < frames)
+    if (obf.getNumSamples() != frames)
     {
         obf .setSize(2, frames, false, false, true);
         dbf1.setSize(2, frames, false, false, true);
