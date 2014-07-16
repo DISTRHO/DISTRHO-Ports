@@ -6,18 +6,18 @@ DISTRHO is an open source project that has the goal of making cross-platform plu
 
 <b>This repository contains the Linux ports</b>.
 
------------------------
+-----------------------------------------------------------------------------------------
 ---- BUILD DEPENDENCIES
 
 To build plugins, you first need to install the following dependencies:
 
- All OSes:
+All OSes:
 
 - csound (version 6)
 - premake (version 3)
 
 
- Linux: (development versions of these)
+Linux: (development versions of these)
 
 - ladspa
 - freetype2
@@ -25,12 +25,12 @@ To build plugins, you first need to install the following dependencies:
 - X11 core and extensions (Xinerama, XShm, XRender and XCursor)
 
 
------------------------
+-----------------------------------------------------------------------------------------
 ---- BUILD and INSTALL
 
 In order to build the plugins, first run:
 
-`./scripts/premake-update.sh _OS_`
+`$ ./scripts/premake-update.sh _OS_`
 
 where _OS_ can be 'linux', 'mac' or 'mingw'.<br/>
 This operation requires 'premake' (version 3) to be installed on your system.
@@ -38,11 +38,11 @@ This operation requires 'premake' (version 3) to be installed on your system.
 
 You are now ready to start building. Run this on the source root folder:
 
-`make`
+`$ make`
 
 If you just want to build specific plugin versions, you can use 'make lv2' or 'make vst'.
 
 
 To build in debug mode, use this:
 
-`make CONFIG=Debug`
+`$ make CONFIG=Debug`
