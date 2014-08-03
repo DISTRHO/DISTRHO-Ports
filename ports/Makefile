@@ -34,6 +34,7 @@ lv2: libs
 	$(MAKE) -C eqinox/LV2
 	$(MAKE) -C juce-demo-plugin/LV2
 	$(MAKE) -C klangfalter/LV2
+	$(MAKE) -C luftikus/LV2
 	$(MAKE) -C obxd/LV2
 	$(MAKE) -C pitchedDelay/LV2
 	$(MAKE) -C tal-dub-3/LV2
@@ -67,6 +68,7 @@ vst: libs
 	$(MAKE) -C eqinox/VST
 	$(MAKE) -C juce-demo-plugin/VST
 	$(MAKE) -C klangfalter/VST
+	$(MAKE) -C luftikus/VST
 	$(MAKE) -C obxd/VST
 	$(MAKE) -C pitchedDelay/VST
 	$(MAKE) -C tal-dub-3/VST
@@ -100,6 +102,7 @@ clean:
 	$(MAKE) clean -C eqinox/LV2
 	$(MAKE) clean -C juce-demo-plugin/LV2
 	$(MAKE) clean -C klangfalter/LV2
+	$(MAKE) clean -C luftikus/LV2
 	$(MAKE) clean -C obxd/LV2
 	$(MAKE) clean -C pitchedDelay/LV2
 	$(MAKE) clean -C tal-dub-3/LV2
@@ -129,6 +132,7 @@ clean:
 	$(MAKE) clean -C eqinox/VST
 	$(MAKE) clean -C juce-demo-plugin/VST
 	$(MAKE) clean -C klangfalter/VST
+	$(MAKE) clean -C luftikus/VST
 	$(MAKE) clean -C obxd/VST
 	$(MAKE) clean -C pitchedDelay/VST
 	$(MAKE) clean -C tal-dub-3/VST
