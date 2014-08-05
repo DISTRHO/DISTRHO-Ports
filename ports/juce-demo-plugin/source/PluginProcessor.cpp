@@ -41,8 +41,8 @@ public:
         return dynamic_cast <SineWaveSound*> (sound) != 0;
     }
 
-    void startNote (const int midiNoteNumber, const float velocity,
-                    SynthesiserSound* /*sound*/, const int /*currentPitchWheelPosition*/)
+    void startNote (int midiNoteNumber, float velocity,
+                    SynthesiserSound* /*sound*/, int /*currentPitchWheelPosition*/)
     {
         currentAngle = 0.0;
         level = velocity * 0.15;
@@ -54,7 +54,7 @@ public:
         angleDelta = cyclesPerSample * 2.0 * double_Pi;
     }
 
-    void stopNote (const bool allowTailOff)
+    void stopNote (bool allowTailOff)
     {
         if (allowTailOff)
         {
@@ -74,12 +74,12 @@ public:
         }
     }
 
-    void pitchWheelMoved (const int /*newValue*/)
+    void pitchWheelMoved (int /*newValue*/)
     {
         // can't be bothered implementing this for the demo!
     }
 
-    void controllerMoved (const int /*controllerNumber*/, const int /*newValue*/)
+    void controllerMoved (int /*controllerNumber*/, int /*newValue*/)
     {
         // not interested in controllers in this case.
     }
@@ -95,7 +95,7 @@ public:
                     const float currentSample = (float) (sin (currentAngle) * level * tailOff);
 
                     for (int i = outputBuffer.getNumChannels(); --i >= 0;)
-                        *outputBuffer.getSampleData (i, startSample) += currentSample;
+                        outputBuffer.addSample (i, startSample, currentSample);
 
                     currentAngle += angleDelta;
                     ++startSample;
@@ -118,7 +118,7 @@ public:
                     const float currentSample = (float) (sin (currentAngle) * level);
 
                     for (int i = outputBuffer.getNumChannels(); --i >= 0;)
-                        *outputBuffer.getSampleData (i, startSample) += currentSample;
+                        outputBuffer.addSample (i, startSample, currentSample);
 
                     currentAngle += angleDelta;
                     ++startSample;
@@ -131,14 +131,16 @@ private:
     double currentAngle, angleDelta, level, tailOff;
 };
 
+const float defaultGain = 1.0f;
+const float defaultDelay = 0.5f;
 
 //==============================================================================
 JuceDemoPluginAudioProcessor::JuceDemoPluginAudioProcessor()
     : delayBuffer (2, 12000)
 {
     // Set up some default values..
-    gain = 1.0f;
-    delay = 0.5f;
+    gain = defaultGain;
+    delay = defaultDelay;
 
     lastUIWidth = 400;
     lastUIHeight = 200;
@@ -187,6 +189,18 @@ void JuceDemoPluginAudioProcessor::setParameter (int index, float newValue)
         case delayParam:    delay = newValue;  break;
         default:            break;
     }
+}
+
+float JuceDemoPluginAudioProcessor::getParameterDefaultValue (int index)
+{
+    switch (index)
+    {
+        case gainParam:     return defaultGain;
+        case delayParam:    return defaultDelay;
+        default:            break;
+    }
+
+    return 0.0f;
 }
 
 const String JuceDemoPluginAudioProcessor::getParameterName (int index)
@@ -249,8 +263,8 @@ void JuceDemoPluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, Midi
     // Apply our delay effect to the new output..
     for (channel = 0; channel < getNumInputChannels(); ++channel)
     {
-        float* channelData = buffer.getSampleData (channel);
-        float* delayData = delayBuffer.getSampleData (jmin (channel, delayBuffer.getNumChannels() - 1));
+        float* channelData = buffer.getWritePointer (channel);
+        float* delayData = delayBuffer.getWritePointer (jmin (channel, delayBuffer.getNumChannels() - 1));
         dp = delayPosition;
 
         for (int i = 0; i < numSamples; ++i)
