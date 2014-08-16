@@ -458,7 +458,7 @@ private:
                 if (pluginEditor != nullptr)
                 {
                     PopupMenu::dismissAllActiveMenus();
-                    pluginEditor->getAudioProcessor()->editorBeingDeleted (pluginEditor);
+                    pluginEditor->processor.editorBeingDeleted (pluginEditor);
                 }
             }
 
@@ -488,7 +488,7 @@ private:
                    #if JUCE_WINDOWS
                     setSize (w, h);
                    #else
-                    if (owner.macHostWindow != nullptr)
+                    if (owner.macHostWindow != nullptr && ! getHostType().isWavelab())
                         juce::setNativeHostWindowSize (owner.macHostWindow, this, w, h, owner.isNSView);
                    #endif
 
@@ -496,6 +496,9 @@ private:
                     {
                         ViewRect newSize (0, 0, w, h);
                         owner.plugFrame->resizeView (&owner, &newSize);
+
+                        if (getHostType().isWavelab())
+                            setBounds (0, 0, w, h);
                     }
                 }
             }
