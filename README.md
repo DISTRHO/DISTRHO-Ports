@@ -1,6 +1,6 @@
--------------------------
--  README for DISTRHO  -
------------------------
+-------------------------------
+-  README for DISTRHO Ports  -
+-----------------------------
 
 DISTRHO is an open source project that has the goal of making cross-platform plugins and Linux ports.
 
@@ -19,7 +19,6 @@ All OSes:
 
 Linux: (development versions of these)
 
-- ladspa
 - freetype2
 - OpenGL/Mesa
 - X11 core and extensions (Xinerama, XShm, XRender and XCursor)
