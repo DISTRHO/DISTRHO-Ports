@@ -31,6 +31,7 @@ lv2: libs
 	$(MAKE) -C drowaudio-reverb/LV2
 	$(MAKE) -C drowaudio-tremolo/LV2
 	$(MAKE) -C drumsynth/LV2
+	$(MAKE) -C easySSP/LV2
 	$(MAKE) -C eqinox/LV2
 	$(MAKE) -C juce-demo-plugin/LV2
 	$(MAKE) -C klangfalter/LV2
@@ -65,6 +66,7 @@ vst: libs
 	$(MAKE) -C drowaudio-reverb/VST
 	$(MAKE) -C drowaudio-tremolo/VST
 	$(MAKE) -C drumsynth/VST
+	$(MAKE) -C easySSP/VST
 	$(MAKE) -C eqinox/VST
 	$(MAKE) -C juce-demo-plugin/VST
 	$(MAKE) -C klangfalter/VST
@@ -99,6 +101,7 @@ clean:
 	$(MAKE) clean -C drowaudio-reverb/LV2
 	$(MAKE) clean -C drowaudio-tremolo/LV2
 	$(MAKE) clean -C drumsynth/LV2
+	$(MAKE) clean -C easySSP/LV2
 	$(MAKE) clean -C eqinox/LV2
 	$(MAKE) clean -C juce-demo-plugin/LV2
 	$(MAKE) clean -C klangfalter/LV2
@@ -129,6 +132,7 @@ clean:
 	$(MAKE) clean -C drowaudio-reverb/VST
 	$(MAKE) clean -C drowaudio-tremolo/VST
 	$(MAKE) clean -C drumsynth/VST
+	$(MAKE) clean -C easySSP/VST
 	$(MAKE) clean -C eqinox/VST
 	$(MAKE) clean -C juce-demo-plugin/VST
 	$(MAKE) clean -C klangfalter/VST
