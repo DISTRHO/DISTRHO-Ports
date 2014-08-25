@@ -40,6 +40,7 @@ lv2: libs
 	$(MAKE) -C luftikus/LV2
 	$(MAKE) -C obxd/LV2
 	$(MAKE) -C pitchedDelay/LV2
+	$(MAKE) -C stereosourceseparation/LV2
 	$(MAKE) -C tal-dub-3/LV2
 	$(MAKE) -C tal-filter/LV2
 	$(MAKE) -C tal-filter-2/LV2
@@ -77,6 +78,7 @@ vst: libs
 	$(MAKE) -C luftikus/VST
 	$(MAKE) -C obxd/VST
 	$(MAKE) -C pitchedDelay/VST
+	$(MAKE) -C stereosourceseparation/VST
 	$(MAKE) -C tal-dub-3/VST
 	$(MAKE) -C tal-filter/VST
 	$(MAKE) -C tal-filter-2/VST
@@ -114,6 +116,7 @@ clean:
 	$(MAKE) clean -C luftikus/LV2
 	$(MAKE) clean -C obxd/LV2
 	$(MAKE) clean -C pitchedDelay/LV2
+	$(MAKE) clean -C stereosourceseparation/LV2
 	$(MAKE) clean -C tal-dub-3/LV2
 	$(MAKE) clean -C tal-filter/LV2
 	$(MAKE) clean -C tal-filter-2/LV2
@@ -147,6 +150,7 @@ clean:
 	$(MAKE) clean -C luftikus/VST
 	$(MAKE) clean -C obxd/VST
 	$(MAKE) clean -C pitchedDelay/VST
+	$(MAKE) clean -C stereosourceseparation/VST
 	$(MAKE) clean -C tal-dub-3/VST
 	$(MAKE) clean -C tal-filter/VST
 	$(MAKE) clean -C tal-filter-2/VST
