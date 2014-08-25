@@ -44,11 +44,11 @@ inline static float tptlpupw(float & state , float inp , float cutoff , float sr
 	return res;
 }
 
-inline static float linsc(float param,const float min,const float max) {
+static float linsc(float param,const float min,const float max) {
     return (param) * (max - min) + min;
 }
 
-inline static float logsc(float param, const float min,const float max,const float rolloff = 19.0f) {
+static float logsc(float param, const float min,const float max,const float rolloff = 19.0f) {
 	return ((expf(param * logf(rolloff+1)) - 1.0f) / (rolloff)) * (max-min) + min;
 }
 

@@ -23,6 +23,7 @@
 //[Headers]     -- You can add your own extra header files here --
 #include "JuceHeader.h"
 #include "msfa/controllers.h"
+#include "SysexComm.h"
 //[/Headers]
 
 
@@ -36,7 +37,8 @@
                                                                     //[/Comments]
 */
 class ParamDialog  : public Component,
-                     public SliderListener
+                     public SliderListener,
+                     public ComboBoxListener
 {
 public:
     //==============================================================================
@@ -45,14 +47,14 @@ public:
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
-    void setDialogValues(Controllers &c);
-    void getDialogValues(Controllers &c);
-
+    void setDialogValues(Controllers &c, SysexComm &mgr);
+    bool getDialogValues(Controllers &c, SysexComm &mgr);
     //[/UserMethods]
 
     void paint (Graphics& g);
     void resized();
     void sliderValueChanged (Slider* sliderThatWasMoved);
+    void comboBoxChanged (ComboBox* comboBoxThatHasChanged);
 
 
 
@@ -63,6 +65,9 @@ private:
     //==============================================================================
     ScopedPointer<Slider> pitchRange;
     ScopedPointer<Slider> pitchStep;
+    ScopedPointer<ComboBox> sysexIn;
+    ScopedPointer<ComboBox> sysexOut;
+    ScopedPointer<Slider> sysexChl;
 
 
     //==============================================================================

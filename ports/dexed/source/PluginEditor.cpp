@@ -22,7 +22,8 @@
 #include "PluginEditor.h"
 #include "GlobalEditor.h"
 #include "ParamDialog.h"
-#include "BinaryData.h"
+#include "SysexComm.h"
+#include "Dexed.h"
 #include "math.h"
 #include <fstream>
 
@@ -48,8 +49,55 @@ public:
         g.drawImage (about_png, 0, 0, about_png.getWidth(), about_png.getHeight(),
                      0, 0, about_png.getWidth(), about_png.getHeight());
         g.setColour(Colour(0xFF000000));
-        String ver("Version 0.5 ; built date " __DATE__ );
+        String ver("Version " DEXED_VERSION " ; built date " __DATE__ );
         g.drawSingleLineText(ver, 9, 118);
+    }
+};
+
+/**
+ * Ugly but usefull midi monitor to know if you are really sending/receiving something from the DX7
+ * If the midi is not configured this component wont show up
+ */
+class MidiMonitor : public Component {
+    SysexComm *midi;
+public:
+    MidiMonitor(SysexComm *sysexComm) {
+        midi = sysexComm;
+    }
+
+    void paint(Graphics &g) {
+        if ( ! (midi->isInputActive() || midi->isOutputActive() ) ) 
+            return;
+
+        g.setColour(DXLookNFeel::dxDarkBrown);
+        g.fillRect(0, 0, getWidth(), getHeight());
+        g.setColour(Colours::black);
+        g.drawSingleLineText("DX7 ", 0, 13);
+
+        if ( midi->isInputActive() ) {
+            g.drawSingleLineText("IN", 27,13);
+            if ( midi->inActivity ) {
+                g.setColour(Colours::red);
+            } else {
+                g.setColour(Colours::darkgrey);
+            }
+            g.fillRect(44, 4, 7, 9);
+
+            midi->inActivity = false;
+        }
+
+        if ( midi->isOutputActive() ) {
+            g.setColour(Colours::black);
+            g.drawSingleLineText("OUT", 55, 13);
+            if ( midi->outActivity ) {
+                g.setColour(Colours::red);
+            } else {
+                g.setColour(Colours::darkgrey);
+            }
+            g.fillRect(83, 4, 7, 9);
+
+            midi->outActivity = false;
+        }
     }
 };
 
@@ -68,22 +116,19 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     cartButton->setButtonText ("CART");
     cartButton->addListener (this);
     cartButton->setBounds(5, 6, 50, 18);
-    for(int i=0;i<processor->cartManager.cartNames.size();i++) {
-        cartPopup.addItem(i+1, processor->cartManager.cartNames[i]);
-    }
     
     addAndMakeVisible (loadButton = new TextButton("LOAD"));
     loadButton->setButtonText ("LOAD");
-    loadButton->addListener (this);
+    loadButton->addListener(this);
     loadButton->setBounds(59, 6, 50, 18);
 
     addAndMakeVisible(saveButton = new TextButton("SAVE"));
     saveButton->setButtonText ("SAVE");
     saveButton->addListener (this);
-    saveButton->setBounds (113, 6, 50, 18);
+    saveButton->setBounds(113, 6, 50, 18);
     
     addAndMakeVisible (&programs);
-    programs.setEditableText (false);
+    programs.setEditableText(false);
     programs.setJustificationType (Justification::centredLeft);
     programs.setTextWhenNothingSelected (String::empty);
     programs.setBounds(167, 6, 160, 18);
@@ -91,20 +136,29 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     programs.addListener(this);
     
     addAndMakeVisible(storeButton = new TextButton("STORE"));
-    storeButton->setButtonText ("STORE");
-    storeButton->addListener (this);
-    storeButton->setBounds (331, 6, 50, 18);
+    storeButton->setButtonText("STORE");
+    storeButton->addListener(this);
+    storeButton->setBounds(331, 6, 50, 18);
+
+    addAndMakeVisible(sendButton = new TextButton("SEND"));
+    sendButton->setVisible(false);
+    sendButton->setButtonText("SEND");
+    sendButton->addListener(this);
+    sendButton->setBounds(385, 6, 50, 18);
+    sendButton->setVisible(processor->sysexComm.isOutputActive());
+    
+    addAndMakeVisible(midiMonitor = new MidiMonitor(&processor->sysexComm));
+    midiMonitor->setBounds(645, 6, 110, 18);
 
     addAndMakeVisible(settingsButton = new TextButton("PARMS"));
-    settingsButton->setButtonText ("PARMS");
-    settingsButton->addListener (this);
-    settingsButton->setBounds (755, 6, 50, 18);
+    settingsButton->setButtonText("PARMS");
+    settingsButton->addListener(this);
+    settingsButton->setBounds(755, 6, 50, 18);
     
     addAndMakeVisible(aboutButton = new TextButton("ABOUT"));
-    aboutButton->setButtonText ("ABOUT");
-    aboutButton->addListener (this);
-    aboutButton->setBounds (807, 6, 50, 18);
-
+    aboutButton->setButtonText("ABOUT");
+    aboutButton->addListener(this);
+    aboutButton->setBounds(807, 6, 50, 18);
 
     // OPERATORS
     addAndMakeVisible(&(operators[0]));
@@ -144,6 +198,9 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     global.setBounds(5,235,855,90);
     global.bind(processor);
     
+    sendPopup.addItem(1, "Send program to DX7");
+    sendPopup.addItem(2, "Send cartridge to DX7");
+    
     updateUI();
     startTimer(100);
 }
@@ -164,7 +221,7 @@ void DexedAudioProcessorEditor::paint (Graphics& g) {
 
 void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
     if (buttonThatWasClicked == cartButton) {
-        int result = cartPopup.show();
+        int result = processor->cartManager.getCarts()->show();
         if ( result < 1 )
             return;
         
@@ -209,7 +266,7 @@ void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
             String f = fc.getResults().getReference(0).getFullPathName();
             char syx_data[4104];
 
-            exportSysex((char *) syx_data, (char *) &processor->sysex);
+            exportSysexCart((char *) syx_data, (char *) &processor->sysex, 0);
 
             ofstream fp_out(f.toRawUTF8(), ios::binary);
             fp_out.write((char *)syx_data, 4104);
@@ -229,13 +286,40 @@ void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
         storeProgram();
         return;
     }
+    
+    if (buttonThatWasClicked == sendButton) {
+        int result = sendPopup.show();
+        
+        if ( result == 1 ) {
+            uint8_t raw[167];
+            
+            exportSysexPgm((char *) raw, processor->data, processor->sysexComm.getChl());
+            if ( processor->sysexComm.isOutputActive() ) {
+                processor->sysexComm.send(MidiMessage(raw, 163));
+            }
+            global.setSystemMessage(String("Done sending program"));
+            return;
+        }
+        
+        if ( result == 2 ) {
+            uint8_t raw[4104];
+
+            exportSysexCart((char *) raw, (char *) &processor->sysex, processor->sysexComm.getChl());
+            if ( processor->sysexComm.isOutputActive() ) {
+                processor->sysexComm.send(MidiMessage(raw, 4104));
+            }
+            global.setSystemMessage(String("Done sending cartridge"));
+            return;
+        }
+        
+        return;
+    }
 
     if (buttonThatWasClicked == settingsButton) {
-        
         AlertWindow window("","", AlertWindow::NoIcon, this);
         ParamDialog param;
         param.setColour(AlertWindow::backgroundColourId, Colour(0x32FFFFFF));
-        param.setDialogValues(processor->controllers);
+        param.setDialogValues(processor->controllers, processor->sysexComm);
         
         window.addCustomComponent(&param);
         window.addButton("OK", 0);
@@ -243,9 +327,14 @@ void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
         if ( window.runModalLoop() != 0 )
             return;
         
-        param.getDialogValues(processor->controllers);
+        bool ret = param.getDialogValues(processor->controllers, processor->sysexComm);
         processor->savePreference();
         
+        if ( ret == false ) {
+            AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Midi Interface", "Error opening midi ports");
+        }
+
+        sendButton->setVisible(processor->sysexComm.isOutputActive());
         return;
     }
     
@@ -273,11 +362,12 @@ void DexedAudioProcessorEditor::timerCallback() {
         return;
 
     for(int i=0;i<6;i++) {
-        operators[i].updateGain(sqrt(processor->voiceStatus.amp[5 - i]) / 8196);
+        operators[i].updateGain(sqrt(processor->voiceStatus.amp[5 - i]) / 8196);        // TODO: FUGLY !!!! change this sqrt nonsens
         operators[i].updateEnvPos(processor->voiceStatus.ampStep[5 - i]);
     }
     global.updatePitchPos(processor->voiceStatus.pitchStep);
     global.updateVu(processor->vuSignal);
+    midiMonitor->repaint();
 }   
 
 void DexedAudioProcessorEditor::updateUI() {
@@ -287,10 +377,7 @@ void DexedAudioProcessorEditor::updateUI() {
     for(int i=0;i<6;i++) {
         operators[i].updateDisplay();
     }
-    
-    int id = processor->getCurrentProgram() + 1;
-    programs.setSelectedId(id, dontSendNotification);
-    
+    rebuildProgramCombobox();
     global.updateDisplay();
 }
 
@@ -369,7 +456,7 @@ void DexedAudioProcessorEditor::storeProgram() {
             } else {
                 packProgram((uint8_t *) &destSysex, (uint8_t *) processor->data, programNum, programName);
                 char sysexFile[4104];
-                exportSysex((char *) &sysexFile, (char *) &destSysex);
+                exportSysexCart((char *) &sysexFile, (char *) &destSysex, 0);
                 if ( ! externalFile->replaceWithData(sysexFile, 4104) ) {
                     AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Write error", "Unable to write file");
                 }

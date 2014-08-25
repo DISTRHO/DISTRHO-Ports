@@ -23,62 +23,87 @@
 #include "PluginParam.h"
 #include "PluginProcessor.h"
 #include "PluginData.h"
-#include "BinaryData.h"
+#include "Dexed.h"
 
-
-uint8_t sysexChecksum(const char *sysex) {
+uint8_t sysexChecksum(const char *sysex, int size) {
     int sum = 0;
     int i;
     
-    for (i = 0; i < 4096; sum -= sysex[i++]);
+    for (i = 0; i < size; sum -= sysex[i++]);
     return sum & 0x7F;
 }
 
-void extractProgramNames(const char *block, StringArray &dest) {
-    char programName[11];
+String normalizeSysexName(const char *sysexName) {
+    char buffer[11];
+
+    memcpy(buffer, sysexName, 10);
     
+    for (int j = 0; j < 10; j++) {
+        char c = (unsigned char) buffer[j];
+        switch (c) {
+            case 92:
+                c = 'Y';
+                break; /* yen */
+            case 126:
+                c = '>';
+                break; /* >> */
+            case 127:
+                c = '<';
+                break; /* << */
+            default:
+                if (c < 32 || c > 127)
+                    c = 32;
+                break;
+        }
+        buffer[j] = c;
+    }
+    buffer[10] = 0;
+
+    return String(buffer);
+}
+
+
+void extractProgramNames(const char *block, StringArray &dest) {
     dest.clear();
     
     for (int i = 0; i < 32; i++) {
-        memcpy(programName, block + ((i * 128) + 118), 11);
-        
-        for (int j = 0; j < 10; j++) {
-            char c = (unsigned char) programName[j];
-            switch (c) {
-                case 92:
-                    c = 'Y';
-                    break; /* yen */
-                case 126:
-                    c = '>';
-                    break; /* >> */
-                case 127:
-                    c = '<';
-                    break; /* << */
-                default:
-                    if (c < 32 || c > 127)
-                        c = 32;
-                    break;
-            }
-            programName[j] = c;
-        }
-        programName[10] = 0;
-        
-        dest.add(String(programName));
+        dest.add(String(normalizeSysexName(block + ((i * 128) + 118))));
     }
 }
 
-void exportSysex(char *dest, char *src) {
+void exportSysexCart(char *dest, char *src, char sysexChl) {
     uint8_t header[] = { 0xF0, 0x43, 0x00, 0x09, 0x20, 0x00 };
+    header[2] = sysexChl;
+    
     memcpy(dest, header, 6);
     
     // copy 32 voices
     memcpy(dest+6, src, 4096);
     
     // make checksum for dump
-    uint8_t footer[] = { sysexChecksum(src), 0xF7 };
-    
+    uint8_t footer[] = { sysexChecksum(src, 4096), 0xF7 };
+
     memcpy(dest+4102, footer, 2);
 }
+
+
+void exportSysexPgm(char *dest, char *src, char sysexChl) {
+    uint8_t header[] = { 0xF0, 0x43, 0x00, 0x00, 0x01, 0x1B };
+    header[2] = sysexChl;
+    
+    memcpy(dest, header, 6);
+    
+    // copy 1 unpacked voices
+    memcpy(dest+6, src, 155);
+    
+    // put some logic to "mute" an operator if the level is 0
+    
+    // make checksum for dump
+    uint8_t footer[] = { sysexChecksum(src, 155), 0xF7 };
+    
+    memcpy(dest+161, footer, 2);
+}
+
 
 /**
  * Pack a program into a 32 packed sysex
@@ -111,6 +136,7 @@ void packProgram(uint8_t *dest, uint8_t *src, int idx, String name) {
     bulk[117] = src[144];
         
     int eos = 0;
+
     for(int i=0; i < 10; i++) {
         char c = (char) name[i];
         if ( c == 0 )
@@ -195,7 +221,7 @@ void DexedAudioProcessor::unpackProgram(int idx) {
 int DexedAudioProcessor::importSysex(const char *imported) {
     memcpy(sysex, imported + 6, 4096);
     
-    uint8_t checksum = sysexChecksum(((char *) &sysex));
+    uint8_t checksum = sysexChecksum(((char *) &sysex), 4096);
     extractProgramNames(sysex, programNames);
     
     if ( checksum != imported[4102] ) {
@@ -207,7 +233,7 @@ int DexedAudioProcessor::importSysex(const char *imported) {
 }
 
 void DexedAudioProcessor::updateProgramFromSysex(const uint8 *rawdata) {
-    memcpy(data, rawdata, 160);
+    memcpy(data, rawdata, 161);
     triggerAsyncUpdate();
 }
 
@@ -235,7 +261,7 @@ void DexedAudioProcessor::getStateInformation(MemoryBlock& destData) {
     dexedState.setAttribute("currentProgram", currentProgram);
 
     char sysex_blob[4104];
-    exportSysex((char *) &sysex_blob, (char *) sysex);
+    exportSysexCart((char *) &sysex_blob, (char *) sysex, 0);
     
     NamedValueSet blobSet;
     blobSet.set("sysex", var((void *) &sysex_blob, 4104));
@@ -287,18 +313,7 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
     updateUI();
 }
 
-//==============================================================================
-/*void DexedAudioProcessor::getCurrentProgramStateInformation(
- MemoryBlock& destData) {
- destData.insert(data, 161, 0);
- }
- 
- void DexedAudioProcessor::setCurrentProgramStateInformation(const void* source,
- int sizeInBytes) {
- memcpy((void *) data, source, sizeInBytes);
- updateUI();
- }*/
-
+#define IDX_USER 1000
 
 CartridgeManager::CartridgeManager() {
     MemoryInputStream *mis = new MemoryInputStream(BinaryData::builtin_pgm_zip, BinaryData::builtin_pgm_zipSize, false);
@@ -309,17 +324,122 @@ CartridgeManager::CartridgeManager() {
         const ZipFile::ZipEntry *e = builtin_pgm->getEntry(i);
         cartNames.add(e->filename.dropLastCharacters(4));
     }
+
+    userCartFile = File(File::getSpecialLocation(File::currentApplicationFile).getParentDirectory().getFullPathName() + File::separator + "Dexed_cart.zip");
+}
+
+CartridgeManager::~CartridgeManager() {
 }
 
 void CartridgeManager::getSysex(int idx, char *dest) {
-    InputStream *is = builtin_pgm->createStreamForEntry(idx);
-
-    if ( is == NULL ) {
-        TRACE("ENTRY IN ZIP NOT FOUND");
+    if ( idx < IDX_USER ) {
+        InputStream *is = builtin_pgm->createStreamForEntry(idx);
+        if ( is == NULL ) {
+            TRACE("ENTRY IN ZIP NOT FOUND");
+            return;
+        }
+        is->read(dest, 4104);
+        delete is;
+        
         return;
     }
+    
+    idx -= IDX_USER;
+    
+    if ( ! userCartFile.exists() )
+        return;
 
-    is->read(dest, 4104);
-    delete is;
+    ZipFile userZip(userCartFile);
+    userZip.sortEntriesByFilename();
+    if ( idx < userZip.getNumEntries() ) {
+        InputStream *is = userZip.createStreamForEntry(idx);
+        if ( is != NULL ) {
+            is->read(dest, 4104);
+            delete is;
+        } else {
+            TRACE("USER ENTRY %d NULL ?", idx);
+        }
+    }
 }
 
+void CartridgeManager::rebuildMenu() {
+    TRACE("rebuild menu zip");
+    
+    completeCarts.clear();
+    
+    if ( userCartFile.exists() ) {
+        zipIdx = 0;
+        ZipFile userZip(userCartFile);
+        userZip.sortEntriesByFilename();
+    
+        PopupMenu *user = fillContent("", &userZip);
+        if ( user != NULL ) {
+            completeCarts.addSubMenu("User", *user);
+            delete user;
+        }
+        lastModifiedUserCartFile = userCartFile.getLastModificationTime();
+    } else {
+        lastModifiedUserCartFile = Time(0);
+    }
+    
+    for(int i=0;i<cartNames.size();i++) {
+        completeCarts.addItem(i+1, cartNames[i]);
+    }
+}
+
+PopupMenu *CartridgeManager::getCarts() {
+    Time t = userCartFile.getLastModificationTime();
+    
+    TRACE("Usercart file %s exists: %d", userCartFile.getFullPathName().toRawUTF8(), userCartFile.exists());
+    TRACE("DIFF TM: %s %s", t.toString(true, true).toRawUTF8(), lastModifiedUserCartFile.toString(true, true).toRawUTF8());
+    
+    if ( t != lastModifiedUserCartFile || completeCarts.getNumItems() == 0 ) {
+        rebuildMenu();
+    }
+    return &completeCarts;
+}
+
+PopupMenu *CartridgeManager::fillContent(String root, ZipFile *userZip) {
+    PopupMenu *current = NULL;
+    
+    while(zipIdx < userZip->getNumEntries() ) {
+        String path = userZip->getEntry(zipIdx)->filename;
+
+        if ( path.endsWith(".DS_Store") || path.startsWith("__MACOSX") ) {
+            zipIdx++;
+            continue;
+        }
+
+        if ( ( ! path.startsWith(root) ) && root.length() != 0 )
+            return current;
+        
+        String tail = path.substring(root.length());
+        if ( tail.containsChar('/') ) {
+            String target = tail.upToFirstOccurrenceOf("/", true, false);
+            PopupMenu *child = fillContent(root + target, userZip);
+            
+            if ( child == NULL )
+                continue;
+            
+            if ( current == NULL )
+                current = new PopupMenu();
+
+            current->addSubMenu(tail.upToFirstOccurrenceOf("/", false, false), *child);
+            delete child;
+        } else {
+            zipIdx++;
+            
+            if ( tail.length() == 0 )
+                continue;
+            
+            if ( current == NULL )
+                current = new PopupMenu();
+
+            if ( tail.endsWithIgnoreCase(".syx") )
+                tail = tail.substring(0, tail.length()-4);
+
+            current->addItem(zipIdx + IDX_USER, tail);
+        }
+    }
+    return current;
+}

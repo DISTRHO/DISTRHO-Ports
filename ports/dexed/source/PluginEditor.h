@@ -21,11 +21,13 @@
 #ifndef PLUGINEDITOR_H_INCLUDED
 #define PLUGINEDITOR_H_INCLUDED
 
+
 #include "JuceHeader.h"
 #include "PluginProcessor.h"
 #include "OperatorEditor.h"
 #include "GlobalEditor.h"
 #include "DXComponents.h"
+#include "DXLookNFeel.h"
 
 //==============================================================================
 /**
@@ -37,6 +39,7 @@ class DexedAudioProcessorEditor  : public AudioProcessorEditor,
     DexedAudioProcessor *processor;
     ComboBox programs;
     PopupMenu cartPopup;
+    PopupMenu sendPopup;
             
     MidiKeyboardComponent midiKeyboard;
     DXLookNFeel dx_lnf;
@@ -47,7 +50,8 @@ class DexedAudioProcessorEditor  : public AudioProcessorEditor,
     ScopedPointer<TextButton> storeButton;
     ScopedPointer<TextButton> aboutButton;
     ScopedPointer<TextButton> settingsButton;
-            
+    ScopedPointer<TextButton> sendButton;
+    ScopedPointer<Component> midiMonitor;
     void storeProgram();
 
 public:

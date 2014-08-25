@@ -21,6 +21,7 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
+#include "Dexed.h"
 #include "msfa/synth.h"
 #include "msfa/freqlut.h"
 #include "msfa/sin.h"
@@ -51,7 +52,9 @@ DexedAudioProcessor::DexedAudioProcessor() {
     setCurrentProgram(0);
     sendSysexChange = true;
     normalizeDxVelocity = false;
-
+    sysexComm.listener = this;
+    keyboardState.addListener(&sysexComm);
+    
     memset(&voiceStatus, 0, sizeof(VoiceStatus));
 
     prefOptions.applicationName = String("Dexed");
@@ -62,6 +65,12 @@ DexedAudioProcessor::DexedAudioProcessor() {
     controllers.values_[kControllerPitchRange] = 3;
     controllers.values_[kControllerPitchStep] = 0;
     loadPreference();
+    
+    for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
+        voices[note].dx7_note = NULL;
+    }
+    nextMidi = NULL;
+    midiMsg = NULL;
 }
 
 DexedAudioProcessor::~DexedAudioProcessor() {
@@ -99,16 +108,24 @@ void DexedAudioProcessor::releaseResources() {
     currentNote = -1;
 
     for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
-        delete voices[note].dx7_note;        
+        if ( voices[note].dx7_note != NULL ) {
+            delete voices[note].dx7_note;
+            voices[note].dx7_note = NULL;
+        }
         voices[note].keydown = false;
         voices[note].sustained = false;
         voices[note].live = false;
     }
 
     keyboardState.reset();
-    
-    delete nextMidi;
-    delete midiMsg;
+    if ( nextMidi != NULL ) {
+        delete nextMidi;
+        nextMidi = NULL;
+    }
+    if ( midiMsg != NULL ) {
+        delete midiMsg;
+        midiMsg = NULL;
+    }
 }
 
 void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages) {
@@ -214,9 +231,11 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
         buffer.copyFrom(channel, 0, channelData, numSamples, 1);
     }
 
-    midiMessages.clear();
-    if ( ! midiOut.isEmpty() ) {
-        midiMessages.swapWith(midiOut);
+    // In case we have more outputs than inputs, we'll clear any output
+    // channels that didn't contain input data, (because these aren't
+    // guaranteed to be empty - they may contain garbage).
+    for (int i = getNumInputChannels(); i < getNumOutputChannels(); ++i) {
+        buffer.clear (i, 0, buffer.getNumSamples());
     }
 }
 
@@ -236,47 +255,7 @@ bool DexedAudioProcessor::getNextEvent(MidiBuffer::Iterator* iter,const int samp
 	return false;
 }
 
-void DexedAudioProcessor::processMidiMessage(MidiMessage *msg) {
-    if ( msg->isSysEx() ) {
-
-        const uint8 *buf = msg->getSysExData();
-        int sz = msg->getSysExDataSize();
-        TRACE("SYSEX RECEIVED %d", sz);
-        if ( sz < 3 )
-            return;
-
-        // test if it is a Yamaha Sysex
-        if ( buf[0] != 0x43 ) {
-            TRACE("not a yamaha sysex %d", buf[0]);
-            return;
-        }
-        
-        // single voice dump
-        if ( buf[2] == 0 ) {
-            if ( sz < 155 ) {
-                TRACE("wrong single voice datasize %d", sz);
-                return;
-            }
-            TRACE("program update sysex");
-            updateProgramFromSysex(buf+4);
-            triggerAsyncUpdate();
-            return;
-        }
-
-        // 32 voice dump
-        if ( buf[2] == 9 ) {
-            if ( sz < 4016 ) {
-                TRACE("wrong 32 voice datasize %d", sz);
-                return;
-            }
-            TRACE("update 32bulk voice)");
-            importSysex((const char *)buf+4);
-            currentProgram = 0;
-            triggerAsyncUpdate();
-        }
-        return;
-    }
-
+void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
     const uint8 *buf  = msg->getRawData();
     uint8_t cmd = buf[0];
 
@@ -334,6 +313,8 @@ void DexedAudioProcessor::keydown(uint8_t pitch, uint8_t velo) {
         return;
     }
 
+    pitch += (data[144] - 24);
+    
     if ( normalizeDxVelocity ) {
         velo = ((float)velo) * 0.7874015; // 100/127
     }
@@ -356,6 +337,8 @@ void DexedAudioProcessor::keydown(uint8_t pitch, uint8_t velo) {
 }
 
 void DexedAudioProcessor::keyup(uint8_t pitch) {
+    pitch += (data[144] - 24);
+    
     for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
         if (voices[note].midi_note == pitch && voices[note].keydown) {
             if (sustain) {
@@ -366,6 +349,66 @@ void DexedAudioProcessor::keyup(uint8_t pitch) {
             voices[note].keydown = false;
         }
     }
+}
+
+void DexedAudioProcessor::panic() {
+    for(int i=0;i<MAX_ACTIVE_NOTES;i++) {
+        voices[i].keydown = false;
+    }
+    keyboardState.reset();
+}
+
+void DexedAudioProcessor::handleIncomingMidiMessage(MidiInput* source, const MidiMessage& message) {
+    if ( message.isActiveSense() ) 
+        return;
+
+    sysexComm.inActivity = true;
+
+    if ( ! message.isSysEx() )
+        return;
+
+    //const uint8 *buf = msg->getSysExData();
+    const uint8 *buf = message.getRawData();
+    int sz = message.getRawDataSize();
+
+    if ( sz < 3 )
+        return;
+
+    TRACE("SYSEX RECEIVED %d", sz);
+
+    // test if it is a Yamaha Sysex
+    if ( buf[1] != 0x43 ) {
+        TRACE("not a yamaha sysex %d", buf[0]);
+        return;
+    }
+        
+    // single voice dump
+    if ( buf[3] == 0 ) {
+         if ( sz < 155 ) {
+            TRACE("wrong single voice datasize %d", sz);
+            return;
+        }
+
+        TRACE("program update sysex");
+        updateProgramFromSysex(buf+6);
+        String name = normalizeSysexName((const char *) buf+151);
+        packProgram((uint8_t *) sysex, (uint8_t *) data, currentProgram, name); 
+        programNames.set(currentProgram, name);
+    }
+
+    // 32 voice dump
+    if ( buf[3] == 9 ) {
+        if ( sz < 4104 ) {
+            TRACE("wrong 32 voice datasize %d", sz);
+            return;
+        }
+        TRACE("update 32bulk voice");
+        importSysex((const char *)buf);
+        setCurrentProgram(0);
+    }
+
+    updateHostDisplay();
+    forceRefreshUI = true;
 }
 
 // ====================================================================
@@ -450,7 +493,7 @@ bool DexedAudioProcessor::hasEditor() const {
 void DexedAudioProcessor::updateUI() {
     // notify host something has changed
     updateHostDisplay();
-    
+ 
     AudioProcessorEditor *editor = getActiveEditor();
     if ( editor == NULL ) {
         return;

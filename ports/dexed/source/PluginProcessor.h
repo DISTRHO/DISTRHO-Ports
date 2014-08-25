@@ -30,6 +30,7 @@
 #include "PluginParam.h"
 #include "PluginData.h"
 #include "PluginFx.h"
+#include "SysexComm.h"
 
 struct ProcessorVoice {
     int midi_note;
@@ -42,7 +43,7 @@ struct ProcessorVoice {
 //==============================================================================
 /**
 */
-class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater
+class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public MidiInputCallback
 {
     static const int MAX_ACTIVE_NOTES = 16;
     ProcessorVoice voices[MAX_ACTIVE_NOTES];
@@ -74,13 +75,11 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater
      * and needs to be updated.
      */
     bool refreshVoice;
-    
+
     bool normalizeDxVelocity;
     bool sendSysexChange;
     
-    MidiBuffer midiOut;
-
-    void processMidiMessage(MidiMessage *msg);
+    void processMidiMessage(const MidiMessage *msg);
     void keydown(uint8_t pitch, uint8_t velo);
     void keyup(uint8_t pitch);
     
@@ -98,6 +97,7 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater
     int midiEventPos;
 	bool getNextEvent(MidiBuffer::Iterator* iter,const int samplePos);
     
+    void handleIncomingMidiMessage(MidiInput* source, const MidiMessage& message);
     
 public :
     // in MIDI units (0x4000 is neutral)
@@ -107,6 +107,8 @@ public :
     char data[161];
     
     CartridgeManager cartManager;
+    SysexComm sysexComm;
+    
     VoiceStatus voiceStatus;
     
     bool forceRefreshUI;
@@ -145,13 +147,13 @@ public :
     void prepareToPlay (double sampleRate, int samplesPerBlock);
     void releaseResources();
     void processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages);
-
+    void panic();
+    
     //==============================================================================
     AudioProcessorEditor* createEditor();
     bool hasEditor() const;
     void updateUI();
     bool peekVoiceStatus();
-    void packProgram(int idx, const char *name);
     void unpackProgram(int idx);
     void updateProgramFromSysex(const uint8 *rawdata);
     void loadBuiltin(int idx);
@@ -201,14 +203,5 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DexedAudioProcessor)
 
 };
-
-void dexed_trace(const char *source, const char *fmt, ...);
-
-#define TRACE(fmt, ...)
-//#ifdef _MSC_VER
-//#define TRACE(fmt, ...) dexed_trace(__FUNCTION__,fmt,##__VA_ARGS__)
-//#else
-//#define TRACE(fmt, ...) dexed_trace(__PRETTY_FUNCTION__,fmt,##__VA_ARGS__)
-//#endif
 
 #endif  // PLUGINPROCESSOR_H_INCLUDED
