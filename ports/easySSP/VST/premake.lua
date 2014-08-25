@@ -12,5 +12,5 @@ package.files = {
 
 package.includepaths = {
   package.includepaths,
-    "../source/dsp-utility"
+  "../source/dsp-utility"
 }
