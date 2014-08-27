@@ -28,7 +28,6 @@ public:
 
 	float a, w0, q, s, alpha;
 	float cosValue, sqrtValue;
-	float vsa;   // Very small amount (Denormal Fix)
 
 	float dBgain, freq;
 
@@ -47,7 +46,6 @@ public:
 		q = dBgain = freq = 0.0f;
 
 		s = 2.0f;
-		vsa= (1.0f/4294967295.0f);   // Very small amount (Denormal Fix)
 	}
 
 	// gain [0..1], q[0..1], freq[0..44100]

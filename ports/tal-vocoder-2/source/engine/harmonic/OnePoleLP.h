@@ -28,19 +28,17 @@ class OnePoleLP
 {
  public:
   float inputs, outputs, lastOutput;
-  float vsa;   // Very small amount (Denormal Fix)
 
 
   OnePoleLP() 
   {
     lastOutput = inputs = outputs = 0.0f;
-    vsa= (1.0f/4294967295.0f);   // Very small amount (Denormal Fix)
   }
 
   inline void tick(float *sample, float cutoff) 
   {
     float p = (cutoff*0.98f)*(cutoff*0.98f)*(cutoff*0.98f)*(cutoff*0.98f);
-    outputs = (1.0f-p)*(*sample) + p*outputs+vsa;
+    outputs = (1.0f-p)*(*sample) + p*outputs;
     *sample= outputs;
   }
 };

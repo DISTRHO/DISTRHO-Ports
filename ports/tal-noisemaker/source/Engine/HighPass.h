@@ -27,7 +27,7 @@
 class HighPass 
 {
  public:
-  float inputs, outputs, lastOutput, vsa;
+  float inputs, outputs, lastOutput;
 
   float cutoff;
 
@@ -35,7 +35,6 @@ class HighPass
   {
     cutoff = 1.0f;
     lastOutput = inputs = outputs = 0.0f;
-    vsa= 1.0f/4294967295.0f;   // Very small amount (Denormal Fix)
   }
 
   ~HighPass()
@@ -50,7 +49,7 @@ class HighPass
   inline void tick(float *sample) 
   {
     outputs     = *sample-inputs+cutoff*outputs;
-    inputs      = *sample + vsa;
+    inputs      = *sample;
     lastOutput  = outputs;
     *sample     = lastOutput;
   }

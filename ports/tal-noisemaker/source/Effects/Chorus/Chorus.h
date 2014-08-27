@@ -55,8 +55,6 @@ public:
 	// lfo 
 	float lfoPhase, lfoStepSize, lfoSign;
 
-	float vsa;   // Very small amount (Denormal Fix)
-
 	Chorus(float sampleRate, float phase, float rate, float delayTime)
 	{
 		this->rate= rate;
@@ -92,8 +90,6 @@ public:
 		writePtr = delayLineStart + delayLineLength -1;
 		delayLineOutput = 0.0f;
 		lp = new OnePoleLP();
-
-		vsa= (1.0f/4294967295.0f);   // Very small amount (Denormal Fix)
 	}
 
     ~Chorus()
