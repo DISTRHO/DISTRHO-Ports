@@ -14,7 +14,7 @@ PWD=`pwd`
 if [ -f $PWD/../libs/lv2_ttl_generator.exe ]; then
   GEN=$PWD/../libs/lv2_ttl_generator.exe
   EXT=dll
-elif [ -d /Developer ]; then
+elif [ -d /System/Library ]; then
   GEN=$PWD/../libs/lv2_ttl_generator
   EXT=dylib
 else
