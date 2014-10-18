@@ -327,6 +327,7 @@ public:
     */
     virtual void setNonRealtime (bool isNonRealtime) noexcept;
 
+#if ! JUCE_AUDIO_PROCESSOR_NO_GUI
     //==============================================================================
     /** Creates the filter's UI.
 
@@ -372,6 +373,7 @@ public:
         This may call createEditor() internally to create the component.
     */
     AudioProcessorEditor* createEditorIfNeeded();
+#endif
 
     //==============================================================================
     /** This must return the correct value immediately after the object has been
@@ -594,6 +596,11 @@ public:
     virtual void numChannelsChanged();
 
     //==============================================================================
+    /** LV2 specific calls, saving/restore as string. */
+    virtual String getStateInformationString () { return String::empty; }
+    virtual void setStateInformationString (const String&) {}
+
+    //==============================================================================
     /** Adds a listener that will be called when an aspect of this processor changes. */
     virtual void addListener (AudioProcessorListener* newListener);
 
@@ -611,9 +618,11 @@ public:
     /** This is called by the processor to specify its details before being played. */
     void setPlayConfigDetails (int numIns, int numOuts, double sampleRate, int blockSize) noexcept;
 
+#if ! JUCE_AUDIO_PROCESSOR_NO_GUI
     //==============================================================================
     /** Not for public use - this is called before deleting an editor component. */
     void editorBeingDeleted (AudioProcessorEditor*) noexcept;
+#endif
 
     /** Not for public use - this is called to initialise the processor before playing. */
     void setSpeakerArrangement (const String& inputs, const String& outputs);
@@ -666,7 +675,9 @@ protected:
 
 private:
     Array<AudioProcessorListener*> listeners;
+#if ! JUCE_AUDIO_PROCESSOR_NO_GUI
     Component::SafePointer<AudioProcessorEditor> activeEditor;
+#endif
     double sampleRate;
     int blockSize, numInputChannels, numOutputChannels, latencySamples;
     bool suspended, nonRealtime;

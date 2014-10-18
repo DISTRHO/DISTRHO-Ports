@@ -2,17 +2,6 @@ diff --git a/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp b/modules
 index 29df141..bc4b02a 100644
 --- a/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
 +++ b/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
-@@ -282,10 +282,6 @@ public:
-         setInitialDelay (filter->getLatencySamples());
-         programsAreChunks (true);
- 
--        // NB: For reasons best known to themselves, some hosts fail to load/save plugin
--        // state correctly if the plugin doesn't report that it has at least 1 program.
--        jassert (af->getNumPrograms() > 0);
--
-         activePlugins.add (this);
-     }
- 
 @@ -1166,8 +1162,10 @@ public:
                  editorComp->addToDesktop (0, ptr);
                  hostWindow = (HWND) ptr;

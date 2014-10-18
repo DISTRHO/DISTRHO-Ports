@@ -45,10 +45,10 @@ index bcb3723..a834b03 100644
      return o.runModal();
  }
 diff --git a/modules/juce_gui_basics/windows/juce_DialogWindow.h b/modules/juce_gui_basics/windows/juce_DialogWindow.h
-index 35cff53..673a5a5 100644
+index 01cbec1..b0cf197 100644
 --- a/modules/juce_gui_basics/windows/juce_DialogWindow.h
 +++ b/modules/juce_gui_basics/windows/juce_DialogWindow.h
-@@ -195,7 +195,8 @@ public:
+@@ -193,7 +193,8 @@ public:
                              Colour backgroundColour,
                              bool escapeKeyTriggersCloseButton,
                              bool shouldBeResizable = false,
@@ -58,7 +58,7 @@ index 35cff53..673a5a5 100644
  
     #if JUCE_MODAL_LOOPS_PERMITTED || DOXYGEN
      /** Easy way of quickly showing a dialog box containing a given component.
-@@ -243,7 +244,8 @@ public:
+@@ -241,7 +242,8 @@ public:
                                  Colour backgroundColour,
                                  bool escapeKeyTriggersCloseButton,
                                  bool shouldBeResizable = false,

@@ -1,5 +1,20 @@
+diff --git a/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp b/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
+index 5f2f29e..b88a3b2 100644
+--- a/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
++++ b/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
+@@ -214,9 +214,9 @@ public:
+     void run() override
+     {
+         initialiseJuce_GUI();
+-        initialised = true;
+ 
+         MessageManager::getInstance()->setCurrentThreadAsMessageThread();
++        initialised = true;
+ 
+         while ((! threadShouldExit()) && MessageManager::getInstance()->runDispatchLoopUntil (250))
+         {}
 diff --git a/modules/juce_events/native/juce_linux_Messaging.cpp b/modules/juce_events/native/juce_linux_Messaging.cpp
-index 48e28a7..b17aafc 100644
+index 48e28a7..9f17ab1 100644
 --- a/modules/juce_events/native/juce_linux_Messaging.cpp
 +++ b/modules/juce_events/native/juce_linux_Messaging.cpp
 @@ -358,8 +358,13 @@ bool MessageManager::postMessageToSystemQueue (MessageManager::MessageBase* cons
@@ -10,7 +25,7 @@ index 48e28a7..b17aafc 100644
 -    return true;
 +    if (InternalMessageQueue* const queue = InternalMessageQueue::getInstanceWithoutCreating())
 +    {
-+        InternalMessageQueue::getInstanceWithoutCreating()->postMessage (message);
++        queue->postMessage (message);
 +        return true;
 +    }
 +

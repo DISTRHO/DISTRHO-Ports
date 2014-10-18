@@ -1,8 +1,8 @@
 diff --git a/modules/juce_audio_basics/juce_audio_basics.cpp b/modules/juce_audio_basics/juce_audio_basics.cpp
-index 0726b6e..5a4eb74 100644
+index da98659..685e7c4 100644
 --- a/modules/juce_audio_basics/juce_audio_basics.cpp
 +++ b/modules/juce_audio_basics/juce_audio_basics.cpp
-@@ -61,6 +61,7 @@ namespace juce
+@@ -76,6 +76,7 @@ namespace juce
  #include "buffers/juce_AudioSampleBuffer.cpp"
  #include "buffers/juce_FloatVectorOperations.cpp"
  #include "effects/juce_IIRFilter.cpp"
@@ -11,14 +11,14 @@ index 0726b6e..5a4eb74 100644
  #include "midi/juce_MidiBuffer.cpp"
  #include "midi/juce_MidiFile.cpp"
 diff --git a/modules/juce_audio_basics/juce_audio_basics.h b/modules/juce_audio_basics/juce_audio_basics.h
-index ddd0421..c9aa8dc 100644
+index 70c5432..c9ce9ab 100644
 --- a/modules/juce_audio_basics/juce_audio_basics.h
 +++ b/modules/juce_audio_basics/juce_audio_basics.h
-@@ -37,6 +37,7 @@ namespace juce
+@@ -36,6 +36,7 @@ namespace juce
  #include "buffers/juce_FloatVectorOperations.h"
  #include "effects/juce_Decibels.h"
  #include "effects/juce_IIRFilter.h"
 +#include "effects/juce_IIRFilterOld.h"
  #include "effects/juce_LagrangeInterpolator.h"
  #include "effects/juce_Reverb.h"
- #include "midi/juce_MidiBuffer.h"
+ #include "midi/juce_MidiMessage.h"

@@ -1,0 +1,44 @@
+diff --git a/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp b/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
+index 9229b24..5f9e037 100644
+--- a/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
++++ b/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
+@@ -108,6 +108,7 @@
+ #include "../utility/juce_IncludeModuleHeaders.h"
+ #include "../utility/juce_FakeMouseMoveGenerator.h"
+ #include "../utility/juce_WindowsHooks.h"
++#include "modules/juce_audio_processors/format_types/juce_VSTMidiEventList.h"
+ 
+ #ifdef _MSC_VER
+  #pragma pack (pop)
+@@ -284,10 +285,6 @@ public:
+         setInitialDelay (filter->getLatencySamples());
+         programsAreChunks (true);
+ 
+-        // NB: For reasons best known to themselves, some hosts fail to load/save plugin
+-        // state correctly if the plugin doesn't report that it has at least 1 program.
+-        jassert (af->getNumPrograms() > 0);
+-
+         activePlugins.add (this);
+     }
+ 
+@@ -351,7 +348,7 @@ public:
+     //==============================================================================
+     bool getEffectName (char* name) override
+     {
+-        String (JucePlugin_Name).copyToUTF8 (name, 64);
++        String (filter->getName()).copyToUTF8 (name, 64);
+         return true;
+     }
+ 
+diff --git a/modules/juce_audio_plugin_client/utility/juce_PluginUtilities.cpp b/modules/juce_audio_plugin_client/utility/juce_PluginUtilities.cpp
+index 82e7e47..8400493 100644
+--- a/modules/juce_audio_plugin_client/utility/juce_PluginUtilities.cpp
++++ b/modules/juce_audio_plugin_client/utility/juce_PluginUtilities.cpp
+@@ -31,7 +31,6 @@
+ #include "AppConfig.h"
+ 
+ #include "../utility/juce_CheckSettingMacros.h"
+-#include "juce_IncludeModuleHeaders.h"
+ 
+ #if _MSC_VER || JUCE_MINGW
+ 

@@ -1,8 +1,8 @@
 diff --git a/modules/juce_audio_processors/processors/juce_AudioProcessor.h b/modules/juce_audio_processors/processors/juce_AudioProcessor.h
-index 76ac472..c014ae2 100644
+index aaae9ef..b39fe63 100644
 --- a/modules/juce_audio_processors/processors/juce_AudioProcessor.h
 +++ b/modules/juce_audio_processors/processors/juce_AudioProcessor.h
-@@ -551,6 +551,11 @@ public:
+@@ -594,6 +594,11 @@ public:
      virtual void numChannelsChanged();
  
      //==============================================================================
@@ -12,5 +12,5 @@ index 76ac472..c014ae2 100644
 +
 +    //==============================================================================
      /** Adds a listener that will be called when an aspect of this processor changes. */
-     void addListener (AudioProcessorListener* newListener);
+     virtual void addListener (AudioProcessorListener* newListener);
  
