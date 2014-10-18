@@ -872,7 +872,7 @@ String ScriptableEngine::serializeVariable (asIScriptContext* context, const int
 //==============================================================================
 void ScriptableEngine::addResolveFilePath (const File& directoryToLookInto)
 {
-	jassert (!directoryToLookInto.exists())
+	jassert (!directoryToLookInto.exists());
 
 	if (directoryToLookInto.existsAsFile())
 		resolvePaths.add (directoryToLookInto.getParentDirectory().getFullPathName());
@@ -882,7 +882,7 @@ void ScriptableEngine::addResolveFilePath (const File& directoryToLookInto)
 
 void ScriptableEngine::removeResolveFilePath (const File& directoryToLookInto)
 {
-	jassert (! directoryToLookInto.exists())
+	jassert (! directoryToLookInto.exists());
 
 	if (directoryToLookInto.existsAsFile())
 		resolvePaths.removeString (directoryToLookInto.getParentDirectory().getFullPathName());

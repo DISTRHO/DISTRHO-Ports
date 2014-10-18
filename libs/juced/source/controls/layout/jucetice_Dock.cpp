@@ -66,7 +66,7 @@ void Dockable::continueDocking (const MouseEvent& e)
             {
                 // to be able to do a drag-and-drop operation, the component needs to
                 // be inside a component which is also a DragAndDropContainer.
-                jassertfalse
+                jassertfalse;
             }
         }
     }

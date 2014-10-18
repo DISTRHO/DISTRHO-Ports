@@ -51,7 +51,7 @@ void CommandLineTokenizer::parseCommandLine (const String& commandLine)
 //==============================================================================
 const String& CommandLineTokenizer::operator[] (const int index) const throw()
 {
-	jassert (index >= 0 && index < argv.size())
+	jassert (index >= 0 && index < argv.size());
 	return argv[index];
 }
 

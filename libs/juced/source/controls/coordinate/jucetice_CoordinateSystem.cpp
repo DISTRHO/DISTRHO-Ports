@@ -1676,7 +1676,7 @@ void CoordinateSystem::updateScaleFactors()
   // scaling factor for linear plots
  else
  {
-  jassert( ((range.getMaxX()/range.getMinX()) > 0.0) )
+  jassert( ((range.getMaxX()/range.getMinX()) > 0.0) );
    // caught a logarithm of a non-positive number, make sure that the 
    // minimum and the maximum for the x-coordinate are both strictly positive
    // for logarithmic axis-scaling
@@ -1693,7 +1693,7 @@ void CoordinateSystem::updateScaleFactors()
   scaleY = getHeight() / (range.getMaxY()-range.getMinY());
  else
  {
-  jassert( ((range.getMaxY()/range.getMinY()) > 0.0) )
+  jassert( ((range.getMaxY()/range.getMinY()) > 0.0) );
    // caught a logarithm of a non-positive number, make sure that the 
    // minimum and the maximum for the y-coordinate are both strictly positive
    // for logarithmic axis-scaling

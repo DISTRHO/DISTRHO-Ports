@@ -298,7 +298,7 @@ bool TuningMap::readFromStream (InputStream& ifs)
 //==============================================================================
 bool TuningMap::setBaseFreq (double dblBaseFreq)
 {
-	//    jassert( dblBaseFreq > 0 )
+	//    jassert( dblBaseFreq > 0 );
 	
     // First make sure, that the base frequency is in the valid range
     if ( dblBaseFreq > 0 )
@@ -314,7 +314,7 @@ bool TuningMap::setBaseFreq (double dblBaseFreq)
 
 bool TuningMap::setRelativeTune (int nNoteIndex, double dblTune)
 {
-	//    jassert( (nNoteIndex >= 0) && (nNoteIndex <= 127) )
+	//    jassert( (nNoteIndex >= 0) && (nNoteIndex <= 127) );
 	
     // First make sure, that the note index is in the valid range
     if ( (nNoteIndex >= 0) && (nNoteIndex <= 127) )

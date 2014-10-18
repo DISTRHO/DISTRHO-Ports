@@ -47,28 +47,28 @@ CoordinateSystemRange::~CoordinateSystemRange()
 
 void CoordinateSystemRange::setMinX(double newMinX) 
 { 
- jassert( newMinX < maxX )
+ jassert( newMinX < maxX );
  if( newMinX < maxX )
   minX = newMinX;
 }
 
 void CoordinateSystemRange::setMaxX(double newMaxX) 
 { 
- jassert( newMaxX > minX )
+ jassert( newMaxX > minX );
  if( newMaxX > minX )
   maxX = newMaxX;
 }
 
 void CoordinateSystemRange::setMinY(double newMinY) 
 { 
- jassert( newMinY < maxY )
+ jassert( newMinY < maxY );
  if( newMinY < maxY )
   minY = newMinY;
 }
 
 void CoordinateSystemRange::setMaxY(double newMaxY) 
 { 
- jassert( newMaxY > minY )
+ jassert( newMaxY > minY );
  if( newMaxY > minY )
   maxY = newMaxY;
 }

@@ -694,7 +694,7 @@ namespace NetWrapperFunctions
             break;
         }
 
-        jassertfalse // should never reach here !
+        jassertfalse; // should never reach here !
         
         return CURLOPT_FILE;
     }

@@ -182,7 +182,7 @@ SqliteResultset* SqliteConnection::executeQuery (const String& sqlText)
 
 const StringPairArray SqliteConnection::getTableSchema (const String& tableName)
 {
-    jassertfalse // not implemented !    
+    jassertfalse; // not implemented !    
     
     StringPairArray schema;
 

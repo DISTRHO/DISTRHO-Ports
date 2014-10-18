@@ -48,9 +48,9 @@ MidiAutomatable::~MidiAutomatable()
 
 void MidiAutomatable::activateLearning ()
 {
-    jassert (midiAutomatorManager != 0) // if you fallback here then you don't have registered your
-                                        // midi automatable object to the manager before actually starting
-                                        // the midi learn feature
+    jassert (midiAutomatorManager != 0); // if you fallback here then you don't have registered your
+                                         // midi automatable object to the manager before actually starting
+                                         // the midi learn feature
 
     if (midiAutomatorManager)
         midiAutomatorManager->setActiveLearner (this);
@@ -201,7 +201,7 @@ void MidiAutomatorManager::removeMidiAutomatable (MidiAutomatable* object)
 //==============================================================================
 void MidiAutomatorManager::clearMidiAutomatableFromCC (const int ccNumber)
 {
-    jassert (ccNumber >= 0 && ccNumber < 128)
+    jassert (ccNumber >= 0 && ccNumber < 128);
 
     Array<void*>* array = controllers.getUnchecked (ccNumber);
     
