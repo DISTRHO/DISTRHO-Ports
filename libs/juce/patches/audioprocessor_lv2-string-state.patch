@@ -8,7 +8,7 @@ index 76ac472..c014ae2 100644
      //==============================================================================
 +    /** LV2 specific calls, saving/restore as string. */
 +    virtual String getStateInformationString () { return String::empty; }
-+    virtual void setStateInformationString (const String& data) {}
++    virtual void setStateInformationString (const String&) {}
 +
 +    //==============================================================================
      /** Adds a listener that will be called when an aspect of this processor changes. */
