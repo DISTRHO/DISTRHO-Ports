@@ -358,13 +358,8 @@ bool MessageManager::postMessageToSystemQueue (MessageManager::MessageBase* cons
     if (LinuxErrorHandling::errorOccurred)
         return false;
 
-    if (InternalMessageQueue* const queue = InternalMessageQueue::getInstanceWithoutCreating())
-    {
-        InternalMessageQueue::getInstanceWithoutCreating()->postMessage (message);
-        return true;
-    }
-
-    return false;
+    InternalMessageQueue::getInstanceWithoutCreating()->postMessage (message);
+    return true;
 }
 
 void MessageManager::broadcastMessage (const String& /* value */)

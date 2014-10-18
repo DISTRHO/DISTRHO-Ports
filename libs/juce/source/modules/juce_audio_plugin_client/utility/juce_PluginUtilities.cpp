@@ -31,6 +31,7 @@
 #include "AppConfig.h"
 
 #include "../utility/juce_CheckSettingMacros.h"
+#include "juce_IncludeModuleHeaders.h"
 
 #if _MSC_VER || JUCE_MINGW
 

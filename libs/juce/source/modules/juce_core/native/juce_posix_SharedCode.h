@@ -142,7 +142,7 @@ void JUCE_CALLTYPE Thread::sleep (int millisecs)
 
 void JUCE_CALLTYPE Process::terminate()
 {
-   #if JUCE_ANDROID || JUCE_HAIKU
+   #if JUCE_ANDROID
     _exit (EXIT_FAILURE);
    #else
     std::_Exit (EXIT_FAILURE);
@@ -203,10 +203,6 @@ namespace
     #define JUCE_STAT     stat
    #endif
 
-   #if JUCE_HAIKU
-    #define statfs statvfs
-   #endif
-
     bool juce_stat (const String& fileName, juce_statStruct& info)
     {
         return fileName.isNotEmpty()
@@ -227,6 +223,12 @@ namespace
         return statfs (f.getFullPathName().toUTF8(), &result) == 0;
     }
 
+   #if (JUCE_MAC && MAC_OS_X_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_5) || JUCE_IOS
+    static int64 getCreationTime (const juce_statStruct& s) noexcept     { return (int64) s.st_birthtime; }
+   #else
+    static int64 getCreationTime (const juce_statStruct& s) noexcept     { return (int64) s.st_ctime; }
+   #endif
+
     void updateStatInfoForFile (const String& path, bool* const isDir, int64* const fileSize,
                                 Time* const modTime, Time* const creationTime, bool* const isReadOnly)
     {
@@ -236,9 +238,9 @@ namespace
             const bool statOk = juce_stat (path, info);
 
             if (isDir != nullptr)         *isDir        = statOk && ((info.st_mode & S_IFDIR) != 0);
-            if (fileSize != nullptr)      *fileSize     = statOk ? info.st_size : 0;
-            if (modTime != nullptr)       *modTime      = Time (statOk ? (int64) info.st_mtime * 1000 : 0);
-            if (creationTime != nullptr)  *creationTime = Time (statOk ? (int64) info.st_ctime * 1000 : 0);
+            if (fileSize != nullptr)      *fileSize     = statOk ? (int64) info.st_size : 0;
+            if (modTime != nullptr)       *modTime      = Time (statOk ? (int64) info.st_mtime  * 1000 : 0);
+            if (creationTime != nullptr)  *creationTime = Time (statOk ? getCreationTime (info) * 1000 : 0);
         }
 
         if (isReadOnly != nullptr)
@@ -546,11 +548,7 @@ void MemoryMappedFile::openInternal (const File& file, AccessMode mode)
         if (m != MAP_FAILED)
         {
             address = m;
-            #if JUCE_HAIKU
-             posix_madvise (m, (size_t) range.getLength(), POSIX_MADV_SEQUENTIAL);
-            #else
-             madvise (m, (size_t) range.getLength(), MADV_SEQUENTIAL);
-            #endif
+            madvise (m, (size_t) range.getLength(), MADV_SEQUENTIAL);
         }
         else
         {
@@ -671,11 +669,8 @@ int File::getVolumeSerialNumber() const
     return result;
 }
 
-#if JUCE_HAIKU
- #undef statvfs
-#endif
-
 //==============================================================================
+#if ! JUCE_IOS
 void juce_runSystemCommand (const String&);
 void juce_runSystemCommand (const String& command)
 {
@@ -696,7 +691,7 @@ String juce_getOutputFromCommand (const String& command)
     tempFile.deleteFile();
     return result;
 }
-
+#endif
 
 //==============================================================================
 #if JUCE_IOS
@@ -1012,20 +1007,9 @@ public:
 
         int pipeHandles[2] = { 0 };
 
-        Array<char*> argv;
-        for (int i = 0; i < arguments.size(); ++i)
-            if (arguments[i].isNotEmpty())
-                argv.add (const_cast<char*> (arguments[i].toUTF8().getAddress()));
-
-        argv.add (nullptr);
-
         if (pipe (pipeHandles) == 0)
         {
-#if JUCE_USE_VFORK
-            const pid_t result = vfork();
-#else
             const pid_t result = fork();
-#endif
 
             if (result < 0)
             {
@@ -1034,7 +1018,6 @@ public:
             }
             else if (result == 0)
             {
-#if ! JUCE_USE_VFORK
                 // we're the child process..
                 close (pipeHandles[0]);   // close the read handle
 
@@ -1049,7 +1032,14 @@ public:
                     close (STDERR_FILENO);
 
                 close (pipeHandles[1]);
-#endif
+
+                Array<char*> argv;
+                for (int i = 0; i < arguments.size(); ++i)
+                    if (arguments[i].isNotEmpty())
+                        argv.add (const_cast<char*> (arguments[i].toUTF8().getAddress()));
+
+                argv.add (nullptr);
+
                 execvp (argv[0], argv.getRawDataPointer());
                 exit (-1);
             }

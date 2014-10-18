@@ -108,7 +108,6 @@
 #include "../utility/juce_IncludeModuleHeaders.h"
 #include "../utility/juce_FakeMouseMoveGenerator.h"
 #include "../utility/juce_WindowsHooks.h"
-#include "modules/juce_audio_processors/format_types/juce_VSTMidiEventList.h"
 
 #ifdef _MSC_VER
  #pragma pack (pop)
@@ -145,13 +144,16 @@ namespace juce
 
 namespace
 {
-    HWND findMDIParentOf (HWND w)
+    // Returns the actual container window, unlike GetParent, which can also return a separate owner window.
+    static HWND getWindowParent (HWND w) noexcept    { return GetAncestor (w, GA_PARENT); }
+
+    static HWND findMDIParentOf (HWND w)
     {
         const int frameThickness = GetSystemMetrics (SM_CYFIXEDFRAME);
 
         while (w != 0)
         {
-            HWND parent = GetParent (w);
+            HWND parent = getWindowParent (w);
 
             if (parent == 0)
                 break;
@@ -211,8 +213,9 @@ public:
     void run() override
     {
         initialiseJuce_GUI();
-        MessageManager::getInstance()->setCurrentThreadAsMessageThread();
         initialised = true;
+
+        MessageManager::getInstance()->setCurrentThreadAsMessageThread();
 
         while ((! threadShouldExit()) && MessageManager::getInstance()->runDispatchLoopUntil (250))
         {}
@@ -282,6 +285,10 @@ public:
         setInitialDelay (filter->getLatencySamples());
         programsAreChunks (true);
 
+        // NB: For reasons best known to themselves, some hosts fail to load/save plugin
+        // state correctly if the plugin doesn't report that it has at least 1 program.
+        jassert (af->getNumPrograms() > 0);
+
         activePlugins.add (this);
     }
 
@@ -345,7 +352,7 @@ public:
     //==============================================================================
     bool getEffectName (char* name) override
     {
-        String (filter->getName()).copyToUTF8 (name, 64);
+        String (JucePlugin_Name).copyToUTF8 (name, 64);
         return true;
     }
 
@@ -848,6 +855,15 @@ public:
         }
     }
 
+    void getParameterLabel (VstInt32 index, char* text) override
+    {
+        if (filter != nullptr)
+        {
+            jassert (isPositiveAndBelow (index, filter->getNumParameters()));
+            filter->getParameterLabel (index).copyToUTF8 (text, 24); // length should technically be kVstMaxParamStrLen, which is 8, but hosts will normally allow a bit more.
+        }
+    }
+
     void audioProcessorParameterChanged (AudioProcessor*, int index, float newValue) override
     {
         if (audioMaster != nullptr)
@@ -1167,10 +1183,8 @@ public:
                 editorComp->addToDesktop (0, ptr);
                 hostWindow = (HWND) ptr;
               #elif JUCE_LINUX
-                editorComp->addToDesktop (0);
+                editorComp->addToDesktop (0, ptr);
                 hostWindow = (Window) ptr;
-                Window editorWnd = (Window) editorComp->getWindowHandle();
-                XReparentWindow (display, editorWnd, hostWindow, 0, 0);
               #else
                 hostWindow = attachComponentToWindowRef (editorComp, ptr, useNSView);
               #endif
@@ -1233,7 +1247,7 @@ public:
 
                 while (w != 0)
                 {
-                    HWND parent = GetParent (w);
+                    HWND parent = getWindowParent (w);
 
                     if (parent == 0)
                         break;

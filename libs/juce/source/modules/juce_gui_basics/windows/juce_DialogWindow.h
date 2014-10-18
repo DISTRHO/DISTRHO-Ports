@@ -78,7 +78,7 @@ public:
         initialise its fields with the appropriate details, and then call its launchAsync()
         method to launch the dialog.
     */
-    struct LaunchOptions
+    struct JUCE_API  LaunchOptions
     {
         LaunchOptions() noexcept;
 
@@ -193,8 +193,7 @@ public:
                             Colour backgroundColour,
                             bool escapeKeyTriggersCloseButton,
                             bool shouldBeResizable = false,
-                            bool useBottomRightCornerResizer = false,
-                            bool useNativeTitleBar = false);
+                            bool useBottomRightCornerResizer = false);
 
    #if JUCE_MODAL_LOOPS_PERMITTED || DOXYGEN
     /** Easy way of quickly showing a dialog box containing a given component.
@@ -242,8 +241,7 @@ public:
                                 Colour backgroundColour,
                                 bool escapeKeyTriggersCloseButton,
                                 bool shouldBeResizable = false,
-                                bool useBottomRightCornerResizer = false,
-                                bool useNativeTitleBar = false);
+                                bool useBottomRightCornerResizer = false);
    #endif
 
 
