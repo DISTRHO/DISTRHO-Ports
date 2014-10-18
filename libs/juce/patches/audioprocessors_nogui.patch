@@ -1,0 +1,72 @@
+diff -U 3 -H -w -E -d -r -N -- DISTRHO/DISTRHO/libs/juce/source/modules/juce_audio_processors/processors/juce_AudioProcessor.cpp Carla/source/modules/juce_audio_processors/processors/juce_AudioProcessor.cpp
+--- DISTRHO/DISTRHO/libs/juce/source/modules/juce_audio_processors/processors/juce_AudioProcessor.cpp	2014-08-16 13:39:27.124025270 +0100
++++ Carla/source/modules/juce_audio_processors/processors/juce_AudioProcessor.cpp	2014-08-25 22:22:52.950287318 +0100
+@@ -44,9 +44,11 @@
+ 
+ AudioProcessor::~AudioProcessor()
+ {
++   #if ! JUCE_AUDIO_PROCESSOR_NO_GUI
+     // ooh, nasty - the editor should have been deleted before the filter
+     // that it refers to is deleted..
+     jassert (activeEditor == nullptr);
++   #endif
+ 
+    #if JUCE_DEBUG
+     // This will fail if you've called beginParameterChangeGesture() for one
+@@ -215,6 +217,7 @@
+ void AudioProcessor::reset() {}
+ void AudioProcessor::processBlockBypassed (AudioSampleBuffer&, MidiBuffer&) {}
+ 
++#if ! JUCE_AUDIO_PROCESSOR_NO_GUI
+ //==============================================================================
+ void AudioProcessor::editorBeingDeleted (AudioProcessorEditor* const editor) noexcept
+ {
+@@ -245,6 +248,7 @@
+ 
+     return ed;
+ }
++#endif
+ 
+ //==============================================================================
+ void AudioProcessor::getCurrentProgramStateInformation (juce::MemoryBlock& destData)
+diff -U 3 -H -w -E -d -r -N -- DISTRHO/DISTRHO/libs/juce/source/modules/juce_audio_processors/processors/juce_AudioProcessor.h Carla/source/modules/juce_audio_processors/processors/juce_AudioProcessor.h
+--- DISTRHO/DISTRHO/libs/juce/source/modules/juce_audio_processors/processors/juce_AudioProcessor.h	2014-08-16 13:39:27.161025564 +0100
++++ Carla/source/modules/juce_audio_processors/processors/juce_AudioProcessor.h	2014-08-25 22:22:52.951287329 +0100
+@@ -327,6 +327,7 @@
+     */
+     virtual void setNonRealtime (bool isNonRealtime) noexcept;
+ 
++#if ! JUCE_AUDIO_PROCESSOR_NO_GUI
+     //==============================================================================
+     /** Creates the filter's UI.
+ 
+@@ -372,6 +373,7 @@
+         This may call createEditor() internally to create the component.
+     */
+     AudioProcessorEditor* createEditorIfNeeded();
++#endif
+ 
+     //==============================================================================
+     /** This must return the correct value immediately after the object has been
+@@ -600,9 +602,11 @@
+     /** This is called by the processor to specify its details before being played. */
+     void setPlayConfigDetails (int numIns, int numOuts, double sampleRate, int blockSize) noexcept;
+ 
++#if ! JUCE_AUDIO_PROCESSOR_NO_GUI
+     //==============================================================================
+     /** Not for public use - this is called before deleting an editor component. */
+     void editorBeingDeleted (AudioProcessorEditor*) noexcept;
++#endif
+ 
+     /** Not for public use - this is called to initialise the processor before playing. */
+     void setSpeakerArrangement (const String& inputs, const String& outputs);
+@@ -655,7 +659,9 @@
+ 
+ private:
+     Array<AudioProcessorListener*> listeners;
++#if ! JUCE_AUDIO_PROCESSOR_NO_GUI
+     Component::SafePointer<AudioProcessorEditor> activeEditor;
++#endif
+     double sampleRate;
+     int blockSize, numInputChannels, numOutputChannels, latencySamples;
+     bool suspended, nonRealtime;
