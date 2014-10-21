@@ -59,12 +59,12 @@ public:
     {
     }
 
-    bool appliesToNote (const int midiNoteNumber)
+    bool appliesToNote (const int midiNoteNumber) override
     {
         return midiNotes [midiNoteNumber];
     }
 
-    bool appliesToChannel (const int midiChannel)
+    bool appliesToChannel (const int midiChannel) override
     {
         return true;
     }
@@ -115,13 +115,13 @@ public:
     }
 
     //==============================================================================
-    bool canPlaySound (SynthesiserSound* sound)
+    bool canPlaySound (SynthesiserSound* sound) override
     {
         return dynamic_cast <DrumSynthSound*> (sound) != 0;
     }
 
     void startNote (const int midiNoteNumber, const float velocity,
-                    SynthesiserSound* sound, const int currentPitchWheelPosition)
+                    SynthesiserSound* sound, const int currentPitchWheelPosition) override
     {
         currentAngle = 0.0;
         level = velocity * 0.15;
@@ -391,7 +391,7 @@ public:
         tpos = 0;
     }
 
-    void stopNote (const bool allowTailOff)
+    void stopNote (float, const bool allowTailOff) override
     {
         if (allowTailOff)
         {
@@ -412,18 +412,18 @@ public:
     }
 
     //==============================================================================
-    void pitchWheelMoved (const int newValue)
+    void pitchWheelMoved (const int newValue) override
     {
         // can't be bothered implementing this for the demo!
     }
 
-    void controllerMoved (const int controllerNumber, const int newValue)
+    void controllerMoved (const int controllerNumber, const int newValue) override
     {
         // not interested in controllers in this case.
     }
 
     //==============================================================================
-    void renderNextBlock (AudioSampleBuffer& outputBuffer, int startSample, int numSamples)
+    void renderNextBlock (AudioSampleBuffer& outputBuffer, int startSample, int numSamples) override
     {
         if (angleDelta != 0.0 && tpos < Length)
         {
