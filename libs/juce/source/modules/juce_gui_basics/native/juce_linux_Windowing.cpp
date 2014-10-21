@@ -979,13 +979,11 @@ public:
 
     Point<float> localToGlobal (Point<float> relativePosition) override
     {
-        updateWindowBounds();
         return relativePosition + bounds.getPosition().toFloat();
     }
 
     Point<float> globalToLocal (Point<float> screenPosition) override
     {
-        updateWindowBounds();
         return screenPosition - bounds.getPosition().toFloat();
     }
 
