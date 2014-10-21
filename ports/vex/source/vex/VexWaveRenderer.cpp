@@ -85,8 +85,8 @@ int WaveRenderer::getWaveTableSize()
 
 String WaveRenderer::getWaveTableName(const int index)
 {
-    jassert (index >= 0)
-    jassert (index < kWaveTableSize)
+    jassert (index >= 0);
+    jassert (index < kWaveTableSize);
 
     return String(WaveRenderer::waveTableNames[index].name);
 }

@@ -283,27 +283,27 @@ void LUFSMeterAudioProcessorEditor::timerCallback()
     // short loudness values
     // ---------------------
     float shortTermLoudness = getProcessor()->getShortTermLoudness();
-    jassert(shortTermLoudness > -400)
+    jassert(shortTermLoudness > -400);
     shortTermLoudnessValue.setValue(shortTermLoudness);
 
     // loudness range values
     // ---------------------
     float loudnessRange = getProcessor()->getLoudnessRange();
-    jassert(loudnessRange > -400)
+    jassert(loudnessRange > -400);
     loudnessRangeValue.setValue(loudnessRange);
     
     float loudnessRangeStart = getProcessor()->getLoudnessRangeStart();
-    jassert (loudnessRangeStart > -400)
+    jassert (loudnessRangeStart > -400);
     loudnessRangeStartValue.setValue(loudnessRangeStart);
     
     float loudnessRangeEnd = getProcessor()->getLoudnessRangeEnd();
-    jassert (loudnessRangeEnd > -400)
+    jassert (loudnessRangeEnd > -400);
     loudnessRangeEndValue.setValue(loudnessRangeEnd);
     
     // integrated loudness values
     // --------------------------
     float integratedLoudness = getProcessor()->getIntegratedLoudness();
-    jassert(integratedLoudness > -400)
+    jassert(integratedLoudness > -400);
     integratedLoudnessValue.setValue(integratedLoudness);
 }
 
