@@ -40,7 +40,7 @@ private:
 		g.drawRect(getLocalBounds(), 2.f);
 		
 		g.setColour(Colours::darkgrey.withAlpha(0.3f));
-		for (int i = 0; i < mFreqGrid.getFreqLineCount(); ++i)
+		for (size_t i = 0; i < mFreqGrid.getFreqLineCount(); ++i)
 		{
 			auto line = mFreqGrid.getFreqLine(i);
 
@@ -54,14 +54,14 @@ private:
 			}
 		}
 
-		for (int i = 0; i < mFreqGrid.getAmplLineCount(); ++i)
+		for (size_t i = 0; i < mFreqGrid.getAmplLineCount(); ++i)
 		{
 			auto line = mFreqGrid.getAmplLine(i);
 
 			g.setColour(Colours::darkgrey.withAlpha(0.3f));
 			g.drawLine(juce::Line<float>(0, line.mLocation, mFreqGrid.getWidth(), line.mLocation));
 
-			if (line.mLocation + 1 < mFreqGrid.getHeight())
+			if (line.mLocation + 1 < (int)mFreqGrid.getHeight())
 			{
 				g.setColour(LookAndFeel::getDefaultLookAndFeel().findColour(TomatlLookAndFeel::alternativeText1).withAlpha(0.6f));
 				g.drawText(juce::String(line.mCaption.c_str()), juce::Rectangle<float>(mFreqGrid.getWidth() - 14, line.mLocation - 8, 30, 14), Justification::centredLeft, false);
@@ -133,14 +133,14 @@ public:
 
 		std::vector<std::pair<Path, int>> paths;
 
-		LowLevelGraphicsSoftwareRenderer& c = dynamic_cast<LowLevelGraphicsSoftwareRenderer&>(g.getInternalContext());
+		//LowLevelGraphicsSoftwareRenderer& c = dynamic_cast<LowLevelGraphicsSoftwareRenderer&>(g.getInternalContext());
 
 		if (backgroundRedraw)
 		{
 			redrawBackground();
 		}
 		
-		for (int pn = 0; pn < mParentProcessor->getMaxStereoPairCount(); ++pn)
+		for (size_t pn = 0; pn < mParentProcessor->getMaxStereoPairCount(); ++pn)
 		{
 			if (mParentProcessor->mSpectroSegments == NULL)
 			{
@@ -175,7 +175,7 @@ public:
 			double lastX = mFreqGrid.lowestVisibleFreqToX();
 			double lastY = mFreqGrid.minusInfToY();
 
-			for (int i = 0; i < block.mLength; ++i)
+			for (size_t i = 0; i < block.mLength; ++i)
 			{
 				double y0 = mFreqGrid.dbToY(TOMATL_TO_DB(block.mData[i].second));
 				double f0 = mFreqGrid.binNumberToFrequency(block.mData[i].first);
@@ -201,6 +201,8 @@ public:
 					lastY = y0;
 				}
 			}
+			// unused
+			(void)lastY;
 			
 			if (points.size() > 0)
 			{
@@ -226,7 +228,7 @@ public:
 			paths.push_back(std::pair<Path, int>(p.createPathWithRoundedCorners(5.f), block.mIndex));
 		}
 
-		for (int i = 0; i < paths.size(); ++i)
+		for (size_t i = 0; i < paths.size(); ++i)
 		{
 			Path p = paths[i].first;
 

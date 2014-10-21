@@ -45,7 +45,7 @@ public:
 		uint8 alphaOffset = 3;
 
 		uint8 balpha;
-		size_t offset, foffset = 0;
+		size_t offset /*, foffset = 0*/;
 
 		uint8* srfline;
 		uint8* subline;
@@ -104,15 +104,16 @@ public:
 			}
 		}
 
-		for (int i = 0; i < pixelCount; ++i)
+		for (size_t i = 0; i < pixelCount; ++i)
 		{
 			float result = start[pixels.pixelStride * i + 1] * multiplier;
 			start[pixels.pixelStride * i + 1] = result < 1 ? 0 : result;
 		}
 	}
 
-	static void setAlphas(Image::BitmapData& pixels, uint8 alpha)
+	static void setAlphas(Image::BitmapData& /*pixels*/, uint8 /*alpha*/)
 	{
+		/*
 		size_t pixelCount = pixels.height * pixels.width;
 		uint8* start = pixels.getPixelPointer(0, 0);
 
@@ -120,6 +121,7 @@ public:
 		{
 
 		}
+		*/
 	}
 
 #define N_SEG 10

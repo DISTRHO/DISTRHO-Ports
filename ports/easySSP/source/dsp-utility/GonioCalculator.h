@@ -8,7 +8,7 @@ template<typename T> class GonioCalculator
 {
 public:
 	GonioCalculator(size_t segmentLength = 512, size_t sampleRate = 48000, std::pair<double, double> autoAttackRelease = std::pair<double, double>(0.01, 5000))
-		: mData(NULL), mProcCounter(0), mCustomScaleEnabled(false), mLastScale(1.), mCustomScale(1.)
+		: mSegmentLength(0), mData(NULL), mProcCounter(0), mCustomScaleEnabled(false), mCustomScale(1.), mLastScale(1.)
 	{
 		setSegmentLength(segmentLength);
 		mSqrt2 = std::pow(2., 0.5);

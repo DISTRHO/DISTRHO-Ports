@@ -342,7 +342,7 @@ template<int oversampling> class wolpVoice: public SynthesiserVoice
 						SynthesiserSound* sound,
 						const int currentPitchWheelPosition) override;
 
-		void stopNote (const bool allowTailOff) override;
+		void stopNote (float, const bool allowTailOff) override;
 
 		void pitchWheelMoved (const int newValue) override { }
 
@@ -509,7 +509,7 @@ class wolp:	public AudioProcessor,
 									int midiChannel, int midiNoteNumber) override
 		{
 //			printf("MidiKeyboard noteOff isProcessing=%s\n", isProcessing? "true": "false");
-			noteOff(midiChannel, midiNoteNumber, velocity);
+			noteOff(midiChannel, midiNoteNumber, 0.0f, true);
 		}
 
 	protected:

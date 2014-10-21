@@ -35,7 +35,7 @@ AudioProcessor* JUCE_CALLTYPE createPluginFilter(const String& commandLine)
 template <int oversampling>
 wolpVoice<oversampling>::wolpVoice(wolp *s): synth(s)
 {
-	setCurrentPlaybackSampleRate(s->getSampleRate());
+	setCurrentPlaybackSampleRate(((AudioProcessor*)s)->getSampleRate());
 }
 
 template <int oversampling>
@@ -58,7 +58,7 @@ void wolpVoice<oversampling>::startNote(const int midiNoteNumber,
 }
 
 template <int oversampling>
-void wolpVoice<oversampling>::stopNote(const bool allowTailOff)
+void wolpVoice<oversampling>::stopNote(float, const bool allowTailOff)
 {
 	//if(!allowTailOff) clearCurrentNote();
 	playing= false;
@@ -460,6 +460,7 @@ void wolp::renderNextBlock (AudioSampleBuffer& outputBuffer,
             {
                 noteOff (m.getChannel(),
                          m.getNoteNumber(),
+                         m.getFloatVelocity(),
                          true);
             }
             else if (m.isAllNotesOff() || m.isAllSoundOff())

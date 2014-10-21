@@ -59,7 +59,7 @@ public:
 	}
 
 	AdmvAudioProcessorEditor (AdmvAudioProcessor* ownerFilter)
-		: AudioProcessorEditor(ownerFilter), mGonio(ownerFilter), mSpectrometer(ownerFilter), mLayout(ownerFilter)
+		: AudioProcessorEditor(ownerFilter), mGonio(ownerFilter), mLayout(ownerFilter), mSpectrometer(ownerFilter)
 	{
 		mParentProcessor = ownerFilter;
 		LookAndFeel::setDefaultLookAndFeel(&mLookAndFeel);

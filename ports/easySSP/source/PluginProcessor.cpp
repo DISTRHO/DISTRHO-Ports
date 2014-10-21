@@ -131,12 +131,12 @@ void AdmvAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 
 	mMaxStereoPairCount = JucePlugin_MaxNumInputChannels / 2;
 
-	for (int i = 0; i < mMaxStereoPairCount; ++i)
+	for (size_t i = 0; i < mMaxStereoPairCount; ++i)
 	{
 		mGonioCalcs.push_back(new tomatl::dsp::GonioCalculator<double>(1600, sampleRate));
 	}
 
-	for (int i = 0; i < mMaxStereoPairCount; ++i)
+	for (size_t i = 0; i < mMaxStereoPairCount; ++i)
 	{
 		mSpectroCalcs.push_back(new tomatl::dsp::SpectroCalculator<double>(sampleRate, std::pair<double, double>(10, getState().mSpectrometerReleaseSpeed), i, fftSize));
 	}
@@ -149,12 +149,12 @@ void AdmvAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 
 void AdmvAudioProcessor::releaseResources()
 {
-	for (int i = 0; i < mMaxStereoPairCount; ++i)
+	for (size_t i = 0; i < mMaxStereoPairCount; ++i)
 	{
 		TOMATL_DELETE(mGonioCalcs[i]);
 	}
 
-	for (int i = 0; i < mMaxStereoPairCount; ++i)
+	for (size_t i = 0; i < mMaxStereoPairCount; ++i)
 	{
 		TOMATL_DELETE(mSpectroCalcs[i]);
 	}
@@ -246,14 +246,14 @@ bool AdmvAudioProcessor::hasEditor() const
 
 void AdmvAudioProcessor::makeCurrentStateEffective()
 {
-	for (int i = 0; i < mGonioCalcs.size(); ++i)
+	for (size_t i = 0; i < mGonioCalcs.size(); ++i)
 	{
 		mGonioCalcs[i]->setCustomScaleEnabled(mState.mManualGoniometerScale);
 		mGonioCalcs[i]->setCustomScale(mState.mManualGoniometerScaleValue);
 		mGonioCalcs[i]->setReleaseSpeed(mState.mGoniometerScaleAttackRelease.second);
 	}
 
-	for (int i = 0; i < mSpectroCalcs.size(); ++i)
+	for (size_t i = 0; i < mSpectroCalcs.size(); ++i)
 	{
 		mSpectroCalcs[i]->setReleaseSpeed(mState.mSpectrometerReleaseSpeed);
 	}

@@ -259,7 +259,7 @@ namespace tomatl{ namespace dsp{
 			}
 		}
 
-		bool containsPoint(int x, int y) { return x <= getWidth() && y <= getHeight(); }
+		bool containsPoint(uint x, uint y) { return x <= getWidth() && y <= getHeight(); }
 
 		bool isFrequencyVisible(const double& freq) { return TOMATL_IS_IN_BOUNDS_INCLUSIVE(freq, mBounds.X.mLow, mBounds.X.mHigh); }
 

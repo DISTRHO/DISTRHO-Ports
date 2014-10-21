@@ -142,7 +142,7 @@ private:
 	bool isBlockInformative(AudioSampleBuffer& buffer, size_t pairIndex)
 	{
 		float magnitude = 0.;
-		size_t checksum = 0;
+		//size_t checksum = 0;
 
 		for (int i = 0; i < 2; ++i)
 		{

@@ -92,7 +92,7 @@ public:
 		Image::BitmapData pixels(mContent, Image::BitmapData::ReadWriteMode::readWrite);
 
 		// TODO: split to several smaller methods
-		for (int cn = 0; cn < mParentProcessor->getMaxStereoPairCount(); ++cn)
+		for (size_t cn = 0; cn < mParentProcessor->getMaxStereoPairCount(); ++cn)
 		{
 			if (mParentProcessor->mGonioSegments == NULL)
 			{
@@ -125,7 +125,7 @@ public:
 
 			points.push_back(std::pair<double, double>(x, y));
 
-			for (int i = 1; i < segment.mLength - 1; ++i)
+			for (size_t i = 1; i < segment.mLength - 1; ++i)
 			{
 				double x = TOMATL_BOUND_VALUE((segment.mData[i].first + 1.) * getWidth() / 2., 0., getWidth() - 1.);
 				double y = TOMATL_BOUND_VALUE((segment.mData[i].second + 1.) * getHeight() / 2., 0., getHeight() - 1.);
@@ -149,7 +149,7 @@ public:
 
 			if (points.size() > 4)
 			{
-				for (int i = 0; i < points.size() - 3; i += 3)
+				for (size_t i = 0; i < points.size() - 3; i += 3)
 				{
 					std::pair<double, double> p1 = points[i + 0];
 					std::pair<double, double> p2 = points[i + 1];
