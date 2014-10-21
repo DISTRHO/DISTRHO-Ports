@@ -44,7 +44,7 @@
 static void * mem_double(void * ptr, int size)
 {
     void * newptr ;
- 
+
     newptr = calloc(2*size, 1);
     if (newptr==NULL) {
         return NULL ;
@@ -91,7 +91,7 @@ static char * xstrdup(char * s)
   by comparing the key itself in last resort.
  */
 /*--------------------------------------------------------------------------*/
-unsigned dictionary_hash(char * key)
+unsigned dictionary_hash(const char * key)
 {
 	int			len ;
 	unsigned	hash ;
@@ -178,7 +178,7 @@ void dictionary_del(dictionary * d)
   dictionary object, you should not try to free it or modify it.
  */
 /*--------------------------------------------------------------------------*/
-char * dictionary_get(dictionary * d, char * key, char * def)
+const char * dictionary_get(dictionary * d, const char * key, const char * def)
 {
 	unsigned	hash ;
 	int			i ;
@@ -230,7 +230,7 @@ int dictionary_set(dictionary * d, char * key, char * val)
 	unsigned	hash ;
 
 	if (d==NULL || key==NULL) return -1 ;
-	
+
 	/* Compute hash for this key */
 	hash = dictionary_hash(key) ;
 	/* Find if value is already in dictionary */

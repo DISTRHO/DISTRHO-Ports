@@ -82,9 +82,9 @@ static char * strstrip(char * s)
 {
     static char l[ASCIILINESZ+1];
 	char * last ;
-	
+
     if (s==NULL) return NULL ;
-    
+
 	while (isspace((int)*s) && *s) s++;
 	memset(l, 0, ASCIILINESZ+1);
 	strcpy(l, s);
@@ -265,10 +265,10 @@ void iniparser_dump_ini(dictionary * d, FILE * f)
   the dictionary, do not free or modify it.
  */
 /*--------------------------------------------------------------------------*/
-char * iniparser_getstring(dictionary * d, const char * key, char * def)
+const char * iniparser_getstring(dictionary * d, const char * key, const char * def)
 {
-    char * lc_key ;
-    char * sval ;
+    const char * lc_key ;
+    const char * sval ;
 
     if (d==NULL || key==NULL)
         return def ;
@@ -307,7 +307,7 @@ char * iniparser_getstring(dictionary * d, const char * key, char * def)
 /*--------------------------------------------------------------------------*/
 int iniparser_getint(dictionary * d, const char * key, int notfound)
 {
-    char    *   str ;
+    const char    *   str ;
 
     str = iniparser_getstring(d, key, INI_INVALID_KEY);
     if (str==INI_INVALID_KEY) return notfound ;
@@ -327,9 +327,9 @@ int iniparser_getint(dictionary * d, const char * key, int notfound)
   the notfound value is returned.
  */
 /*--------------------------------------------------------------------------*/
-double iniparser_getdouble(dictionary * d, char * key, double notfound)
+double iniparser_getdouble(dictionary * d, const char * key, double notfound)
 {
-    char    *   str ;
+    const char    *   str ;
 
     str = iniparser_getstring(d, key, INI_INVALID_KEY);
     if (str==INI_INVALID_KEY) return notfound ;
@@ -370,7 +370,7 @@ double iniparser_getdouble(dictionary * d, char * key, double notfound)
 /*--------------------------------------------------------------------------*/
 int iniparser_getboolean(dictionary * d, const char * key, int notfound)
 {
-    char    *   c ;
+    const char* c ;
     int         ret ;
 
     c = iniparser_getstring(d, key, INI_INVALID_KEY);
@@ -457,7 +457,7 @@ static line_status iniparser_line(
     char * section,
     char * key,
     char * value)
-{   
+{
     line_status sta ;
     char        line[ASCIILINESZ+1];
     int         len ;
@@ -471,7 +471,7 @@ static line_status iniparser_line(
         sta = LINE_EMPTY ;
     } else if (line[0]=='#') {
         /* Comment line */
-        sta = LINE_COMMENT ; 
+        sta = LINE_COMMENT ;
     } else if (line[0]=='[' && line[len-1]==']') {
         /* Section name */
         sscanf(line, "[%[^]]", section);

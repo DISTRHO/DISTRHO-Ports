@@ -125,7 +125,7 @@ void iniparser_dump(dictionary * d, FILE * f);
   the dictionary, do not free or modify it.
  */
 /*--------------------------------------------------------------------------*/
-char * iniparser_getstring(dictionary * d, const char * key, char * def);
+const char * iniparser_getstring(dictionary * d, const char * key, const char * def);
 
 /*-------------------------------------------------------------------------*/
 /**
@@ -169,7 +169,7 @@ int iniparser_getint(dictionary * d, const char * key, int notfound);
   the notfound value is returned.
  */
 /*--------------------------------------------------------------------------*/
-double iniparser_getdouble(dictionary * d, char * key, double notfound);
+double iniparser_getdouble(dictionary * d, const char * key, double notfound);
 
 /*-------------------------------------------------------------------------*/
 /**
