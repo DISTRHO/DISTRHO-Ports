@@ -16,23 +16,15 @@
 
 #ifdef VERBOSE
 #include <iostream>
+using namespace std;
 #endif
 #include <math.h>
+#include <stdlib.h>
 #include "synth.h"
 #include "freqlut.h"
 #include "exp2.h"
 #include "controllers.h"
 #include "dx7note.h"
-
-using namespace std;
-
-void dexed_trace(const char *source, const char *fmt, ...);
-
-#ifdef _MSC_VER
-#define TRACE(fmt, ...) dexed_trace(__FUNCTION__,fmt,##__VA_ARGS__)
-#else
-#define TRACE(fmt, ...) dexed_trace(__PRETTY_FUNCTION__,fmt,##__VA_ARGS__)
-#endif
 
 int32_t midinote_to_logfreq(int midinote) {
   const int base = 50857777;  // (1 << 24) * (log(440) / log(2) - 69/12)
@@ -135,6 +127,12 @@ static const uint8_t pitchmodsenstab[] = {
   0, 10, 20, 33, 55, 92, 153, 255
 };
 
+
+// 0, 66, 109, 255
+static const uint32_t ampmodsenstab[] = {
+    0, 4342338, 7171437, 16777216
+};
+
 void Dx7Note::init(const char patch[156], int midinote, int velocity) {
   int rates[4];
   int levels[4];
@@ -172,7 +170,8 @@ void Dx7Note::init(const char patch[156], int midinote, int velocity) {
     basepitch_[op] = freq;
     // cout << op << " freq: " << freq << endl;
     params_[op].phase = 0;
-    params_[op].gain[1] = 0;
+    params_[op].gain_out = 0;
+    ampmodsens_[op] = ampmodsenstab[patch[off + 14] & 3];
   }
   for (int i = 0; i < 4; i++) {
     rates[i] = patch[126 + i];
@@ -187,40 +186,49 @@ void Dx7Note::init(const char patch[156], int midinote, int velocity) {
   ampmoddepth_ = (patch[140] * 165) >> 6;
 }
 
-void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay,
-  const Controllers *ctrls) {
-  int32_t pitchmod = pitchenv_.getsample();
-  uint32_t pmd = pitchmoddepth_ * lfo_delay;  // Q32
-  // TODO: add modulation sources (mod wheel, etc)
-  uint32_t pwmd = (ctrls->values_[kControllerModWheel] * 0.7874) * (1 << 24);
-  int32_t senslfo = pitchmodsens_ * (lfo_val - (1 << 23));
+void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Controllers *ctrls) {
+    int32_t pitchmod = pitchenv_.getsample();
+    uint32_t pmd = pitchmoddepth_ * lfo_delay;  // Q32
+    // TODO(PG) : make this integer friendly
+    uint32_t pwmd = (ctrls->values_[kControllerModWheel] * 0.7874) * (1 << 24);
+    int32_t senslfo = pitchmodsens_ * (lfo_val - (1 << 23));
     
-  pitchmod += (((int64_t)pwmd) * (int64_t)senslfo) >> 39;
-  pitchmod += (((int64_t)pmd) * (int64_t)senslfo) >> 39;
+    uint32_t amd = ((int64_t) ampmoddepth_ * (int64_t) lfo_delay) >> 8; // Q24 :D
+    amd = ((int64_t) amd * (int64_t) lfo_val) >> 24;
+    
+    pitchmod += (((int64_t) pwmd) * (int64_t) senslfo) >> 39;
+    pitchmod += (((int64_t) pmd) * (int64_t) senslfo) >> 39;
 
-  int pitchbend = ctrls->values_[kControllerPitch];
-  int32_t pb = (pitchbend - 0x2000);
-    
-  if ( pb != 0 ) {
-    if ( ctrls->values_[kControllerPitchStep] == 0 ) {
-        pb = ((float)(pb << 11)) * ((float)ctrls->values_[kControllerPitchRange]) / 12.0;
-    } else {
-        int stp = 12 / ctrls->values_[kControllerPitchStep];
-        pb = pb * stp / 8191;
-        pb = (pb * (8191/stp)) << 11;
+    int pitchbend = ctrls->values_[kControllerPitch];
+    int32_t pb = (pitchbend - 0x2000);
+
+    if (pb != 0) {
+        if (ctrls->values_[kControllerPitchStep] == 0) {
+            pb = ((float) (pb << 11)) * ((float) ctrls->values_[kControllerPitchRange]) / 12.0;
+        } else {
+            int stp = 12 / ctrls->values_[kControllerPitchStep];
+            pb = pb * stp / 8191;
+            pb = (pb * (8191 / stp)) << 11;
+        }
     }
-  }
-        
-  pitchmod += pb;
-  for (int op = 0; op < 6; op++) {
-    params_[op].gain[0] = params_[op].gain[1];
-    int32_t level = env_[op].getsample();
-    int32_t gain = Exp2::lookup(level - (14 * (1 << 24)));
-    //int32_t gain = pow(2, 10 + level * (1.0 / (1 << 24)));
-    params_[op].freq = Freqlut::lookup(basepitch_[op] + pitchmod);
-    params_[op].gain[1] = gain;
-  }
-  core_.compute(buf, params_, algorithm_, fb_buf_, fb_shift_);
+
+    pitchmod += pb;
+    for (int op = 0; op < 6; op++) {
+        //int32_t gain = pow(2, 10 + level * (1.0 / (1 << 24)));
+        params_[op].freq = Freqlut::lookup(basepitch_[op] + pitchmod);
+
+        int32_t level = env_[op].getsample();
+        if (ampmodsens_[op] != 0) {
+            uint32_t sensamp = ((uint64_t) amd) * ((uint64_t) ampmodsens_[op]) >> 24;
+            
+            // TODO: mehhh.. this needs some real tuning.
+            uint32_t pt = exp(((float)sensamp)/262144 * 0.07 + 12.2);
+            uint32_t ldiff = ((uint64_t)level) * (((uint64_t)pt<<4)) >> 28;
+            level -= ldiff;
+        }
+        params_[op].level_in = level;
+    }
+    ctrls->core->render(buf, params_, algorithm_, fb_buf_, fb_shift_, ctrls);
 }
 
 void Dx7Note::keyup() {
@@ -238,20 +246,32 @@ void Dx7Note::update(const char patch[156], int midinote) {
     int fine = patch[off + 19];
     int detune = patch[off + 20];
     basepitch_[op] = osc_freq(midinote, mode, coarse, fine, detune);
+    ampmodsens_[op] = ampmodsenstab[patch[off + 14] & 3];
   }
   algorithm_ = patch[134];
   int feedback = patch[135];
   fb_shift_ = feedback != 0 ? 8 - feedback : 16;
   pitchmoddepth_ = (patch[139] * 165) >> 6;
   pitchmodsens_ = pitchmodsenstab[patch[143] & 7];
+  ampmoddepth_ = (patch[140] * 165) >> 6;
 }
 
 void Dx7Note::peekVoiceStatus(VoiceStatus &status) {
   for(int i=0;i<6;i++) {
-    status.amp[i] = params_[i].gain[1];
+    status.amp[i] = Exp2::lookup(params_[i].level_in - (14 * (1 << 24)));
     env_[i].getPosition(&status.ampStep[i]);
   }
   pitchenv_.getPosition(&status.pitchStep);
 }
 
+/**
+ * Used in monophonic mode to transfert voice state from different notes
+ */
+void Dx7Note::transfertState(Dx7Note &src) {
+    for (int i=0;i<6;i++) {
+        env_[i].transfert(src.env_[i]);
+        params_[i].gain_out = src.params_[i].gain_out;
+    }
+    
+}
 

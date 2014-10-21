@@ -2,20 +2,20 @@
  *
  * Copyright (c) 2013 Pascal Gauthier.
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of
- * the License, or (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE.  See the GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public
- * License along with this program; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
- * Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+ *
  */
 
 #include "PluginProcessor.h"
@@ -26,6 +26,8 @@
 #include "Dexed.h"
 #include "math.h"
 #include <fstream>
+
+#include "msfa/fm_op_kernel.h"
 
 using namespace ::std;
 
@@ -140,11 +142,21 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     storeButton->addListener(this);
     storeButton->setBounds(331, 6, 50, 18);
 
+    addAndMakeVisible(initButton = new TextButton("INIT"));
+    initButton->setButtonText("INIT");
+    initButton->addListener(this);
+    initButton->setBounds(385, 6, 50, 18);
+
+    addAndMakeVisible(monoButton = new ToggleButton("MONO"));
+    monoButton->setButtonText("MONO");
+    monoButton->addListener(this);
+    monoButton->setBounds(439, 6, 50, 18);
+
     addAndMakeVisible(sendButton = new TextButton("SEND"));
     sendButton->setVisible(false);
     sendButton->setButtonText("SEND");
     sendButton->addListener(this);
-    sendButton->setBounds(385, 6, 50, 18);
+    sendButton->setBounds(493, 6, 50, 18);
     sendButton->setVisible(processor->sysexComm.isOutputActive());
     
     addAndMakeVisible(midiMonitor = new MidiMonitor(&processor->sysexComm));
@@ -153,7 +165,7 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     addAndMakeVisible(settingsButton = new TextButton("PARMS"));
     settingsButton->setButtonText("PARMS");
     settingsButton->addListener(this);
-    settingsButton->setBounds(755, 6, 50, 18);
+    settingsButton->setBounds(754, 6, 50, 18);
     
     addAndMakeVisible(aboutButton = new TextButton("ABOUT"));
     aboutButton->setButtonText("ABOUT");
@@ -200,6 +212,8 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     
     sendPopup.addItem(1, "Send program to DX7");
     sendPopup.addItem(2, "Send cartridge to DX7");
+    
+    monoButton->setState(processor->isMonoMode() ? Button::ButtonState::buttonDown : Button::ButtonState::buttonNormal);
     
     updateUI();
     startTimer(100);
@@ -316,10 +330,12 @@ void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
     }
 
     if (buttonThatWasClicked == settingsButton) {
+        int tp = processor->getEngineType();
+        
         AlertWindow window("","", AlertWindow::NoIcon, this);
         ParamDialog param;
         param.setColour(AlertWindow::backgroundColourId, Colour(0x32FFFFFF));
-        param.setDialogValues(processor->controllers, processor->sysexComm);
+        param.setDialogValues(processor->controllers, processor->sysexComm, tp);
         
         window.addCustomComponent(&param);
         window.addButton("OK", 0);
@@ -327,7 +343,8 @@ void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
         if ( window.runModalLoop() != 0 )
             return;
         
-        bool ret = param.getDialogValues(processor->controllers, processor->sysexComm);
+        bool ret = param.getDialogValues(processor->controllers, processor->sysexComm, &tp);
+        processor->setEngineType(tp);
         processor->savePreference();
         
         if ( ret == false ) {
@@ -335,6 +352,17 @@ void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
         }
 
         sendButton->setVisible(processor->sysexComm.isOutputActive());
+        return;
+    }
+    
+    if (buttonThatWasClicked == initButton ) {
+        processor->resetToInitVoice();
+        return;
+    }
+    
+    if (buttonThatWasClicked == monoButton ) {
+        processor->setMonoMode(monoButton->getToggleState());
+        monoButton->setState(processor->isMonoMode() ? Button::ButtonState::buttonDown : Button::ButtonState::buttonNormal);
         return;
     }
     

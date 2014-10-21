@@ -2,20 +2,20 @@
  *
  * Copyright (c) 2013 Pascal Gauthier.
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of
- * the License, or (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE.  See the GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public
- * License along with this program; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
- * Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+ *
  */
 
 #ifndef PLUGINPROCESSOR_H_INCLUDED
@@ -27,10 +27,13 @@
 #include "msfa/dx7note.h"
 #include "msfa/lfo.h"
 #include "msfa/synth.h"
+#include "msfa/fm_core.h"
 #include "PluginParam.h"
 #include "PluginData.h"
 #include "PluginFx.h"
 #include "SysexComm.h"
+#include "EngineMkI.h"
+#include "EngineOpl.h"
 
 struct ProcessorVoice {
     int midi_note;
@@ -38,6 +41,12 @@ struct ProcessorVoice {
     bool sustained;
     bool live;
     Dx7Note *dx7_note;
+};
+
+enum DexedEngineResolution {
+    DEXED_ENGINE_MODERN,
+    DEXED_ENGINE_MARKI,
+    DEXED_ENGINE_OPL
 };
 
 //==============================================================================
@@ -53,7 +62,8 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public 
     Lfo lfo;
 
     bool sustain;
-
+    bool monoMode;
+    
     // Extra buffering for when GetSamples wants a buffer not a multiple of N
     float extra_buf[N];
     int extra_buf_size;
@@ -98,6 +108,11 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public 
 	bool getNextEvent(MidiBuffer::Iterator* iter,const int samplePos);
     
     void handleIncomingMidiMessage(MidiInput* source, const MidiMessage& message);
+    uint32_t engineType;
+    
+    FmCore engineMsfa;
+    EngineMkI engineMkI;
+    EngineOpl engineOpl;
     
 public :
     // in MIDI units (0x4000 is neutral)
@@ -114,6 +129,9 @@ public :
     bool forceRefreshUI;
     
     float vuSignal;
+
+    int getEngineType();
+    void setEngineType(int rs);
     
     Array<Ctrl*> ctrl;
 
@@ -148,6 +166,10 @@ public :
     void releaseResources();
     void processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages);
     void panic();
+    bool isMonoMode() {
+        return monoMode;
+    }
+    void setMonoMode(bool mode);
     
     //==============================================================================
     AudioProcessorEditor* createEditor();
@@ -178,10 +200,11 @@ public :
     //==============================================================================
     int getNumPrograms();
     int getCurrentProgram();
-    void setCurrentProgram (int index);
+    void setCurrentProgram(int index);
     const String getProgramName (int index);
-    void changeProgramName (int index, const String& newName);
-
+    void changeProgramName(int index, const String& newName);
+    void resetToInitVoice();
+    
     //==============================================================================
     void getStateInformation (MemoryBlock& destData);
     void setStateInformation (const void* data, int sizeInBytes);

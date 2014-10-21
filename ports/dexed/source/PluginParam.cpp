@@ -2,20 +2,20 @@
  *
  * Copyright (c) 2013 Pascal Gauthier.
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of
- * the License, or (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE.  See the GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public
- * License along with this program; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
- * Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+ *
  */
 
 #include <time.h>
@@ -141,15 +141,6 @@ float CtrlDX::getValueHost() {
 
 void CtrlDX::setValueHost(float f) {
     setValue((f * steps));
-    
-    /*
-    DexedAudioProcessorEditor *editor = (DexedAudioProcessorEditor *) parent->getActiveEditor();
-    if ( editor == NULL ) {
-        return;
-    }
-    String msg;
-    msg << label << " = " << getValueDisplay();
-    editor->global.setParamMessage(msg);*/
 }
 
 void CtrlDX::setValue(int v) {
@@ -456,11 +447,8 @@ void DexedAudioProcessor::setCurrentProgram(int index) {
         return;
     }
     
-    for (int i = 0; i < MAX_ACTIVE_NOTES; i++) {
-        if (voices[i].keydown == false && voices[i].live == true) {
-            voices[i].live = false;
-        }
-    }
+    panic();
+    
     index = index > 31 ? 31 : index;
     unpackProgram(index);
     lfo.reset(data + 137);
@@ -473,6 +461,8 @@ void DexedAudioProcessor::setCurrentProgram(int index) {
         return;
     }
     editor->global.setParamMessage("");
+    
+    panic();
 }
 
 const String DexedAudioProcessor::getProgramName(int index) {
@@ -523,6 +513,9 @@ void DexedAudioProcessor::loadPreference() {
         sysexComm.setChl( prop.getIntValue( String("sysexChl") ) );
     }
     
+    if ( prop.containsKey( String("engineType" ) ) ) {
+        engineType = prop.getIntValue( String("engineType") );
+    }
 }
 
 void DexedAudioProcessor::savePreference() {
@@ -535,6 +528,8 @@ void DexedAudioProcessor::savePreference() {
     prop.setValue(String("sysexIn"), sysexComm.getInput());
     prop.setValue(String("sysexOut"), sysexComm.getOutput());
     prop.setValue(String("sysexChl"), sysexComm.getChl());
+    
+    //prop.setValue(String("engineResolution"), engineResolution);
     
     prop.save();
 }

@@ -44,8 +44,6 @@ class Dx7Note {
 
   void keyup();
     
-  // TODO: parameter changes
-
   // TODO: some way of indicating end-of-note. Maybe should be a return
   // value from the compute method? (Having a count return from keyup
   // is also tempting, but if there's a dynamic parameter change after
@@ -54,16 +52,17 @@ class Dx7Note {
   // PG:add the update
   void update(const char patch[156], int midinote);
   void peekVoiceStatus(VoiceStatus &status);
-
+  void transfertState(Dx7Note& src);
+    
  private:
-  FmCore core_;
   Env env_[6];
   FmOpParams params_[6];
   PitchEnv pitchenv_;
   int32_t basepitch_[6];
   int32_t fb_buf_[2];
   int32_t fb_shift_;
-
+  int32_t ampmodsens_[6];
+        
   int ampmoddepth_;
   int algorithm_;
   int pitchmoddepth_;

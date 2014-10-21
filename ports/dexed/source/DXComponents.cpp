@@ -6,20 +6,20 @@
  * Copyright (C) 2002 Juan Linietsky <coding@reduz.com.ar>
  * Copyright (C) 2006 Mark-André Hopf <mhopf@mark13.org>
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of
- * the License, or (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE.  See the GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public
- * License along with this program; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
- * Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+ *
  */
 
 #include "DXComponents.h"
@@ -425,7 +425,7 @@ void VuMeter::paint(Graphics &g) {
     g.setColour (Colours::black);
     g.fillRoundedRectangle (0.0f, 0.0f, (float)  width, (float) height, 0);
 
-    const int numBlocks = roundToInt (totalBlocks * v);
+    const int numBlocks = roundToInt(totalBlocks * v);
     const float h = (height - 6.0f) / (float) totalBlocks;
     
     for (int i = 0; i < totalBlocks; ++i) {
@@ -457,11 +457,18 @@ void LcdDisplay::handleAsyncUpdate() {
     startTimer(5000);
 }
 
+#ifdef _WIN32 
+    const float LCD_FONTSIZE = 13.0f;
+#else 
+    const float LCD_FONTSIZE = 15.0f;
+#endif
+
 void LcdDisplay::paint(Graphics &g) {
+
     g.setColour(Colours::black.withAlpha(0.4f));
     g.fillRoundedRectangle (0.0f, 0.0f, (float) getWidth(), (float) getHeight(), 1.0f);
     g.setColour (Colours::white);
-    g.setFont (Font (Font::getDefaultMonospacedFontName(), 15.00f, Font::plain));
+    g.setFont (Font (Font::getDefaultMonospacedFontName(), LCD_FONTSIZE, Font::plain));
     g.drawText (systemMsg,
                 7, 4, 300, 8,
                 Justification::centredLeft, true);

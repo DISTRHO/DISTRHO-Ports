@@ -17,15 +17,26 @@
 #ifndef __CONTROLLERS_H
 #define __CONTROLLERS_H
 
+#include "synth.h"
+
 // State of MIDI controllers
 const int kControllerModWheel = 1;
 const int kControllerPitch = 128;
 const int kControllerPitchRange = 129;
 const int kControllerPitchStep = 130;
 
+class FmCore;
+
 class Controllers {
  public:
   int values_[131];
+    
+  // engine bit filters
+  uint32_t sinBitFilter;         // bit filter based upon sin LUT lookup
+  uint32_t dacBitFilter;         // bit filter based upon DAC resolution
+  uint32_t mulBitFilter;         // bit filter based upon multipliers (?????)
+    
+  FmCore *core;
 };
 
 #endif  // __CONTROLLERS_H
