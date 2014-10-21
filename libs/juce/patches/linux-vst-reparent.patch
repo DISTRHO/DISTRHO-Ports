@@ -1,0 +1,16 @@
+diff --git a/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp b/libs/juce/source/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
+index b88a3b2..d057fb0 100644
+--- a/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
++++ b/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
+@@ -1180,8 +1180,10 @@ public:
+                 editorComp->addToDesktop (0, ptr);
+                 hostWindow = (HWND) ptr;
+               #elif JUCE_LINUX
+-                editorComp->addToDesktop (0, ptr);
++                editorComp->addToDesktop (0);
+                 hostWindow = (Window) ptr;
++                Window editorWnd = (Window) editorComp->getWindowHandle();
++                XReparentWindow (display, editorWnd, hostWindow, 0, 0);
+               #else
+                 hostWindow = attachComponentToWindowRef (editorComp, ptr, useNSView);
+               #endif
