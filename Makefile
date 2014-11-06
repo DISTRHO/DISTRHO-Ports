@@ -27,9 +27,13 @@ install:
 	install -d $(DESTDIR)/usr/src/distrho/scripts/
 
 	# install plugins
+ifneq (,$(wildcard bin/lv2/TheFunction.lv2))
 	cp -r bin/lv2/*.lv2/        $(DESTDIR)$(PREFIX)/lib/lv2/
-	cp -r bin/vst/*             $(DESTDIR)$(PREFIX)/lib/vst/
 	cp -r static-lv2-ttl/*.lv2/ $(DESTDIR)$(PREFIX)/lib/lv2/
+endif
+ifneq (,$(wildcard bin/vst/TheFunction.so))
+	cp -r bin/vst/*             $(DESTDIR)$(PREFIX)/lib/vst/
+endif
 
 	# install source needed for extra builds
 	install -m 644 libs/libjuce.a           $(DESTDIR)/usr/src/distrho/libs/
