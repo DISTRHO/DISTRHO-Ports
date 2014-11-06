@@ -18,10 +18,16 @@
  *
  */
 
-#ifndef DEXED_H_INCLUDED
-#define DEXED_H_INCLUDED
+#ifndef ALGODISPLAY_H_INCLUDED
+#define ALGODISPLAY_H_INCLUDED
 
-#define DEXED_VERSION "0.8.0"
-#define TRACE(fmt, ...)
+#include "JuceHeader.h"
 
-#endif  // DEXED_H_INCLUDED
+class AlgoDisplay : public Component {
+public:
+    AlgoDisplay();
+    char *algo;
+    void paint(Graphics &g);
+};
+
+#endif  // ALGODISPLAY_H_INCLUDED

@@ -24,6 +24,9 @@
 #include "JuceHeader.h"
 #include "PluginProcessor.h"
 #include "DXComponents.h"
+#include "AlgoDisplay.h"
+
+class DexedAudioProcessorEditor;
 //[/Headers]
 
 
@@ -37,8 +40,8 @@
                                                                     //[/Comments]
 */
 class GlobalEditor  : public Component,
-                      public ComboBoxListener,
-                      public SliderListener
+                      public SliderListener,
+                      public ButtonListener
 {
 public:
     //==============================================================================
@@ -47,29 +50,36 @@ public:
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
-    void bind(DexedAudioProcessor *processor);
+    void bind(DexedAudioProcessorEditor *processor);
     void setSystemMessage(String msg);
     void setParamMessage(String msg);
     void updatePitchPos(int pos);
     void updateVu(float v);
     void updateDisplay();
     void repaintMsg();
+
+    void setMonoState(bool state);
+    ProgramSelector *programs;
+    ScopedPointer<Component> midiMonitor;
     //[/UserMethods]
 
     void paint (Graphics& g);
     void resized();
-    void comboBoxChanged (ComboBox* comboBoxThatHasChanged);
     void sliderValueChanged (Slider* sliderThatWasMoved);
+    void buttonClicked (Button* buttonThatWasClicked);
 
+    // Binary resources:
+    static const char* globalEditor_864x144_png;
+    static const int globalEditor_864x144_pngSize;
 
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
+    DexedAudioProcessorEditor *editor;
     DexedAudioProcessor *processor;
     //[/UserVariables]
 
     //==============================================================================
-    ScopedPointer<ComboBox> lfoType;
     ScopedPointer<Slider> lfoSpeed;
     ScopedPointer<Slider> lfoAmDepth;
     ScopedPointer<Slider> lfoPitchDepth;
@@ -95,6 +105,17 @@ private:
     ScopedPointer<LcdDisplay> lcdDisplay;
     ScopedPointer<Slider> output;
     ScopedPointer<VuMeter> vuOutput;
+    ScopedPointer<TextButton> initButton;
+    ScopedPointer<TextButton> parmButton;
+    ScopedPointer<TextButton> sendButton;
+    ScopedPointer<TextButton> cartButton;
+    ScopedPointer<TextButton> loadButton;
+    ScopedPointer<TextButton> saveButton;
+    ScopedPointer<TextButton> storeButton;
+    ScopedPointer<ToggleButton> monoMode;
+    ScopedPointer<ComboBoxImage> lfoType;
+    ScopedPointer<ProgramSelector> programSelector;
+    Image cachedImage_globalEditor_864x144_png;
 
 
     //==============================================================================

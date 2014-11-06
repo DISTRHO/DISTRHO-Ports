@@ -127,11 +127,17 @@ static const uint8_t pitchmodsenstab[] = {
   0, 10, 20, 33, 55, 92, 153, 255
 };
 
-
 // 0, 66, 109, 255
 static const uint32_t ampmodsenstab[] = {
     0, 4342338, 7171437, 16777216
 };
+
+Dx7Note::Dx7Note() {
+    for(int op=0;op<6;op++) {
+        params_[op].phase = 0;
+        params_[op].gain_out = 0;
+    }
+}
 
 void Dx7Note::init(const char patch[156], int midinote, int velocity) {
   int rates[4];
@@ -169,8 +175,8 @@ void Dx7Note::init(const char patch[156], int midinote, int velocity) {
     int32_t freq = osc_freq(midinote, mode, coarse, fine, detune);
     basepitch_[op] = freq;
     // cout << op << " freq: " << freq << endl;
-    params_[op].phase = 0;
-    params_[op].gain_out = 0;
+    //params_[op].phase = 0;
+    //params_[op].gain_out = 0;
     ampmodsens_[op] = ampmodsenstab[patch[off + 14] & 3];
   }
   for (int i = 0; i < 4; i++) {
@@ -267,11 +273,25 @@ void Dx7Note::peekVoiceStatus(VoiceStatus &status) {
 /**
  * Used in monophonic mode to transfert voice state from different notes
  */
-void Dx7Note::transfertState(Dx7Note &src) {
+void Dx7Note::transferState(Dx7Note &src) {
     for (int i=0;i<6;i++) {
-        env_[i].transfert(src.env_[i]);
+        env_[i].transfer(src.env_[i]);
         params_[i].gain_out = src.params_[i].gain_out;
+        params_[i].phase = src.params_[i].phase;
     }
-    
 }
 
+void Dx7Note::transferSignal(Dx7Note &src) {
+    for (int i=0;i<6;i++) {
+        params_[i].gain_out = src.params_[i].gain_out;
+        params_[i].phase = src.params_[i].phase;
+        //params_[i].phase = 0;
+    }
+}
+
+void Dx7Note::firstUse() {
+    for (int i=0;i<6;i++) {
+        params_[i].gain_out = 0;
+        params_[i].phase = 0;
+    }
+}

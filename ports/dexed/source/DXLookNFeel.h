@@ -25,10 +25,38 @@
 
 class DXLookNFeel : public LookAndFeel_V3 {
 public:
-    static Colour dxDarkBrown;
-    static Colour dxLightBrown;
-    
+    Typeface::Ptr defaultFont;
+    Typeface::Ptr defaultFontBold;
+
+    static Colour comboBoxBackground;
+    static Colour background;
+    static Colour lightBackground;
+    static Colour fillColour;
+    static Colour ctrlBackground;
+
     DXLookNFeel();
+
+    virtual void drawRotarySlider(Graphics &g, int x, int y, int width, int height, float sliderPosProportional, float rotaryStartAngle, float rotaryEndAngle,  Slider &slider );
+
+    virtual void drawToggleButton(Graphics& g, ToggleButton& button, bool isMouseOverButton, bool isButtonDown);
+
+    
+    virtual void drawLinearSliderBackground (Graphics&, int x, int y, int width, int height,
+                                     float sliderPos, float minSliderPos, float maxSliderPos,
+                                     const Slider::SliderStyle, Slider&) override;
+    
+    virtual void drawLinearSliderThumb (Graphics&, int x, int y, int width, int height,
+                                float sliderPos, float minSliderPos, float maxSliderPos,
+                                const Slider::SliderStyle, Slider&) override;
+    
+    virtual void drawButtonBackground (Graphics&, Button&, const Colour& backgroundColour,
+                               bool isMouseOverButton, bool isButtonDown) override;
+    
+    virtual Font getTextButtonFont(TextButton&, int buttonHeight) override;
+
+    virtual Typeface::Ptr getTypefaceForFont(const Font &);
+
+    virtual void positionComboBoxText (ComboBox& box, Label& label);
 };
 
 #endif  // DXLOOKNFEEL_H_INCLUDED

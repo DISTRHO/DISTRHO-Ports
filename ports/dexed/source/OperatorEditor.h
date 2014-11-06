@@ -39,7 +39,7 @@
 */
 class OperatorEditor  : public Component,
                         public SliderListener,
-                        public ComboBoxListener
+                        public ButtonListener
 {
 public:
     //==============================================================================
@@ -53,17 +53,25 @@ public:
     void updateGain(float v);
     void updateDisplay();
     void updateEnvPos(char pos);
+    void mouseDown(const MouseEvent& e) override;
     //[/UserMethods]
 
     void paint (Graphics& g);
     void resized();
     void sliderValueChanged (Slider* sliderThatWasMoved);
-    void comboBoxChanged (ComboBox* comboBoxThatHasChanged);
+    void buttonClicked (Button* buttonThatWasClicked);
 
+    // Binary resources:
+    static const char* operatorEditor_287x218_png;
+    static const int operatorEditor_287x218_pngSize;
 
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
+    String opNum;
+    int internalOp;
+
+    DexedAudioProcessor *processor;
     //[/UserVariables]
 
     //==============================================================================
@@ -75,7 +83,6 @@ private:
     ScopedPointer<Slider> s_egv2;
     ScopedPointer<Slider> s_egv3;
     ScopedPointer<Slider> s_egv4;
-    ScopedPointer<ComboBox> opMode;
     ScopedPointer<Slider> opLevel;
     ScopedPointer<Slider> opFine;
     ScopedPointer<Slider> opCoarse;
@@ -84,13 +91,15 @@ private:
     ScopedPointer<EnvDisplay> envDisplay;
     ScopedPointer<Slider> sclLeftLevel;
     ScopedPointer<Slider> sclRightLevel;
-    ScopedPointer<ComboBox> kbdLeftCurve;
-    ScopedPointer<ComboBox> kbdRightCurve;
     ScopedPointer<Slider> sclLvlBrkPt;
     ScopedPointer<Slider> sclRateScaling;
     ScopedPointer<Slider> keyVelSens;
     ScopedPointer<Slider> ampModSens;
     ScopedPointer<VuMeter> vu;
+    ScopedPointer<ToggleButton> opMode;
+    ScopedPointer<ComboBoxImage> kbdLeftCurve;
+    ScopedPointer<ComboBoxImage> kbdRightCurve;
+    Image cachedImage_operatorEditor_287x218_png;
 
 
     //==============================================================================
