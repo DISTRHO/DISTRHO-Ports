@@ -1084,11 +1084,9 @@ private:
             if (parentContainer->isOnDesktop())
                 parentContainer->removeFromDesktop();
 
-#if (JUCE_MAC || JUCE_WINDOWS)
             parentContainer->addToDesktop (0, parent);
-#elif JUCE_LINUX
-            parentContainer->addToDesktop (0);
 
+#if JUCE_LINUX
             Window hostWindow = (Window) parent;
             Window editorWnd  = (Window) parentContainer->getWindowHandle();
             XReparentWindow (display, editorWnd, hostWindow, 0, 0);
