@@ -140,11 +140,17 @@ public:
     /** Returns the current AudioPlayHead object that should be used to find
         out the state and position of the playhead.
 
-        You can call this from your processBlock() method, and use the AudioPlayHead
-        object to get the details about the time of the start of the block currently
-        being processed.
+        You can ONLY call this from your processBlock() method! Calling it at other
+        times will produce undefined behaviour, as the host may not have any context
+        in which a time would make sense, and some hosts will almost certainly have
+        multithreading issues if it's not called on the audio thread.
 
-        If the host hasn't supplied a playhead object, this will return nullptr.
+        The AudioPlayHead object that is returned can be used to get the details about
+        the time of the start of the block currently being processed. But do not
+        store this pointer or use it outside of the current audio callback, because
+        the host may delete or re-use it.
+
+        If the host can't or won't provide any time info, this will return nullptr.
     */
     AudioPlayHead* getPlayHead() const noexcept                 { return playHead; }
 
@@ -327,7 +333,6 @@ public:
     */
     virtual void setNonRealtime (bool isNonRealtime) noexcept;
 
-#if ! JUCE_AUDIO_PROCESSOR_NO_GUI
     //==============================================================================
     /** Creates the filter's UI.
 
@@ -373,7 +378,6 @@ public:
         This may call createEditor() internally to create the component.
     */
     AudioProcessorEditor* createEditorIfNeeded();
-#endif
 
     //==============================================================================
     /** This must return the correct value immediately after the object has been
@@ -596,11 +600,6 @@ public:
     virtual void numChannelsChanged();
 
     //==============================================================================
-    /** LV2 specific calls, saving/restore as string. */
-    virtual String getStateInformationString () { return String::empty; }
-    virtual void setStateInformationString (const String&) {}
-
-    //==============================================================================
     /** Adds a listener that will be called when an aspect of this processor changes. */
     virtual void addListener (AudioProcessorListener* newListener);
 
@@ -618,11 +617,9 @@ public:
     /** This is called by the processor to specify its details before being played. */
     void setPlayConfigDetails (int numIns, int numOuts, double sampleRate, int blockSize) noexcept;
 
-#if ! JUCE_AUDIO_PROCESSOR_NO_GUI
     //==============================================================================
     /** Not for public use - this is called before deleting an editor component. */
     void editorBeingDeleted (AudioProcessorEditor*) noexcept;
-#endif
 
     /** Not for public use - this is called to initialise the processor before playing. */
     void setSpeakerArrangement (const String& inputs, const String& outputs);
@@ -675,9 +672,7 @@ protected:
 
 private:
     Array<AudioProcessorListener*> listeners;
-#if ! JUCE_AUDIO_PROCESSOR_NO_GUI
     Component::SafePointer<AudioProcessorEditor> activeEditor;
-#endif
     double sampleRate;
     int blockSize, numInputChannels, numOutputChannels, latencySamples;
     bool suspended, nonRealtime;

@@ -1,0 +1,12 @@
+--- a/source/modules/juce_audio_processors/format_types/juce_VST3PluginFormat.cpp
++++ b/source/modules/juce_audio_processors/format_types/juce_VST3PluginFormat.cpp
+@@ -1403,7 +1403,8 @@ class VST3ModuleHandle  : public ReferenceCountedObject
+ 
+             const Result result (finder.findDescriptionsAndPerform (f));
+ 
+-            if (result.getErrorMessage() == MatchingDescriptionFinder::getSuccessString())
++            if (result.getErrorMessage() == MatchingDescriptionFinder::getSuccessString() ||
++                result.getErrorMessage().isEmpty())
+             {
+                 name = description.name;
+                 return true;

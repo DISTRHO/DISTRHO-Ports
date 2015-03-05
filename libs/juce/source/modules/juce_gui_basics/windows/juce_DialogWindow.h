@@ -122,9 +122,7 @@ public:
             If your content component needs to find the dialog window that it is
             contained in, a quick trick is to do this:
             @code
-            Dialogwindow* dw = contentComponent->findParentComponentOfClass<DialogWindow>();
-
-            if (dw != nullptr)
+            if (DialogWindow* dw = contentComponent->findParentComponentOfClass<DialogWindow>())
                 dw->exitModalState (1234);
             @endcode
         */
@@ -163,9 +161,7 @@ public:
         the DialogWindow that is created. To find a pointer to this window from your
         contentComponent, you can do something like this:
         @code
-        Dialogwindow* dw = contentComponent->findParentComponentOfClass<DialogWindow>();
-
-        if (dw != nullptr)
+        if (DialogWindow* dw = contentComponent->findParentComponentOfClass<DialogWindow>())
             dw->exitModalState (1234);
         @endcode
 
@@ -193,8 +189,7 @@ public:
                             Colour backgroundColour,
                             bool escapeKeyTriggersCloseButton,
                             bool shouldBeResizable = false,
-                            bool useBottomRightCornerResizer = false,
-                            bool useNativeTitleBar = false);
+                            bool useBottomRightCornerResizer = false);
 
    #if JUCE_MODAL_LOOPS_PERMITTED || DOXYGEN
     /** Easy way of quickly showing a dialog box containing a given component.
@@ -212,9 +207,7 @@ public:
         the DialogWindow that is created. To find a pointer to this window from your
         contentComponent, you can do something like this:
         @code
-        Dialogwindow* dw = contentComponent->findParentComponentOfClass<DialogWindow>();
-
-        if (dw != nullptr)
+        if (DialogWindow* dw = contentComponent->findParentComponentOfClass<DialogWindow>())
             dw->exitModalState (1234);
         @endcode
 
@@ -242,8 +235,7 @@ public:
                                 Colour backgroundColour,
                                 bool escapeKeyTriggersCloseButton,
                                 bool shouldBeResizable = false,
-                                bool useBottomRightCornerResizer = false,
-                                bool useNativeTitleBar = false);
+                                bool useBottomRightCornerResizer = false);
    #endif
 
 

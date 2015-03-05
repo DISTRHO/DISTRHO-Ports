@@ -304,21 +304,31 @@ bool File::hasWriteAccess() const
     return false;
 }
 
-bool File::setFileReadOnlyInternal (const bool shouldBeReadOnly) const
+static bool setFileModeFlags (const String& fullPath, mode_t flags, bool shouldSet) noexcept
 {
     juce_statStruct info;
     if (! juce_stat (fullPath, info))
         return false;
 
-    info.st_mode &= 0777;   // Just permissions
+    info.st_mode &= 0777;
 
-    if (shouldBeReadOnly)
-        info.st_mode &= ~(S_IWUSR | S_IWGRP | S_IWOTH);
+    if (shouldSet)
+        info.st_mode |= flags;
     else
-        // Give everybody write permission?
-        info.st_mode |= S_IWUSR | S_IWGRP | S_IWOTH;
+        info.st_mode &= ~flags;
 
     return chmod (fullPath.toUTF8(), info.st_mode) == 0;
+}
+
+bool File::setFileReadOnlyInternal (bool shouldBeReadOnly) const
+{
+    // Hmm.. should we give global write permission or just the current user?
+    return setFileModeFlags (fullPath, S_IWUSR | S_IWGRP | S_IWOTH, ! shouldBeReadOnly);
+}
+
+bool File::setFileExecutableInternal (bool shouldBeExecutable) const
+{
+    return setFileModeFlags (fullPath, S_IXUSR | S_IXGRP | S_IXOTH, shouldBeExecutable);
 }
 
 void File::getFileTimesInternal (int64& modificationTime, int64& accessTime, int64& creationTime) const
@@ -328,11 +338,12 @@ void File::getFileTimesInternal (int64& modificationTime, int64& accessTime, int
     creationTime = 0;
 
     juce_statStruct info;
+
     if (juce_stat (fullPath, info))
     {
-        modificationTime = (int64) info.st_mtime * 1000;
-        accessTime = (int64) info.st_atime * 1000;
-        creationTime = (int64) info.st_ctime * 1000;
+        modificationTime  = (int64) info.st_mtime * 1000;
+        accessTime        = (int64) info.st_atime * 1000;
+        creationTime      = (int64) info.st_ctime * 1000;
     }
 }
 
@@ -1009,18 +1020,7 @@ public:
 
         if (pipe (pipeHandles) == 0)
         {
-              Array<char*> argv;
-              for (int i = 0; i < arguments.size(); ++i)
-                  if (arguments[i].isNotEmpty())
-                      argv.add (const_cast<char*> (arguments[i].toUTF8().getAddress()));
-
-              argv.add (nullptr);
-
-#if JUCE_USE_VFORK
-            const pid_t result = vfork();
-#else
             const pid_t result = fork();
-#endif
 
             if (result < 0)
             {
@@ -1029,7 +1029,6 @@ public:
             }
             else if (result == 0)
             {
-#if ! JUCE_USE_VFORK
                 // we're the child process..
                 close (pipeHandles[0]);   // close the read handle
 
@@ -1044,7 +1043,13 @@ public:
                     close (STDERR_FILENO);
 
                 close (pipeHandles[1]);
-#endif
+
+                Array<char*> argv;
+                for (int i = 0; i < arguments.size(); ++i)
+                    if (arguments[i].isNotEmpty())
+                        argv.add (const_cast<char*> (arguments[i].toUTF8().getAddress()));
+
+                argv.add (nullptr);
 
                 execvp (argv[0], argv.getRawDataPointer());
                 exit (-1);
@@ -1114,11 +1119,6 @@ public:
         }
 
         return 0;
-    }
-
-    int getPID() const noexcept
-    {
-        return childPID;
     }
 
     int childPID;

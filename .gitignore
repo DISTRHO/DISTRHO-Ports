@@ -38,8 +38,10 @@ _old
 ports/_todo
 
 libs/juce/source/.gitignore
+libs/juce/source/ChangeList.txt
 libs/juce/source/amalgamation/
 libs/juce/source/docs/
+libs/juce/source/examples/
 libs/juce/source/extras/
 libs/juce/source/juce.h
 libs/juce/source/juce_amalgamated.cpp
@@ -47,7 +49,5 @@ libs/juce/source/juce_amalgamated.h
 libs/juce/source/juce_amalgamated.mm
 libs/juce/source/modules/juce_box2d/
 libs/juce/source/modules/juce_browser_plugin_client/
-libs/juce/source/modules/juce_cryptography/
 libs/juce/source/modules/juce_opengl/
-libs/juce/source/modules/juce_tracktion_marketplace/
 libs/juce/source/modules/juce_video/
