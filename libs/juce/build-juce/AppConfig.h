@@ -15,13 +15,14 @@
 #define JUCE_MODULE_AVAILABLE_juce_audio_processors      1
 #define JUCE_MODULE_AVAILABLE_juce_audio_utils           1
 #define JUCE_MODULE_AVAILABLE_juce_core                  1
-#define JUCE_MODULE_AVAILABLE_juce_cryptography          0
+#define JUCE_MODULE_AVAILABLE_juce_cryptography          1
 #define JUCE_MODULE_AVAILABLE_juce_data_structures       1
 #define JUCE_MODULE_AVAILABLE_juce_events                1
 #define JUCE_MODULE_AVAILABLE_juce_graphics              1
 #define JUCE_MODULE_AVAILABLE_juce_gui_basics            1
 #define JUCE_MODULE_AVAILABLE_juce_gui_extra             1
 #define JUCE_MODULE_AVAILABLE_juce_opengl                0
+#define JUCE_MODULE_AVAILABLE_juce_tracktion_marketplace 1
 #define JUCE_MODULE_AVAILABLE_juce_video                 0
 
 //=============================================================================
@@ -60,6 +61,11 @@
     Enables JACK audio devices (Linux only).
 */
 #define JUCE_JACK 0
+
+/** Config: JUCE_USE_ANDROID_OPENSLES
+    Enables OpenSLES devices (Android only).
+*/
+#define JUCE_USE_ANDROID_OPENSLES 0
 
 //=============================================================================
 /** Config: JUCE_USE_CDREADER
@@ -122,18 +128,29 @@
     Enables the VST audio plugin hosting classes. This requires the Steinberg VST SDK to be
     installed on your machine.
 
-    @see VSTPluginFormat, AudioPluginFormat, AudioPluginFormatManager, JUCE_PLUGINHOST_AU
+    @see VSTPluginFormat, AudioPluginFormat, AudioPluginFormatManager, JUCE_PLUGINHOST_AU, JUCE_PLUGINHOST_VST3
 */
 #define JUCE_PLUGINHOST_VST 0
+
+/** Config: JUCE_PLUGINHOST_VST3
+    Enables the VST3 audio plugin hosting classes. This requires the Steinberg VST3 SDK to be
+    installed on your machine.
+
+    @see VSTPluginFormat, VST3PluginFormat, AudioPluginFormat, AudioPluginFormatManager, JUCE_PLUGINHOST_VST, JUCE_PLUGINHOST_AU
+*/
+#define JUCE_PLUGINHOST_VST3 0
 
 /** Config: JUCE_PLUGINHOST_AU
     Enables the AudioUnit plugin hosting classes. This is Mac-only, of course.
 
-    @see AudioUnitPluginFormat, AudioPluginFormat, AudioPluginFormatManager, JUCE_PLUGINHOST_VST
+    @see AudioUnitPluginFormat, AudioPluginFormat, AudioPluginFormatManager, JUCE_PLUGINHOST_VST, JUCE_PLUGINHOST_VST3
 */
 #define JUCE_PLUGINHOST_AU 0
 
 #define JUCE_PLUGINHOST_LADSPA 0
+
+//=============================================================================
+// juce_audio_utils
 
 //=============================================================================
 // juce_core
@@ -192,7 +209,11 @@
 */
 #define JUCE_CATCH_UNHANDLED_EXCEPTIONS 0
 
+#define JUCE_STRING_UTF_TYPE 8
 #define JUCE_USE_VFORK 1
+
+//=============================================================================
+// juce_cryptography
 
 //=============================================================================
 // juce_data_structures
@@ -290,6 +311,12 @@
     If you're not using any embedded web-pages, turning this off may reduce your code size.
 */
 #define JUCE_WEB_BROWSER 1
+
+/** Config: JUCE_ENABLE_LIVE_CONSTANT_EDITOR
+    This lets you turn on the JUCE_ENABLE_LIVE_CONSTANT_EDITOR support. See the documentation
+    for that macro for more details.
+*/
+#define JUCE_ENABLE_LIVE_CONSTANT_EDITOR 0
 
 //=============================================================================
 // drowaudio
