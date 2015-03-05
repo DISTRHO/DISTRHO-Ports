@@ -1,6 +1,8 @@
---- a/source/modules/juce_audio_processors/format_types/juce_VST3PluginFormat.cpp
-+++ b/source/modules/juce_audio_processors/format_types/juce_VST3PluginFormat.cpp
-@@ -1403,7 +1403,8 @@ class VST3ModuleHandle  : public ReferenceCountedObject
+diff --git a/modules/juce_audio_processors/format_types/juce_VST3PluginFormat.cpp b/modules/juce_audio_processors/format_types/juce_VST3PluginFormat.cpp
+index 1bef497..cb4d884 100644
+--- a/modules/juce_audio_processors/format_types/juce_VST3PluginFormat.cpp
++++ b/modules/juce_audio_processors/format_types/juce_VST3PluginFormat.cpp
+@@ -1355,7 +1355,8 @@ private:
  
              const Result result (finder.findDescriptionsAndPerform (f));
  
