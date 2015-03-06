@@ -83,6 +83,10 @@ if [ ! -d sdks/vstsdk2.4 ]; then
   exit 0
 fi
 
+if [ -L sdks/vstsdk2.4/pluginterfaces ]; then
+  exit 0
+fi
+
 if [ -d /usr/include/pluginterfaces ]; then
   cp -r /usr/include/pluginterfaces sdks/vstsdk2.4/
 fi

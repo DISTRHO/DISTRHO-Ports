@@ -186,6 +186,7 @@ float safeParamValue (float value)
 /** Create the manifest.ttl file contents */
 const String makeManifestFile (AudioProcessor* const filter, const String& binary)
 {
+    const String& pluginURI(getPluginURI());
     String text;
 
     // Header
@@ -196,7 +197,7 @@ const String makeManifestFile (AudioProcessor* const filter, const String& binar
     text += "\n";
 
     // Plugin
-    text += "<" + getPluginURI() + ">\n";
+    text += "<" + pluginURI + ">\n";
     text += "    a lv2:Plugin ;\n";
     text += "    lv2:binary <" + binary + PLUGIN_EXT "> ;\n";
     text += "    rdfs:seeAlso <" + binary + ".ttl> .\n";
@@ -205,14 +206,14 @@ const String makeManifestFile (AudioProcessor* const filter, const String& binar
     // UIs
     if (filter->hasEditor())
     {
-        text += "<" + getPluginURI() + "#ExternalUI>\n";
+        text += "<" + pluginURI + "#ExternalUI>\n";
         text += "    a <" LV2_EXTERNAL_UI__Widget "> ;\n";
         text += "    ui:binary <" + binary + PLUGIN_EXT "> ;\n";
         text += "    lv2:requiredFeature <" LV2_INSTANCE_ACCESS_URI "> ;\n";
         text += "    lv2:extensionData <" LV2_PROGRAMS__UIInterface "> .\n";
         text += "\n";
 
-        text += "<" + getPluginURI() + "#ParentUI>\n";
+        text += "<" + pluginURI + "#ParentUI>\n";
 #if JUCE_MAC
         text += "    a ui:CocoaUI ;\n";
 #elif JUCE_LINUX
@@ -228,12 +229,14 @@ const String makeManifestFile (AudioProcessor* const filter, const String& binar
     }
 
 #if JucePlugin_WantsLV2Presets
+    const String presetSeparator(pluginURI.contains("#") ? ":" : "#");
+
     // Presets
     for (int i = 0; i < filter->getNumPrograms(); ++i)
     {
-        text += "<" + getPluginURI() + "#preset" + String::formatted("%03i", i+1) + ">\n";
+        text += "<" + pluginURI + presetSeparator + "preset" + String::formatted("%03i", i+1) + ">\n";
         text += "    a pset:Preset ;\n";
-        text += "    lv2:appliesTo <" + getPluginURI() + "> ;\n";
+        text += "    lv2:appliesTo <" + pluginURI + "> ;\n";
         text += "    rdfs:seeAlso <presets.ttl> .\n";
         text += "\n";
     }
@@ -245,6 +248,7 @@ const String makeManifestFile (AudioProcessor* const filter, const String& binar
 /** Create the -plugin-.ttl file contents */
 const String makePluginFile (AudioProcessor* const filter)
 {
+    const String& pluginURI(getPluginURI());
     String text;
 
     // Header
@@ -258,7 +262,7 @@ const String makePluginFile (AudioProcessor* const filter)
     text += "\n";
 
     // Plugin
-    text += "<" + getPluginURI() + ">\n";
+    text += "<" + pluginURI + ">\n";
     text += "    a " + getPluginType() + " ;\n";
     text += "    lv2:requiredFeature <" LV2_BUF_SIZE__boundedBlockLength "> ,\n";
 #if JucePlugin_WantsLV2FixedBlockLength
@@ -275,8 +279,8 @@ const String makePluginFile (AudioProcessor* const filter)
     // UIs
     if (filter->hasEditor())
     {
-        text += "    ui:ui <" + getPluginURI() + "#ExternalUI> ,\n";
-        text += "          <" + getPluginURI() + "#ParentUI> ;\n";
+        text += "    ui:ui <" + pluginURI + "#ExternalUI> ,\n";
+        text += "          <" + pluginURI + "#ParentUI> ;\n";
         text += "\n";
     }
 
@@ -428,6 +432,7 @@ const String makePluginFile (AudioProcessor* const filter)
 /** Create the presets.ttl file contents */
 const String makePresetsFile (AudioProcessor* const filter)
 {
+    const String& pluginURI(getPluginURI());
     String text;
 
     // Header
@@ -442,6 +447,7 @@ const String makePresetsFile (AudioProcessor* const filter)
 
     // Presets
     const int numPrograms = filter->getNumPrograms();
+    const String presetSeparator(pluginURI.contains("#") ? ":" : "#");
 
     for (int i = 0; i < numPrograms; ++i)
     {
@@ -452,7 +458,7 @@ const String makePresetsFile (AudioProcessor* const filter)
 
         // Label
         filter->setCurrentProgram(i);
-        preset += "<" + getPluginURI() + "#preset" + String::formatted("%03i", i+1) + "> a pset:Preset ;\n";
+        preset += "<" + pluginURI + presetSeparator + "preset" + String::formatted("%03i", i+1) + "> a pset:Preset ;\n";
         preset += "    rdfs:label \"" + filter->getProgramName(i) + "\" ;\n";
 
         // State
