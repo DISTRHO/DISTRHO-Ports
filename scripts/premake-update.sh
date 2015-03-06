@@ -37,7 +37,21 @@ run_premake()
 
 # ------------------------------------------------------------------------------------------------------------
 
-FILES=`find libs plugins ports -name premake.lua`
+FOLDERS="."
+
+if [ -d libs ]; then
+  FOLDERS="libs"
+fi
+
+if [ -d plugins ]; then
+  FOLDERS="$FOLDERS plugins"
+fi
+
+if [ -d ports ]; then
+  FOLDERS="$FOLDERS ports"
+fi
+
+FILES=`find $FOLDERS -name premake.lua`
 
 for i in $FILES; do
   FOLDER=`echo $i | awk sub'("/premake.lua","")'`
