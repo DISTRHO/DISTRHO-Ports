@@ -79,6 +79,10 @@ done
 
 # ------------------------------------------------------------------------------------------------------------
 
+if [ ! -d sdks/vstsdk2.4 ]; then
+  exit 0
+fi
+
 if [ -d /usr/include/pluginterfaces ]; then
   cp -r /usr/include/pluginterfaces sdks/vstsdk2.4/
 fi
@@ -91,3 +95,5 @@ fi
 if [ ! -d sdks/vstsdk2.4/pluginterfaces ] && [ $MAC != 1 ]; then
   sed -i "s/#define JUCE_PLUGINHOST_VST 1/#define JUCE_PLUGINHOST_VST 0/" libs/juce/build-juce/AppConfig.h
 fi
+
+# ------------------------------------------------------------------------------------------------------------
