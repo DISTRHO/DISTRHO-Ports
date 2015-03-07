@@ -78,6 +78,10 @@ DexedAudioProcessor::DexedAudioProcessor() {
     midiMsg = NULL;
 
     clipboardContent = -1;
+
+    // make sure parameters are initialized
+    for (int i=getNumParameters(); --i >= 0;)
+        setParameter(i, 0.0f);
 }
 
 DexedAudioProcessor::~DexedAudioProcessor() {
