@@ -329,12 +329,16 @@ struct AAXClasses
         {
             if (component != nullptr && component->pluginEditor != nullptr)
             {
-                AudioProcessorEditor::ParameterControlHighlightInfo info;
-                info.parameterIndex  = getParamIndexFromID (paramID);
-                info.isHighlighted   = isHighlighted;
-                info.suggestedColour = getColourFromHighlightEnum (colour);
+                if (! isBypassParam (paramID))
+                {
+                    AudioProcessorEditor::ParameterControlHighlightInfo info;
+                    info.parameterIndex  = getParamIndexFromID (paramID);
+                    info.isHighlighted   = isHighlighted;
+                    info.suggestedColour = getColourFromHighlightEnum (colour);
 
-                component->pluginEditor->setControlHighlight (info);
+                    component->pluginEditor->setControlHighlight (info);
+                }
+
                 return AAX_SUCCESS;
             }
 
@@ -463,13 +467,28 @@ struct AAXClasses
             return AAX_SUCCESS;
         }
 
+        juce::MemoryBlock& getTemporaryChunkMemory() const
+        {
+            ScopedLock sl (perThreadDataLock);
+            const Thread::ThreadID currentThread = Thread::getCurrentThreadId();
+
+            if (ChunkMemoryBlock::Ptr m = perThreadFilterData [currentThread])
+                return m->data;
+
+            ChunkMemoryBlock::Ptr m (new ChunkMemoryBlock());
+            perThreadFilterData.set (currentThread, m);
+            return m->data;
+        }
+
         AAX_Result GetChunkSize (AAX_CTypeID chunkID, uint32_t* oSize) const override
         {
             if (chunkID != juceChunkType)
                 return AAX_CEffectParameters::GetChunkSize (chunkID, oSize);
 
+            juce::MemoryBlock& tempFilterData = getTemporaryChunkMemory();
             tempFilterData.reset();
             pluginInstance->getStateInformation (tempFilterData);
+
             *oSize = (uint32_t) tempFilterData.getSize();
             return AAX_SUCCESS;
         }
@@ -479,8 +498,10 @@ struct AAXClasses
             if (chunkID != juceChunkType)
                 return AAX_CEffectParameters::GetChunk (chunkID, oChunk);
 
+            juce::MemoryBlock& tempFilterData = getTemporaryChunkMemory();
+
             if (tempFilterData.getSize() == 0)
-                pluginInstance->getStateInformation (tempFilterData);
+                return 20700 /*AAX_ERROR_PLUGIN_API_INVALID_THREAD*/;
 
             oChunk->fSize = (int32_t) tempFilterData.getSize();
             tempFilterData.copyTo (oChunk->fData, 0, tempFilterData.getSize());
@@ -554,13 +575,41 @@ struct AAXClasses
             return result;
         }
 
+        AAX_Result GetParameterValueFromString (AAX_CParamID paramID, double* result, const AAX_IString& text) const override
+        {
+            if (isBypassParam (paramID))
+            {
+                *result = (text.Get()[0] == 'B') ? 1 : 0;
+                return AAX_SUCCESS;
+            }
+
+            if (AudioProcessorParameter* param = pluginInstance->getParameters() [getParamIndexFromID (paramID)])
+            {
+                *result = param->getValueForText (text.Get());
+                return AAX_SUCCESS;
+            }
+
+            return AAX_CEffectParameters::GetParameterValueFromString (paramID, result, text);
+        }
+
         AAX_Result GetParameterStringFromValue (AAX_CParamID paramID, double value, AAX_IString* result, int32_t maxLen) const override
         {
             if (isBypassParam (paramID))
-                result->Set (value == 0 ? "Off"
-                                        : (maxLen >= 8 ? "Bypassed" : "Byp"));
+            {
+                result->Set (value == 0 ? "Off" : (maxLen >= 8 ? "Bypassed" : "Byp"));
+            }
             else
-                result->Set (pluginInstance->getParameterText (getParamIndexFromID (paramID), maxLen).toRawUTF8());
+            {
+                const int paramIndex = getParamIndexFromID (paramID);
+                juce::String text;
+
+                if (AudioProcessorParameter* param = pluginInstance->getParameters() [paramIndex])
+                    text = param->getText ((float) value, maxLen);
+                else
+                    text = pluginInstance->getParameterText (paramIndex, maxLen);
+
+                result->Set (text.toRawUTF8());
+            }
 
             return AAX_SUCCESS;
         }
@@ -924,9 +973,21 @@ struct AAXClasses
         AAX_CSampleRate sampleRate;
         int lastBufferSize;
 
-        // tempFilterData is initialized in GetChunkSize.
-        // To avoid generating it again in GetChunk, we keep it as a member.
-        mutable juce::MemoryBlock tempFilterData;
+        struct ChunkMemoryBlock  : public ReferenceCountedObject
+        {
+            juce::MemoryBlock data;
+
+            typedef ReferenceCountedObjectPtr<ChunkMemoryBlock> Ptr;
+        };
+
+        // temporary filter data is generated in GetChunkSize
+        // and the size of the data returned. To avoid generating
+        // it again in GetChunk, we need to store it somewhere.
+        // However, as GetChunkSize and GetChunk can be called
+        // on different threads, we store it in thread dependant storage
+        // in a hash map with the thread id as a key.
+        mutable HashMap<Thread::ThreadID, ChunkMemoryBlock::Ptr> perThreadFilterData;
+        CriticalSection perThreadDataLock;
 
         JUCE_DECLARE_NON_COPYABLE (JuceAAX_Processor)
     };
