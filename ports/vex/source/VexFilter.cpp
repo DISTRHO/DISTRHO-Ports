@@ -454,7 +454,7 @@ void VexFilter::processBlock(AudioSampleBuffer& output, MidiBuffer& midiInBuffer
 
 void VexFilter::setStateInformation (const void* data_, int dataSize)
 {
-#ifdef JucePlugin_Build_LV2
+#if JucePlugin_Build_LV2
     static const int kParamDataSize = 0;
 #else
     static const int kParamDataSize = sizeof(float)*kParamCount;
@@ -473,14 +473,14 @@ void VexFilter::setStateInformation (const void* data_, int dataSize)
             fSynth.setWaveLater(2, xmlState->getStringAttribute("Wave2"));
             fSynth.setWaveLater(3, xmlState->getStringAttribute("Wave3"));
 
-#ifndef JucePlugin_Build_LV2
+#if ! JucePlugin_Build_LV2
             std::memcpy(fParameters, data, sizeof(float) * kParamCount);
 #endif
             std::memcpy(&fArpSet1,   data + (kParamDataSize + sizeof(VexArpSettings)*0), sizeof(VexArpSettings));
             std::memcpy(&fArpSet2,   data + (kParamDataSize + sizeof(VexArpSettings)*1), sizeof(VexArpSettings));
             std::memcpy(&fArpSet3,   data + (kParamDataSize + sizeof(VexArpSettings)*2), sizeof(VexArpSettings));
 
-#ifndef JucePlugin_Build_LV2
+#if ! JucePlugin_Build_LV2
             for (unsigned int i = 0; i < kParamCount; ++i)
                fSynth.update(i);
 #endif
@@ -497,7 +497,7 @@ void VexFilter::setStateInformation (const void* data_, int dataSize)
 
 void VexFilter::getStateInformation (MemoryBlock& destData)
 {
-#ifndef JucePlugin_Build_LV2
+#if ! JucePlugin_Build_LV2
     destData.append(fParameters, sizeof(float) * kParamCount);
 #endif
     destData.append(&fArpSet1, sizeof(VexArpSettings));
