@@ -252,13 +252,13 @@ const String makePluginFile (AudioProcessor* const filter)
     String text;
 
     // Header
-    text += "@prefix atom: <" LV2_ATOM_PREFIX "> .\n";
-    text += "@prefix doap: <http://usefulinc.com/ns/doap#> .\n";
-    text += "@prefix foaf: <http://xmlns.com/foaf/0.1/> .\n";
-    text += "@prefix lv2:  <" LV2_CORE_PREFIX "> .\n";
-    text += "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n";
-    text += "@prefix ui:   <" LV2_UI_PREFIX "> .\n";
-    text += "@prefix unit: <" LV2_UNITS_PREFIX "> .\n";
+    text += "@prefix atom:  <" LV2_ATOM_PREFIX "> .\n";
+    text += "@prefix doap:  <http://usefulinc.com/ns/doap#> .\n";
+    text += "@prefix foaf:  <http://xmlns.com/foaf/0.1/> .\n";
+    text += "@prefix lv2:   <" LV2_CORE_PREFIX "> .\n";
+    text += "@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .\n";
+    text += "@prefix ui:    <" LV2_UI_PREFIX "> .\n";
+    text += "@prefix units: <" LV2_UNITS_PREFIX "> .\n";
     text += "\n";
 
     // Plugin
