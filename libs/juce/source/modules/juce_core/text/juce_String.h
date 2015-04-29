@@ -299,13 +299,13 @@ public:
         Note that there's also an isNotEmpty() method to help write readable code.
         @see containsNonWhitespaceChars()
     */
-    inline bool isEmpty() const noexcept                    { return text.isEmpty(); }
+    inline bool isEmpty() const noexcept                    { return text[0] == 0; }
 
     /** Returns true if the string contains at least one character.
         Note that there's also an isEmpty() method to help write readable code.
         @see containsNonWhitespaceChars()
     */
-    inline bool isNotEmpty() const noexcept                 { return ! text.isEmpty(); }
+    inline bool isNotEmpty() const noexcept                 { return text[0] != 0; }
 
     /** Resets this string to be empty. */
     void clear() noexcept;

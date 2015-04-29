@@ -253,8 +253,6 @@ public:
     /** @internal */
     void componentMovedOrResized (Component&, bool wasMoved, bool wasResized) override;
     /** @internal */
-    void lookAndFeelChanged() override;
-    /** @internal */
     bool useMouseWheelMoveIfNeeded (const MouseEvent&, const MouseWheelDetails&);
     /** @internal */
     static bool respondsToKey (const KeyPress&);
@@ -263,7 +261,6 @@ private:
     //==============================================================================
     WeakReference<Component> contentComp;
     Rectangle<int> lastVisibleArea;
-    bool customScrollBarThickness;
     int scrollBarThickness;
     int singleStepX, singleStepY;
     bool showHScrollbar, showVScrollbar, deleteContent;

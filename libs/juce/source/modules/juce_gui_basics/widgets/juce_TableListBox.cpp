@@ -146,21 +146,16 @@ public:
     {
         if (isEnabled() && owner.getModel() != nullptr && ! (e.mouseWasClicked() || isDragging))
         {
-            SparseSet<int> rowsToDrag;
+            const SparseSet<int> selectedRows (owner.getSelectedRows());
 
-            if (owner.selectOnMouseDown || owner.isRowSelected (row))
-                rowsToDrag = owner.getSelectedRows();
-            else
-                rowsToDrag.addRange (Range<int>::withStartAndLength (row, 1));
-
-            if (rowsToDrag.size() > 0)
+            if (selectedRows.size() > 0)
             {
-                const var dragDescription (owner.getModel()->getDragSourceDescription (rowsToDrag));
+                const var dragDescription (owner.getModel()->getDragSourceDescription (selectedRows));
 
                 if (! (dragDescription.isVoid() || (dragDescription.isString() && dragDescription.toString().isEmpty())))
                 {
                     isDragging = true;
-                    owner.startDragAndDrop (e, rowsToDrag, dragDescription, true);
+                    owner.startDragAndDrop (e, dragDescription, true);
                 }
             }
         }

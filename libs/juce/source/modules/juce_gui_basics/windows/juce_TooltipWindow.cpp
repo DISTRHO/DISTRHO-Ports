@@ -60,9 +60,16 @@ void TooltipWindow::mouseEnter (const MouseEvent&)
     hideTip();
 }
 
-void TooltipWindow::updatePosition (const String& tip, Point<int> pos, Rectangle<int> parentArea)
+void TooltipWindow::updatePosition (const String& tip, Point<int> pos, const Rectangle<int>& parentArea)
 {
-    setBounds (getLookAndFeel().getTooltipBounds (tip, pos, parentArea));
+    int w, h;
+    getLookAndFeel().getTooltipSize (tip, w, h);
+
+    setBounds (Rectangle<int> (pos.x > parentArea.getCentreX() ? pos.x - (w + 12) : pos.x + 24,
+                               pos.y > parentArea.getCentreY() ? pos.y - (h + 6)  : pos.y + 6,
+                               w, h)
+                .constrainedWithin (parentArea));
+
     setVisible (true);
 }
 
@@ -105,7 +112,7 @@ String TooltipWindow::getTipFor (Component* const c)
          && Process::isForegroundProcess()
          && ! ModifierKeys::getCurrentModifiers().isAnyMouseButtonDown())
     {
-        if (TooltipClient* const ttc = dynamic_cast<TooltipClient*> (c))
+        if (TooltipClient* const ttc = dynamic_cast <TooltipClient*> (c))
             if (! c->isCurrentlyBlockedByAnotherModalComponent())
                 return ttc->getTooltip();
     }

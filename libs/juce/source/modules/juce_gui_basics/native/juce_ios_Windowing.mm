@@ -43,51 +43,44 @@ extern bool isIOSAppActive;
 
 - (void) applicationDidFinishLaunching: (UIApplication*) application
 {
-    ignoreUnused (application);
+    (void) application;
     initialiseJuce_GUI();
 
-    if (JUCEApplicationBase* app = JUCEApplicationBase::createInstance())
-    {
-        if (! app->initialiseApp())
-            exit (app->shutdownApp());
-    }
-    else
-    {
-        jassertfalse; // you must supply an application object for an iOS app!
-    }
+    JUCEApplicationBase* app = JUCEApplicationBase::createInstance();
+
+    if (! app->initialiseApp())
+        exit (0);
 }
 
 - (void) applicationWillTerminate: (UIApplication*) application
 {
-    ignoreUnused (application);
+    (void) application;
     JUCEApplicationBase::appWillTerminateByForce();
 }
 
 - (void) applicationDidEnterBackground: (UIApplication*) application
 {
-    ignoreUnused (application);
-
+    (void) application;
     if (JUCEApplicationBase* const app = JUCEApplicationBase::getInstance())
         app->suspended();
 }
 
 - (void) applicationWillEnterForeground: (UIApplication*) application
 {
-    ignoreUnused (application);
-
+    (void) application;
     if (JUCEApplicationBase* const app = JUCEApplicationBase::getInstance())
         app->resumed();
 }
 
 - (void) applicationDidBecomeActive: (UIApplication*) application
 {
-    ignoreUnused (application);
+    (void) application;
     isIOSAppActive = true;
 }
 
 - (void) applicationWillResignActive: (UIApplication*) application
 {
-    ignoreUnused (application);
+    (void) application;
     isIOSAppActive = false;
 }
 
@@ -214,7 +207,7 @@ void JUCE_CALLTYPE NativeMessageBox::showMessageBox (AlertWindow::AlertIconType 
     JUCE_AUTORELEASEPOOL
     {
         iOSMessageBox mb (title, message, @"OK", nil, nil, nullptr, false);
-        ignoreUnused (mb.getResult());
+        (void) mb.getResult();
     }
 }
 #endif

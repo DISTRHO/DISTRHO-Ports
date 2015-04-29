@@ -333,7 +333,7 @@ private:
                 if (countdown <= 0)
                     currentValue = target;
                 else
-                    step = (target - currentValue) / (float) countdown;
+                    step = (target - currentValue) / countdown;
             }
         }
 

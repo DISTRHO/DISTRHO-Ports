@@ -1493,17 +1493,12 @@ int LookAndFeel_V2::getSliderPopupPlacement (Slider&)
 }
 
 //==============================================================================
-Rectangle<int> LookAndFeel_V2::getTooltipBounds (const String& tipText, Point<int> screenPos, Rectangle<int> parentArea)
+void LookAndFeel_V2::getTooltipSize (const String& tipText, int& width, int& height)
 {
     const TextLayout tl (LookAndFeelHelpers::layoutTooltipText (tipText, Colours::black));
 
-    const int w = (int) (tl.getWidth() + 14.0f);
-    const int h = (int) (tl.getHeight() + 6.0f);
-
-    return Rectangle<int> (screenPos.x > parentArea.getCentreX() ? screenPos.x - (w + 12) : screenPos.x + 24,
-                           screenPos.y > parentArea.getCentreY() ? screenPos.y - (h + 6)  : screenPos.y + 6,
-                           w, h)
-             .constrainedWithin (parentArea);
+    width  = (int) (tl.getWidth() + 14.0f);
+    height = (int) (tl.getHeight() + 6.0f);
 }
 
 void LookAndFeel_V2::drawTooltip (Graphics& g, const String& text, int width, int height)

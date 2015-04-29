@@ -55,10 +55,6 @@ public:
     /** Changes the text in the panel's options button. */
     void setOptionsButtonText (const String& newText);
 
-    /** Changes the text in the progress dialog box that is shown when scanning. */
-    void setScanDialogText (const String& textForProgressWindowTitle,
-                            const String& textForProgressWindowDescription);
-
     /** Sets how many threads to simultaneously scan for plugins.
         If this is 0, then all scanning happens on the message thread (this is the default)
     */
@@ -95,7 +91,6 @@ private:
     TableListBox table;
     TextButton optionsButton;
     PropertiesFile* propertiesToUse;
-    String dialogTitle, dialogText;
     int numThreads;
 
     class TableModel;

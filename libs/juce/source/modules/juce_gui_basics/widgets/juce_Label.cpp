@@ -162,8 +162,7 @@ void Label::componentMovedOrResized (Component& component, bool /*wasMoved*/, bo
 
     if (leftOfOwnerComp)
     {
-        setSize (jmin (roundToInt (f.getStringWidthFloat (textValue.toString()) + 0.5f) + getBorderSize().getLeftAndRight(),
-                       component.getX()),
+        setSize (jmin (f.getStringWidth (textValue.toString()) + 8, component.getX()),
                  component.getHeight());
 
         setTopRightPosition (component.getX(), component.getY());
@@ -171,7 +170,7 @@ void Label::componentMovedOrResized (Component& component, bool /*wasMoved*/, bo
     else
     {
         setSize (component.getWidth(),
-                 getBorderSize().getTopAndBottom() + 6 + roundToInt (f.getHeight() + 0.5f));
+                 8 + roundToInt (f.getHeight()));
 
         setTopLeftPosition (component.getX(), component.getY() - getHeight());
     }
@@ -198,13 +197,10 @@ void Label::editorShown (TextEditor* textEditor)
     listeners.callChecked (checker, &LabelListener::editorShown, this, *textEditor);
 }
 
-void Label::editorAboutToBeHidden (TextEditor* textEditor)
+void Label::editorAboutToBeHidden (TextEditor*)
 {
     if (ComponentPeer* const peer = getPeer())
         peer->dismissPendingTextInput();
-
-    Component::BailOutChecker checker (this);
-    listeners.callChecked (checker, &LabelListener::editorHidden, this, *textEditor);
 }
 
 void Label::showEditor()

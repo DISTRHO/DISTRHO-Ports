@@ -86,18 +86,9 @@ void* attachComponentToWindowRef (Component* comp, void* parentWindowOrView, boo
         if (! isNSView)
         {
             NSWindow* hostWindow = [[NSWindow alloc] initWithWindowRef: parentWindowOrView];
-
-            if (getHostType().isCubase7orLater())
-            {
-                [hostWindow setReleasedWhenClosed: NO];
-            }
-            else
-            {
-                [hostWindow retain];
-                [hostWindow setReleasedWhenClosed: YES];
-            }
-
+            [hostWindow retain];
             [hostWindow setCanHide: YES];
+            [hostWindow setReleasedWhenClosed: YES];
 
             HIViewRef parentView = 0;
 
@@ -211,12 +202,8 @@ void detachComponentFromWindowRef (Component* comp, void* window, bool isNSView)
             comp->removeFromDesktop();
             [pluginView release];
 
-            if (getHostType().isCubase7orLater())
-                [hostWindow close];
-            else
-                [hostWindow release];
+            [hostWindow release];
 
-           #if JUCE_MODAL_LOOPS_PERMITTED
             static bool needToRunMessageLoop = ! getHostType().isReaper();
 
             // The event loop needs to be run between closing the window and deleting the plugin,
@@ -227,7 +214,6 @@ void detachComponentFromWindowRef (Component* comp, void* window, bool isNSView)
             if (needToRunMessageLoop)
                 for (int i = 20; --i >= 0;)
                     MessageManager::getInstance()->runDispatchLoopUntil (1);
-           #endif
 
             return;
         }

@@ -499,20 +499,21 @@ public:
 
     /** Adds a "pie-chart" shape to the path.
 
-        The shape is added as a new sub-path. (Any currently open paths will be left open).
+        The shape is added as a new sub-path. (Any currently open paths will be
+        left open).
 
         Note that when specifying the start and end angles, the curve will be drawn either clockwise
         or anti-clockwise according to whether the end angle is greater than the start. This means
         that sometimes you may need to use values greater than 2*Pi for the end angle.
 
-        @param segmentBounds the outer rectangle in which the elliptical outline fits
-        @param fromRadians   the angle (clockwise) in radians at which to start the arc segment (where 0 is the
-                             top-centre of the ellipse)
-        @param toRadians     the angle (clockwise) in radians at which to end the arc segment (where 0 is the
-                             top-centre of the ellipse)
+        @param area         the outer rectangle in which the elliptical outline fits
+        @param fromRadians  the angle (clockwise) in radians at which to start the arc segment (where 0 is the
+                            top-centre of the ellipse)
+        @param toRadians    the angle (clockwise) in radians at which to end the arc segment (where 0 is the
+                            top-centre of the ellipse)
         @param innerCircleProportionalSize  if this is > 0, then the pie will be drawn as a curved band around a hollow
-                             ellipse at its centre, where this value indicates the inner ellipse's size with
-                             respect to the outer one.
+                            ellipse at its centre, where this value indicates the inner ellipse's size with
+                            respect to the outer one.
         @see addArc
     */
     void addPieSegment (Rectangle<float> segmentBounds,
@@ -717,8 +718,8 @@ public:
     {
     public:
         //==============================================================================
-        Iterator (const Path& path) noexcept;
-        ~Iterator() noexcept;
+        Iterator (const Path& path);
+        ~Iterator();
 
         //==============================================================================
         /** Moves onto the next element in the path.
@@ -727,7 +728,7 @@ public:
             the elementType variable will be set to the type of the current element,
             and some of the x and y variables will be filled in with values.
         */
-        bool next() noexcept;
+        bool next();
 
         //==============================================================================
         enum PathElementType

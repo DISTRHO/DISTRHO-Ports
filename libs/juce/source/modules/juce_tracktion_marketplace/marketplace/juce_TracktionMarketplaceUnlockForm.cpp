@@ -82,15 +82,15 @@ struct TracktionMarketplaceUnlockForm::OverlayComp  : public Component,
 
         if (result.errorMessage.isNotEmpty())
         {
-            AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
-                                              TRANS("Registration Failed"),
-                                              result.errorMessage);
+            AlertWindow::showMessageBox (AlertWindow::WarningIcon,
+                                         TRANS("Registration Failed"),
+                                         result.errorMessage);
         }
         else if (result.informativeMessage.isNotEmpty())
         {
-            AlertWindow::showMessageBoxAsync (AlertWindow::InfoIcon,
-                                              TRANS("Registration Complete!"),
-                                              result.informativeMessage);
+            AlertWindow::showMessageBox (AlertWindow::InfoIcon,
+                                         TRANS("Registration Complete!"),
+                                         result.informativeMessage);
         }
         else if (result.urlToLaunch.isNotEmpty())
         {
@@ -98,14 +98,10 @@ struct TracktionMarketplaceUnlockForm::OverlayComp  : public Component,
             url.launchInDefaultBrowser();
         }
 
-        // (local copies because we're about to delete this)
-        const bool worked = result.succeeded;
-        TracktionMarketplaceUnlockForm& f = form;
-
-        delete this;
-
-        if (worked)
-            f.dismiss();
+        if (result.succeeded)
+            form.cancel();
+        else
+            delete this;
     }
 
     TracktionMarketplaceUnlockForm& form;
@@ -124,13 +120,12 @@ static juce_wchar getDefaultPasswordChar() noexcept
 }
 
 TracktionMarketplaceUnlockForm::TracktionMarketplaceUnlockForm (TracktionMarketplaceStatus& s,
-                                                                const String& userInstructions,
-                                                                bool hasCancelButton)
-    : message (String(), userInstructions),
+                                                                const String& userInstructions)
+    : status (s),
+      message (String(), userInstructions),
       passwordBox (String(), getDefaultPasswordChar()),
       registerButton (TRANS("Register")),
-      cancelButton (TRANS ("Cancel")),
-      status (s)
+      cancelButton (TRANS ("Cancel"))
 {
     // Please supply a message to tell your users what to do!
     jassert (userInstructions.isNotEmpty());
@@ -144,14 +139,7 @@ TracktionMarketplaceUnlockForm::TracktionMarketplaceUnlockForm (TracktionMarketp
     addAndMakeVisible (emailBox);
     addAndMakeVisible (passwordBox);
     addAndMakeVisible (registerButton);
-
-    if (hasCancelButton)
-        addAndMakeVisible (cancelButton);
-
-    emailBox.setEscapeAndReturnKeysConsumed (false);
-    passwordBox.setEscapeAndReturnKeysConsumed (false);
-
-    registerButton.addShortcut (KeyPress (KeyPress::returnKey));
+    addAndMakeVisible (cancelButton);
 
     registerButton.addListener (this);
     cancelButton.addListener (this);
@@ -186,31 +174,21 @@ void TracktionMarketplaceUnlockForm::resized()
     Rectangle<int> buttonArea (r.removeFromBottom (buttonHeight));
     registerButton.changeWidthToFitText (buttonHeight);
     cancelButton.changeWidthToFitText (buttonHeight);
-
     const int gap = 20;
-    buttonArea = buttonArea.withSizeKeepingCentre (registerButton.getWidth()
-                                                     + (cancelButton.isVisible() ? gap + cancelButton.getWidth() : 0),
-                                                   buttonHeight);
+    buttonArea = buttonArea.withSizeKeepingCentre (registerButton.getWidth() + gap + cancelButton.getWidth(), buttonHeight);
     registerButton.setBounds (buttonArea.removeFromLeft (registerButton.getWidth()));
     buttonArea.removeFromLeft (gap);
     cancelButton.setBounds (buttonArea);
 
     r.removeFromBottom (20);
 
-    // (force use of a default system font to make sure it has the password blob character)
-    Font font (Font::getDefaultTypefaceForFont (Font (Font::getDefaultSansSerifFontName(),
-                                                      Font::getDefaultStyle(),
-                                                      5.0f)));
-
     const int boxHeight = 24;
     passwordBox.setBounds (r.removeFromBottom (boxHeight));
     passwordBox.setInputRestrictions (64);
-    passwordBox.setFont (font);
 
     r.removeFromBottom (30);
     emailBox.setBounds (r.removeFromBottom (boxHeight));
-    emailBox.setInputRestrictions (512);
-    emailBox.setFont (font);
+    passwordBox.setInputRestrictions (256);
 
     r.removeFromBottom (30);
 
@@ -247,7 +225,7 @@ void TracktionMarketplaceUnlockForm::buttonClicked (Button* b)
     if (b == &registerButton)
         attemptRegistration();
     else if (b == &cancelButton)
-        dismiss();
+        cancel();
 }
 
 void TracktionMarketplaceUnlockForm::attemptRegistration()
@@ -274,7 +252,7 @@ void TracktionMarketplaceUnlockForm::attemptRegistration()
     }
 }
 
-void TracktionMarketplaceUnlockForm::dismiss()
+void TracktionMarketplaceUnlockForm::cancel()
 {
     delete this;
 }

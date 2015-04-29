@@ -119,28 +119,24 @@ public:
     */
     ~ReferenceCountedArray()
     {
-        releaseAllObjects();
+        clear();
     }
 
     //==============================================================================
     /** Removes all objects from the array.
-        Any objects in the array that whose reference counts drop to zero will be deleted.
+
+        Any objects in the array that are not referenced from elsewhere will be deleted.
     */
     void clear()
     {
         const ScopedLockType lock (getLock());
-        releaseAllObjects();
-        data.setAllocatedSize (0);
-    }
 
-    /** Removes all objects from the array without freeing the array's allocated storage.
-        Any objects in the array that whose reference counts drop to zero will be deleted.
-        @see clear
-    */
-    void clearQuick()
-    {
-        const ScopedLockType lock (getLock());
-        releaseAllObjects();
+        while (numUsed > 0)
+            if (ObjectClass* o = data.elements [--numUsed])
+                releaseObject (o);
+
+        jassert (numUsed == 0);
+        data.setAllocatedSize (0);
     }
 
     /** Returns the current number of objects in the array. */
@@ -889,15 +885,6 @@ private:
     //==============================================================================
     ArrayAllocationBase <ObjectClass*, TypeOfCriticalSectionToUse> data;
     int numUsed;
-
-    void releaseAllObjects()
-    {
-        while (numUsed > 0)
-            if (ObjectClass* o = data.elements [--numUsed])
-                releaseObject (o);
-
-        jassert (numUsed == 0);
-    }
 
     static void releaseObject (ObjectClass* o)
     {

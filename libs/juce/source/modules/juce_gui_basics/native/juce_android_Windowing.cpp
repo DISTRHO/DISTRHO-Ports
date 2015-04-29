@@ -41,15 +41,9 @@ JUCE_JNI_CALLBACK (JUCE_ANDROID_ACTIVITY_CLASSNAME, launchApp, void, (JNIEnv* en
 
     initialiseJuce_GUI();
 
-    if (JUCEApplicationBase* app = JUCEApplicationBase::createInstance())
-    {
-        if (! app->initialiseApp())
-            exit (app->shutdownApp());
-    }
-    else
-    {
-        jassertfalse; // you must supply an application object for an android app!
-    }
+    JUCEApplicationBase* app = JUCEApplicationBase::createInstance();
+    if (! app->initialiseApp())
+        exit (app->getApplicationReturnValue());
 
     jassert (MessageManager::getInstance()->isThisTheMessageThread());
 }

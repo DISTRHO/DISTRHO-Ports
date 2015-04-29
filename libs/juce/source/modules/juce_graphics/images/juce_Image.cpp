@@ -39,11 +39,6 @@ void ImagePixelData::sendDataChangeMessage()
     listeners.call (&Listener::imageDataChanged, this);
 }
 
-int ImagePixelData::getSharedCount() const noexcept
-{
-    return getReferenceCount();
-}
-
 //==============================================================================
 ImageType::ImageType() {}
 ImageType::~ImageType() {}
@@ -184,11 +179,7 @@ public:
 
     ImageType* createType() const override    { return image->createType(); }
 
-    /* as we always hold a reference to image, don't double count */
-    int getSharedCount() const noexcept { return getReferenceCount() + image->getSharedCount() - 1; }
-
 private:
-    friend class Image;
     const ImagePixelData::Ptr image;
     const Rectangle<int> area;
 
@@ -255,7 +246,7 @@ Image::~Image()
 
 const Image Image::null;
 
-int Image::getReferenceCount() const noexcept           { return image == nullptr ? 0 : image->getSharedCount(); }
+int Image::getReferenceCount() const noexcept           { return image == nullptr ? 0 : image->getReferenceCount(); }
 int Image::getWidth() const noexcept                    { return image == nullptr ? 0 : image->width; }
 int Image::getHeight() const noexcept                   { return image == nullptr ? 0 : image->height; }
 Rectangle<int> Image::getBounds() const noexcept        { return image == nullptr ? Rectangle<int>() : Rectangle<int> (image->width, image->height); }
@@ -272,7 +263,7 @@ LowLevelGraphicsContext* Image::createLowLevelContext() const
 
 void Image::duplicateIfShared()
 {
-    if (getReferenceCount() > 1)
+    if (image != nullptr && image->getReferenceCount() > 1)
         image = image->clone();
 }
 

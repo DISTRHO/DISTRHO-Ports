@@ -307,9 +307,9 @@ public:
                                        faceWrapper->face->style_name);
     }
 
-    void initialiseCharacteristics (const String& fontName, const String& fontStyle)
+    void initialiseCharacteristics (const String& name, const String& style)
     {
-        setCharacteristics (fontName, fontStyle,
+        setCharacteristics (name, style,
                             faceWrapper->face->ascender / (float) (faceWrapper->face->ascender - faceWrapper->face->descender),
                             L' ');
     }

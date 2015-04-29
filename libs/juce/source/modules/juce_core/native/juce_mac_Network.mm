@@ -128,8 +128,7 @@ public:
           hasFailed (false),
           hasFinished (false),
           numRedirectsToFollow (maxRedirects),
-          numRedirects (0),
-          latestTotalBytes (0)
+          numRedirects (0)
     {
         static DelegateClass cls;
         delegate = [cls.createInstance() init];
@@ -153,7 +152,7 @@ public:
         while (isThreadRunning() && ! initialised)
         {
             if (callback != nullptr)
-                callback (context, latestTotalBytes, (int) [[request HTTPBody] length]);
+                callback (context, -1, (int) [[request HTTPBody] length]);
 
             Thread::sleep (1);
         }
@@ -246,9 +245,8 @@ public:
         initialised = true;
     }
 
-    void didSendBodyData (NSInteger totalBytesWritten, NSInteger /*totalBytesExpected*/)
+    void didSendBodyData (NSInteger /*totalBytesWritten*/, NSInteger /*totalBytesExpected*/)
     {
-        latestTotalBytes = static_cast<int> (totalBytesWritten);
     }
 
     void finishedLoading()
@@ -282,7 +280,6 @@ public:
     bool initialised, hasFailed, hasFinished;
     const int numRedirectsToFollow;
     int numRedirects;
-    int latestTotalBytes;
 
 private:
     //==============================================================================

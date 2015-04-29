@@ -554,11 +554,6 @@ double AudioDeviceManager::chooseBestSampleRate (double rate) const
     if (rate > 0 && rates.contains (rate))
         return rate;
 
-    rate = currentAudioDevice->getCurrentSampleRate();
-
-    if (rate > 0 && rates.contains (rate))
-        return rate;
-
     double lowestAbove44 = 0.0;
 
     for (int i = rates.size(); --i >= 0;)
