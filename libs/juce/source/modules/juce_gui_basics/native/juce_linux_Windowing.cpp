@@ -3203,7 +3203,8 @@ double Desktop::getDefaultMasterScale()
     // variable. This can be changed in the Monitor system settings panel.
     ChildProcess dconf;
 
-    if (dconf.start ("dconf read /com/ubuntu/user-interface/scale-factor", ChildProcess::wantStdOut))
+    if (File ("/usr/bin/dconf").existsAsFile() &&
+        dconf.start ("/usr/bin/dconf read /com/ubuntu/user-interface/scale-factor", ChildProcess::wantStdOut))
     {
         if (dconf.waitForProcessToFinish (200))
         {
