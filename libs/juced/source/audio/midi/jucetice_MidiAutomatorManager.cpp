@@ -110,8 +110,10 @@ void MidiAutomatable::handleMidiPopupMenu (const MouseEvent& e)
 
     for (int i = 0; i < 128; i++)
     {
+         String name (MidiMessage::getControllerName (i));
+
          ccSubMenu.addItem (i + 1000,
-                            "CC# " + String(i) + " " + MidiMessage::getControllerName (i),
+                            "CC# " + String(i) + " " + name,
                             true,
                             controllerNumber == i);
     }
