@@ -1,5 +1,6 @@
 #include "BandLimit.h"
 #include <emmintrin.h>
+#include <mmintrin.h>
 
 CAllPassFilterPair::CAllPassFilterPair(double coeff_A, double coeff_B)
 : a(coeff_A), b(coeff_B), md(5), mf(5)
