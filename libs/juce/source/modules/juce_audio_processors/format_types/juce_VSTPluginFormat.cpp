@@ -2086,6 +2086,19 @@ public:
                 plugin.dispatch (effEditIdle, 0, 0, 0, 0);
                 reentrant = false;
             }
+
+           #if JUCE_LINUX
+            if (pluginWindow == 0)
+            {
+                if ((pluginWindow = getChildWindow ((Window) getWindowHandle())))
+                {
+                    pluginProc = (EventProcPtr) getPropertyFromXWindow (pluginWindow,
+                                                                        XInternAtom (display, "_XEventProc", False));
+
+                    componentMovedOrResized (true, true);
+                }
+            }
+           #endif
         }
     }
 
