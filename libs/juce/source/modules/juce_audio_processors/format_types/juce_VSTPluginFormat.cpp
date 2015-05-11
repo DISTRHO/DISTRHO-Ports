@@ -2090,13 +2090,10 @@ public:
            #if JUCE_LINUX
             if (pluginWindow == 0)
             {
-                if ((pluginWindow = getChildWindow ((Window) getWindowHandle())))
-                {
-                    pluginProc = (EventProcPtr) getPropertyFromXWindow (pluginWindow,
-                                                                        XInternAtom (display, "_XEventProc", False));
+                updatePluginWindowHandle();
 
+                if (pluginWindow != 0)
                     componentMovedOrResized (true, true);
-                }
             }
            #endif
         }
@@ -2284,11 +2281,7 @@ private:
         }
 
        #elif JUCE_LINUX
-        pluginWindow = getChildWindow ((Window) getWindowHandle());
-
-        if (pluginWindow != 0)
-            pluginProc = (EventProcPtr) getPropertyFromXWindow (pluginWindow,
-                                                                XInternAtom (display, "_XEventProc", False));
+        updatePluginWindowHandle();
 
         int w = 250, h = 150;
 
@@ -2515,6 +2508,15 @@ private:
             ev.xbutton.type = ButtonRelease;
             sendEventToChild (ev);
         }
+    }
+
+    void updatePluginWindowHandle()
+    {
+        pluginWindow = getChildWindow ((Window) getWindowHandle());
+
+        if (pluginWindow != 0)
+            pluginProc = (EventProcPtr) getPropertyFromXWindow (pluginWindow,
+                                                                XInternAtom (display, "_XEventProc", False));
     }
 #endif
 
