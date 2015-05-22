@@ -13,7 +13,6 @@ To build plugins, you first need to install the following dependencies:
 
 All OSes:
 
-- csound (version 6)
 - premake (version 3)
 
 
