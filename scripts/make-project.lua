@@ -20,7 +20,14 @@ function make_library_project(name)
   package.config["Release"].target       = project.name
   package.config["Release"].objdir       = "intermediate/Release"
   package.config["Release"].defines      = { "NDEBUG=1" }
-  package.config["Release"].buildoptions = { "-O2", "-mtune=generic", "-msse", "-msse2", "-fvisibility=hidden", "-fvisibility-inlines-hidden" }
+  package.config["Release"].buildoptions = { "-O2", "-fvisibility=hidden", "-fvisibility-inlines-hidden" }
+
+  if (not os.getenv("NOOPTIMIZATIONS")) then
+    package.config["Release"].buildoptions = {
+        package.config["Release"].buildoptions,
+        "-mtune=generic", "-msse", "-msse2"
+    }
+  end
 
   if (not macosx) then
     package.config["Release"].buildoptions = { package.config["Release"].buildoptions, "-fdata-sections", "-ffunction-sections" }
@@ -80,8 +87,15 @@ function make_plugin_project(name, spec)
   package.config["Release"].target       = project.name
   package.config["Release"].objdir       = "intermediate/Release"
   package.config["Release"].defines      = { "NDEBUG=1", "CONFIGURATION=\"Release\"" }
-  package.config["Release"].buildoptions = { "-O2", "-ffast-math", "-fomit-frame-pointer", "-mtune=generic", "-msse", "-msse2", "-mfpmath=sse", "-fvisibility=hidden", "-fvisibility-inlines-hidden" }
+  package.config["Release"].buildoptions = { "-O2", "-ffast-math", "-fomit-frame-pointer", "-fvisibility=hidden", "-fvisibility-inlines-hidden" }
   package.config["Release"].links        = {}
+
+  if (not os.getenv("NOOPTIMIZATIONS")) then
+    package.config["Release"].buildoptions = {
+      package.config["Release"].buildoptions,
+      "-mtune=generic", "-msse", "-msse2", "-mfpmath=sse"
+    }
+  end
 
   if (not macosx) then
     package.linkoptions                    = { package.linkoptions, "-Wl,--no-undefined" }
