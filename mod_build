@@ -1,0 +1,5 @@
+#!/bin/bash
+
+env NOOPTIMIZATIONS=1 ./scripts/premake-update.sh linux
+make lv2 -j4 # or more
+make install PREFIX=/usr # with sudo if needed
