@@ -1198,6 +1198,11 @@ private:
                             if (! screens->outputs[j])
                                 continue;
 
+                            // Xrandr on the raspberry pi fails to determine the main display (mainDisplay == 0)!
+                            // Detect this edge case and make the first found display the main display
+                            if (! mainDisplay)
+                                mainDisplay = screens->outputs[j];
+
                             ScopedPointer<XRROutputInfo> output;
 
                             if ((output = xrandr.getOutputInfo (dpy, screens.get(), screens->outputs[j])).get())
@@ -1215,8 +1220,12 @@ private:
                                     e.usableBounds = e.totalBounds.withZeroOrigin(); // Support for usable area is not implemented in JUCE yet
                                     e.topLeftScaled = e.totalBounds.getTopLeft();
                                     e.isMain = (mainDisplay == screens->outputs[j]) && (i == 0);
-                                    e.dpi = ((static_cast<double> (crtc->width) * 25.4 * 0.5) / static_cast<double> (output->mm_width))
-                                        + ((static_cast<double> (crtc->height) * 25.4 * 0.5) / static_cast<double> (output->mm_height));
+                                    e.dpi = getDisplayDPI (0);
+
+                                    // The raspberry pi returns a zero sized display, so we need to guard for divide-by-zero
+                                    if (output->mm_width > 0 && output->mm_height > 0)
+                                        e.dpi = ((static_cast<double> (crtc->width) * 25.4 * 0.5) / static_cast<double> (output->mm_width))
+                                            + ((static_cast<double> (crtc->height) * 25.4 * 0.5) / static_cast<double> (output->mm_height));
 
                                     e.scale = masterScale * getScaleForDisplay (output->name, e);
 
@@ -2029,6 +2038,8 @@ public:
 
     void handleKeyPressEvent (XKeyEvent& keyEvent)
     {
+        const ModifierKeys oldMods (currentModifiers);
+
         char utf8 [64] = { 0 };
         juce_wchar unicodeChar = 0;
         int keyCode = 0;
@@ -2055,7 +2066,6 @@ public:
             keyDownChange = (sym != NoSymbol) && ! updateKeyModifiersFromSym (sym, true);
         }
 
-        const ModifierKeys oldMods (currentModifiers);
         bool keyPressed = false;
 
         if ((sym & 0xff00) == 0xff00 || keyCode == XK_ISO_Left_Tab)

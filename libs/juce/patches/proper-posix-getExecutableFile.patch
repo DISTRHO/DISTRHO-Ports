@@ -22,7 +22,7 @@ index 0895697..2163d9c 100644
 +            {
 +                StringArray paths (StringArray::fromTokens (envpath, ":", ""));
 +
-+                for (int i = 0; i < paths.size(); ++i)
++                for (int i=paths.size(); --i>=0;)
 +                {
 +                    const File filepath (File (paths[i]).getChildFile (filename));
 +
