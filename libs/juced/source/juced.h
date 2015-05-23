@@ -61,16 +61,6 @@
  #define JUCE_USE_GLX 0
 #endif
 
-/** Config: JUCE_PLUGINHOST_LADSPA
-	Enabling this builds support for LADSPA audio plugins.
-	Not enabled by default.
- 
-	@see AudioUnitPluginFormat, AudioPluginFormat, AudioPluginFormatManager, JUCE_PLUGINHOST_VST
-*/
-#ifndef JUCE_PLUGINHOST_LADSPA
- #define JUCE_PLUGINHOST_LADSPA 0
-#endif
-
 /** Config: JUCE_SUPPORT_SQLITE
 	Setting this allows the build to use SQLITE libraries for access a self-contained,
 	serverless, zero-configuration, transactional SQL database engine.

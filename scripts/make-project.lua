@@ -46,7 +46,7 @@ function make_library_project(name)
     package.buildoptions = { package.buildoptions, "-ObjC++" }
   else
     package.defines      = { "LINUX=1" }
-    package.buildoptions = { package.buildoptions, "`pkg-config --cflags freetype2 x11 xext`", "-std=c++0x" }
+    package.buildoptions = { package.buildoptions, "`pkg-config --cflags alsa freetype2 x11 xext`", "-std=c++0x" }
   end
 
   return package
@@ -158,6 +158,12 @@ function make_juce_lv2_project(name)
   else
     package.links       = { "dl", "pthread", "rt" }
     package.linkoptions = { package.linkoptions, "`pkg-config --libs freetype2 x11 xext`" }
+
+    if (name == "drumsynth" or name == "eqinox" or name == "Dexed") then
+      package.linkoptions = { package.linkoptions, "`pkg-config --libs alsa`" }
+    else
+      package.config["Debug"].linkoptions = { "`pkg-config --libs alsa`" }
+    end
   end
 
   return package
@@ -193,6 +199,12 @@ function make_juce_vst_project(name)
   else
     package.links       = { "dl", "pthread", "rt" }
     package.linkoptions = { package.linkoptions, "`pkg-config --libs freetype2 x11 xext`" }
+
+    if (name == "drumsynth" or name == "eqinox" or name == "Dexed") then
+      package.linkoptions = { package.linkoptions, "`pkg-config --libs alsa`" }
+    else
+      package.config["Debug"].linkoptions = { "`pkg-config --libs alsa`" }
+    end
   end
 
   return package
