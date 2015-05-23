@@ -134,7 +134,7 @@
 
     @see VSTPluginFormat, AudioPluginFormat, AudioPluginFormatManager, JUCE_PLUGINHOST_AU, JUCE_PLUGINHOST_VST3
 */
-#define JUCE_PLUGINHOST_VST 0
+#define JUCE_PLUGINHOST_VST 1
 
 /** Config: JUCE_PLUGINHOST_VST3
     Enables the VST3 audio plugin hosting classes. This requires the Steinberg VST3 SDK to be
@@ -142,16 +142,28 @@
 
     @see VSTPluginFormat, VST3PluginFormat, AudioPluginFormat, AudioPluginFormatManager, JUCE_PLUGINHOST_VST, JUCE_PLUGINHOST_AU
 */
-#define JUCE_PLUGINHOST_VST3 0
+#if MAC || WINDOWS
+ #define JUCE_PLUGINHOST_VST3 1
+#else
+ #define JUCE_PLUGINHOST_VST3 0
+#endif
 
 /** Config: JUCE_PLUGINHOST_AU
     Enables the AudioUnit plugin hosting classes. This is Mac-only, of course.
 
     @see AudioUnitPluginFormat, AudioPluginFormat, AudioPluginFormatManager, JUCE_PLUGINHOST_VST, JUCE_PLUGINHOST_VST3
 */
-#define JUCE_PLUGINHOST_AU 0
+#if MAC
+ #define JUCE_PLUGINHOST_AU 1
+#else
+ #define JUCE_PLUGINHOST_AU 0
+#endif
 
-#define JUCE_PLUGINHOST_LADSPA 0
+#if LINUX
+ #define JUCE_PLUGINHOST_LADSPA 1
+#else
+ #define JUCE_PLUGINHOST_LADSPA 0
+#endif
 
 //=============================================================================
 // juce_audio_utils
@@ -246,11 +258,7 @@
     Enabling this flag means that DirectWrite will be used when available for font
     management and layout.
 */
-#if WINDOWS
- #define JUCE_USE_DIRECTWRITE 1
-#else
- #define JUCE_USE_DIRECTWRITE 0
-#endif
+#define JUCE_USE_DIRECTWRITE 0
 
 #define JUCE_INCLUDE_PNGLIB_CODE 1
 #define JUCE_INCLUDE_JPEGLIB_CODE 1

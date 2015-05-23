@@ -96,7 +96,9 @@ if [ -d /usr/include/public.sdk ]; then
   cd sdks/vstsdk2.4; patch -p0 < fix-c++11.patch; cd ../..
 fi
 
-if [ ! -d sdks/vstsdk2.4/pluginterfaces ] && [ $MAC != 1 ]; then
+if [ -d sdks/vstsdk2.4/pluginterfaces ]; then
+  sed -i "s/#define JUCE_PLUGINHOST_VST 0/#define JUCE_PLUGINHOST_VST 1/" libs/juce/build-juce/AppConfig.h
+else
   sed -i "s/#define JUCE_PLUGINHOST_VST 1/#define JUCE_PLUGINHOST_VST 0/" libs/juce/build-juce/AppConfig.h
 fi
 
