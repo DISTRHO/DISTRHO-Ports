@@ -42,7 +42,7 @@ PluginWindow::PluginWindow (GraphEditorPanel* const p,
     setSize (400, 300);
 
     setContentOwned (pluginEditor, true);
-    //setUsingNativeTitleBar (true);
+    setUsingNativeTitleBar (true);
 
     setTopLeftPosition (owner->properties.getWithDefault ("uiLastX", Random::getSystemRandom().nextInt (500)),
                         owner->properties.getWithDefault ("uiLastY", Random::getSystemRandom().nextInt (500)));
