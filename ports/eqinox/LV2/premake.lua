@@ -1,7 +1,7 @@
 
 dofile("../../../scripts/make-project.lua")
 
-package = make_juce_lv2_project("EQinox")
+package = make_juce_lv2_project("eqinox")
 
 package.config["Release"].links = { package.config["Release"].links, "juced" }
 package.config["Debug"].links   = { package.config["Debug"].links, "juced_debug" }
