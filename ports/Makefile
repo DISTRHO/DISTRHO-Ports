@@ -30,6 +30,7 @@ lv2: libs
 	$(MAKE) -C drumsynth/LV2
 	$(MAKE) -C easySSP/LV2
 	$(MAKE) -C eqinox/LV2
+	$(MAKE) -C juce-demo-host/LV2
 	$(MAKE) -C juce-demo-plugin/LV2
 	$(MAKE) -C klangfalter/LV2
 	$(MAKE) -C LUFSMeter/LV2
@@ -65,6 +66,7 @@ vst: libs
 	$(MAKE) -C drumsynth/VST
 	$(MAKE) -C easySSP/VST
 	$(MAKE) -C eqinox/VST
+	$(MAKE) -C juce-demo-host/VST
 	$(MAKE) -C juce-demo-plugin/VST
 	$(MAKE) -C klangfalter/VST
 	$(MAKE) -C LUFSMeter/VST
@@ -100,6 +102,7 @@ clean:
 	$(MAKE) clean -C drumsynth/LV2
 	$(MAKE) clean -C easySSP/LV2
 	$(MAKE) clean -C eqinox/LV2
+	$(MAKE) clean -C juce-demo-host/LV2
 	$(MAKE) clean -C juce-demo-plugin/LV2
 	$(MAKE) clean -C klangfalter/LV2
 	$(MAKE) clean -C LUFSMeter/LV2
@@ -131,6 +134,7 @@ clean:
 	$(MAKE) clean -C drumsynth/VST
 	$(MAKE) clean -C easySSP/VST
 	$(MAKE) clean -C eqinox/VST
+	$(MAKE) clean -C juce-demo-host/VST
 	$(MAKE) clean -C juce-demo-plugin/VST
 	$(MAKE) clean -C klangfalter/VST
 	$(MAKE) clean -C LUFSMeter/VST
