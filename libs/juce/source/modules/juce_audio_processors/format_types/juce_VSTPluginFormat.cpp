@@ -1284,7 +1284,12 @@ public:
 
             case audioMasterSizeWindow:
                 if (AudioProcessorEditor* ed = getActiveEditor())
+                {
+               #if JUCE_LINUX
+                    const MessageManagerLock mmLock;
+               #endif
                     ed->setSize (index, (int) value);
+                }
 
                 return 1;
 
@@ -1973,9 +1978,9 @@ public:
            #elif JUCE_LINUX
             if (pluginWindow != 0)
             {
-                XResizeWindow (display, pluginWindow, getWidth(), getHeight());
-                XMoveWindow (display, pluginWindow, pos.getX(), pos.getY());
+                XMoveResizeWindow (display, pluginWindow, pos.getX(), pos.getY(), getWidth(), getHeight());
                 XMapRaised (display, pluginWindow);
+                XFlush (display);
             }
            #endif
 
