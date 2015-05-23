@@ -50,7 +50,7 @@ public:
         setTopLeftPosition (60, 60);
 
         restoreWindowStateFromString (owner.appProperties.getUserSettings()->getValue ("listWindowPos"));
-        setUsingNativeTitleBar (true);
+        //setUsingNativeTitleBar (true);
         setVisible (true);
     }
 

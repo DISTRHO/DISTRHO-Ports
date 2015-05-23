@@ -280,14 +280,17 @@
 */
 #define JUCE_ENABLE_REPAINT_DEBUGGING 0
 
+/** JUCE_USE_XRANDR: Enables Xrandr multi-monitor support (Linux only).
+    Unless you specifically want to disable this, it's best to leave this option turned on.
+    Note that your users do not need to have Xrandr installed for your JUCE app to run, as
+    the availability of Xrandr is queried during runtime.
+*/
+#define JUCE_USE_XRANDR 0
+
 /** JUCE_USE_XINERAMA: Enables Xinerama multi-monitor support (Linux only).
     Unless you specifically want to disable this, it's best to leave this option turned on.
 */
-#if LINUX
- #define JUCE_USE_XINERAMA 1
-#else
- #define JUCE_USE_XINERAMA 0
-#endif
+#define JUCE_USE_XINERAMA 0
 
 /** Config: JUCE_USE_XSHM
     Enables X shared memory for faster rendering on Linux. This is best left turned on
