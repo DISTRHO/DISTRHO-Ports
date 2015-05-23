@@ -18,9 +18,10 @@ All OSes:
 
 Linux: (development versions of these)
 
+- ALSA
 - freetype2
 - OpenGL/Mesa
-- X11 core and extensions (Xinerama, XShm, XRender and XCursor)
+- X11 core and extensions (XShm, XRender and XCursor)
 
 
 -----------------------------------------------------------------------------------------
