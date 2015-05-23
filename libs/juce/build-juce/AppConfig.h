@@ -59,7 +59,11 @@
 /** Config: JUCE_ALSA
     Enables ALSA audio devices (Linux only).
 */
-#define JUCE_ALSA 0
+#if LINUX
+ #define JUCE_ALSA 1
+#else
+ #define JUCE_ALSA 0
+#endif
 
 /** Config: JUCE_JACK
     Enables JACK audio devices (Linux only).
