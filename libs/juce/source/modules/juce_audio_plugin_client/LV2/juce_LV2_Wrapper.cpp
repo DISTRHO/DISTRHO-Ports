@@ -15,15 +15,32 @@
 
 #if JucePlugin_Build_LV2
 
-/*
- * Available macros:
- * - JucePlugin_LV2Category
- * - JucePlugin_WantsLV2State
- * - JucePlugin_WantsLV2StateString
- * - JucePlugin_WantsLV2Presets
- * - JucePlugin_WantsLV2TimePos
- */
+/** Plugin requires processing with a fixed/constant block size */
+#ifndef JucePlugin_WantsLV2FixedBlockSize
+ #define JucePlugin_WantsLV2FixedBlockSize 0
+#endif
 
+/** Use non-parameter states */
+#ifndef JucePlugin_WantsLV2State
+ #define JucePlugin_WantsLV2State 1
+#endif
+
+/** States are strings, needs custom get/setStateInformationString */
+#ifndef JucePlugin_WantsLV2StateString
+ #define JucePlugin_WantsLV2StateString 0
+#endif
+
+/** Export presets */
+#ifndef JucePlugin_WantsLV2Presets
+ #define JucePlugin_WantsLV2Presets 1
+#endif
+
+/** Request time position */
+#ifndef JucePlugin_WantsLV2TimePos
+ #define JucePlugin_WantsLV2TimePos 1
+#endif
+
+/** Using string states require enabling states first */
 #if JucePlugin_WantsLV2StateString && ! JucePlugin_WantsLV2State
  #undef JucePlugin_WantsLV2State
  #define JucePlugin_WantsLV2State 1
@@ -32,10 +49,6 @@
 #if JUCE_LINUX
  #include <X11/Xlib.h>
  #undef KeyPress
-#endif
-
-#if defined(Cabbage_Plugin_LV2) && ! JUCE_WINDOWS
- #include <dlfcn.h>
 #endif
 
 #include <fstream>
@@ -104,24 +117,8 @@ const String getPluginType()
 /** Returns plugin URI */
 static const String& getPluginURI()
 {
-#if defined(Cabbage_Plugin_LV2)
- #if ! JUCE_WINDOWS
-    static String pluginURI;
-
-    if (pluginURI.isEmpty())
-    {
-        Dl_info exeInfo;
-        dladdr ((void*) getPluginType, &exeInfo);
-
-        pluginURI << "urn:cabbage:";
-        pluginURI << File(exeInfo.dli_fname).getFileNameWithoutExtension().replace("cabbage-","");
-    }
- #else
-    static const String pluginURI(String("urn:cabbage:")+File::getSpecialLocation(File::currentExecutableFile).getFileNameWithoutExtension().replace("cabbage-",""));
- #endif
-#else
+    // JucePlugin_LV2URI might be defined as a function (eg. allowing dynamic URIs based on filename)
     static const String pluginURI(JucePlugin_LV2URI);
-#endif
     return pluginURI;
 }
 
@@ -265,7 +262,7 @@ const String makePluginFile (AudioProcessor* const filter)
     text += "<" + pluginURI + ">\n";
     text += "    a " + getPluginType() + " ;\n";
     text += "    lv2:requiredFeature <" LV2_BUF_SIZE__boundedBlockLength "> ,\n";
-#if JucePlugin_WantsLV2FixedBlockLength
+#if JucePlugin_WantsLV2FixedBlockSize
     text += "                        <" LV2_BUF_SIZE__fixedBlockLength "> ,\n";
 #endif
     text += "                        <" LV2_URID__map "> ;\n";
@@ -331,7 +328,7 @@ const String makePluginFile (AudioProcessor* const filter)
     text += "        lv2:minimum 0.0 ;\n";
     text += "        lv2:maximum 1.0 ;\n";
     text += "        lv2:designation <" LV2_CORE__freeWheeling "> ;\n";
-    text += "        lv2:portProperty lv2:toggled ;\n";
+    text += "        lv2:portProperty lv2:toggled, <" LV2_PORT_PROPS__notOnGUI "> ;\n";
     text += "    ] ,\n";
     text += "    [\n";
     text += "        a lv2:OutputPort, lv2:ControlPort ;\n";

@@ -58,6 +58,9 @@
 
 #define JucePlugin_LV2URI                   "urn:juced:EQinox"
 #define JucePlugin_LV2Category              "EQPlugin"
+#define JucePlugin_WantsLV2Presets          0
+#define JucePlugin_WantsLV2State            0
+#define JucePlugin_WantsLV2TimePos          0
 
 //==============================================================================
 

@@ -10,6 +10,7 @@
 #define BUILD_JUCE_APPCONFIG_H_INCLUDED
 
 #define JUCE_MODULE_AVAILABLE_juce_audio_basics          1
+#define JUCE_MODULE_AVAILABLE_juce_audio_plugin_client   1
 #define JUCE_MODULE_AVAILABLE_juce_audio_devices         1
 #define JUCE_MODULE_AVAILABLE_juce_audio_formats         1
 #define JUCE_MODULE_AVAILABLE_juce_audio_processors      1
@@ -146,7 +147,7 @@
 
     @see VSTPluginFormat, VST3PluginFormat, AudioPluginFormat, AudioPluginFormatManager, JUCE_PLUGINHOST_VST, JUCE_PLUGINHOST_AU
 */
-#if MAC || WINDOWS
+#if 0 //MAC || WINDOWS
  #define JUCE_PLUGINHOST_VST3 1
 #else
  #define JUCE_PLUGINHOST_VST3 0

@@ -53,5 +53,6 @@
 #define JucePlugin_LV2Category          "DelayPlugin"
 #define JucePlugin_WantsLV2State        1
 #define JucePlugin_WantsLV2TimePos      1
+#define JucePlugin_WantsLV2Presets      0
 
 #endif   // __PLUGINCHARACTERISTICS_D4EFFF1A__

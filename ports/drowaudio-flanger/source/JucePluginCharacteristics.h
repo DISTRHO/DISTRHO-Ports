@@ -275,6 +275,9 @@
 
 #define JucePlugin_LV2URI               "http://www.drowaudio.co.uk/audio/audio_plugins/flanger"
 #define JucePlugin_LV2Category          "FlangerPlugin"
+#define JucePlugin_WantsLV2Presets      0
+#define JucePlugin_WantsLV2State        0
+#define JucePlugin_WantsLV2TimePos      0
 
 //==============================================================================
 

@@ -130,5 +130,6 @@
 #define JucePlugin_LV2Category          "InstrumentPlugin"
 #define JucePlugin_WantsLV2Presets      1
 #define JucePlugin_WantsLV2State        1
+#define JucePlugin_WantsLV2TimePos      0
 
 #endif  // __JUCE_APPCONFIG_RYFHHI__
