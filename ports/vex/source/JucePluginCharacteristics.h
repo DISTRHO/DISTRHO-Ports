@@ -265,7 +265,7 @@
 #define JucePlugin_LV2Category              "InstrumentPlugin"
 #define JucePlugin_WantsLV2State            1
 #define JucePlugin_WantsLV2TimePos          1
-#define JucePlugin_WantsLV2FixedBlockLength 1
+#define JucePlugin_WantsLV2FixedBlockSize   1
 #define JucePlugin_WantsLV2Presets          0
 
 
