@@ -1,0 +1,77 @@
+diff --git a/modules/juce_core/native/juce_linux_Files.cpp b/modules/juce_core/native/juce_linux_Files.cpp
+index f26f516..a0941ab 100644
+--- a/modules/juce_core/native/juce_linux_Files.cpp
++++ b/modules/juce_core/native/juce_linux_Files.cpp
+@@ -219,7 +219,7 @@ bool Process::openDocument (const String& fileName, const String& parameters)
+         cmdString = cmdLines.joinIntoString (" || ");
+     }
+ 
+-    const char* const argv[4] = { "/bin/sh", "-c", cmdString.toUTF8(), 0 };
++    const char* const argv[4] = { "/bin/sh", "-c", cmdString.toUTF8(), nullptr };
+ 
+ #if JUCE_USE_VFORK
+     const int cpid = vfork();
+@@ -229,11 +229,12 @@ bool Process::openDocument (const String& fileName, const String& parameters)
+ 
+     if (cpid == 0)
+     {
++#if ! JUCE_USE_VFORK
+         setsid();
+-
++#endif
+         // Child process
+-        execve (argv[0], (char**) argv, environ);
+-        exit (0);
++        if (execvp (argv[0], (char**) argv) < 0)
++            _exit (0);
+     }
+ 
+     return cpid >= 0;
+diff --git a/modules/juce_core/native/juce_mac_Files.mm b/modules/juce_core/native/juce_mac_Files.mm
+index d7bd74a..fdebd69 100644
+--- a/modules/juce_core/native/juce_mac_Files.mm
++++ b/modules/juce_core/native/juce_mac_Files.mm
+@@ -110,7 +110,7 @@ namespace FileHelpers
+ 
+     static bool launchExecutable (const String& pathAndArguments)
+     {
+-        const char* const argv[4] = { "/bin/sh", "-c", pathAndArguments.toUTF8(), 0 };
++        const char* const argv[4] = { "/bin/sh", "-c", pathAndArguments.toUTF8(), nullptr };
+ 
+ #if JUCE_USE_VFORK
+         const int cpid = vfork();
+@@ -121,16 +121,11 @@ namespace FileHelpers
+         if (cpid == 0)
+         {
+             // Child process
+-            if (execve (argv[0], (char**) argv, 0) < 0)
+-                exit (0);
+-        }
+-        else
+-        {
+-            if (cpid < 0)
+-                return false;
++            if (execvp (argv[0], (char**) argv) < 0)
++                _exit (0);
+         }
+ 
+-        return true;
++        return cpid >= 0;
+     }
+ }
+ 
+diff --git a/modules/juce_core/native/juce_posix_SharedCode.h b/modules/juce_core/native/juce_posix_SharedCode.h
+index ffacdec..17def66 100644
+--- a/modules/juce_core/native/juce_posix_SharedCode.h
++++ b/modules/juce_core/native/juce_posix_SharedCode.h
+@@ -1083,8 +1083,8 @@ public:
+                 close (pipeHandles[1]);
+ #endif
+ 
+-                execvp (argv[0], argv.getRawDataPointer());
+-                exit (-1);
++                if (execvp (argv[0], argv.getRawDataPointer()) < 0)
++                    _exit (-1);
+             }
+             else
+             {

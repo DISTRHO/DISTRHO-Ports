@@ -1083,8 +1083,8 @@ public:
                 close (pipeHandles[1]);
 #endif
 
-                execvp (argv[0], argv.getRawDataPointer());
-                exit (-1);
+                if (execvp (argv[0], argv.getRawDataPointer()) < 0)
+                    _exit (-1);
             }
             else
             {
