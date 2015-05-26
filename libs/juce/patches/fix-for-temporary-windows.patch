@@ -1,0 +1,51 @@
+diff --git a/modules/juce_gui_basics/misc/juce_DropShadower.cpp b/modules/juce_gui_basics/misc/juce_DropShadower.cpp
+index c6d0d77..18b706d 100644
+--- a/modules/juce_gui_basics/misc/juce_DropShadower.cpp
++++ b/modules/juce_gui_basics/misc/juce_DropShadower.cpp
+@@ -31,7 +31,7 @@ public:
+         setVisible (true);
+         setInterceptsMouseClicks (false, false);
+ 
+-        if (comp->isOnDesktop())
++        if (! comp->isOnDesktop())
+         {
+             setSize (1, 1); // to keep the OS happy by not having zero-size windows
+             addToDesktop (ComponentPeer::windowIgnoresMouseClicks
+diff --git a/modules/juce_gui_basics/native/juce_linux_Windowing.cpp b/modules/juce_gui_basics/native/juce_linux_Windowing.cpp
+index 7573f8a..ff1993c 100644
+--- a/modules/juce_gui_basics/native/juce_linux_Windowing.cpp
++++ b/modules/juce_gui_basics/native/juce_linux_Windowing.cpp
+@@ -2879,8 +2879,9 @@ private:
+     {
+         Atom netHints [2];
+ 
+-        if ((styleFlags & windowIsTemporary) != 0
+-             || ((styleFlags & windowHasDropShadow) == 0 && Desktop::canUseSemiTransparentWindows()))
++        if (styleFlags & windowIsTemporary)
++            netHints [0] = Atoms::getIfExists ("_NET_WM_WINDOW_TYPE_TOOLTIP");
++        else if ((styleFlags & windowHasDropShadow) == 0 && Desktop::canUseSemiTransparentWindows())
+             netHints [0] = Atoms::getIfExists ("_NET_WM_WINDOW_TYPE_COMBO");
+         else
+             netHints [0] = Atoms::getIfExists ("_NET_WM_WINDOW_TYPE_NORMAL");
+@@ -2930,7 +2931,7 @@ private:
+         swa.border_pixel = 0;
+         swa.background_pixmap = None;
+         swa.colormap = colormap;
+-        swa.override_redirect = (component.isAlwaysOnTop() && (styleFlags & windowIsTemporary) != 0) ? True : False;
++        swa.override_redirect = (styleFlags & windowIsTemporary) ? True : False;
+         swa.event_mask = getAllEventsMask();
+ 
+         windowH = XCreateWindow (display, parentToAddTo != 0 ? parentToAddTo : root,
+diff --git a/modules/juce_gui_basics/widgets/juce_Slider.cpp b/modules/juce_gui_basics/widgets/juce_Slider.cpp
+index 75f9c1c..4e07676 100644
+--- a/modules/juce_gui_basics/widgets/juce_Slider.cpp
++++ b/modules/juce_gui_basics/widgets/juce_Slider.cpp
+@@ -868,7 +868,7 @@ public:
+                     if (parentForPopupDisplay != nullptr)
+                         parentForPopupDisplay->addChildComponent (popup);
+                     else
+-                        popup->addToDesktop (0);
++                        popup->addToDesktop (ComponentPeer::windowIsTemporary);
+ 
+                     popup->setVisible (true);
+                 }

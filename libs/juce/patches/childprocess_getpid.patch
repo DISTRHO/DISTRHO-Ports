@@ -1,20 +1,8 @@
-From 53f89fdb53d4e2deced8f841d1130fe1ece16afd Mon Sep 17 00:00:00 2001
-From: falkTX <falktx@gmail.com>
-Date: Sat, 18 Oct 2014 23:05:06 +0100
-Subject: [PATCH] Re-add juce getPID()
-
----
- modules/juce_core/native/juce_posix_SharedCode.h | 5 +++++
- modules/juce_core/native/juce_win32_Threads.cpp  | 5 +++++
- modules/juce_core/threads/juce_ChildProcess.cpp  | 5 +++++
- modules/juce_core/threads/juce_ChildProcess.h    | 2 ++
- 4 files changed, 17 insertions(+)
-
-diff --git a/modules/juce_core/native/juce_posix_SharedCode.h b/source/modules/juce_core/native/juce_posix_SharedCode.h
-index 757105b..3574420 100644
+diff --git a/modules/juce_core/native/juce_posix_SharedCode.h b/modules/juce_core/native/juce_posix_SharedCode.h
+index e682eae..17a5307 100644
 --- a/modules/juce_core/native/juce_posix_SharedCode.h
 +++ b/modules/juce_core/native/juce_posix_SharedCode.h
-@@ -1116,6 +1116,11 @@ class ChildProcess::ActiveProcess
+@@ -1121,6 +1121,11 @@ public:
          return 0;
      }
  
@@ -26,11 +14,11 @@ index 757105b..3574420 100644
      int childPID;
  
  private:
-diff --git a/modules/juce_core/native/juce_win32_Threads.cpp b/source/modules/juce_core/native/juce_win32_Threads.cpp
+diff --git a/modules/juce_core/native/juce_win32_Threads.cpp b/modules/juce_core/native/juce_win32_Threads.cpp
 index 1421c10..ca22ea0 100644
 --- a/modules/juce_core/native/juce_win32_Threads.cpp
 +++ b/modules/juce_core/native/juce_win32_Threads.cpp
-@@ -534,6 +534,11 @@ class ChildProcess::ActiveProcess
+@@ -534,6 +534,11 @@ public:
          return (uint32) exitCode;
      }
  
@@ -42,7 +30,7 @@ index 1421c10..ca22ea0 100644
      bool ok;
  
  private:
-diff --git a/modules/juce_core/threads/juce_ChildProcess.cpp b/source/modules/juce_core/threads/juce_ChildProcess.cpp
+diff --git a/modules/juce_core/threads/juce_ChildProcess.cpp b/modules/juce_core/threads/juce_ChildProcess.cpp
 index 4566b13..e984837 100644
 --- a/modules/juce_core/threads/juce_ChildProcess.cpp
 +++ b/modules/juce_core/threads/juce_ChildProcess.cpp
@@ -58,11 +46,11 @@ index 4566b13..e984837 100644
  //==============================================================================
  #if JUCE_UNIT_TESTS
  
-diff --git a/modules/juce_core/threads/juce_ChildProcess.h b/source/modules/juce_core/threads/juce_ChildProcess.h
+diff --git a/modules/juce_core/threads/juce_ChildProcess.h b/modules/juce_core/threads/juce_ChildProcess.h
 index 0adcb57..7a1c88c 100644
 --- a/modules/juce_core/threads/juce_ChildProcess.h
 +++ b/modules/juce_core/threads/juce_ChildProcess.h
-@@ -106,6 +106,8 @@ class JUCE_API  ChildProcess
+@@ -106,6 +106,8 @@ public:
      */
      bool kill();
  

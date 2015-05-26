@@ -1982,6 +1982,7 @@ public:
                                    pos.getX(), pos.getY(),
                                    (unsigned int) getWidth(),
                                    (unsigned int) getHeight());
+
                 XMapRaised (display, pluginWindow);
                 XFlush (display);
             }
