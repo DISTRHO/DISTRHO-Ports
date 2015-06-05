@@ -15,6 +15,14 @@
 #elif JucePlugin_Build_RTAS
  #include "modules/juce_audio_plugin_client/RTAS/juce_RTAS_Wrapper.cpp"
 #elif JucePlugin_Build_VST
+ // we need to include 'juce_VSTMidiEventList' before 'juce_VST_Wrapper'
+ #ifndef _MSC_VER
+  #define __cdecl
+ #endif
+ #include "pluginterfaces/vst2.x/aeffectx.h"
+ namespace juce {
+ #include "modules/juce_audio_processors/format_types/juce_VSTMidiEventList.h"
+ }
  #ifdef JUCE_MAC
   #include "modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.mm"
  #else
