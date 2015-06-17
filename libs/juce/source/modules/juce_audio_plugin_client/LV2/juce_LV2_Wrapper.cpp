@@ -462,10 +462,13 @@ const String makePresetsFile (AudioProcessor* const filter)
         preset += "            rdf:value \"" + chunkString + "\"^^xsd:base64Binary ;\n";
         preset += "        ] ;\n";
  #endif
-        if (filter->getNumParameters() > 0)
-            preset += "    ] ;\n\n";
-        else
+        if (filter->getNumParameters() == 0)
+        {
             preset += "    ] .\n\n";
+            continue;
+        }
+
+        preset += "    ] ;\n\n";
 #endif
 
         // Port values
