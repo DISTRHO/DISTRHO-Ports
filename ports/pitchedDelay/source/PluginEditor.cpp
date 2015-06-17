@@ -62,7 +62,11 @@ PitchedDelayAudioProcessorEditor::PitchedDelayAudioProcessorEditor (PitchedDelay
 	tooltipWindow = new TooltipWindow();
 
 	{
+#if LINUX
+		File presetFile("~/.config/lkjb/PitchedDelay/presets.xml");
+#else
 		File presetFile(File::getSpecialLocation(File::userApplicationDataDirectory).getChildFile("lkjb").getChildFile("PitchedDelay").getChildFile("presets.xml"));
+#endif
 
 		if (! presetFile.existsAsFile())
 		{
