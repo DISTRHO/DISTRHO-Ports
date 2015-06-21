@@ -661,7 +661,7 @@ void TalCore::getStateInformation (MemoryBlock& destData)
     // header
     XmlElement tal("tal");
     tal.setAttribute ("curprogram", curProgram);
-    tal.setAttribute ("version", 1.6);
+    tal.setAttribute ("version", 1.7);
 
     // programs
     XmlElement *programList = new XmlElement ("programs");
@@ -687,7 +687,7 @@ void TalCore::getCurrentProgramStateInformation (MemoryBlock& destData)
     // header
     XmlElement tal("tal");
     tal.setAttribute ("curprogram", curProgram);
-    tal.setAttribute ("version", 1.6);
+    tal.setAttribute ("version", 1.7);
 
     // programs
     XmlElement *programList = new XmlElement ("programs");
@@ -1057,7 +1057,7 @@ String TalCore::getStateInformationString ()
     // header
     XmlElement tal("tal");
     tal.setAttribute ("curprogram", curProgram);
-    tal.setAttribute ("version", 1.6);
+    tal.setAttribute ("version", 1.7);
 
     // programs
     XmlElement *programList = new XmlElement ("programs");
