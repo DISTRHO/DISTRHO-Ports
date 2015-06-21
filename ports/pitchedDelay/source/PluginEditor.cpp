@@ -63,7 +63,7 @@ PitchedDelayAudioProcessorEditor::PitchedDelayAudioProcessorEditor (PitchedDelay
 
 	{
 #if LINUX
-		File presetFile("~/.config/lkjb/PitchedDelay/presets.xml");
+		File presetFile("~/.config/lkjb/PitchedDelayPresets.xml");
 #else
 		File presetFile(File::getSpecialLocation(File::userApplicationDataDirectory).getChildFile("lkjb").getChildFile("PitchedDelay").getChildFile("presets.xml"));
 #endif
