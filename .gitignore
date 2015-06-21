@@ -33,6 +33,7 @@ scripts/*.h
 
 sdks/ASIOSDK2/*
 sdks/vstsdk2.4/*
+sdks/VST3SDK/*
 
 _old
 ports/_todo
