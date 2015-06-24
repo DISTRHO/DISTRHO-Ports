@@ -29,7 +29,7 @@ AlgoDisplay::AlgoDisplay() {
 
 inline void displayOp(Graphics &g, char id, int x, int y, char link, char fb) {
     const int LINE_SZ = 3;
-    String t(id);
+    const String t = String(id);
 
     x *= 25;
     x += 3;

@@ -26,8 +26,10 @@ FOLDERS=`find ./lv2/ -name \*.lv2`
 
 for i in $FOLDERS; do
   cd $i
-  FILE=`ls *.$EXT | sort | head -n 1`
-  $GEN ./$FILE
+  FILE=`ls *.$EXT 2>/dev/null | sort | head -n 1`
+  if [ "$FILE"x != ""x ]; then
+    $GEN ./$FILE
+  fi
   cd ../..
 done
 

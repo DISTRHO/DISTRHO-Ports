@@ -282,9 +282,9 @@ void DexedAudioProcessorEditor::updateUI() {
 void DexedAudioProcessorEditor::rebuildProgramCombobox() {
     global.programs->clear(dontSendNotification);
     for(int i=0;i<processor->getNumPrograms();i++) {
-        String id;
-        id << (i+1) << ". " << processor->getProgramName(i);
-        global.programs->addItem(id, i+1);
+        String id_;
+        id_ << (i+1) << ". " << processor->getProgramName(i);
+        global.programs->addItem(id_, i+1);
     }
     global.programs->setSelectedId(processor->getCurrentProgram()+1, dontSendNotification);
 }
