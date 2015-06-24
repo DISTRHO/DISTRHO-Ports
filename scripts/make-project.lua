@@ -154,7 +154,7 @@ function make_juce_lv2_project(name)
   elseif (macosx) then
     package.linkoptions = { package.linkoptions,
                             "-framework Accelerate", "-framework AudioToolbox", "-framework AudioUnit", "-framework Carbon", "-framework Cocoa",
-                            "-framework CoreAudio", "-framework CoreMIDI", "-framework IOKit", "-framework QuartzCore", "-framework WebKit" }
+                            "-framework CoreAudio", "-framework CoreAudioKit", "-framework CoreMIDI", "-framework IOKit", "-framework QuartzCore", "-framework WebKit" }
   else
     package.links       = { "dl", "pthread", "rt" }
     package.linkoptions = { package.linkoptions, "`pkg-config --libs freetype2 x11 xext`" }
@@ -195,7 +195,7 @@ function make_juce_vst_project(name)
   elseif (macosx) then
     package.linkoptions = { package.linkoptions,
                             "-framework Accelerate", "-framework AudioToolbox", "-framework AudioUnit", "-framework Carbon", "-framework Cocoa",
-                            "-framework CoreAudio", "-framework CoreMIDI", "-framework IOKit", "-framework QuartzCore", "-framework WebKit" }
+                            "-framework CoreAudio", "-framework CoreAudioKit", "-framework CoreMIDI", "-framework IOKit", "-framework QuartzCore", "-framework WebKit" }
   else
     package.links       = { "dl", "pthread", "rt" }
     package.linkoptions = { package.linkoptions, "`pkg-config --libs freetype2 x11 xext`" }

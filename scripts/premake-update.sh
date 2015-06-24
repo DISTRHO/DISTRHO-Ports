@@ -30,8 +30,10 @@ run_premake()
 {
   premake --os $1 --target gnu --cc gcc
 
-  if [ $MAC != 1 ]; then
-    sed "s/\$(LDFLAGS)/\$(LDFLAGS) \$(LDFLAGS)/" -i `find . -name \*.make`
+  if [ $MAC == 1 ]; then
+    sed -i -e "s|BLDCMD = ar -rcs \$(OUTDIR)/\$(TARGET) \$(OBJECTS) \$(TARGET_ARCH)|BLDCMD = ar -rcs \$(OUTDIR)/\$(TARGET) \$(OBJECTS)|" `find . -name \*.make`
+  else
+    sed -i -e "s/\$(LDFLAGS)/\$(LDFLAGS) \$(LDFLAGS)/" `find . -name \*.make`
   fi
 }
 
