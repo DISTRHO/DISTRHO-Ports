@@ -97,9 +97,9 @@ if [ -d /usr/include/public.sdk ]; then
 fi
 
 if [ -d sdks/vstsdk2.4/pluginterfaces ]; then
-  sed -i "s/#define JUCE_PLUGINHOST_VST 0/#define JUCE_PLUGINHOST_VST 1/" libs/juce/build-juce/AppConfig.h || true
+  sed -i -e "s/#define JUCE_PLUGINHOST_VST 0/#define JUCE_PLUGINHOST_VST 1/" libs/juce/build-juce/AppConfig.h || true
 else
-  sed -i "s/#define JUCE_PLUGINHOST_VST 1/#define JUCE_PLUGINHOST_VST 0/" libs/juce/build-juce/AppConfig.h || true
+  sed -i -e "s/#define JUCE_PLUGINHOST_VST 1/#define JUCE_PLUGINHOST_VST 0/" libs/juce/build-juce/AppConfig.h || true
 fi
 
 # ------------------------------------------------------------------------------------------------------------
