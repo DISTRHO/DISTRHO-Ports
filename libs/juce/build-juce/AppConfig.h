@@ -204,7 +204,7 @@
     Enables a memory-leak check for certain objects when the app terminates. See the LeakedObjectDetector
     class and the JUCE_LEAK_DETECTOR macro for more details about enabling leak checking for specific classes.
 */
-#if DEBUG
+#ifdef DEBUG
  #define JUCE_CHECK_MEMORY_LEAKS 1
 #else
  #define JUCE_CHECK_MEMORY_LEAKS 0
