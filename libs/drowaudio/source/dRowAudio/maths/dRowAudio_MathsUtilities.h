@@ -401,20 +401,6 @@ inline FloatingPointType sincPi (const FloatingPointType x) noexcept
     return static_cast<FloatingPointType> (std::sin (double_Pi * x) / (double_Pi * x));
 }
 
-//==============================================================================
-/** Converts a number of degrees to radians. */
-template<typename FloatingPointType>
-inline FloatingPointType degreesToRadians (const FloatingPointType degrees) noexcept
-{
-    return (degrees / 180.0) * double_Pi;
-}
-
-template<>
-inline float degreesToRadians<float> (const float degrees) noexcept
-{
-    return (degrees / 180.0f) * float_Pi;
-}
-
 /**	Returns true if the argument is a power of 2.
     This will return false if 0 is passed.
  */
