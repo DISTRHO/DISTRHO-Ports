@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2013 Pascal Gauthier.
+ * Copyright (c) 2013-2015 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,6 @@
 #include "msfa/aligned_buf.h"
 #include "msfa/fm_op_kernel.h"
 
-
 //==============================================================================
 DexedAudioProcessor::DexedAudioProcessor() {
 #ifdef DEBUG
@@ -47,22 +46,20 @@ DexedAudioProcessor::DexedAudioProcessor() {
     Sin::init();
 
     lastStateSave = 0;
-    
     currentNote = -1;
+    engineType = -1;
+    
     vuSignal = 0;
     monoMode = 0;
+    
+    resolvAppDir();
+
     initCtrl();
     sendSysexChange = true;
     normalizeDxVelocity = false;
     sysexComm.listener = this;
-    engineType = -1;
-    
-    memset(&voiceStatus, 0, sizeof(VoiceStatus));
 
-    prefOptions.applicationName = String("Dexed");
-    prefOptions.filenameSuffix = String("xml");
-    prefOptions.folderName = String("DigitalSuburban");
-    prefOptions.osxLibrarySubFolder = String("Application Support");
+    memset(&voiceStatus, 0, sizeof(VoiceStatus));
     
     controllers.values_[kControllerPitchRange] = 3;
     controllers.values_[kControllerPitchStep] = 0;
@@ -142,10 +139,10 @@ void DexedAudioProcessor::releaseResources() {
 
 void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages) {
     int numSamples = buffer.getNumSamples();
-    int i = 0;
+    int i;
     
     if ( refreshVoice ) {
-        for(int i=0;i<MAX_ACTIVE_NOTES;i++) {
+        for(i=0;i < MAX_ACTIVE_NOTES;i++) {
             if ( voices[i].live )
                 voices[i].dx7_note->update(data, voices[i].midi_note);
         }
@@ -158,10 +155,10 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
     MidiBuffer::Iterator it(midiMessages);
     hasMidiMessage = it.getNextEvent(*nextMidi,midiEventPos);
 
-    float *channelData = buffer.getWritePointer(0);
+    float *channelData = buffer.getSampleData(0);
   
     // flush first events
-    for (i = 0; i < numSamples && i < extra_buf_size; i++) {
+    for (i=0; i < numSamples && i < extra_buf_size; i++) {
         channelData[i] = extra_buf[i];
     }
     
@@ -227,7 +224,7 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
     }
 
     fx.process(channelData, numSamples);
-    for(int i=0; i<numSamples; i++) {
+    for(i=0; i<numSamples; i++) {
         float s = std::abs(channelData[i]);
         
         const double decayFactor = 0.99992;
@@ -334,6 +331,8 @@ void DexedAudioProcessor::keydown(uint8_t pitch, uint8_t velo) {
             voices[note].sustained = sustain;
             voices[note].keydown = true;
             voices[note].dx7_note->init(data, pitch, velo);
+            if ( data[136] )
+                voices[note].dx7_note->oscSync();
             break;
         }
         note = (note + 1) % MAX_ACTIVE_NOTES;
@@ -407,7 +406,7 @@ void DexedAudioProcessor::panic() {
         voices[i].keydown = false;
         voices[i].live = false;
         if ( voices[i].dx7_note != NULL ) {
-            voices[i].dx7_note->firstUse();
+            voices[i].dx7_note->oscSync();
         }
     }
     keyboardState.reset();
@@ -444,11 +443,7 @@ void DexedAudioProcessor::handleIncomingMidiMessage(MidiInput* source, const Mid
             return;
         }
 
-        TRACE("program update sysex");
         updateProgramFromSysex(buf+6);
-        String name = normalizeSysexName((const char *) buf+151);
-        packProgram((uint8_t *) sysex, (uint8_t *) data, currentProgram, name); 
-        programNames.set(currentProgram, name);
     }
 
     // 32 voice dump

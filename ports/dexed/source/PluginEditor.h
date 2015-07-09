@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2013 Pascal Gauthier.
+ * Copyright (c) 2013-2015 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,13 +20,13 @@
 #ifndef PLUGINEDITOR_H_INCLUDED
 #define PLUGINEDITOR_H_INCLUDED
 
-
-#include "JuceHeader.h"
+#include "../JuceLibraryCode/JuceHeader.h"
 #include "PluginProcessor.h"
 #include "OperatorEditor.h"
 #include "GlobalEditor.h"
 #include "DXComponents.h"
 #include "DXLookNFeel.h"
+#include "CartManager.h"
 
 //==============================================================================
 /**
@@ -35,12 +35,12 @@ class DexedAudioProcessorEditor  : public AudioProcessorEditor,
         public ComboBoxListener,
         public Timer {
     PopupMenu cartPopup;
-    PopupMenu sendPopup;
             
     MidiKeyboardComponent midiKeyboard;
-    DXLookNFeel dx_lnf;
     OperatorEditor operators[6];
-
+    Colour background;
+    CartManager cartManager;
+            
 public:
     DexedAudioProcessor *processor;
     GlobalEditor global;
@@ -53,11 +53,10 @@ public:
     void comboBoxChanged (ComboBox* comboBoxThatHasChanged);
     void updateUI();
     void rebuildProgramCombobox();
-    void loadCart();
+    void loadCart(File file);
     void saveCart();
     void initProgram();
     void storeProgram();
-    void sendToDx7();
     void cartShow();
     void parmShow();
 };

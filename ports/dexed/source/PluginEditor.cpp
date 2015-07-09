@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2013 Pascal Gauthier.
+ * Copyright (c) 2013-2015 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ public:
         setUsingNativeTitleBar(false);
         setAlwaysOnTop(true);
         about_png = ImageCache::getFromMemory(BinaryData::about_png, BinaryData::about_pngSize);
-        setSize( about_png.getWidth(), about_png.getHeight());
+        setSize(about_png.getWidth(), about_png.getHeight());
         centreAroundComponent (parent, getWidth(), getHeight());
     }
     
@@ -60,16 +60,16 @@ public:
 //==============================================================================
 DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* ownerFilter)
     : AudioProcessorEditor (ownerFilter),
-    midiKeyboard (ownerFilter->keyboardState, MidiKeyboardComponent::horizontalKeyboard)
+    midiKeyboard (ownerFilter->keyboardState, MidiKeyboardComponent::horizontalKeyboard),
+    cartManager(this)
 {
-    LookAndFeel::setDefaultLookAndFeel(&dx_lnf);
+    LookAndFeel::setDefaultLookAndFeel(DXLookNFeel::getLookAndFeel());
 
-    setSize (866, ownerFilter->showKeyboard ? 674 : 581);
+    setSize(866, ownerFilter->showKeyboard ? 674 : 581);
 
     processor = ownerFilter;
     
-    /*addAndMakeVisible(midiMonitor = new MidiMonitor(&processor->sysexComm));
-    midiMonitor->setBounds(645, 6, 110, 18);*/
+    background = DXLookNFeel::getLookAndFeel()->background;
 
     // OPERATORS
     addAndMakeVisible(&(operators[0]));
@@ -108,13 +108,12 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     global.setBounds(2,436,864,144);
     global.bind(this);
     
-    sendPopup.addItem(1, "Send program to DX7");
-    sendPopup.addItem(2, "Send cartridge to DX7");
-    
     global.setMonoState(processor->isMonoMode());
     
     rebuildProgramCombobox();
     global.programs->addListener(this);
+    
+    addChildComponent(&cartManager);
     
     updateUI();
     startTimer(100);
@@ -127,52 +126,46 @@ DexedAudioProcessorEditor::~DexedAudioProcessorEditor() {
 
 //==============================================================================
 void DexedAudioProcessorEditor::paint (Graphics& g) {    
-    g.setColour(DXLookNFeel::background);
+    g.setColour(background);
     g.fillRoundedRectangle(0.0f, 0.0f, (float) getWidth(), (float) getHeight(), 0);
 }
 
 void DexedAudioProcessorEditor::cartShow() {
-    int result = processor->cartManager.getCarts()->show();
-    if ( result < 1 )
+    stopTimer();    
+    cartManager.resetActiveSysex();
+    cartManager.setBounds(4, 2, 859, 576);
+    cartManager.setVisible(true);
+    cartManager.initialFocus();
+}
+
+
+void DexedAudioProcessorEditor::loadCart(File file) {
+    String f = file.getFullPathName();
+    uint8_t syx_data[4104];
+    ifstream fp_in(f.toRawUTF8(), ios::binary);
+    if (fp_in.fail()) {
+        AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
+                                          "Error",
+                                          "Unable to open: " + f);
         return;
-    
-    processor->loadBuiltin(result-1);
+    }
+    fp_in.read((char *)syx_data, 4104);
+    fp_in.close();
+    if ( processor->importSysex((char *) &syx_data) ) {
+        global.setSystemMessage(String("Unkown sysex format !?"));
+    }
     processor->setCurrentProgram(0);
     rebuildProgramCombobox();
     global.programs->setSelectedId(processor->getCurrentProgram()+1, dontSendNotification);
     processor->updateHostDisplay();
-    return;
-}
-
-void DexedAudioProcessorEditor::loadCart() {
-    FileChooser fc ("Import original DX sysex...", File::nonexistent, "*.syx;*.SYX;*.*", 1);
     
-    if ( fc.browseForFileToOpen()) {
-        String f = fc.getResults().getReference(0).getFullPathName();
-        uint8_t syx_data[4104];
-        ifstream fp_in(f.toRawUTF8(), ios::binary);
-        if (fp_in.fail()) {
-            AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
-                                              "Error",
-                                              "Unable to open: " + f);
-            return;
-        }
-        fp_in.read((char *)syx_data, 4104);
-        fp_in.close();
-        if ( processor->importSysex((char *) &syx_data) ) {
-            global.setSystemMessage(String("Unkown sysex format !?"));
-        }
-        processor->setCurrentProgram(0);
-        rebuildProgramCombobox();
-        global.programs->setSelectedId(processor->getCurrentProgram()+1, dontSendNotification);
-        processor->updateHostDisplay();
-    }
-    
-    return;
+    processor->activeFileCartridge = file;
 }
 
 void DexedAudioProcessorEditor::saveCart() {
-    FileChooser fc ("Export DX sysex...", File::nonexistent, "*.syx", 1);
+    File startFileName = processor->activeFileCartridge.exists() ? processor->activeFileCartridge : processor->dexedCartDir;
+
+    FileChooser fc ("Export DX sysex...", processor->dexedCartDir, "*.syx", 1);
     if ( fc.browseForFileToSave(true) ) {
         String f = fc.getResults().getReference(0).getFullPathName();
         char syx_data[4104];
@@ -188,31 +181,6 @@ void DexedAudioProcessorEditor::saveCart() {
                                               "Error",
                                               "Unable to write: " + f);
         }
-    }
-}
-
-void DexedAudioProcessorEditor::sendToDx7() {
-    int result = sendPopup.show();
-    
-    if ( result == 1 ) {
-        uint8_t raw[167];
-        
-        exportSysexPgm((char *) raw, processor->data, processor->sysexComm.getChl());
-        if ( processor->sysexComm.isOutputActive() ) {
-            processor->sysexComm.send(MidiMessage(raw, 163));
-        }
-        global.setSystemMessage(String("Done sending program"));
-        return;
-    }
-    
-    if ( result == 2 ) {
-        uint8_t raw[4104];
-        
-        exportSysexCart((char *) raw, (char *) &processor->sysex, processor->sysexComm.getChl());
-        if ( processor->sysexComm.isOutputActive() ) {
-            processor->sysexComm.send(MidiMessage(raw, 4104));
-        }
-        global.setSystemMessage(String("Done sending cartridge"));
     }
 }
 
@@ -234,7 +202,7 @@ void DexedAudioProcessorEditor::parmShow() {
     processor->setEngineType(tp);
     processor->savePreference();
     
-    setSize (866, processor->showKeyboard ? 677 : 583);
+    setSize(866, processor->showKeyboard ? 677 : 583);
     midiKeyboard.repaint();
     
     if ( ret == false ) {
@@ -281,44 +249,70 @@ void DexedAudioProcessorEditor::updateUI() {
 
 void DexedAudioProcessorEditor::rebuildProgramCombobox() {
     global.programs->clear(dontSendNotification);
+    
     for(int i=0;i<processor->getNumPrograms();i++) {
-        String id_;
-        id_ << (i+1) << ". " << processor->getProgramName(i);
-        global.programs->addItem(id_, i+1);
+        String id;
+        id << (i+1) << ". " << processor->getProgramName(i);
+        global.programs->addItem(id, i+1);
     }
+    
     global.programs->setSelectedId(processor->getCurrentProgram()+1, dontSendNotification);
+    
+    String name = normalizeSysexName((const char *) processor->data+145);
+    cartManager.setActiveProgram(processor->getCurrentProgram(), name);
+    if ( name != processor->getProgramName(processor->getCurrentProgram()) )
+        global.programs->setText("**. " + name, dontSendNotification);
+    
+    cartManager.resetActiveSysex();
 }
 
 void DexedAudioProcessorEditor::storeProgram() {
-    String currentName(processor->getProgramName(processor->getCurrentProgram()));
+    String currentName = normalizeSysexName((const char *) processor->data+145);
     char destSysex[4096];
     File *externalFile = NULL;
-
+    
     memcpy(&destSysex, processor->sysex, 4096);
 
+    bool activeCartridgeFound = processor->activeFileCartridge.exists();
+    
     while (true) {
         String msg;
+        
         if ( externalFile == NULL ) {
-            msg = "Store program to current cartridge";
+            if ( activeCartridgeFound )
+                msg = "Store program to current (" + processor->activeFileCartridge.getFileName() + ") / new cartridge";
+            else
+                msg = "Store program to current / new cartridge";
         } else {
             msg = "Store program to " + externalFile->getFileName();
         }
         
-        AlertWindow dialog(String("Store Program"), msg, AlertWindow::NoIcon, this);
-        dialog.addTextEditor(String("Name"), currentName, String("Name"), false);
+        AlertWindow dialog("Store Program", msg, AlertWindow::NoIcon, this);
+        dialog.addTextEditor("Name", currentName, String("Name"), false);
         // TODO: fix the name length to 10
 
         StringArray programs;
         extractProgramNames((char *) &destSysex, programs);
+        dialog.addComboBox("Dest", programs, "Program Destination");
 
-        dialog.addComboBox(String("Dest"), programs);
+
+        if ( externalFile == NULL ) {
+            StringArray saveAction;
+            saveAction.add("Store program to DAW plugin song state");
+            saveAction.add("Store program and create a new copy of the .syx cartridge");
+            if ( activeCartridgeFound )
+                saveAction.add("Store program and overwrite current .syx cartridge");
+        
+            dialog.addComboBox("SaveAction", saveAction, "Store Action");
+        }
+                
         dialog.addButton("OK", 0, KeyPress(KeyPress::returnKey));
         dialog.addButton("CANCEL", 1, KeyPress(KeyPress::escapeKey));
         dialog.addButton("EXTERNAL FILE", 2, KeyPress());
         int response = dialog.runModalLoop();
 
         if ( response == 2 ) {
-            FileChooser fc("Destination Sysex", File::nonexistent, "*.syx;*.SYX;*.*", 1);
+            FileChooser fc("Destination Sysex", processor->dexedCartDir, "*.syx;*.SYX;*.*", 1);
 
             if ( fc.browseForFileToOpen() ) {
                 if ( externalFile != NULL ) 
@@ -335,8 +329,8 @@ void DexedAudioProcessorEditor::storeProgram() {
         }
 
         if ( response == 0 ) {
-            TextEditor *name = dialog.getTextEditor(String("Name"));
-            ComboBox *dest = dialog.getComboBoxComponent(String("Dest"));
+            TextEditor *name = dialog.getTextEditor("Name");
+            ComboBox *dest = dialog.getComboBoxComponent("Dest");
             
             int programNum = dest->getSelectedItemIndex();
             String programName(name->getText());
@@ -351,6 +345,23 @@ void DexedAudioProcessorEditor::storeProgram() {
                 rebuildProgramCombobox();
                 processor->setCurrentProgram(programNum);
                 processor->updateHostDisplay();
+                
+                int action = dialog.getComboBoxComponent("SaveAction")->getSelectedItemIndex();
+                if ( action > 0 ) {                  
+                    File destination = processor->activeFileCartridge;
+                    if ( ! destination.exists() ) {
+                        FileChooser fc("Destination Sysex", processor->dexedCartDir, "*.syx", 1);
+                        if ( ! fc.browseForFileToSave(true) )
+                            break;
+                        destination = fc.getResult();
+                    }
+                    char sysexFile[4104];
+                    exportSysexCart((char *) &sysexFile, (char *) &processor->sysex, 0);
+                    if ( ! destination.replaceWithData(sysexFile, 4104) ) {
+                        AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Write error", "Unable to write file");
+                    }
+                    processor->activeFileCartridge = destination;
+                }
             } else {
                 packProgram((uint8_t *) &destSysex, (uint8_t *) processor->data, programNum, programName);
                 char sysexFile[4104];
@@ -360,10 +371,10 @@ void DexedAudioProcessorEditor::storeProgram() {
                 }
             }
         }
-
         break;
     }
 
-    if ( externalFile != NULL ) 
+    if ( externalFile != NULL )
         delete externalFile;
+    cartManager.resetActiveSysex();
 }

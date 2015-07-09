@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2014 Pascal Gauthier.
+ * Copyright (c) 2014-2015 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,9 @@
 #include "PluginProcessor.h"
 #include "PluginData.h"
 #include "Dexed.h"
+
+#include <fstream>
+using namespace ::std;
 
 uint8_t sysexChecksum(const char *sysex, int size) {
     int sum = 0;
@@ -104,7 +107,6 @@ void exportSysexPgm(char *dest, char *src, char sysexChl) {
     memcpy(dest+161, footer, 2);
 }
 
-
 /**
  * Pack a program into a 32 packed sysex
  */
@@ -169,53 +171,57 @@ char normparm(char value, char max, int id) {
     return v;
 }
 
-void DexedAudioProcessor::unpackProgram(int idx) {
-    char *bulk = sysex + (idx * 128);
+void unpackProgramFromSysex(char *unpackPgm, char *sysexCart, int idx) {
+    char *bulk = sysexCart + (idx * 128);
     
     for (int op = 0; op < 6; op++) {
         // eg rate and level, brk pt, depth, scaling
-
+        
         for(int i=0; i<11; i++) {
-            data[op * 21 + i] = normparm(bulk[op * 17 + i], 99, i);
+            unpackPgm[op * 21 + i] = normparm(bulk[op * 17 + i], 99, i);
         }
-
-        memcpy(data + op * 21, bulk + op * 17, 11);
+        
+        memcpy(unpackPgm + op * 21, bulk + op * 17, 11);
         char leftrightcurves = bulk[op * 17 + 11];
-        data[op * 21 + 11] = leftrightcurves & 3;
-        data[op * 21 + 12] = (leftrightcurves >> 2) & 3;
+        unpackPgm[op * 21 + 11] = leftrightcurves & 3;
+        unpackPgm[op * 21 + 12] = (leftrightcurves >> 2) & 3;
         char detune_rs = bulk[op * 17 + 12];
-        data[op * 21 + 13] = detune_rs & 7;
+        unpackPgm[op * 21 + 13] = detune_rs & 7;
         char kvs_ams = bulk[op * 17 + 13];
-        data[op * 21 + 14] = kvs_ams & 3;
-        data[op * 21 + 15] = kvs_ams >> 2;
-        data[op * 21 + 16] = bulk[op * 17 + 14];  // output level
+        unpackPgm[op * 21 + 14] = kvs_ams & 3;
+        unpackPgm[op * 21 + 15] = kvs_ams >> 2;
+        unpackPgm[op * 21 + 16] = bulk[op * 17 + 14];  // output level
         char fcoarse_mode = bulk[op * 17 + 15];
-        data[op * 21 + 17] = fcoarse_mode & 1;
-        data[op * 21 + 18] = fcoarse_mode >> 1;
-        data[op * 21 + 19] = bulk[op * 17 + 16];  // fine freq
-        data[op * 21 + 20] = detune_rs >> 3;
+        unpackPgm[op * 21 + 17] = fcoarse_mode & 1;
+        unpackPgm[op * 21 + 18] = fcoarse_mode >> 1;
+        unpackPgm[op * 21 + 19] = bulk[op * 17 + 16];  // fine freq
+        unpackPgm[op * 21 + 20] = detune_rs >> 3;
     }
-
+    
     for (int i=0; i<8; i++)  {
-        data[126+i] = normparm(bulk[102+i], 99, 126+i);
+        unpackPgm[126+i] = normparm(bulk[102+i], 99, 126+i);
     }
-    data[134] = normparm(bulk[110], 31, 134);
+    unpackPgm[134] = normparm(bulk[110], 31, 134);
     
     char oks_fb = bulk[111];
-    data[135] = oks_fb & 7;
-    data[136] = oks_fb >> 3;
-    memcpy(data + 137, bulk + 112, 4);  // lfo
+    unpackPgm[135] = oks_fb & 7;
+    unpackPgm[136] = oks_fb >> 3;
+    memcpy(unpackPgm + 137, bulk + 112, 4);  // lfo
     char lpms_lfw_lks = bulk[116];
-    data[141] = lpms_lfw_lks & 1;
-    data[142] = (lpms_lfw_lks >> 1) & 7;
-    data[143] = lpms_lfw_lks >> 4;
-    memcpy(data + 144, bulk + 117, 11);  // transpose, name
-    data[155] = 1;  // operator on/off
-    data[156] = 1;
-    data[157] = 1;
-    data[158] = 1;
-    data[159] = 1;
-    data[160] = 1;
+    unpackPgm[141] = lpms_lfw_lks & 1;
+    unpackPgm[142] = (lpms_lfw_lks >> 1) & 7;
+    unpackPgm[143] = lpms_lfw_lks >> 4;
+    memcpy(unpackPgm + 144, bulk + 117, 11);  // transpose, name
+    unpackPgm[155] = 1;  // operator on/off
+    unpackPgm[156] = 1;
+    unpackPgm[157] = 1;
+    unpackPgm[158] = 1;
+    unpackPgm[159] = 1;
+    unpackPgm[160] = 1;
+}
+
+void DexedAudioProcessor::unpackProgram(int idx) {
+    unpackProgramFromSysex(data, sysex, idx);
 }
 
 int DexedAudioProcessor::importSysex(const char *imported) {
@@ -237,10 +243,29 @@ void DexedAudioProcessor::updateProgramFromSysex(const uint8 *rawdata) {
     triggerAsyncUpdate();
 }
 
-void DexedAudioProcessor::loadBuiltin(int idx) {
+void DexedAudioProcessor::setupStartupCart() {
     char syx_data[4104];
     memset(&syx_data, 0, 4104);
-    cartManager.getSysex(idx, (char *) &syx_data);
+    
+    File startup = dexedCartDir.getChildFile("Dexed_01.syx");
+    
+    if ( startup.exists() ) {
+        FileInputStream *fis = startup.createInputStream();
+        if ( fis == nullptr ) {
+            TRACE("unable to open default cartridge");
+            return;
+        }
+        fis->read(syx_data, 4104);
+        delete fis;
+    } else {
+        // The user deleted the file :/, load from the builtin zip file.
+        MemoryInputStream *mis = new MemoryInputStream(BinaryData::builtin_pgm_zip, BinaryData::builtin_pgm_zipSize, false);
+        ZipFile *builtin_pgm = new ZipFile(mis, true);
+        InputStream *is = builtin_pgm->createStreamForEntry(builtin_pgm->getIndexOfFileName(("Dexed_01.syx")));
+        is->read(syx_data, 4104);
+        delete is;
+        delete builtin_pgm;
+    }
     importSysex((char *) &syx_data);
 }
 
@@ -255,7 +280,7 @@ void DexedAudioProcessor::resetToInitVoice() {
         99, 99, 99, 99, 50, 50, 50, 50, 0, 0, 1, 35, 0, 0, 0, 1, 0, 3, 24,
         73, 78, 73, 84, 32, 86, 79, 73, 67, 69 };
     
-    for(size_t i=0;i<sizeof(init_voice);i++) {
+    for(int i=0;i<sizeof(init_voice);i++) {
         data[i] = init_voice[i];
     }
     panic();
@@ -276,6 +301,42 @@ void DexedAudioProcessor::pasteEnvFromClipboard(int destOp) {
     memcpy(data+(destOp*21), clipboard+(clipboardContent*21), 8);
     triggerAsyncUpdate();
 }
+
+void DexedAudioProcessor::sendCurrentSysexProgram() {
+    uint8_t raw[167];
+    
+    exportSysexPgm((char *) raw, data, sysexComm.getChl());
+    if ( sysexComm.isOutputActive() ) {
+        sysexComm.send(MidiMessage(raw, 163));
+    }
+}
+
+void DexedAudioProcessor::sendCurrentSysexCartridge() {
+    uint8_t raw[4104];
+    
+    exportSysexCart((char *) raw, (char *) &sysex, sysexComm.getChl());
+    if ( sysexComm.isOutputActive() ) {
+        sysexComm.send(MidiMessage(raw, 4104));
+    }
+}
+
+void DexedAudioProcessor::sendSysexCartridge(File cart) {
+    if ( ! sysexComm.isOutputActive() )
+        return;
+    String f = cart.getFullPathName();
+    uint8_t syx_data[4104];
+    ifstream fp_in(f.toRawUTF8(), ios::binary);
+    if (fp_in.fail()) {
+        AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
+                                          "Error",
+                                          "Unable to open: " + f);
+        return;
+    }
+    fp_in.read((char *)syx_data, 4104);
+    fp_in.close();
+    sysexComm.send(MidiMessage(syx_data, 4104));
+}
+
 
 bool DexedAudioProcessor::hasClipboardContent() {
     return clipboardContent != -1;
@@ -298,6 +359,9 @@ void DexedAudioProcessor::getStateInformation(MemoryBlock& destData) {
     dexedState.setAttribute("currentProgram", currentProgram);
     dexedState.setAttribute("monoMode", monoMode);
     dexedState.setAttribute("engineType", (int) engineType);
+    
+    if ( activeFileCartridge.exists() )
+        dexedState.setAttribute("activeFileCartridge", activeFileCartridge.getFullPathName());
 
     char sysex_blob[4104];
     exportSysexCart((char *) &sysex_blob, (char *) sysex, 0);
@@ -330,6 +394,10 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
     setEngineType(root->getIntAttribute("engineType", 0));
     monoMode = root->getIntAttribute("monoMode", 0);
     
+    File possibleCartridge = File(root->getStringAttribute("activeFileCartridge"));
+    if ( possibleCartridge.exists() )
+        activeFileCartridge = possibleCartridge;
+    
     XmlElement *dexedBlob = root->getChildByName("dexedBlob");
     if ( dexedBlob == NULL ) {
         TRACE("dexedBlob element not found");
@@ -355,138 +423,54 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
     updateUI();
 }
 
-#define IDX_USER 1000
+File DexedAudioProcessor::dexedAppDir;
+File DexedAudioProcessor::dexedCartDir;
 
-CartridgeManager::CartridgeManager() {
-    MemoryInputStream *mis = new MemoryInputStream(BinaryData::builtin_pgm_zip, BinaryData::builtin_pgm_zipSize, false);
-    builtin_pgm = new ZipFile(mis, true);
-    builtin_pgm->sortEntriesByFilename();
-
-    for(int i=0;i<builtin_pgm->getNumEntries();i++) {
-        const ZipFile::ZipEntry *e = builtin_pgm->getEntry(i);
-        cartNames.add(e->filename.dropLastCharacters(4));
-    }
-
-    userCartFile = File(File::getSpecialLocation(File::currentApplicationFile).getParentDirectory().getFullPathName() + File::separator + "Dexed_cart.zip");
-}
-
-CartridgeManager::~CartridgeManager() {
-}
-
-void CartridgeManager::getSysex(int idx, char *dest) {
-    if ( idx < IDX_USER ) {
-        InputStream *is = builtin_pgm->createStreamForEntry(idx);
-        if ( is == NULL ) {
-            TRACE("ENTRY IN ZIP NOT FOUND");
-            return;
-        }
-        is->read(dest, 4104);
-        delete is;
-        
-        return;
-    }
+void DexedAudioProcessor::resolvAppDir() {
     
-    idx -= IDX_USER;
-    
-    if ( ! userCartFile.exists() )
-        return;
-
-    ZipFile userZip(userCartFile);
-    userZip.sortEntriesByFilename();
-    if ( idx < userZip.getNumEntries() ) {
-        InputStream *is = userZip.createStreamForEntry(idx);
-        if ( is != NULL ) {
-            is->read(dest, 4104);
-            delete is;
-        } else {
-            TRACE("USER ENTRY %d NULL ?", idx);
-        }
-    }
-}
-
-void CartridgeManager::rebuildMenu() {
-    TRACE("rebuild menu zip");
-    
-    completeCarts.clear();
-    
-    completeCarts.addItem(1, cartNames[0]);
-    PopupMenu synprez;
-    for(int i=1;i<cartNames.size();i++) {
-        synprez.addItem(i+1, cartNames[i]);
-    }
-    completeCarts.addSubMenu("SynprezFM", synprez, true);
-
-    if ( userCartFile.exists() ) {
-        zipIdx = 0;
-        ZipFile userZip(userCartFile);
-        userZip.sortEntriesByFilename();
-    
-        PopupMenu *user = fillContent("", &userZip);
-        if ( user != NULL ) {
-            completeCarts.addSubMenu("User", *user);
-            delete user;
-        }
-        lastModifiedUserCartFile = userCartFile.getLastModificationTime();
+#if JUCE_MAC || JUCE_IOS
+    dexedAppDir = File("~/Library/Application Support/DigitalSuburban/Dexed");
+#elif JUCE_WINDOWS
+    dexedAppDir = File::getSpecialLocation(File::userApplicationDataDirectory).getChildFile("DigitalSuburban").getChildFile("Dexed");
+#else
+    char *xdgHome = getenv("XDG_DATA_HOME");
+    if ( xdgHome == nullptr ) {
+        dexedAppDir = File("~/.local/share").getChildFile("DigitalSuburban").getChildFile("Dexed");
     } else {
-        lastModifiedUserCartFile = Time(0);
+        dexedAppDir = File(xdgHome).getChildFile("DigitalSuburban").getChildFile("Dexed");
     }
-}
-
-PopupMenu *CartridgeManager::getCarts() {
-    Time t = userCartFile.getLastModificationTime();
-
-    if ( t != lastModifiedUserCartFile || completeCarts.getNumItems() == 0 ) {
-        rebuildMenu();
-    }
-    return &completeCarts;
-}
-
-PopupMenu *CartridgeManager::fillContent(String root, ZipFile *userZip) {
-    PopupMenu *current = NULL;
+#endif
     
-    while(zipIdx < userZip->getNumEntries() ) {
-        String path = userZip->getEntry(zipIdx)->filename;
-
-        if ( path.endsWith(".DS_Store") || path.startsWith("__MACOSX") ) {
-            zipIdx++;
-            continue;
-        }
-        
-        if ( ! path.endsWithIgnoreCase(".syx") ) {
-            zipIdx++;
-            continue;
-        }
-        
-        if ( ( ! path.startsWith(root) ) && root.length() != 0 )
-            return current;
-        
-        String tail = path.substring(root.length());
-        if ( tail.containsChar('/') ) {
-            String target = tail.upToFirstOccurrenceOf("/", true, false);
-            PopupMenu *child = fillContent(root + target, userZip);
-            
-            if ( child == NULL )
-                continue;
-            
-            if ( current == NULL )
-                current = new PopupMenu();
-
-            current->addSubMenu(tail.upToFirstOccurrenceOf("/", false, false), *child);
-            delete child;
-        } else {
-            zipIdx++;
-            
-            if ( tail.length() == 0 )
-                continue;
-            
-            if ( current == NULL )
-                current = new PopupMenu();
-
-            // remove the .syx extension
-            tail = tail.substring(0, tail.length()-4);
-
-            current->addItem(zipIdx + IDX_USER, tail);
-        }
+    if ( ! dexedAppDir.exists() ) {
+        dexedAppDir.createDirectory();
+        // ==========================================================================
+        // For older versions, we move the Dexed.xml config file
+        // This code will be removed in 0.9.0
+        File cfgFile = dexedAppDir.getParentDirectory().getChildFile("Dexed.xml");
+        if ( cfgFile.exists() )
+            cfgFile.moveFileTo(dexedAppDir.getChildFile("Dexed.xml"));
+        // *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+        // ==========================================================================
     }
-    return current;
+    
+    dexedCartDir = dexedAppDir.getChildFile("Cartridges");
+
+    if ( ! dexedCartDir.exists() ) {
+        // Initial setup, we unzip the built-in cartridges
+        dexedCartDir.createDirectory();
+        File synprezFmDir = dexedCartDir.getChildFile("SynprezFM");
+        synprezFmDir.createDirectory();
+        
+        MemoryInputStream *mis = new MemoryInputStream(BinaryData::builtin_pgm_zip, BinaryData::builtin_pgm_zipSize, false);
+        ZipFile *builtin_pgm = new ZipFile(mis, true);
+        
+        for(int i=0;i<builtin_pgm->getNumEntries();i++) {
+            if ( builtin_pgm->getEntry(i)->filename == "Dexed_01.syx" ) {
+                builtin_pgm->uncompressEntry(i, dexedCartDir);
+            } else {
+                builtin_pgm->uncompressEntry(i, synprezFmDir);
+            }
+        }
+        delete builtin_pgm;
+    }
 }

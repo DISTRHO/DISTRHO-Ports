@@ -21,7 +21,18 @@
 #ifndef DEXED_H_INCLUDED
 #define DEXED_H_INCLUDED
 
-#define DEXED_VERSION "0.8.0"
-#define TRACE(fmt, ...)
+void dexed_trace(const char *source, const char *fmt, ...);
+
+#ifdef DEBUG
+    #define DEXED_VERSION "0.9.0 DEBUG"
+    #ifdef _MSC_VER
+        #define TRACE(fmt, ...) dexed_trace(__FUNCTION__,fmt,##__VA_ARGS__)
+    #else
+        #define TRACE(fmt, ...) dexed_trace(__PRETTY_FUNCTION__,fmt,##__VA_ARGS__)
+    #endif
+#else
+    #define DEXED_VERSION "0.9.0"
+    #define TRACE(fmt, ...)
+#endif
 
 #endif  // DEXED_H_INCLUDED

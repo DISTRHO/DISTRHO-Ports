@@ -125,6 +125,9 @@
 #ifndef  JucePlugin_AAXDisableBypass
  #define JucePlugin_AAXDisableBypass       0
 #endif
+#ifndef  JucePlugin_AAXDisableMultiMono
+ #define JucePlugin_AAXDisableMultiMono    0
+#endif
 
 #define JucePlugin_LV2URI               "https://github.com/asb2m10/dexed"
 #define JucePlugin_LV2Category          "InstrumentPlugin"

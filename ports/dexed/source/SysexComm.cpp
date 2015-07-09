@@ -143,6 +143,8 @@ int SysexComm::send(const MidiMessage &message) {
     if ( output == NULL )
         return 2;
 
+    TRACE("send sysex");
+    
     outActivity = true;
     output->sendMessageNow(message);
     return 0;
@@ -151,8 +153,3 @@ int SysexComm::send(const MidiMessage &message) {
 void SysexComm::playBuffer(MidiBuffer &keyboardEvents, int numSamples ) {
     noteOutput.addEvents(keyboardEvents, 0, numSamples, 0);
 }
-
-void SysexComm::handleAsyncUpdate() {
-    
-}
-

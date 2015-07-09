@@ -161,9 +161,6 @@ EnvDisplay::EnvDisplay() {
 }
 
 void EnvDisplay::paint(Graphics &g) {
-    g.setColour(Colours::black.withAlpha(0.5f));
-    g.fillRoundedRectangle (0.0f, 0.0f, (float) getWidth(), (float) getHeight(), 1.0f);
-    
     int h = getHeight();
     char *rates = pvalues;
     char *levels = pvalues + 4;
@@ -266,12 +263,12 @@ void PitchEnvDisplay::paint(Graphics &g) {
     float dist[4];
     float total = 0;
     
-    int old = pitchenv_tab[int(levels[3])] + 128;
+    int old = pitchenv_tab[levels[3]] + 128;
     
     // find the scale
     for(int i=0;i<4;i++) {
-        int nw = pitchenv_tab[int(levels[i])] + 128;
-        dist[i] = ((float)abs(nw - old)) / pitchenv_rate[int(rates[i])];
+        int nw = pitchenv_tab[levels[i]] + 128;
+        dist[i] = ((float)abs(nw - old)) / pitchenv_rate[rates[i]];
         total += dist[i];
         old = nw;
     }
@@ -287,7 +284,7 @@ void PitchEnvDisplay::paint(Graphics &g) {
     p.startNewSubPath(0, 32);
 
     int x = 0;
-    int y = 25 - (pitchenv_tab[int(levels[3])] + 128) / 10;
+    int y = 25 - (pitchenv_tab[levels[3]] + 128) / 10;
     p.lineTo(0,y);
 
     int dx = x;
@@ -301,7 +298,7 @@ void PitchEnvDisplay::paint(Graphics &g) {
         }
 
         x = dist[i] * ratio + x;
-        y = 25 - (pitchenv_tab[int(levels[i])] + 128) / 10;
+        y = 25 - (pitchenv_tab[levels[i]] + 128) / 10;
         p.lineTo(x, y);
     }
     
@@ -354,11 +351,17 @@ void LcdDisplay::paint(Graphics &g) {
 
 void ComboBoxImage::paint(Graphics &g) {
     int idx = getSelectedItemIndex();
+    if ( itemPos[0] != -1 ) {
+        if ( idx < 4 )
+            idx = itemPos[idx];
+    }
+    
     g.drawImage(items, 0, 0, items.getWidth(), itemHeight, 0, idx * itemHeight, items.getWidth(), itemHeight);
 }
 
 ComboBoxImage::ComboBoxImage() {
     onPopup = false;
+    itemPos[0] = -1;
 }
 
 void ComboBoxImage::showPopup() {
@@ -369,7 +372,6 @@ void ComboBoxImage::showPopup() {
         if ( idx < 0 )
             return;
         setSelectedItemIndex(idx);
-
     }
 }
 
@@ -395,16 +397,10 @@ void ComboBoxImage::setImage(Image image, int pos[]) {
         Image tmp = image.getClippedImage(Rectangle<int>(0,itemHeight*pos[i], image.getWidth(), itemHeight));
         popup.addItem(i+1, getItemText(i), true, false, tmp);
     }
-}
 
-void ProgramSelector::setInit() {
-    isInInit = true;
+    for(int i=0;i<4;i++)
+        itemPos[i] = pos[i];
 }
 
 void ProgramSelector::paint(Graphics &g) {
-    g.setColour(Colours::white);
-    g.setFont(Font(15.00f, Font::plain));
-    //g.drawText (, getLocalBounds(),
-      //          Justification::centred, true);   // draw some placeholder text
-
 }

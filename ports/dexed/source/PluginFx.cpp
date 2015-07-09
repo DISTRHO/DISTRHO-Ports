@@ -44,14 +44,18 @@ inline static float tptlpupw(float & state , float inp , float cutoff , float sr
 	return res;
 }
 
-/*
 static float linsc(float param,const float min,const float max) {
     return (param) * (max - min) + min;
 }
-*/
 
 static float logsc(float param, const float min,const float max,const float rolloff = 19.0f) {
 	return ((expf(param * logf(rolloff+1)) - 1.0f) / (rolloff)) * (max-min) + min;
+}
+
+PluginFx::PluginFx() {
+    uiCutoff = 1;
+    uiReso = 0;
+    uiGain = 1;
 }
 
 void PluginFx::init(int sr) {
@@ -74,11 +78,7 @@ void PluginFx::init(int sr) {
 	rcor = (480.0 / 44000)*rcrate;
     rcorInv = 1 / rcor;
     bandPassSw = false;
-    
-    uiCutoff = 1;
-    uiReso = 0;
-    uiGain = 1;
-    
+
     pCutoff = -1;
     pReso = -1;
 }
@@ -143,7 +143,7 @@ void PluginFx::process(float *work, int sampleSize) {
         float y2 = tptpc(s2,y1,g);
         float y3 = tptpc(s3,y2,g);
         float y4 = tptpc(s4,y3,g);
-        float mc = 0.0f;
+        float mc;
     
         switch(mmch) {
             case 0:

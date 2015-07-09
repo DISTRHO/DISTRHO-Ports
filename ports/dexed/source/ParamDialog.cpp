@@ -260,7 +260,7 @@ void ParamDialog::setDialogValues(Controllers &c, SysexComm &mgr, int reso, bool
     sysexOut->setSelectedItemIndex(idx);
 
     engineReso->setSelectedItemIndex(reso);
-    showKeyboard->setToggleState(showKey, dontSendNotification);
+    showKeyboard->setToggleState(showKey, false);
 }
 
 bool ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr, int *reso, bool *showKey) {

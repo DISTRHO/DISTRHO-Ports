@@ -21,7 +21,7 @@
 #ifndef DXCOMPONENTS_H_INCLUDED
 #define DXCOMPONENTS_H_INCLUDED
 
-#include "JuceHeader.h"
+#include "../JuceLibraryCode/JuceHeader.h"
 
 class EnvDisplay : public Component {
 public:
@@ -71,9 +71,7 @@ public:
 };
 
 class ProgramSelector : public ComboBox {
-    bool isInInit;
 public:
-    void setInit();
     virtual void paint(Graphics &g) override;
 };
 

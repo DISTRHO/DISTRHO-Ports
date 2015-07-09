@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2013 Pascal Gauthier.
+ * Copyright (c) 2013-2015 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,11 +19,57 @@
  */
 
 #include <time.h>
+#include <stdlib.h>
 
 #include "PluginParam.h"
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 #include "Dexed.h"
+
+// ************************************************************************
+// Custom displays
+
+class CtrlDXLabel : public CtrlDX {
+   StringArray labels;
+public:
+    CtrlDXLabel(String name, int steps, int offset, StringArray &labels) : CtrlDX(name, steps, offset, 0) {
+        this->labels = labels;
+    };
+    
+    String getValueDisplay() {
+        return labels[getValue()];
+    }
+};
+
+class CtrlDXTranspose : public CtrlDX {
+public:
+    CtrlDXTranspose(String name, int steps, int offset) : CtrlDX(name, steps, offset, 0) {
+    };
+    
+    String getValueDisplay() {
+        String ret;
+        int value = getValue();
+        if ( value == 48 )
+            value = 47;
+        
+        switch(value % 12) {
+            case 0: ret << "C"; break;
+            case 1: ret << "C#"; break;
+            case 2: ret << "D"; break;
+            case 3: ret << "D#"; break;
+            case 4: ret << "E"; break;
+            case 5: ret << "F"; break;
+            case 6: ret << "F#"; break;
+            case 7: ret << "G"; break;
+            case 8: ret << "G#"; break;
+            case 9: ret << "A"; break;
+            case 10: ret << "A#"; break;
+            case 11: ret << "B"; break;
+        }
+        return ret << (value/12-2);
+    }
+};
+
 
 // ************************************************************************
 //
@@ -140,6 +186,8 @@ float CtrlDX::getValueHost() {
 }
 
 void CtrlDX::setValueHost(float f) {
+    if ( f == 1 )
+        f = 0.999;
     setValue((f * steps));
 }
 
@@ -228,7 +276,7 @@ void CtrlDX::updateComponent() {
  *
  */
 void DexedAudioProcessor::initCtrl() {
-    loadBuiltin(0);
+    setupStartupCart();
     currentProgram = 0;
     
     fxCutoff = new CtrlFloat("Cutoff", &fx.uiCutoff);
@@ -264,10 +312,18 @@ void DexedAudioProcessor::initCtrl() {
     lfoSync = new CtrlDX("LFO KEY SYNC", 2, 141);
     ctrl.add(lfoSync);
     
-    lfoWaveform = new CtrlDX("LFO WAVE", 6, 142);
+    StringArray lbl;
+    lbl.add("TRIANGE");
+    lbl.add("SAW DOWN");
+    lbl.add("SAW UP");
+    lbl.add("SQUARE");
+    lbl.add("SINE");
+    lbl.add("S&HOLD");
+    
+    lfoWaveform = new CtrlDXLabel("LFO WAVE", 6, 142, lbl);
     ctrl.add(lfoWaveform);
     
-    transpose = new CtrlDX("MIDDLE C", 49, 144);
+    transpose = new CtrlDXTranspose("MIDDLE C", 49, 144);
     ctrl.add(transpose);
     
     pitchModSens = new CtrlDX("P MODE SENS.", 8, 143);
@@ -286,6 +342,12 @@ void DexedAudioProcessor::initCtrl() {
         pitchEgLevel[i] = new CtrlDX(level, 100, 130+i);
         ctrl.add(pitchEgLevel[i]);
     }
+    
+    StringArray keyScaleLabels;
+    keyScaleLabels.add("-LN");
+    keyScaleLabels.add("-EX");
+    keyScaleLabels.add("+EX");
+    keyScaleLabels.add("+LN");
     
     // fill operator values;
     for (int i = 0; i < 6; i++) {
@@ -351,12 +413,12 @@ void DexedAudioProcessor::initCtrl() {
 
         String sclLeftCurve;
         sclLeftCurve << opName << " L KEY SCALE";
-        opCtrl[opVal].sclLeftCurve = new CtrlDX(sclLeftCurve, 4, opTarget + 11);
+        opCtrl[opVal].sclLeftCurve = new CtrlDXLabel(sclLeftCurve, 4, opTarget + 11, keyScaleLabels);
         ctrl.add(opCtrl[opVal].sclLeftCurve);
 
         String sclRightCurve;
         sclRightCurve << opName << " R KEY SCALE";
-        opCtrl[opVal].sclRightCurve = new CtrlDX(sclRightCurve, 4, opTarget + 12);
+        opCtrl[opVal].sclRightCurve = new CtrlDXLabel(sclRightCurve, 4, opTarget + 12, keyScaleLabels);
         ctrl.add(opCtrl[opVal].sclRightCurve);
 
         String sclRate;
@@ -483,7 +545,9 @@ const String DexedAudioProcessor::getParameterText(int index) {
 }
 
 void DexedAudioProcessor::loadPreference() {
-    PropertiesFile prop(prefOptions);
+    File propFile = DexedAudioProcessor::dexedAppDir.getChildFile("Dexed.xml");
+    PropertiesFile::Options prefOptions;
+    PropertiesFile prop(propFile, prefOptions);
     
     if ( ! prop.isValidFile() ) {
         return;
@@ -523,7 +587,9 @@ void DexedAudioProcessor::loadPreference() {
 }
 
 void DexedAudioProcessor::savePreference() {
-    PropertiesFile prop(prefOptions);
+    File propFile = DexedAudioProcessor::dexedAppDir.getChildFile("Dexed.xml");
+    PropertiesFile::Options prefOptions;
+    PropertiesFile prop(propFile, prefOptions);
     
     prop.setValue(String("normalizeDxVelocity"), normalizeDxVelocity);
     prop.setValue(String("pitchRange"), controllers.values_[kControllerPitchRange]);
@@ -539,4 +605,5 @@ void DexedAudioProcessor::savePreference() {
     
     prop.save();
 }
+
 

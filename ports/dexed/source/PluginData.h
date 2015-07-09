@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2014 Pascal Gauthier.
+ * Copyright (c) 2014-2015 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,9 +21,10 @@
 #ifndef PLUGINDATA_H_INCLUDED
 #define PLUGINDATA_H_INCLUDED
 
-#include "JuceHeader.h"
+#include "../JuceLibraryCode/JuceHeader.h"
 #define SYSEX_SIZE 4104
 
+#include <stdint.h>
 
 enum UnpackedOffset {
 	egRate,
@@ -59,29 +60,11 @@ enum UnpackedOffset {
 };
 
 String normalizeSysexName(const char *sysexName);
+uint8_t sysexChecksum(const char *sysex, int size);
 void extractProgramNames(const char *block, StringArray &dest);
 void exportSysexCart(char *dest, char *src, char sysexChl);
 void exportSysexPgm(char *dest, char *src, char sysexChl);
 void packProgram(uint8_t *dest, uint8_t *src, int idx, String name);
-
-class CartridgeManager {
-    ScopedPointer<ZipFile> builtin_pgm;
-    Time lastModifiedUserCartFile;
-    File userCartFile;
-    
-	StringArray cartNames;
-    
-    int zipIdx;
-    PopupMenu *fillContent(String root, ZipFile *userZip);
-    PopupMenu completeCarts;
-    void rebuildMenu();
-    
-public:
-    PopupMenu *getCarts();
-
-	CartridgeManager();
-    ~CartridgeManager();
-	void getSysex(int idx, char *data);
-};
+void unpackProgramFromSysex(char *unpackPgm, char *sysexCart, int idx);
 
 #endif  // PLUGINDATA_H_INCLUDED
