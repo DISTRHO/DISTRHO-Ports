@@ -21,7 +21,7 @@
 #ifndef DXLOOKNFEEL_H_INCLUDED
 #define DXLOOKNFEEL_H_INCLUDED
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "JuceHeader.h"
 
 class DXLookNFeel : public LookAndFeel_V3 {
     static CriticalSection lock;

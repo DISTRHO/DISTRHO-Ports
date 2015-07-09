@@ -57,4 +57,11 @@ inline static T max(const T& a, const T& b) {
     return a > b ? a : b;
 }
 
+
+void dexed_trace(const char *source, const char *fmt, ...);
+
+#define QER(n,b) ( ((float)n)/(1<<b) )
+#define TRACE(fmt, ...)
+
+
 #endif  // __SYNTH_H

@@ -21,7 +21,7 @@
 #ifndef DXCOMPONENTS_H_INCLUDED
 #define DXCOMPONENTS_H_INCLUDED
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "JuceHeader.h"
 
 class EnvDisplay : public Component {
 public:

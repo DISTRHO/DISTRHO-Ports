@@ -21,7 +21,7 @@
 #ifndef ALGODISPLAY_H_INCLUDED
 #define ALGODISPLAY_H_INCLUDED
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "JuceHeader.h"
 
 class AlgoDisplay : public Component {
 public:

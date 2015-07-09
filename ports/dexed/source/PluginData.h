@@ -21,7 +21,7 @@
 #ifndef PLUGINDATA_H_INCLUDED
 #define PLUGINDATA_H_INCLUDED
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "JuceHeader.h"
 #define SYSEX_SIZE 4104
 
 #include <stdint.h>
