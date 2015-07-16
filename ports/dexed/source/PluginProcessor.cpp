@@ -75,10 +75,6 @@ DexedAudioProcessor::DexedAudioProcessor() {
     midiMsg = NULL;
 
     clipboardContent = -1;
-
-    // make sure parameters are initialized
-    for (int i=getNumParameters(); --i >= 0;)
-        setParameter(i, 0.0f);
 }
 
 DexedAudioProcessor::~DexedAudioProcessor() {
@@ -155,7 +151,7 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
     MidiBuffer::Iterator it(midiMessages);
     hasMidiMessage = it.getNextEvent(*nextMidi,midiEventPos);
 
-    float *channelData = buffer.getSampleData(0);
+    float *channelData = buffer.getWritePointer(0);
   
     // flush first events
     for (i=0; i < numSamples && i < extra_buf_size; i++) {
@@ -237,7 +233,7 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
     }
     
     // DX7 is a mono synth
-    for (int channel = 1; channel < getNumInputChannels(); ++channel) {
+    for (int channel = 1; channel < getNumOutputChannels(); ++channel) {
         buffer.copyFrom(channel, 0, channelData, numSamples, 1);
     }
 }
