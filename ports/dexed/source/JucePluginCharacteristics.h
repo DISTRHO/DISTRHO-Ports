@@ -21,7 +21,7 @@
  #define JucePlugin_Name                   "Dexed"
 #endif
 #ifndef  JucePlugin_Desc
- #define JucePlugin_Desc                   "Dexed"
+ #define JucePlugin_Desc                   "Dexed FM Synth"
 #endif
 #ifndef  JucePlugin_Manufacturer
  #define JucePlugin_Manufacturer           "Digital Suburban"
@@ -33,10 +33,10 @@
  #define JucePlugin_ManufacturerEmail      ""
 #endif
 #ifndef  JucePlugin_ManufacturerCode
- #define JucePlugin_ManufacturerCode       'DiSb'
+ #define JucePlugin_ManufacturerCode       'DGSB'
 #endif
 #ifndef  JucePlugin_PluginCode
- #define JucePlugin_PluginCode             'Dxed'
+ #define JucePlugin_PluginCode             'Dexd'
 #endif
 #ifndef  JucePlugin_MaxNumInputChannels
  #define JucePlugin_MaxNumInputChannels    0
