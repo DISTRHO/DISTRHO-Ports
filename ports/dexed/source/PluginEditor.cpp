@@ -187,7 +187,7 @@ void DexedAudioProcessorEditor::saveCart() {
 void DexedAudioProcessorEditor::parmShow() {
     int tp = processor->getEngineType();
     
-    AlertWindow window("","", AlertWindow::NoIcon, this);
+    AlertWindow window("Dexed Params","", AlertWindow::NoIcon, this);
     ParamDialog param;
     param.setColour(AlertWindow::backgroundColourId, Colour(0x32FFFFFF));
     param.setDialogValues(processor->controllers, processor->sysexComm, tp, processor->showKeyboard);
