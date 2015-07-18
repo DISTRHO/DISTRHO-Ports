@@ -80,7 +80,7 @@ function make_plugin_project(name, spec)
   package.target       = project.name
   package.targetprefix = ""
   package.objdir       = "intermediate"
-  package.buildoptions = { "-Wall", os.getenv("CXXFLAGS") }
+  package.buildoptions = { "-Wall", "-Werror=deprecated-declarations", os.getenv("CXXFLAGS") }
   package.links        = {}
   package.linkoptions  = { os.getenv("LDFLAGS") }
 
