@@ -1881,6 +1881,9 @@ public:
     {
         if (LinuxComponentPeer* const otherPeer = dynamic_cast<LinuxComponentPeer*> (other))
         {
+            if (otherPeer->styleFlags & windowIsTemporary)
+                return;
+
             setMinimised (false);
 
             Window newStack[] = { otherPeer->windowH, windowH };
