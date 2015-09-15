@@ -1174,12 +1174,12 @@ public:
 
                     for (int j=0; options[j].key != 0; ++j)
                     {
-                        if (options[j].key == uridMap->map(uridMap->handle, LV2_BUF_SIZE__maxBlockLength))
+                        if (options[j].key == uridMap->map(uridMap->handle, LV2_BUF_SIZE__nominalBlockLength))
                         {
                             if (options[j].type == uridMap->map(uridMap->handle, LV2_ATOM__Int))
                                 bufferSize = *(int*)options[j].value;
                             else
-                                std::cerr << "Host provides maxBlockLength but has wrong value type" << std::endl;
+                                std::cerr << "Host provides nominalBlockLength but has wrong value type" << std::endl;
 
                             break;
                         }
@@ -1651,12 +1651,12 @@ public:
     {
         for (int j=0; options[j].key != 0; ++j)
         {
-            if (options[j].key == uridMap->map(uridMap->handle, LV2_BUF_SIZE__maxBlockLength))
+            if (options[j].key == uridMap->map(uridMap->handle, LV2_BUF_SIZE__nominalBlockLength))
             {
                 if (options[j].type == uridMap->map(uridMap->handle, LV2_ATOM__Int))
                     bufferSize = *(int*)options[j].value;
                 else
-                    std::cerr << "Host changed maxBlockLength but with wrong value type" << std::endl;
+                    std::cerr << "Host changed nominalBlockLength but with wrong value type" << std::endl;
             }
             else if (options[j].key == uridMap->map(uridMap->handle, LV2_CORE__sampleRate))
             {

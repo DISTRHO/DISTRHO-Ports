@@ -1865,12 +1865,6 @@ public:
             XSendEvent (display, RootWindow (display, DefaultScreen (display)),
                         False, SubstructureRedirectMask | SubstructureNotifyMask, &ev);
 
-            XWindowAttributes attr;
-            XGetWindowAttributes (display, windowH, &attr);
-
-            if (component.isAlwaysOnTop())
-                XRaiseWindow (display, windowH);
-
             XSync (display, False);
         }
 
