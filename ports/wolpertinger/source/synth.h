@@ -506,10 +506,10 @@ class wolp:	public AudioProcessor,
 			careful not to block, and avoid any UI activity in the callback.
 		*/
 		virtual void handleNoteOff (MidiKeyboardState* source,
-									int midiChannel, int midiNoteNumber) override
+									int midiChannel, int midiNoteNumber, float velocity) override
 		{
 //			printf("MidiKeyboard noteOff isProcessing=%s\n", isProcessing? "true": "false");
-			noteOff(midiChannel, midiNoteNumber, 0.0f, true);
+			noteOff(midiChannel, midiNoteNumber, velocity, true);
 		}
 
 	protected:
