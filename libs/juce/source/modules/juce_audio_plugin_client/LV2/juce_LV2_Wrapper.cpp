@@ -1121,7 +1121,8 @@ public:
           uridTimeBeatsPerMinute (0),
           uridTimeBeatUnit (0),
           uridTimeFrame (0),
-          uridTimeSpeed (0)
+          uridTimeSpeed (0),
+          usingNominalBlockLength (false)
     {
         filter = createPluginFilterOfType (AudioProcessor::wrapperType_VST); // FIXME
         jassert (filter != nullptr);
@@ -1166,28 +1167,6 @@ public:
 
         if (uridMap != nullptr)
         {
-            for (int i=0; features[i] != nullptr; ++i)
-            {
-                if (strcmp(features[i]->URI, LV2_OPTIONS__options) == 0)
-                {
-                    const LV2_Options_Option* options = (const LV2_Options_Option*)features[i]->data;
-
-                    for (int j=0; options[j].key != 0; ++j)
-                    {
-                        if (options[j].key == uridMap->map(uridMap->handle, LV2_BUF_SIZE__nominalBlockLength))
-                        {
-                            if (options[j].type == uridMap->map(uridMap->handle, LV2_ATOM__Int))
-                                bufferSize = *(int*)options[j].value;
-                            else
-                                std::cerr << "Host provides nominalBlockLength but has wrong value type" << std::endl;
-
-                            break;
-                        }
-                    }
-                    break;
-                }
-            }
-
             uridAtomBlank = uridMap->map(uridMap->handle, LV2_ATOM__Blank);
             uridAtomObject = uridMap->map(uridMap->handle, LV2_ATOM__Object);
             uridAtomDouble = uridMap->map(uridMap->handle, LV2_ATOM__Double);
@@ -1204,6 +1183,42 @@ public:
             uridTimeBeatUnit = uridMap->map(uridMap->handle, LV2_TIME__beatUnit);
             uridTimeFrame = uridMap->map(uridMap->handle, LV2_TIME__frame);
             uridTimeSpeed = uridMap->map(uridMap->handle, LV2_TIME__speed);
+
+            for (int i=0; features[i] != nullptr; ++i)
+            {
+                if (strcmp(features[i]->URI, LV2_OPTIONS__options) == 0)
+                {
+                    const LV2_Options_Option* options = (const LV2_Options_Option*)features[i]->data;
+
+                    for (int j=0; options[j].key != 0; ++j)
+                    {
+                        if (options[j].key == uridMap->map(uridMap->handle, LV2_BUF_SIZE__nominalBlockLength))
+                        {
+                            if (options[j].type == uridAtomInt)
+                            {
+                                bufferSize = *(int*)options[j].value;
+                                usingNominalBlockLength = true;
+                            }
+                            else
+                            {
+                                std::cerr << "Host provides nominalBlockLength but has wrong value type" << std::endl;
+                            }
+                            break;
+                        }
+
+                        if (options[j].key == uridMap->map(uridMap->handle, LV2_BUF_SIZE__maxBlockLength))
+                        {
+                            if (options[j].type == uridAtomInt)
+                                bufferSize = *(int*)options[j].value;
+                            else
+                                std::cerr << "Host provides maxBlockLength but has wrong value type" << std::endl;
+
+                            // no break, continue in case host supports nominalBlockLength
+                        }
+                    }
+                    break;
+                }
+            }
         }
 
         progDesc.bank = 0;
@@ -1653,14 +1668,21 @@ public:
         {
             if (options[j].key == uridMap->map(uridMap->handle, LV2_BUF_SIZE__nominalBlockLength))
             {
-                if (options[j].type == uridMap->map(uridMap->handle, LV2_ATOM__Int))
+                if (options[j].type == uridAtomInt)
                     bufferSize = *(int*)options[j].value;
                 else
                     std::cerr << "Host changed nominalBlockLength but with wrong value type" << std::endl;
             }
+            else if (options[j].key == uridMap->map(uridMap->handle, LV2_BUF_SIZE__maxBlockLength) && ! usingNominalBlockLength)
+            {
+                if (options[j].type == uridAtomInt)
+                    bufferSize = *(int*)options[j].value;
+                else
+                    std::cerr << "Host changed maxBlockLength but with wrong value type" << std::endl;
+            }
             else if (options[j].key == uridMap->map(uridMap->handle, LV2_CORE__sampleRate))
             {
-                if (options[j].type == uridMap->map(uridMap->handle, LV2_ATOM__Double))
+                if (options[j].type == uridAtomDouble)
                     sampleRate = *(double*)options[j].value;
                 else
                     std::cerr << "Host changed sampleRate but with wrong value type" << std::endl;
@@ -1882,6 +1904,8 @@ private:
     LV2_URID uridTimeBeatUnit;       // timeSigDenominator
     LV2_URID uridTimeFrame;          // timeInSamples
     LV2_URID uridTimeSpeed;
+
+    bool usingNominalBlockLength; // if false use maxBlockLength
 
     LV2_Program_Descriptor progDesc;
 

@@ -696,6 +696,29 @@ bool DatagramSocket::leaveMulticast (const String& multicastIPAddress)
     return SocketHelpers::multicast (handle, multicastIPAddress, lastBindAddress, false);
 }
 
+bool DatagramSocket::setEnablePortReuse (bool enabled)
+{
+   #if JUCE_ANDROID
+    return false;
+   #else
+    const int reuse = enabled ? 1 : 0;
+
+   #if JUCE_WINDOWS
+    // port re-use is implied by addr re-use on windows
+    const int optname = SO_REUSEADDR;
+   #else
+    const int optname = SO_REUSEPORT;
+   #endif
+
+
+    if (handle >= 0)
+        return (setsockopt (handle, SOL_SOCKET, optname,
+                            (const char*) &reuse, sizeof (reuse)) == 0);
+
+    return false;
+   #endif
+}
+
 #if JUCE_MSVC
  #pragma warning (pop)
 #endif
