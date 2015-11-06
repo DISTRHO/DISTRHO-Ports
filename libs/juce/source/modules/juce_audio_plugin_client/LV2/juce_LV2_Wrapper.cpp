@@ -233,6 +233,7 @@ const String makeManifestFile (AudioProcessor* const filter, const String& binar
         text += "<" + pluginURI + presetSeparator + "preset" + String::formatted("%03i", i+1) + ">\n";
         text += "    a pset:Preset ;\n";
         text += "    lv2:appliesTo <" + pluginURI + "> ;\n";
+        text += "    rdfs:label \"" + filter->getProgramName(i) + "\" ;\n";
         text += "    rdfs:seeAlso <presets.ttl> .\n";
         text += "\n";
     }
@@ -442,7 +443,6 @@ const String makePresetsFile (AudioProcessor* const filter)
         // Label
         filter->setCurrentProgram(i);
         preset += "<" + pluginURI + presetSeparator + "preset" + String::formatted("%03i", i+1) + "> a pset:Preset ;\n";
-        preset += "    rdfs:label \"" + filter->getProgramName(i) + "\" ;\n";
 
         // State
 #if JucePlugin_WantsLV2State
