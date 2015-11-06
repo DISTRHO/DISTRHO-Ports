@@ -156,7 +156,7 @@ private:
         if (xml == nullptr)
             return "invalid XmlElement";
         
-        return newLine + xml->createDocument (String::empty, false, includeXmlHeader);
+        return String(NewLine::getDefault()) + xml->createDocument (String::empty, false, includeXmlHeader);
     }
 
     String getStringFromValueTree() const

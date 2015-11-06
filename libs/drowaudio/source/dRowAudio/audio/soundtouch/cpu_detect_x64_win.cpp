@@ -42,7 +42,7 @@
 
 #include "cpu_detect.h"
 
-#ifndef WIN64
+#ifndef _WIN64
 #error wrong platform - this source code file is exclusively for Win64 platform
 #endif
 

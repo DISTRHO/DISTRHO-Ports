@@ -504,10 +504,8 @@ public:
         return numChannelConfigs;
     }
 
-    UInt32 GetAudioChannelLayout (AudioUnitScope scope,
-                                  AudioUnitElement element,
-                                  AudioChannelLayout *outLayoutPtr,
-                                  Boolean &outWritable) override
+    UInt32 GetAudioChannelLayout (AudioUnitScope scope, AudioUnitElement element,
+                                  AudioChannelLayout* outLayoutPtr, Boolean& outWritable) override
     {
         // fallback to old code if this plug-in does not have multi channel IO
         if (! hasMultiChannelConfiguration())
@@ -886,7 +884,7 @@ public:
 
             for (unsigned int i = 0; i < outBuffer.mNumberBuffers; ++i)
             {
-                AudioBuffer& buf = outBuffer.mBuffers[i];
+                ::AudioBuffer& buf = outBuffer.mBuffers[i];
 
                 if (buf.mNumberChannels == 1)
                 {
@@ -908,7 +906,7 @@ public:
 
             for (unsigned int i = 0; i < inBuffer.mNumberBuffers; ++i)
             {
-                const AudioBuffer& buf = inBuffer.mBuffers[i];
+                const ::AudioBuffer& buf = inBuffer.mBuffers[i];
 
                 if (buf.mNumberChannels == 1)
                 {
@@ -1027,7 +1025,7 @@ public:
 
                 for (unsigned int i = 0; i < outBuffer.mNumberBuffers; ++i)
                 {
-                    AudioBuffer& buf = outBuffer.mBuffers[i];
+                    ::AudioBuffer& buf = outBuffer.mBuffers[i];
 
                     if (buf.mNumberChannels > 1)
                     {

@@ -52,4 +52,5 @@ libs/juce/source/juce_amalgamated.mm
 libs/juce/source/modules/juce_box2d/
 libs/juce/source/modules/juce_browser_plugin_client/
 libs/juce/source/modules/juce_opengl/
+libs/juce/source/modules/juce_osc/
 libs/juce/source/modules/juce_video/
