@@ -109,7 +109,7 @@ public:
         delete filterStateVariableLp12db;
         delete filterStateVariableHp12db;
         delete filterStateVariableBp12db;
-		delete upsampledValues;
+		delete[] upsampledValues;
 	}
 
 	void setFiltertype(float value)
