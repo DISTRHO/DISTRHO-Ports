@@ -42,7 +42,7 @@
 
 #include "cpu_detect.h"
 
-#ifndef WIN32
+#ifndef _WIN32
 #error wrong platform - this source code file is exclusively for Win32 platform
 #endif
 
@@ -71,6 +71,7 @@ uint detectCPUextensions(void)
 
     if (_dwDisabledISA == 0xffffffff) return 0;
 
+#ifndef __MINGW32__
     _asm 
     {
         ; check if 'cpuid' instructions is available by toggling eflags bit 21
@@ -124,6 +125,7 @@ uint detectCPUextensions(void)
 
         mov     res, esi
     }
+#endif
 
     return res & ~_dwDisabledISA;
 }
