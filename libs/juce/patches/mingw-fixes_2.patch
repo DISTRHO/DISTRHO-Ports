@@ -1,0 +1,46 @@
+diff --git a/modules/juce_core/files/juce_File.cpp b/modules/juce_core/files/juce_File.cpp
+index de6790e..a8c2c69 100644
+--- a/modules/juce_core/files/juce_File.cpp
++++ b/modules/juce_core/files/juce_File.cpp
+@@ -911,7 +911,7 @@ bool File::createSymbolicLink (const File& linkFileToCreate, bool overwriteExist
+     }
+ 
+     return true;
+-   #elif JUCE_WINDOWS
++   #elif JUCE_MSVC
+     return CreateSymbolicLink (linkFileToCreate.getFullPathName().toWideCharPointer(),
+                                fullPath.toWideCharPointer(),
+                                isDirectory() ? SYMBOLIC_LINK_FLAG_DIRECTORY : 0) != FALSE;
+diff --git a/modules/juce_core/native/juce_BasicNativeHeaders.h b/modules/juce_core/native/juce_BasicNativeHeaders.h
+index 933285a..c926ecf 100644
+--- a/modules/juce_core/native/juce_BasicNativeHeaders.h
++++ b/modules/juce_core/native/juce_BasicNativeHeaders.h
+@@ -114,7 +114,7 @@
+  #if JUCE_MINGW
+   #include <basetyps.h>
+   #include <sys/time.h>
+-  #define alloca __builtin_alloca
++  #define alloca(x) __builtin_alloca((x))
+  #else
+   #include <crtdbg.h>
+   #include <comutil.h>
+diff --git a/modules/juce_core/native/juce_win32_Files.cpp b/modules/juce_core/native/juce_win32_Files.cpp
+index 715be33..81a0bca 100644
+--- a/modules/juce_core/native/juce_win32_Files.cpp
++++ b/modules/juce_core/native/juce_win32_Files.cpp
+@@ -643,6 +643,7 @@ bool File::isShortcut() const
+ 
+ File File::getLinkedTarget() const
+ {
++#if JUCE_MSVC
+     {
+         HANDLE h = CreateFile (getFullPathName().toWideCharPointer(),
+                                GENERIC_READ, FILE_SHARE_READ, nullptr,
+@@ -676,6 +677,7 @@ File File::getLinkedTarget() const
+             CloseHandle (h);
+         }
+     }
++#endif
+ 
+     File result (*this);
+     String p (getFullPathName());
