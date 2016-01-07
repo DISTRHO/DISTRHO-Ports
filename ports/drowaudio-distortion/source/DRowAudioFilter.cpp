@@ -303,7 +303,7 @@ void DRowAudioFilter::processBlock (AudioSampleBuffer& buffer,
 {
 	smoothParameters();
 
-	const int numInputChannels = getNumInputChannels();
+	const int numInputChannels = getTotalNumInputChannels();
 
 
 	// create parameters to use
@@ -314,7 +314,7 @@ void DRowAudioFilter::processBlock (AudioSampleBuffer& buffer,
 	float fColour = 100 * params[COLOUR].getSmoothedNormalisedValue();
 
 	// set up array of pointers to samples
-	int numSamples = buffer.getNumSamples();
+	const int numSamples = buffer.getNumSamples();
 	int samplesLeft = numSamples;
 	float* pfSample[numInputChannels];
 	for (int channel = 0; channel < numInputChannels; channel++)
@@ -380,8 +380,8 @@ void DRowAudioFilter::processBlock (AudioSampleBuffer& buffer,
 
 
     // clear any output channels that didn't contain input data
-    for (int i = getNumInputChannels(); i < getNumOutputChannels(); ++i)
-        buffer.clear (i, 0, buffer.getNumSamples());
+    for (int i = numInputChannels; i < getTotalNumOutputChannels(); ++i)
+        buffer.clear (i, 0, numSamples);
 }
 
 //==============================================================================

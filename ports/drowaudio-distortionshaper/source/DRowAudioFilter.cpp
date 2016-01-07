@@ -290,7 +290,7 @@ void DRowAudioFilter::releaseResources()
 void DRowAudioFilter::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 {
 	smoothParameters();
-	const int numInputChannels = getNumInputChannels();
+	const int numInputChannels = getTotalNumInputChannels();
 	const int numSamples = buffer.getNumSamples();
 
 	// set up the parameters to be used
@@ -384,7 +384,7 @@ void DRowAudioFilter::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiM
     // in case we have more outputs than inputs, we'll clear any output
     // channels that didn't contain input data, (because these aren't
     // guaranteed to be empty - they may contain garbage).
-    for (int i = getNumInputChannels(); i < getNumOutputChannels(); ++i)
+    for (int i = numInputChannels; i < getTotalNumOutputChannels(); ++i)
     {
         buffer.clear (i, 0, numSamples);
     }

@@ -230,7 +230,7 @@ void TalCore::processBlock (AudioSampleBuffer& buffer,
 
     // for each of our input channels, we'll attenuate its level by the
     // amount that our volume parameter is set to.
-	int numberOfChannels = getNumInputChannels();
+	int numberOfChannels = getTotalNumInputChannels();
 	//int bufferSize = buffer.getNumSamples();
 
 	if (numberOfChannels == 2)
@@ -264,7 +264,7 @@ void TalCore::processBlock (AudioSampleBuffer& buffer,
     // in case we have more outputs than inputs, we'll clear any output
     // channels that didn't contain input data, (because these aren't
     // guaranteed to be empty - they may contain garbage).
-    for (int i = getNumInputChannels(); i < getNumOutputChannels(); ++i)
+    for (int i = getTotalNumInputChannels(); i < getTotalNumOutputChannels(); ++i)
     {
         buffer.clear (i, 0, buffer.getNumSamples());
     }

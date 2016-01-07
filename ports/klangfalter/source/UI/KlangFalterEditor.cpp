@@ -1094,8 +1094,8 @@ void KlangFalterEditor::buttonClicked (Button* buttonThatWasClicked)
 void KlangFalterEditor::updateUI()
 {
   const bool irAvailable = _processor.irAvailable();
-  const size_t numInputChannels = static_cast<size_t>(std::min(_processor.getNumInputChannels(), 2));
-  const size_t numOutputChannels = static_cast<size_t>(std::min(_processor.getNumOutputChannels(), 2));
+  const size_t numInputChannels = static_cast<size_t>(std::min(_processor.getTotalNumInputChannels(), 2));
+  const size_t numOutputChannels = static_cast<size_t>(std::min(_processor.getTotalNumOutputChannels(), 2));
   {
     const double stretch = _processor.getStretch();
     _stretchSlider->setEnabled(irAvailable);

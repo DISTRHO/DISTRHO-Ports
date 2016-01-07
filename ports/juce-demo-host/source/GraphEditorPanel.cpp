@@ -168,13 +168,7 @@ public:
             }
             else
             {
-                if (isInput)
-                    tip = node->getProcessor()->getInputChannelName (index_);
-                else
-                    tip = node->getProcessor()->getOutputChannelName (index_);
-
-                if (tip.isEmpty())
-                    tip = (isInput ? "Input " : "Output ") + String (index_ + 1);
+                tip = (isInput ? "Input " : "Output ") + String (index_ + 1);
             }
 
             setTooltip (tip);
@@ -420,11 +414,11 @@ public:
             return;
         }
 
-        numIns = f->getProcessor()->getNumInputChannels();
+        numIns = f->getProcessor()->getTotalNumInputChannels();
         if (f->getProcessor()->acceptsMidi())
             ++numIns;
 
-        numOuts = f->getProcessor()->getNumOutputChannels();
+        numOuts = f->getProcessor()->getTotalNumOutputChannels();
         if (f->getProcessor()->producesMidi())
             ++numOuts;
 
@@ -456,13 +450,13 @@ public:
             deleteAllChildren();
 
             int i;
-            for (i = 0; i < f->getProcessor()->getNumInputChannels(); ++i)
+            for (i = 0; i < f->getProcessor()->getTotalNumInputChannels(); ++i)
                 addAndMakeVisible (new PinComponent (graph, filterID, i, true));
 
             if (f->getProcessor()->acceptsMidi())
                 addAndMakeVisible (new PinComponent (graph, filterID, FilterGraph::midiChannelNumber, true));
 
-            for (i = 0; i < f->getProcessor()->getNumOutputChannels(); ++i)
+            for (i = 0; i < f->getProcessor()->getTotalNumOutputChannels(); ++i)
                 addAndMakeVisible (new PinComponent (graph, filterID, i, false));
 
             if (f->getProcessor()->producesMidi())

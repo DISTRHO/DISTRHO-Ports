@@ -77,13 +77,13 @@ TremoloAudioProcessorEditor::TremoloAudioProcessorEditor (TremoloAudioProcessor*
     //	bufferView2Label->setColour(Label::textColourId, Colours::white);
 
 
-	if (ownerFilter->getNumInputChannels() == 1)
+	if (ownerFilter->getTotalNumInputChannels() == 1)
 		setSize (360, 170);
 	else
 		setSize (360, 210);
 
 	// if plugin is mono set up the accordingly
-	if (ownerFilter->getNumInputChannels() < 2)
+	if (ownerFilter->getTotalNumInputChannels() < 2)
 	{
 		sliders[Parameters::phase]->setVisible (false);
 		bufferViewR->setVisible (false);
@@ -124,7 +124,7 @@ void TremoloAudioProcessorEditor::paint (Graphics& g)
                                Colour (0xFF455769).darker (0.5f), Colour (0xFF455769).brighter (0.3f),
                                false, true);
 
-    if (getAudioProcessor()->getNumInputChannels() > 1)
+    if (getAudioProcessor()->getTotalNumInputChannels() > 1)
     {
         bevel  = bufferViewR->getBounds().expanded (2, 2);
         LookAndFeel_V2::drawBevel (g, bevel.getX(), bevel.getY(), bevel.getWidth(), bevel.getHeight(), 2,
@@ -145,14 +145,14 @@ void TremoloAudioProcessorEditor::resized()
 	sliders[Parameters::shape]->setBounds (5, 140, w - 170, 20);
 	sliders[Parameters::phase]->setBounds (5, 180, w - 170, 20);
 
-	if (getAudioProcessor()->getNumInputChannels() > 1)
+	if (getAudioProcessor()->getTotalNumInputChannels() > 1)
 	{
 		bufferViewL->setBounds (w - 125, 20,
 								115, ((h - 15) * 0.5f) - 14);
 		bufferViewR->setBounds (w - 125, ((h - 15) * 0.5f) + 15 + 2,
 								115, ((h - 15) * 0.5f) - 14);
 	}
-	else if (getAudioProcessor()->getNumInputChannels() == 1)
+	else if (getAudioProcessor()->getTotalNumInputChannels() == 1)
     {
 		bufferViewL->setBounds (w - 150, 20,
 								140, (h - 15 - 15));

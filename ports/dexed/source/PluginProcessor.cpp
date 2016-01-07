@@ -134,7 +134,7 @@ void DexedAudioProcessor::releaseResources() {
 }
 
 void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages) {
-    int numSamples = buffer.getNumSamples();
+    const int numSamples = buffer.getNumSamples();
     int i;
     
     if ( refreshVoice ) {
@@ -233,7 +233,7 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
     }
     
     // DX7 is a mono synth
-    for (int channel = 1; channel < getNumOutputChannels(); ++channel) {
+    for (int channel = 1; channel < getTotalNumOutputChannels(); ++channel) {
         buffer.copyFrom(channel, 0, channelData, numSamples, 1);
     }
 }

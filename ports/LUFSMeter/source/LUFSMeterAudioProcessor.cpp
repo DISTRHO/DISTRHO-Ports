@@ -164,14 +164,14 @@ void LUFSMeterAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     int expectedRequestRate = 20;
     
     ebu128LoudnessMeter.prepareToPlay(sampleRate, 
-                                      getNumInputChannels(), 
+                                      getTotalNumInputChannels(), 
                                       samplesPerBlock, 
                                       expectedRequestRate);
     
 //    Array<var>* theArrayInside = momentaryLoudnessValues.getValue().getArray();
 //    theArrayInside->clear();
 //    double TODO_minimalLoudness = -300;
-//    int numberOfInputChannels = getNumInputChannels();
+//    int numberOfInputChannels = getTotalNumInputChannels();
 //    theArrayInside->insertMultiple (0, var (TODO_minimalLoudness), numberOfInputChannels);
 }
 
@@ -196,7 +196,7 @@ void LUFSMeterAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffe
     // In case we have more outputs than inputs, we'll clear any output
     // channels that didn't contain input data, (because these aren't
     // guaranteed to be empty - they may contain garbage).
-    for (int i = getNumInputChannels(); i < getNumOutputChannels(); ++i)
+    for (int i = getTotalNumInputChannels(); i < getTotalNumOutputChannels(); ++i)
     {
         buffer.clear (i, 0, buffer.getNumSamples());
     }
@@ -281,7 +281,7 @@ void LUFSMeterAudioProcessor::setStateInformation (const void* data, int sizeInB
 
 void LUFSMeterAudioProcessor::numChannelsChanged()
 {
-    numberOfInputChannels = getNumInputChannels();
+    numberOfInputChannels = getTotalNumInputChannels();
     DEB("number of input channels = " + String( int(numberOfInputChannels.getValue()) ))
 }
 

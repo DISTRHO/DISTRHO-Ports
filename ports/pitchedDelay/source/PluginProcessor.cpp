@@ -412,7 +412,7 @@ void PitchedDelayAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBu
 	}
 
 
-  for (int i = getNumInputChannels(); i < getNumOutputChannels(); ++i)
+  for (int i = getTotalNumInputChannels(); i < getTotalNumOutputChannels(); ++i)
   {
       buffer.clear (i, 0, buffer.getNumSamples());
   }

@@ -173,7 +173,7 @@ void AdmvAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mid
 	int channelCount = 0;
 	size_t sampleRate = getSampleRate();
 
-	for (int channel = 0; channel < (getNumInputChannels() - 1); channel += 2)
+	for (int channel = 0; channel < (getTotalNumInputChannels() - 1); channel += 2)
 	{
 		// No need to process signal if editor is closed
 		if (getActiveEditor() == NULL)
@@ -182,7 +182,7 @@ void AdmvAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mid
 		}
 
 		// TODO: investigate how to get number of input channels really connected to the plugin ATM.
-		// It seems that getNumInputChannels() will always return max possible defined by JucePlugin_MaxNumInputChannels
+		// It seems that getTotalNumInputChannels() will always return max possible defined by JucePlugin_MaxNumInputChannels
 		// This solution is bad, because it iterates through all input buffers.
 		if (!isBlockInformative(buffer, channel / 2))
 		{
@@ -231,7 +231,7 @@ void AdmvAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mid
 		// In case we have more outputs than inputs, we'll clear any output
 		// channels that didn't contain input data, (because these aren't
 		// guaranteed to be empty - they may contain garbage).
-		for (int i = getNumInputChannels(); i < getNumOutputChannels(); ++i)
+		for (int i = getTotalNumInputChannels(); i < getTotalNumOutputChannels(); ++i)
 		{
 			buffer.clear(i, 0, buffer.getNumSamples());
 		}

@@ -258,8 +258,8 @@ void Processor::releaseResources()
 
 void Processor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& /*midiMessages*/)
 { 
-  const int numInputChannels = getNumInputChannels();
-  const int numOutputChannels = getNumOutputChannels();
+  const int numInputChannels = getTotalNumInputChannels();
+  const int numOutputChannels = getTotalNumOutputChannels();
   const size_t samplesToProcess = buffer.getNumSamples();
 
   // Determine channel data

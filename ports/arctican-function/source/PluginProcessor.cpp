@@ -251,7 +251,7 @@ void TheFunctionAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuf
 // This is the place where you'd normally do the guts of your plugin's
     // audio processing...
 
-        int numberOfSamples = buffer.getNumSamples();
+        const int numberOfSamples = buffer.getNumSamples();
 
         float* channelDataL = buffer.getWritePointer (0);
         float* channelDataR = buffer.getWritePointer (1);
@@ -334,10 +334,8 @@ void TheFunctionAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuf
     // In case we have more outputs than inputs, we'll clear any output
     // channels that didn't contain input data, (because these aren't
     // guaranteed to be empty - they may contain garbage).
-    for (int i = getNumInputChannels(); i < getNumOutputChannels(); ++i)
-    {
-        buffer.clear (i, 0, buffer.getNumSamples());
-    }
+    for (int i = getTotalNumInputChannels(); i < getTotalNumOutputChannels(); ++i)
+        buffer.clear (i, 0, numberOfSamples);
 }
 
 

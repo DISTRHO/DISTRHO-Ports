@@ -152,7 +152,7 @@ void IRBrowserComponent::selectionChanged()
         infoText += juce::String("\nChannels: ") + juce::String(static_cast<int>(channelCount));
         infoText += juce::String("\nSample Rate: ") + juce::String(static_cast<int>(sampleRate)) + juce::String("Hz");
 
-        if (_processor->getNumInputChannels() >= 2 && _processor->getNumOutputChannels() >= 2)
+        if (_processor->getTotalNumInputChannels() >= 2 && _processor->getTotalNumOutputChannels() >= 2)
         {
           const TrueStereoPairs trueStereoPairs = findTrueStereoPairs(file, sampleCount, sampleRate);        
           for (size_t i=0; i<trueStereoPairs.size(); ++i)
@@ -205,8 +205,8 @@ void IRBrowserComponent::fileDoubleClicked(const File &file)
   IRAgent* agent10 = _processor->getAgent(1, 0);
   IRAgent* agent11 = _processor->getAgent(1, 1);
   
-  const int inputChannels = _processor->getNumInputChannels();
-  const int outputChannels = _processor->getNumOutputChannels();
+  const int inputChannels = _processor->getTotalNumInputChannels();
+  const int outputChannels = _processor->getTotalNumOutputChannels();
   
   if (inputChannels == 1 && outputChannels == 1)
   {

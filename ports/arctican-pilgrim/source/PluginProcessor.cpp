@@ -186,18 +186,20 @@ void ThePilgrimAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuff
 	int currentSmoothSample = 0;
 	int smoothSampleWas = 0;
 
+        const int numberOfSamples = buffer.getNumSamples();
+
     // This is the place where you'd normally do the guts of your plugin's
     // audio processing...
 
 	// The 'for' loop cycles through each channel at a time.
-    for (int channel = 0; channel < getNumInputChannels(); ++channel)
+    for (int channel = 0; channel < getTotalNumInputChannels(); ++channel)
     {
         float* channelData = buffer.getWritePointer(channel);
 
-        dryBuffer.copyFrom(channel, 0, channelData, buffer.getNumSamples());
+        dryBuffer.copyFrom(channel, 0, channelData, numberOfSamples);
         const float* dryData = dryBuffer.getReadPointer(channel);
 
-			for (int i = 0; i < buffer.getNumSamples(); ++i)
+			for (int i = 0; i < numberOfSamples; ++i)
 			{
 
 			// Smoother //
@@ -234,10 +236,8 @@ void ThePilgrimAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuff
     // In case we have more outputs than inputs, we'll clear any output
     // channels that didn't contain input data, (because these aren't
     // guaranteed to be empty - they may contain garbage).
-    for (int i = getNumInputChannels(); i < getNumOutputChannels(); ++i)
-    {
-        buffer.clear (i, 0, buffer.getNumSamples());
-    }
+    for (int i = getTotalNumInputChannels(); i < getTotalNumOutputChannels(); ++i)
+        buffer.clear (i, 0, numberOfSamples);
 }
 
 void ThePilgrimAudioProcessor::updateFilter()

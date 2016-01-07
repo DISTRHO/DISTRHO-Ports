@@ -32,7 +32,7 @@ JuceDemoHostAudioProcessor::JuceDemoHostAudioProcessor()
     formatManager.addFormat(new InternalPluginFormat());
     graph.ready(appProperties);
 
-    graph.getGraph().setPlayConfigDetails(getNumInputChannels(), getNumOutputChannels(), getSampleRate(), getBlockSize());
+    graph.getGraph().setPlayConfigDetails(getTotalNumInputChannels(), getTotalNumOutputChannels(), getSampleRate(), getBlockSize());
 }
 
 JuceDemoHostAudioProcessor::~JuceDemoHostAudioProcessor()
@@ -43,7 +43,7 @@ JuceDemoHostAudioProcessor::~JuceDemoHostAudioProcessor()
 //==============================================================================
 void JuceDemoHostAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    graph.getGraph().setPlayConfigDetails(getNumInputChannels(), getNumOutputChannels(), sampleRate, samplesPerBlock);
+    graph.getGraph().setPlayConfigDetails(getTotalNumInputChannels(), getTotalNumOutputChannels(), sampleRate, samplesPerBlock);
     graph.getGraph().prepareToPlay(sampleRate, samplesPerBlock);
 
     {
@@ -77,8 +77,8 @@ void JuceDemoHostAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBu
     // In case we have more outputs than inputs, we'll clear any output
     // channels that didn't contain input data, (because these aren't
     // guaranteed to be empty - they may contain garbage).
-    for (int i = getNumInputChannels(); i < getNumOutputChannels(); ++i)
-        buffer.clear (i, 0, buffer.getNumSamples());
+    for (int i = getTotalNumInputChannels(); i < getTotalNumOutputChannels(); ++i)
+        buffer.clear (i, 0, numSamples);
 }
 
 //==============================================================================

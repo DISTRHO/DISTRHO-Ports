@@ -541,7 +541,7 @@ void TalCore::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
     // in case we have more outputs than inputs, we'll clear any output
     // channels that didn't contain input data, (because these aren't
     // guaranteed to be empty - they may contain garbage).
-    for (int i = getNumInputChannels(); i < getNumOutputChannels(); ++i)
+    for (int i = getTotalNumInputChannels(); i < getTotalNumOutputChannels(); ++i)
     {
         buffer.clear (i, 0, buffer.getNumSamples());
     }
@@ -588,7 +588,7 @@ void TalCore::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
     MidiBuffer::Iterator midiIterator(midiMessages);
     hasMidiMessage = midiIterator.getNextEvent(*nextMidiMessage, midiEventPos);
 
-    int numberOfChannels = getNumOutputChannels();
+    int numberOfChannels = getTotalNumOutputChannels();
     if (numberOfChannels == 2)
     {
         float *samples0 = buffer.getWritePointer(0);
