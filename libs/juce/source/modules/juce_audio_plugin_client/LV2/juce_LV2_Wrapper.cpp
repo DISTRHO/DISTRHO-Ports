@@ -83,11 +83,6 @@ namespace juce
 #define JUCE_LV2_STATE_STRING_URI "urn:juce:stateString"
 #define JUCE_LV2_STATE_BINARY_URI "urn:juce:stateBinary"
 
-#if JucePlugin_WantsLV2State && ! JucePlugin_WantsLV2StateString
- // FIXME - juce base64 algorithm does not conform to RFC used in LV2
- #include "base64/Base64.cpp"
-#endif
-
 //==============================================================================
 // Various helper functions for creating the ttl files
 
@@ -455,7 +450,7 @@ const String makePresetsFile (AudioProcessor* const filter)
  #else
         MemoryBlock chunkMemory;
         filter->getCurrentProgramStateInformation(chunkMemory);
-        const String chunkString(Base64Encode(chunkMemory));
+        const String chunkString(Base64::toBase64(chunkMemory.getData(), chunkMemory.getSize()));
 
         preset += "        <" JUCE_LV2_STATE_BINARY_URI "> [\n";
         preset += "            a atom:Chunk ;\n";
@@ -560,7 +555,7 @@ public:
     }
 
 private:
-    bool initialised;
+    volatile bool initialised;
 };
 #endif
 
