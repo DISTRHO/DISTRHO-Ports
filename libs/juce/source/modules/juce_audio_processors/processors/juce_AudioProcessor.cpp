@@ -402,7 +402,6 @@ bool AudioProcessor::supportsDoublePrecisionProcessing() const
     return false;
 }
 
-#if ! JUCE_AUDIO_PROCESSOR_NO_GUI
 //==============================================================================
 static String getChannelName (const Array<AudioProcessor::AudioProcessorBus>& buses, int index)
 {
@@ -542,6 +541,7 @@ void AudioProcessor::updateSpeakerFormatStrings()
         cachedOutputSpeakerArrString = busArrangement.outputBuses.getReference (0).channels.getSpeakerArrangementAsString();
 }
 
+#if ! JUCE_AUDIO_PROCESSOR_NO_GUI
 //==============================================================================
 void AudioProcessor::editorBeingDeleted (AudioProcessorEditor* const editor) noexcept
 {
