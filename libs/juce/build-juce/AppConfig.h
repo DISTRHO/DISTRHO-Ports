@@ -139,7 +139,7 @@
 
     @see VSTPluginFormat, AudioPluginFormat, AudioPluginFormatManager, JUCE_PLUGINHOST_AU, JUCE_PLUGINHOST_VST3
 */
-#define JUCE_PLUGINHOST_VST 0
+#define JUCE_PLUGINHOST_VST 1
 
 /** Config: JUCE_PLUGINHOST_VST3
     Enables the VST3 audio plugin hosting classes. This requires the Steinberg VST3 SDK to be

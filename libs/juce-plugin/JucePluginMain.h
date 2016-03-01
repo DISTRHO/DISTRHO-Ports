@@ -25,6 +25,4 @@
 #include "modules/juce_gui_extra/juce_gui_extra.h"
 #include "modules/juce_tracktion_marketplace/juce_tracktion_marketplace.h"
 
-#include "modules/juce_audio_plugin_client/utility/juce_CheckSettingMacros.h"
-
 #endif // JUCE_PLUGIN_MAIN_H_INCLUDED
