@@ -1119,7 +1119,10 @@ public:
           uridTimeSpeed (0),
           usingNominalBlockLength (false)
     {
-        filter = createPluginFilterOfType (AudioProcessor::wrapperType_VST); // FIXME
+        {
+            const MessageManagerLock mmLock;
+            filter = createPluginFilterOfType (AudioProcessor::wrapperType_VST); // FIXME
+        }
         jassert (filter != nullptr);
 
         filter->setPlayConfigDetails (numInChans, numOutChans, 0, 0);
