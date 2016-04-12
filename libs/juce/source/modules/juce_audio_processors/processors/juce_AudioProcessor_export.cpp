@@ -1,6 +1,4 @@
 
-namespace juce {
-
 static ThreadLocalValue<AudioProcessor::WrapperType> wrapperTypeBeingCreated;
 
 void JUCE_CALLTYPE AudioProcessor::setTypeOfNextNewPlugin (AudioProcessor::WrapperType type)
@@ -125,6 +123,4 @@ bool AudioProcessor::setPreferredBusArrangement (bool isInput, int busIndex, con
     }
 
     return true;
-}
-
 }

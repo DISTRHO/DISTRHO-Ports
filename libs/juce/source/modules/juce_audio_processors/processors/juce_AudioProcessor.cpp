@@ -600,3 +600,7 @@ void AudioPlayHead::CurrentPositionInfo::resetToDefault()
     timeSigDenominator = 4;
     bpm = 120;
 }
+
+#ifdef JucePlugin_PreferredChannelConfigurations
+ #include "juce_AudioProcessor_export.cpp"
+#endif

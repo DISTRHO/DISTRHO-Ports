@@ -38,4 +38,6 @@
  #include "modules/juce_audio_plugin_client/utility/juce_PluginUtilities.cpp"
 #endif
 
+namespace juce {
 #include "modules/juce_audio_processors/processors/juce_AudioProcessor_export.cpp"
+}
