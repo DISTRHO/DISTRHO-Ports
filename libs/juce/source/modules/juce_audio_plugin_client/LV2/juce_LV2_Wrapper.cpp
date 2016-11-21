@@ -1609,24 +1609,24 @@ public:
         }
 #endif
 
-        if (! midiEvents.isEmpty())
+        if (portMidiOut != nullptr)
         {
-#if JucePlugin_ProducesMidiOutput
-            if (portMidiOut != nullptr)
+            const uint32_t capacity = portMidiOut->atom.size;
+
+            portMidiOut->atom.size = sizeof(LV2_Atom_Sequence_Body);
+            portMidiOut->atom.type = uridAtomSequence;
+            portMidiOut->body.unit = 0;
+            portMidiOut->body.pad  = 0;
+
+            if (! midiEvents.isEmpty())
             {
+#if JucePlugin_ProducesMidiOutput
                 const uint8* midiEventData;
                 int midiEventSize, midiEventPosition;
                 MidiBuffer::Iterator i (midiEvents);
 
                 uint32_t size, offset = 0;
                 LV2_Atom_Event* aev;
-
-                const uint32_t capacity = portMidiOut->atom.size;
-
-                portMidiOut->atom.size = 0;
-                portMidiOut->atom.type = uridAtomSequence;
-                portMidiOut->body.unit = 0;
-                portMidiOut->body.pad  = 0;
 
                 while (i.getNextEvent (midiEventData, midiEventSize, midiEventPosition))
                 {
@@ -1645,8 +1645,12 @@ public:
                     offset += size;
                     portMidiOut->atom.size += size;
                 }
-            }
 #endif
+                midiEvents.clear();
+            }
+        }
+        else if (! midiEvents.isEmpty())
+        {
             midiEvents.clear();
         }
     }
