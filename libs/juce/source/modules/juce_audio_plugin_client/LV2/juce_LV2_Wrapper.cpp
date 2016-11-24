@@ -1609,6 +1609,7 @@ public:
         }
 #endif
 
+#if JucePlugin_ProducesMidiOutput
         if (portMidiOut != nullptr)
         {
             const uint32_t capacity = portMidiOut->atom.size;
@@ -1620,7 +1621,6 @@ public:
 
             if (! midiEvents.isEmpty())
             {
-#if JucePlugin_ProducesMidiOutput
                 const uint8* midiEventData;
                 int midiEventSize, midiEventPosition;
                 MidiBuffer::Iterator i (midiEvents);
@@ -1645,11 +1645,12 @@ public:
                     offset += size;
                     portMidiOut->atom.size += size;
                 }
-#endif
+
                 midiEvents.clear();
             }
-        }
-        else if (! midiEvents.isEmpty())
+        } else
+#endif
+        if (! midiEvents.isEmpty())
         {
             midiEvents.clear();
         }
