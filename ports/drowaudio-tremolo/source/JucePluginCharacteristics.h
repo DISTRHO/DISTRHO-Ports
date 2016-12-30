@@ -46,6 +46,7 @@
 
 #define JucePlugin_LV2URI               "http://www.drowaudio.co.uk/audio/audio_plugins/tremolo"
 #define JucePlugin_LV2Category          "DynamicsPlugin"
+#define JucePlugin_WantsLV2Latency      0
 #define JucePlugin_WantsLV2Presets      0
 #define JucePlugin_WantsLV2State        0
 #define JucePlugin_WantsLV2TimePos      0

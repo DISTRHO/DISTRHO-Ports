@@ -287,6 +287,7 @@
 #define JucePlugin_LV2URI                   "http://kunz.corrupt.ch/products/tal-vocoder"
 #define JucePlugin_LV2Category              "ModulatorPlugin"
 
+#define JucePlugin_WantsLV2Latency          0
 #define JucePlugin_WantsLV2State            1
 #define JucePlugin_WantsLV2StateString      1
 #define JucePlugin_WantsLV2Presets          1

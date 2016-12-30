@@ -131,6 +131,7 @@
 
 #define JucePlugin_LV2URI               "https://github.com/asb2m10/dexed"
 #define JucePlugin_LV2Category          "InstrumentPlugin"
+#define JucePlugin_WantsLV2Latency      0
 #define JucePlugin_WantsLV2Presets      0
 #define JucePlugin_WantsLV2State        1
 #define JucePlugin_WantsLV2TimePos      0

@@ -20,6 +20,11 @@
  #define JucePlugin_WantsLV2FixedBlockSize 0
 #endif
 
+/** Enable latency port */
+#ifndef JucePlugin_WantsLV2Latency
+ #define JucePlugin_WantsLV2Latency 1
+#endif
+
 /** Use non-parameter states */
 #ifndef JucePlugin_WantsLV2State
  #define JucePlugin_WantsLV2State 1
@@ -312,7 +317,7 @@ const String makePluginFile (AudioProcessor* const filter)
     text += "\n";
 #endif
 
-    // Freewheel and latency ports
+    // Freewheel port
     text += "    lv2:port [\n";
     text += "        a lv2:InputPort, lv2:ControlPort ;\n";
     text += "        lv2:index " + String(portIndex++) + " ;\n";
@@ -323,8 +328,12 @@ const String makePluginFile (AudioProcessor* const filter)
     text += "        lv2:maximum 1.0 ;\n";
     text += "        lv2:designation <" LV2_CORE__freeWheeling "> ;\n";
     text += "        lv2:portProperty lv2:toggled, <" LV2_PORT_PROPS__notOnGUI "> ;\n";
-    text += "    ] ,\n";
-    text += "    [\n";
+    text += "    ] ;\n";
+    text += "\n";
+
+#if JucePlugin_WantsLV2Latency
+    // Latency port
+    text += "    lv2:port [\n";
     text += "        a lv2:OutputPort, lv2:ControlPort ;\n";
     text += "        lv2:index " + String(portIndex++) + " ;\n";
     text += "        lv2:symbol \"lv2_latency\" ;\n";
@@ -333,6 +342,7 @@ const String makePluginFile (AudioProcessor* const filter)
     text += "        lv2:portProperty lv2:reportsLatency, lv2:integer ;\n";
     text += "    ] ;\n";
     text += "\n";
+#endif
 
     // Audio inputs
     for (int i=0; i < JucePlugin_MaxNumInputChannels; ++i)
@@ -855,7 +865,10 @@ public:
 #if JucePlugin_ProducesMidiOutput
         controlPortOffset += 1;
 #endif
-        controlPortOffset += 2; // freewheel and latency
+        controlPortOffset += 1; // freewheel
+#if JucePlugin_WantsLV2Latency
+        controlPortOffset += 1;
+#endif
         controlPortOffset += JucePlugin_MaxNumInputChannels;
         controlPortOffset += JucePlugin_MaxNumOutputChannels;
 
@@ -1136,7 +1149,10 @@ public:
 #endif
 
         portFreewheel = nullptr;
-        portLatency   = nullptr;
+
+#if JucePlugin_WantsLV2Latency
+        portLatency = nullptr;
+#endif
 
         for (int i=0; i < numInChans; ++i)
             portAudioIns[i] = nullptr;
@@ -1267,11 +1283,13 @@ public:
             return;
         }
 
+#if JucePlugin_WantsLV2Latency
         if (portId == index++)
         {
             portLatency = (float*)dataLocation;
             return;
         }
+#endif
 
         for (int i=0; i < numInChans; ++i)
         {
@@ -1329,8 +1347,10 @@ public:
     {
         jassert (filter != nullptr);
 
+#if JucePlugin_WantsLV2Latency
         if (portLatency != nullptr)
             *portLatency = filter->getLatencySamples();
+#endif
 
         if (portFreewheel != nullptr)
             filter->setNonRealtime (*portFreewheel >= 0.5f);
@@ -1858,7 +1878,9 @@ private:
     LV2_Atom_Sequence* portMidiOut;
 #endif
     float* portFreewheel;
+#if JucePlugin_WantsLV2Latency
     float* portLatency;
+#endif
     float* portAudioIns[JucePlugin_MaxNumInputChannels];
     float* portAudioOuts[JucePlugin_MaxNumOutputChannels];
     Array<float*> portControls;

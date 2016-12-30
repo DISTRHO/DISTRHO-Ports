@@ -51,6 +51,7 @@
 
 #define JucePlugin_LV2URI               "https://code.google.com/p/lkjb-plugins/luftikus"
 #define JucePlugin_LV2Category          "EQPlugin"
+#define JucePlugin_WantsLV2Latency      0
 #define JucePlugin_WantsLV2State        1
 #define JucePlugin_WantsLV2Presets      0
 #define JucePlugin_WantsLV2TimePos      0

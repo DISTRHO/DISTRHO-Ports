@@ -130,6 +130,7 @@
 #endif
 
 #define JucePlugin_LV2URI                  "https://github.com/laixinyuan/StereoSourceSepartion"
+#define JucePlugin_WantsLV2Latency         0
 #define JucePlugin_WantsLV2Presets         0
 #define JucePlugin_WantsLV2State           0
 #define JucePlugin_WantsLV2TimePos         0

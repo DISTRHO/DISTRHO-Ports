@@ -41,6 +41,7 @@
 
 #define JucePlugin_LV2URI               "http://arcticanaudio.com/plugins/thepilgrim"
 #define JucePlugin_LV2Category          "PhaserPlugin"
+#define JucePlugin_WantsLV2Latency      0
 #define JucePlugin_WantsLV2Presets      0
 #define JucePlugin_WantsLV2State        0
 #define JucePlugin_WantsLV2TimePos      0

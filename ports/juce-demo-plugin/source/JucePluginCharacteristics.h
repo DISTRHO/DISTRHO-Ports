@@ -41,6 +41,7 @@
 #define JucePlugin_RTASProductId        JucePlugin_PluginCode
 
 #define JucePlugin_LV2URI               "urn:juce:JuceDemoPlugin"
+#define JucePlugin_WantsLV2Latency      0
 #define JucePlugin_WantsLV2TimePos      1
 #define JucePlugin_WantsLV2State        1
 #define JucePlugin_WantsLV2Presets      0

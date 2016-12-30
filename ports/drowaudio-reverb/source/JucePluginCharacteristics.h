@@ -282,6 +282,7 @@
 
 #define JucePlugin_LV2URI               "http://www.drowaudio.co.uk/audio/audio_plugins/reverb"
 #define JucePlugin_LV2Category          "ReverbPlugin"
+#define JucePlugin_WantsLV2Latency      0
 #define JucePlugin_WantsLV2Presets      0
 #define JucePlugin_WantsLV2State        0
 #define JucePlugin_WantsLV2TimePos      0

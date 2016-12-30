@@ -282,6 +282,7 @@
 #define JucePlugin_LV2URI                   "urn:juce:TalFilter2"
 #define JucePlugin_LV2Category              "FilterPlugin"
 
+#define JucePlugin_WantsLV2Latency          0
 #define JucePlugin_WantsLV2TimePos          1
 #define JucePlugin_WantsLV2State            1
 #define JucePlugin_WantsLV2StateString      1

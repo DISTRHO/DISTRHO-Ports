@@ -263,6 +263,7 @@
 
 #define JucePlugin_LV2URI                   "urn:juce:Vex"
 #define JucePlugin_LV2Category              "InstrumentPlugin"
+#define JucePlugin_WantsLV2Latency          0
 #define JucePlugin_WantsLV2State            1
 #define JucePlugin_WantsLV2TimePos          1
 #define JucePlugin_WantsLV2FixedBlockSize   1

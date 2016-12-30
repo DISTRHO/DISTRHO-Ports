@@ -41,6 +41,7 @@
 
 #define JucePlugin_LV2URI                   "http://kunz.corrupt.ch/products/tal-noisemaker"
 #define JucePlugin_LV2Category              "InstrumentPlugin"
+#define JucePlugin_WantsLV2Latency          0
 #define JucePlugin_WantsLV2Presets          1
 #define JucePlugin_WantsLV2State            1
 #define JucePlugin_WantsLV2StateString      1
