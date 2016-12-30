@@ -1052,7 +1052,8 @@ void KlangFalterEditor::buttonClicked (Button* buttonThatWasClicked)
     else if (buttonThatWasClicked == _autogainButton)
     {
         //[UserButtonCode__autogainButton] -- add your button handler code here..
-        _processor.setParameterNotifyingHost(Parameters::AutoGainOn, _autogainButton->getToggleState());
+        if (_autogainButton->getToggleState())
+            _autogainButton->setToggleState(false, juce::dontSendNotification);
         //[/UserButtonCode__autogainButton]
     }
     else if (buttonThatWasClicked == _reverseButton)
@@ -1162,10 +1163,8 @@ void KlangFalterEditor::updateUI()
   }
   {
     const float autoGainDecibels = _processor.getParameter(Parameters::AutoGainDecibels);
-    const bool autoGainOn = _processor.getParameter(Parameters::AutoGainOn);
     const juce::String autoGainText = DecibelScaling::DecibelString(autoGainDecibels);
     _autogainButton->setButtonText(juce::String("Autogain ") + autoGainText);
-    _autogainButton->setToggleState(autoGainOn, juce::dontSendNotification);
   }
   {
     Parameters::EqType lowEqType = static_cast<Parameters::EqType>(_processor.getParameter(Parameters::EqLowType));

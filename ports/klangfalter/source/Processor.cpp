@@ -72,7 +72,6 @@ Processor::Processor() :
   _parameterSet.registerParameter(Parameters::EqHighShelfFreq);
   _parameterSet.registerParameter(Parameters::EqHighShelfDecibels);
   _parameterSet.registerParameter(Parameters::StereoWidth);
-  _parameterSet.registerParameter(Parameters::AutoGainOn);
   _parameterSet.registerParameter(Parameters::AutoGainDecibels);
 
   _agents.push_back(new IRAgent(*this, 0, 0));
@@ -280,11 +279,7 @@ void Processor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& /*midiMessag
   _wetBuffer.clear();
   if (numInputChannels > 0 && numOutputChannels > 0)
   {
-    float autoGain = 1.0f;
-    if (getParameter(Parameters::AutoGainOn))
-    {
-      autoGain = DecibelScaling::Db2Gain(getParameter(Parameters::AutoGainDecibels));
-    }
+    float autoGain = DecibelScaling::Db2Gain(getParameter(Parameters::AutoGainDecibels));
 
     // Convolve
     IRAgent* irAgent00 = getAgent(0, 0);

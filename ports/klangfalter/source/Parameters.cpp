@@ -120,12 +120,6 @@ const FloatParameterDescriptor Parameters::StereoWidth(12,
                                                        0.0f,
                                                        10.0f);
 
-const BoolParameterDescriptor Parameters::AutoGainOn(13,
-                                                     "Autogain On",
-                                                     "",
-                                                     ParameterDescriptor::NotAutomatable,
-                                                     true);
- 
 const FloatParameterDescriptor Parameters::AutoGainDecibels(14,
                                                             "Autogain",
                                                             "dB",

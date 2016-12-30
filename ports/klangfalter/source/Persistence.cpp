@@ -75,7 +75,6 @@ XmlElement* SaveState(const File& irDirectory, Processor& processor)
   convolutionElement->setAttribute("wetDecibels", processor.getParameter(Parameters::WetDecibels));
   convolutionElement->setAttribute("dryOn", processor.getParameter(Parameters::DryOn));
   convolutionElement->setAttribute("dryDecibels", processor.getParameter(Parameters::DryDecibels));
-  convolutionElement->setAttribute("autoGainOn", processor.getParameter(Parameters::AutoGainOn));
   convolutionElement->setAttribute("eqLowType", internal::EqType2String(Parameters::EqType(processor.getParameter(Parameters::EqLowType))));
   convolutionElement->setAttribute("eqLowCutFreq", processor.getParameter(Parameters::EqLowCutFreq));
   convolutionElement->setAttribute("eqLowShelfFreq", processor.getParameter(Parameters::EqLowShelfFreq));
@@ -136,7 +135,6 @@ bool LoadState(const File& irDirectory, XmlElement& element, Processor& processo
   double wetDecibels = element.getDoubleAttribute("wetDecibels", Parameters::WetDecibels.getDefaultValue());
   bool dryOn = element.getBoolAttribute("dryOn", Parameters::DryOn.getDefaultValue());
   double dryDecibels = element.getDoubleAttribute("dryDecibels", Parameters::DryDecibels.getDefaultValue());
-  bool autoGainOn = element.getBoolAttribute("autoGainOn", Parameters::AutoGainOn.getDefaultValue());
   double irBegin = element.getDoubleAttribute("irBegin", 0.0);
   double irEnd = element.getDoubleAttribute("irEnd", 1.0);
   double stretch = element.getDoubleAttribute("stretch", 1.0);
@@ -186,7 +184,6 @@ bool LoadState(const File& irDirectory, XmlElement& element, Processor& processo
   processor.setParameterNotifyingHost(Parameters::WetDecibels, static_cast<float>(wetDecibels));
   processor.setParameterNotifyingHost(Parameters::DryOn, dryOn);
   processor.setParameterNotifyingHost(Parameters::DryDecibels, static_cast<float>(dryDecibels));
-  processor.setParameterNotifyingHost(Parameters::AutoGainOn, autoGainOn);  
   processor.setParameterNotifyingHost(Parameters::EqLowType, static_cast<int>(eqLoType));
   processor.setParameterNotifyingHost(Parameters::EqLowCutFreq, static_cast<float>(eqLoCutFreq));
   processor.setParameterNotifyingHost(Parameters::EqLowShelfFreq, static_cast<float>(eqLoShelfFreq));

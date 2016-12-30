@@ -73,6 +73,7 @@ private:
     GroupComponent* _aboutGroupComponent;
     Label* _nameVersionLabel;
     Label* _copyrightLabel;
+    Label* _myLabel;
     HyperlinkButton* _licenseHyperlink;
     GroupComponent* _infoGroupComponent;
     Label* _juceVersionPrefixLabel;

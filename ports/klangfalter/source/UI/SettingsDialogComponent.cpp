@@ -38,6 +38,7 @@ SettingsDialogComponent::SettingsDialogComponent (Processor& processor)
       _aboutGroupComponent (0),
       _nameVersionLabel (0),
       _copyrightLabel (0),
+      _myLabel (0),
       _licenseHyperlink (0),
       _infoGroupComponent (0),
       _juceVersionPrefixLabel (0),
@@ -80,6 +81,15 @@ SettingsDialogComponent::SettingsDialogComponent (Processor& processor)
     _copyrightLabel->setColour (Label::textColourId, Colour (0xff202020));
     _copyrightLabel->setColour (TextEditor::textColourId, Colour (0xff202020));
     _copyrightLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
+
+    addAndMakeVisible (_myLabel = new Label (String::empty,
+                                             L"Modified by falkTX"));
+    _myLabel->setFont (Font (15.0000f, Font::plain));
+    _myLabel->setJustificationType (Justification::centredLeft);
+    _myLabel->setEditable (false, false, false);
+    _myLabel->setColour (Label::textColourId, Colour (0xff202020));
+    _myLabel->setColour (TextEditor::textColourId, Colour (0xff202020));
+    _myLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
     addAndMakeVisible (_licenseHyperlink = new HyperlinkButton (L"Licensed under GPL3",
                                                                 URL (L"http://www.gnu.org/licenses")));
@@ -239,6 +249,7 @@ SettingsDialogComponent::~SettingsDialogComponent()
     deleteAndZero (_aboutGroupComponent);
     deleteAndZero (_nameVersionLabel);
     deleteAndZero (_copyrightLabel);
+    deleteAndZero (_myLabel);
     deleteAndZero (_licenseHyperlink);
     deleteAndZero (_infoGroupComponent);
     deleteAndZero (_juceVersionPrefixLabel);
@@ -284,6 +295,7 @@ void SettingsDialogComponent::resized()
     _aboutGroupComponent->setBounds (16, 11, 472, 101);
     _nameVersionLabel->setBounds (24, 28, 344, 24);
     _copyrightLabel->setBounds (24, 52, 344, 24);
+    _myLabel->setBounds (24, 76, 344, 24);
     _licenseHyperlink->setBounds (160, 76, 184, 24);
     _infoGroupComponent->setBounds (16, 416, 472, 152);
     _juceVersionPrefixLabel->setBounds (24, 436, 140, 24);

@@ -37,7 +37,6 @@ struct Parameters
   static const BoolParameterDescriptor DryOn;
   static const FloatParameterDescriptor DryDecibels;
   
-  static const BoolParameterDescriptor AutoGainOn;
   static const FloatParameterDescriptor AutoGainDecibels;
 
   static const IntParameterDescriptor EqLowType;
