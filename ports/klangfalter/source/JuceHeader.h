@@ -20,8 +20,8 @@ using namespace juce;
 namespace ProjectInfo
 {
     const char* const  projectName    = "KlangFalter";
-    const char* const  versionString  = "2013.08.31";
-    const int          versionNumber  = 0x7dd081f;
+    const char* const  versionString  = "2016.09.01";
+    const int          versionNumber  = 0x7e00901;
 }
 
 #endif   // __APPHEADERFILE_IRCJCT__

@@ -226,7 +226,7 @@ void Processor::prepareToPlay(double /*sampleRate*/, int samplesPerBlock)
     {
       _convolverHeadBlockSize *= 2;
     }
-    _convolverTailBlockSize = std::max(size_t(8192), 2 * _convolverTailBlockSize);
+    _convolverTailBlockSize = std::max(size_t(8192), 2 * _convolverHeadBlockSize);
   }
 
   // Prepare convolution buffers

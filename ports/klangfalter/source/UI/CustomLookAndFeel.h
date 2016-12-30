@@ -20,11 +20,10 @@
 
 #include "../JuceHeader.h"
 
-class CustomLookAndFeel : public juce::LookAndFeel_V2
+class CustomLookAndFeel : public juce::LookAndFeel_V3
 {
 public:
   CustomLookAndFeel();
-  virtual ~CustomLookAndFeel();
 
   static const CustomLookAndFeel& GetCustomLookAndFeel(juce::Component* component);
 
@@ -45,8 +44,8 @@ public:
   juce::Colour getEnvelopeNodeColour(bool highlighted) const;
   
 private:
-  CustomLookAndFeel(const CustomLookAndFeel&);
-  CustomLookAndFeel& operator=(const CustomLookAndFeel&);
+  CustomLookAndFeel(const CustomLookAndFeel&) = delete;
+  CustomLookAndFeel& operator=(const CustomLookAndFeel&) = delete;
 };
 
 

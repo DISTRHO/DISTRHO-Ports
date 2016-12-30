@@ -175,7 +175,7 @@ void IRBrowserComponent::selectionChanged()
     }
     
     _infoLabel->setJustificationType(juce::Justification(juce::Justification::topLeft));
-    _infoLabel->setText(infoText, sendNotification);
+    _infoLabel->setText(infoText, juce::sendNotification);
   }
 }
 

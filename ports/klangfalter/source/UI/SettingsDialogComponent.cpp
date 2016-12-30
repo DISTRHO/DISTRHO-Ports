@@ -220,13 +220,13 @@ SettingsDialogComponent::SettingsDialogComponent (Processor& processor)
 
 
     //[Constructor] You can add your own custom stuff here..
-    _nameVersionLabel->setText(ProjectInfo::projectName + juce::String(" - Version ") + ProjectInfo::versionString, dontSendNotification);
-    _juceVersionLabel->setText(juce::SystemStats::getJUCEVersion(), dontSendNotification);
-    _numberInputsLabel->setText(juce::String(_processor.getTotalNumInputChannels()), dontSendNotification);
-    _numberOutputsLabel->setText(juce::String(_processor.getTotalNumOutputChannels()), dontSendNotification);
-    _sseOptimizationLabel->setText((fftconvolver::SSEEnabled() == true) ? juce::String("Yes") : juce::String("No"), dontSendNotification);
-    _headBlockSizeLabel->setText(juce::String(static_cast<int>(_processor.getConvolverHeadBlockSize())), dontSendNotification);
-    _tailBlockSizeLabel->setText(juce::String(static_cast<int>(_processor.getConvolverTailBlockSize())), dontSendNotification);
+    _nameVersionLabel->setText(ProjectInfo::projectName + juce::String(" - Version ") + ProjectInfo::versionString, juce::sendNotification);
+    _juceVersionLabel->setText(juce::SystemStats::getJUCEVersion(), juce::sendNotification);
+    _numberInputsLabel->setText(juce::String(_processor.getTotalNumInputChannels()), juce::sendNotification);
+    _numberOutputsLabel->setText(juce::String(_processor.getTotalNumOutputChannels()), juce::sendNotification);
+    _sseOptimizationLabel->setText((fftconvolver::SSEEnabled() == true) ? juce::String("Yes") : juce::String("No"), juce::sendNotification);
+    _headBlockSizeLabel->setText(juce::String(static_cast<int>(_processor.getConvolverHeadBlockSize())), juce::sendNotification);
+    _tailBlockSizeLabel->setText(juce::String(static_cast<int>(_processor.getConvolverTailBlockSize())), juce::sendNotification);
     //[/Constructor]
 }
 

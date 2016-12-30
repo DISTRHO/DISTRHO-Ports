@@ -24,6 +24,7 @@
 
 //[Headers]     -- You can add your own extra header files here --
 #include "../JuceHeader.h"
+#include "../BinaryData.h"
 
 #include "CustomLookAndFeel.h"
 #include "DecibelScale.h"
@@ -68,6 +69,11 @@ public:
     void resized();
     void sliderValueChanged (Slider* sliderThatWasMoved);
     void buttonClicked (Button* buttonThatWasClicked);
+
+
+
+    //==============================================================================
+    juce_UseDebuggingNewOperator
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
