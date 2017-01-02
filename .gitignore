@@ -49,6 +49,8 @@ libs/juce/source/juce.h
 libs/juce/source/juce_amalgamated.cpp
 libs/juce/source/juce_amalgamated.h
 libs/juce/source/juce_amalgamated.mm
+libs/juce/source/modules/JUCE Module Format.txt
+libs/juce/source/modules/juce_blocks_basics/
 libs/juce/source/modules/juce_box2d/
 libs/juce/source/modules/juce_browser_plugin_client/
 libs/juce/source/modules/juce_opengl/
