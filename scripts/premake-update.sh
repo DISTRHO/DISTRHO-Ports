@@ -45,10 +45,6 @@ if [ -d libs ]; then
   FOLDERS="libs"
 fi
 
-if [ -d plugins ]; then
-  FOLDERS="$FOLDERS plugins"
-fi
-
 if [ -d ports ]; then
   FOLDERS="$FOLDERS ports"
 fi

@@ -15,14 +15,14 @@ function make_library_project(name)
   package.target       = project.name
   package.objdir       = "intermediate"
   package.defines      = {}
-  package.buildoptions = { "-fPIC", "-DPIC", "-Wall",
+  package.buildoptions = { "-fPIC", "-DPIC", "-Wall", "-pthread",
                            "-Wno-multichar", "-Wno-misleading-indentation", "-Wno-unused-but-set-variable",
                            os.getenv("CXXFLAGS") }
 
   package.config["Release"].target       = project.name
   package.config["Release"].objdir       = "intermediate/Release"
   package.config["Release"].defines      = { "NDEBUG=1" }
-  package.config["Release"].buildoptions = { "-O2", "-fvisibility=hidden", "-fvisibility-inlines-hidden" }
+  package.config["Release"].buildoptions = { "-O3", "-fvisibility=hidden", "-fvisibility-inlines-hidden" }
 
   if (not os.getenv("NOOPTIMIZATIONS")) then
     package.config["Release"].buildoptions = {
@@ -84,12 +84,12 @@ function make_plugin_project(name, spec)
   package.objdir       = "intermediate"
   package.buildoptions = { "-Wall", "-Werror=deprecated-declarations", os.getenv("CXXFLAGS") }
   package.links        = {}
-  package.linkoptions  = { os.getenv("LDFLAGS") }
+  package.linkoptions  = { "-pthread", os.getenv("LDFLAGS") }
 
   package.config["Release"].target       = project.name
   package.config["Release"].objdir       = "intermediate/Release"
   package.config["Release"].defines      = { "NDEBUG=1", "CONFIGURATION=\"Release\"" }
-  package.config["Release"].buildoptions = { "-O2", "-ffast-math", "-fomit-frame-pointer", "-fvisibility=hidden", "-fvisibility-inlines-hidden" }
+  package.config["Release"].buildoptions = { "-O3", "-ffast-math", "-fomit-frame-pointer", "-fvisibility=hidden", "-fvisibility-inlines-hidden" }
   package.config["Release"].links        = {}
 
   if (not os.getenv("NOOPTIMIZATIONS")) then
@@ -112,7 +112,12 @@ function make_plugin_project(name, spec)
   package.config["Debug"].links        = {}
 
   package.includepaths = {
-    "../source"
+    "../source",
+    "../../../libs/juce/source",
+    "../../../libs/juce/source/modules",
+    "../../../libs/drowaudio/source",
+    "../../../libs/juced/source",
+    "../../../libs/juce-plugin"
   }
 
   package.libpaths = {
@@ -143,14 +148,6 @@ function make_juce_lv2_project(name)
   package.config["Release"].links = { "juce" }
   package.config["Debug"].links   = { "juce_debug" }
 
-  package.includepaths = {
-    package.includepaths,
-    "../../../libs/juce/source",
-    "../../../libs/drowaudio/source",
-    "../../../libs/juced/source",
-    "../../../libs/juce-plugin"
-  }
-
   if (windows) then
     package.links       = { "comdlg32", "gdi32", "imm32", "ole32", "oleaut32", "shlwapi", "uuid", "version", "winmm", "wininet", "ws2_32" }
   elseif (macosx) then
@@ -158,7 +155,7 @@ function make_juce_lv2_project(name)
                             "-framework Accelerate", "-framework AudioToolbox", "-framework AudioUnit", "-framework Carbon", "-framework Cocoa",
                             "-framework CoreAudio", "-framework CoreAudioKit", "-framework CoreMIDI", "-framework IOKit", "-framework QuartzCore", "-framework WebKit" }
   else
-    package.links       = { "dl", "pthread", "rt" }
+    package.links       = { "dl", "rt" }
     package.linkoptions = { package.linkoptions, "`pkg-config --libs freetype2 x11 xext`" }
 
     if (name == "drumsynth" or name == "eqinox" or name == "Dexed") then
@@ -185,10 +182,6 @@ function make_juce_vst_project(name)
 
   package.includepaths = {
     package.includepaths,
-    "../../../libs/juce/source",
-    "../../../libs/drowaudio/source",
-    "../../../libs/juced/source",
-    "../../../libs/juce-plugin",
     "../../../sdks/vstsdk2.4"
   }
 
@@ -199,7 +192,7 @@ function make_juce_vst_project(name)
                             "-framework Accelerate", "-framework AudioToolbox", "-framework AudioUnit", "-framework Carbon", "-framework Cocoa",
                             "-framework CoreAudio", "-framework CoreAudioKit", "-framework CoreMIDI", "-framework IOKit", "-framework QuartzCore", "-framework WebKit" }
   else
-    package.links       = { "dl", "pthread", "rt" }
+    package.links       = { "dl", "rt" }
     package.linkoptions = { package.linkoptions, "`pkg-config --libs freetype2 x11 xext`" }
 
     if (name == "drumsynth" or name == "eqinox" or name == "Dexed") then
