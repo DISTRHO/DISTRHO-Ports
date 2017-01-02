@@ -6,6 +6,7 @@ package = make_library_project("juce")
 package.includepaths = {
   ".",
   "../source",
+  "../source/modules",
   "../../../sdks/vstsdk2.4/"
 }
 

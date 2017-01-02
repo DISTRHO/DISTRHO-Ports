@@ -170,6 +170,23 @@ public:
     }
 
     //==============================================================================
+    /**
+         Returns the plug-in format via which the plug-in file was loaded. This value is
+         identical to AudioProcessor::wrapperType of the main audio processor of this
+         plug-in. This function is useful for code that does not have access to the
+         plug-in's main audio processor.
+
+         @see AudioProcessor::wrapperType
+    */
+    static AudioProcessor::WrapperType getPluginLoadedAs() noexcept    { return jucePlugInClientCurrentWrapperType; }
+
+    //==============================================================================
+
+   #ifndef DOXYGEN
+    // @internal
+    static AudioProcessor::WrapperType jucePlugInClientCurrentWrapperType;
+   #endif
+
 private:
     static HostType getHostType()
     {
@@ -249,7 +266,7 @@ private:
 
        #elif JUCE_LINUX
         if (hostFilename.containsIgnoreCase ("Ardour"))            return Ardour;
-
+       #elif JUCE_IOS
        #else
         #error
        #endif

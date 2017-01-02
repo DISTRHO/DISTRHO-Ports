@@ -28,6 +28,7 @@
 
 //=============================================================================
 
+#define JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED 1
 #define JUCE_STANDALONE_APPLICATION 0
 
 //=============================================================================
@@ -96,14 +97,14 @@
     If your app doesn't need to read FLAC files, you might want to disable this to
     reduce the size of your codebase and build time.
 */
-#define JUCE_USE_FLAC 0
+#define JUCE_USE_FLAC 1
 
 /** Config: JUCE_USE_OGGVORBIS
     Enables the Ogg-Vorbis audio codec classes (available on all platforms).
     If your app doesn't need to read Ogg-Vorbis files, you might want to disable this to
     reduce the size of your codebase and build time.
 */
-#define JUCE_USE_OGGVORBIS 0
+#define JUCE_USE_OGGVORBIS 1
 
 /** Config: JUCE_USE_MP3AUDIOFORMAT
     Enables the software-based MP3AudioFormat class.

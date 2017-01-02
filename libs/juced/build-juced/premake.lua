@@ -5,7 +5,8 @@ package = make_library_project("juced")
 
 package.includepaths = {
   ".",
-  "../../juce/source"
+  "../../juce/source",
+  "../../juce/source/modules"
 }
 
 package.files = {

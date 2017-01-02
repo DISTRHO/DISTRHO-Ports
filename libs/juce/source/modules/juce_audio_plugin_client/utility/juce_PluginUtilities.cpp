@@ -29,6 +29,11 @@
 #include "../../juce_core/system/juce_TargetPlatform.h"
 #include "juce_IncludeModuleHeaders.h"
 
+namespace juce
+{
+    AudioProcessor::WrapperType PluginHostType::jucePlugInClientCurrentWrapperType = AudioProcessor::wrapperType_Undefined;
+}
+
 #if _MSC_VER || JUCE_MINGW
 
 #if JucePlugin_Build_RTAS
@@ -62,7 +67,7 @@ extern "C" BOOL WINAPI DllMain (HINSTANCE instance, DWORD reason, LPVOID reserve
 */
 extern AudioProcessor* JUCE_CALLTYPE createPluginFilter();
 
-AudioProcessor* JUCE_CALLTYPE createPluginFilterOfType (AudioProcessor::WrapperType type)
+AudioProcessor* JUCE_API JUCE_CALLTYPE createPluginFilterOfType (AudioProcessor::WrapperType type)
 {
     AudioProcessor::setTypeOfNextNewPlugin (type);
     AudioProcessor* const pluginInstance = createPluginFilter();

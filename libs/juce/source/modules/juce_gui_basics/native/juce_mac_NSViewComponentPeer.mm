@@ -58,6 +58,10 @@ static NSRect flippedScreenRect (NSRect r) noexcept
     return r;
 }
 
+#if JUCE_MODULE_AVAILABLE_juce_opengl
+void componentPeerAboutToBeRemovedFromScreen (ComponentPeer&);
+#endif
+
 //==============================================================================
 class NSViewComponentPeer  : public ComponentPeer,
                              private AsyncUpdater
@@ -75,7 +79,10 @@ public:
           usingCoreGraphics (false),
          #endif
           isZooming (false),
+          isFirstLiveResize (false),
           textWasInserted (false),
+          isStretchingTop (false), isStretchingLeft (false),
+          isStretchingBottom (false), isStretchingRight (false),
           notificationCenter (nil)
     {
         appFocusChangeCallback = appFocusChanged;
@@ -235,9 +242,9 @@ public:
     void setRepresentedFile (const File& file) override
     {
         if (! isSharedWindow)
-            [window setRepresentedFilename: juceStringToNS (file != File::nonexistent
+            [window setRepresentedFilename: juceStringToNS (file != File()
                                                                 ? file.getFullPathName()
-                                                                : String::empty)];
+                                                                : String())];
     }
 
     void setBounds (const Rectangle<int>& newBounds, bool isNowFullScreen) override
@@ -393,15 +400,19 @@ public:
              && isPositiveAndBelow (localPos.getY(), (int) viewFrame.size.height)))
             return false;
 
-        if (NSWindow* const viewWindow = [view window])
+        if (! SystemStats::isRunningInAppExtensionSandbox())
         {
-            const NSRect windowFrame = [viewWindow frame];
-            const NSPoint windowPoint = [view convertPoint: NSMakePoint (localPos.x, viewFrame.size.height - localPos.y) toView: nil];
-            const NSPoint screenPoint = NSMakePoint (windowFrame.origin.x + windowPoint.x,
-                                                     windowFrame.origin.y + windowPoint.y);
+            if (NSWindow* const viewWindow = [view window])
+            {
+                const NSRect windowFrame = [viewWindow frame];
+                const NSPoint windowPoint = [view convertPoint: NSMakePoint (localPos.x, viewFrame.size.height - localPos.y) toView: nil];
+                const NSPoint screenPoint = NSMakePoint (windowFrame.origin.x + windowPoint.x,
+                                                         windowFrame.origin.y + windowPoint.y);
 
-            if (! isWindowAtPoint (viewWindow, screenPoint))
-                return false;
+                if (! isWindowAtPoint (viewWindow, screenPoint))
+                    return false;
+
+            }
         }
 
         NSView* v = [view hitTest: NSMakePoint (viewFrame.origin.x + localPos.getX(),
@@ -611,7 +622,6 @@ public:
         wheel.isSmooth = false;
         wheel.isInertial = false;
 
-       #if ! JUCE_PPC
         @try
         {
            #if defined (MAC_OS_X_VERSION_10_7) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
@@ -640,7 +650,6 @@ public:
         }
         @catch (...)
         {}
-       #endif
 
         if (wheel.deltaX == 0 && wheel.deltaY == 0)
         {
@@ -666,6 +675,16 @@ public:
     void redirectCopy  (NSObject*) { handleKeyPress (KeyPress ('c', ModifierKeys (ModifierKeys::commandModifier), 'c')); }
     void redirectPaste (NSObject*) { handleKeyPress (KeyPress ('v', ModifierKeys (ModifierKeys::commandModifier), 'v')); }
     void redirectCut   (NSObject*) { handleKeyPress (KeyPress ('x', ModifierKeys (ModifierKeys::commandModifier), 'x')); }
+
+    void redirectWillMoveToWindow (NSWindow* newWindow)
+    {
+       #if JUCE_MODULE_AVAILABLE_juce_opengl
+        if ([view window] == window && newWindow == nullptr)
+            componentPeerAboutToBeRemovedFromScreen (*this);
+       #else
+        ignoreUnused (newWindow);
+       #endif
+    }
 
     void sendMouseEvent (NSEvent* ev)
     {
@@ -872,9 +891,16 @@ public:
 
     void handleAsyncUpdate() override
     {
+       #if JucePlugin_Build_AAX || JucePlugin_Build_RTAS || JucePlugin_Build_AUv3 || JucePlugin_Build_AU || JucePlugin_Build_VST3 || JucePlugin_Build_VST
+        const bool shouldThrottle = true;
+       #else
+        const bool shouldThrottle = areAnyWindowsInLiveResize();
+       #endif
+
         // When windows are being resized, artificially throttling high-frequency repaints helps
-        // to stop the event queue getting clogged, and keeps everything working smoothly
-        if (areAnyWindowsInLiveResize()
+        // to stop the event queue getting clogged, and keeps everything working smoothly.
+        // For some reason Logic also needs this throttling to recored parameter events correctly.
+        if (shouldThrottle
               && Time::getCurrentTime() < lastRepaintTime + RelativeTime::milliseconds (1000 / 30))
         {
             triggerAsyncUpdate();
@@ -884,6 +910,7 @@ public:
         for (const Rectangle<float>* i = deferredRepaints.begin(), *e = deferredRepaints.end(); i != e; ++i)
             [view setNeedsDisplayInRect: makeNSRect (*i)];
 
+        lastRepaintTime = Time::getCurrentTime();
         deferredRepaints.clear();
     }
 
@@ -901,7 +928,6 @@ public:
 
     void invokePaint (LowLevelGraphicsContext& context)
     {
-        lastRepaintTime = Time::getCurrentTime();
         handlePaint (context);
     }
 
@@ -984,7 +1010,10 @@ public:
     void liveResizingStart()
     {
         if (constrainer != nullptr)
+        {
             constrainer->resizeStart();
+            isFirstLiveResize = true;
+        }
     }
 
     void liveResizingEnd()
@@ -997,30 +1026,34 @@ public:
     {
         if (constrainer != nullptr && ! isKioskMode())
         {
-            Rectangle<int> pos      (convertToRectInt (flippedScreenRect (r)));
-            Rectangle<int> original (convertToRectInt (flippedScreenRect ([window frame])));
+            const float scale = getComponent().getDesktopScaleFactor();
+
+            Rectangle<int> pos      = ScalingHelpers::unscaledScreenPosToScaled (scale, convertToRectInt (flippedScreenRect (r)));
+            Rectangle<int> original = ScalingHelpers::unscaledScreenPosToScaled (scale, convertToRectInt (flippedScreenRect ([window frame])));
 
             const Rectangle<int> screenBounds (Desktop::getInstance().getDisplays().getTotalBounds (true));
 
            #if defined (MAC_OS_X_VERSION_10_6) && MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_6
-            if ([window inLiveResize])
+            const bool inLiveResize = [window inLiveResize];
            #else
-            if ([window respondsToSelector: @selector (inLiveResize)]
-                 && [window performSelector: @selector (inLiveResize)])
+            const bool inLiveResize = [window respondsToSelector: @selector (inLiveResize)]
+                                   && [window performSelector: @selector (inLiveResize)];
            #endif
+
+            if (! inLiveResize || isFirstLiveResize)
             {
-                constrainer->checkBounds (pos, original, screenBounds,
-                                          false, false, true, true);
-            }
-            else
-            {
-                constrainer->checkBounds (pos, original, screenBounds,
-                                          pos.getY() != original.getY() && pos.getBottom() == original.getBottom(),
-                                          pos.getX() != original.getX() && pos.getRight()  == original.getRight(),
-                                          pos.getY() == original.getY() && pos.getBottom() != original.getBottom(),
-                                          pos.getX() == original.getX() && pos.getRight()  != original.getRight());
+                isFirstLiveResize = false;
+
+                isStretchingTop    = (pos.getY() != original.getY() && pos.getBottom() == original.getBottom());
+                isStretchingLeft   = (pos.getX() != original.getX() && pos.getRight()  == original.getRight());
+                isStretchingBottom = (pos.getY() == original.getY() && pos.getBottom() != original.getBottom());
+                isStretchingRight  = (pos.getX() == original.getX() && pos.getRight()  != original.getRight());
             }
 
+            constrainer->checkBounds (pos, original, screenBounds,
+                                      isStretchingTop, isStretchingLeft, isStretchingBottom, isStretchingRight);
+
+            pos = ScalingHelpers::scaledScreenPosToUnscaled (scale, pos);
             r = flippedScreenRect (makeNSRect (pos));
         }
 
@@ -1312,7 +1345,8 @@ public:
     NSWindow* window;
     NSView* view;
     bool isSharedWindow, fullScreen;
-    bool usingCoreGraphics, isZooming, textWasInserted;
+    bool usingCoreGraphics, isZooming, isFirstLiveResize, textWasInserted;
+    bool isStretchingTop, isStretchingLeft, isStretchingBottom, isStretchingRight;
     String stringBeingComposed;
     NSNotificationCenter* notificationCenter;
 
@@ -1516,6 +1550,8 @@ struct JuceNSViewClass   : public ObjCClass<NSView>
         addMethod (@selector (copy:),                         copy,                       "v@:@");
         addMethod (@selector (cut:),                          cut,                        "v@:@");
 
+        addMethod (@selector (viewWillMoveToWindow:),         willMoveToWindow,           "v@:@");
+
         addProtocol (@protocol (NSTextInput));
 
         registerClass();
@@ -1564,6 +1600,11 @@ private:
     static void copy           (id self, SEL, NSObject* s)   { if (NSViewComponentPeer* p = getOwner (self)) p->redirectCopy       (s);  }
     static void paste          (id self, SEL, NSObject* s)   { if (NSViewComponentPeer* p = getOwner (self)) p->redirectPaste      (s);  }
     static void cut            (id self, SEL, NSObject* s)   { if (NSViewComponentPeer* p = getOwner (self)) p->redirectCut        (s);  }
+
+    static void willMoveToWindow (id self, SEL, NSWindow* window)
+    {
+        if (NSViewComponentPeer* p = getOwner (self)) p->redirectWillMoveToWindow (window);
+    }
 
     static BOOL acceptsFirstMouse (id, SEL, NSEvent*)        { return YES; }
     static BOOL wantsDefaultClipping (id, SEL)               { return YES; } // (this is the default, but may want to customise it in future)
@@ -2092,7 +2133,7 @@ const int KeyPress::F7Key           = NSF7FunctionKey;
 const int KeyPress::F8Key           = NSF8FunctionKey;
 const int KeyPress::F9Key           = NSF9FunctionKey;
 const int KeyPress::F10Key          = NSF10FunctionKey;
-const int KeyPress::F11Key          = NSF1FunctionKey;
+const int KeyPress::F11Key          = NSF11FunctionKey;
 const int KeyPress::F12Key          = NSF12FunctionKey;
 const int KeyPress::F13Key          = NSF13FunctionKey;
 const int KeyPress::F14Key          = NSF14FunctionKey;

@@ -45,8 +45,7 @@ void AudioProcessorPlayer::setProcessor (AudioProcessor* const processorToPlay)
     {
         if (processorToPlay != nullptr && sampleRate > 0 && blockSize > 0)
         {
-            processorToPlay->setPlayConfigDetails (numInputChans, numOutputChans, sampleRate, blockSize);
-
+            processorToPlay->setPlayConfigDetails(numInputChans, numOutputChans, sampleRate, blockSize);
             const bool supportsDouble = processorToPlay->supportsDoublePrecisionProcessing() && isDoublePrecision;
             AudioProcessor::ProcessingPrecision precision = supportsDouble ? AudioProcessor::doublePrecision
                                                                            : AudioProcessor::singlePrecision;
