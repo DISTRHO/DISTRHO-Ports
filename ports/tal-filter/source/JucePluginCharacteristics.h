@@ -283,6 +283,8 @@
 */
 #define JucePlugin_WinBag_path              "C:\\essentials\\PT_73_SDK\\WinBag"
 
+#define JucePlugin_IsMidiEffect             0
+
 #define JucePlugin_LV2URI                   "urn:juce:TalFilter"
 #define JucePlugin_LV2Category              "FilterPlugin"
 

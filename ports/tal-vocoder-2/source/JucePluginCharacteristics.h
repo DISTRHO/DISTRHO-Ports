@@ -284,6 +284,8 @@
 */
 #define JucePlugin_WinBag_path              "C:\\essentials\\PT_73_SDK\\WinBag"
 
+#define JucePlugin_IsMidiEffect             0
+
 #define JucePlugin_LV2URI                   "http://kunz.corrupt.ch/products/tal-vocoder"
 #define JucePlugin_LV2Category              "ModulatorPlugin"
 

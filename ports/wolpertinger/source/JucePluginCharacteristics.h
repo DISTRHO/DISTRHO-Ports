@@ -280,6 +280,8 @@
 // ...whatever!
 #define JUCE_ObjCExtraSuffix 3
 
+#define JucePlugin_IsMidiEffect             0
+
 #define JucePlugin_LV2URI                   "http://tumbetoene.tuxfamily.org"
 #define JucePlugin_LV2Category              "InstrumentPlugin"
 #define JucePlugin_WantsLV2Latency          0

@@ -57,6 +57,9 @@
 #ifndef  JucePlugin_IsSynth
  #define JucePlugin_IsSynth                0
 #endif
+#ifndef  JucePlugin_IsMidiEffect
+ #define JucePlugin_IsMidiEffect           0
+#endif
 #ifndef  JucePlugin_WantsMidiInput
  #define JucePlugin_WantsMidiInput         0
 #endif

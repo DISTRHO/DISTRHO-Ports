@@ -36,7 +36,7 @@ public:
 			sendDataChangeMessage();
 	}
 
-	ImagePixelData* clone() override
+	Ptr clone() override
 	{
 		TomatlPixelData* s = new TomatlPixelData(pixelFormat, width, height, false, mAlways32Bit);
 		memcpy(s->imageData, imageData, (size_t)(lineStride * height));

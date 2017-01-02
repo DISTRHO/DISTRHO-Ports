@@ -26,6 +26,8 @@
 #include "SynthEngine.h"
 #include "Lfo.h"
 
+#include <climits>
+
 class Motherboard
 {
 private:

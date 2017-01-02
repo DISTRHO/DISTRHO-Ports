@@ -40,7 +40,7 @@ public:
     void dispatchParameters()
     {
         while (paramtersToUpdate.size() > 0)
-            listener.parameterUpdated (paramtersToUpdate.remove (paramtersToUpdate.size() - 1));
+            listener.parameterUpdated (paramtersToUpdate.removeAndReturn (paramtersToUpdate.size() - 1));
     }
     
 private:

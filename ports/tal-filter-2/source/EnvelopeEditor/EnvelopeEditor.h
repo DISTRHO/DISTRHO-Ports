@@ -336,7 +336,7 @@ public:
             if (points[i] == selected
                 && points[i]->canDelete())
             {
-                SplinePoint *removedPoint = points.remove(i);
+                SplinePoint *removedPoint = points.removeAndReturn(i);
                 delete removedPoint;
                 this->sort();
                 this->setDirty();

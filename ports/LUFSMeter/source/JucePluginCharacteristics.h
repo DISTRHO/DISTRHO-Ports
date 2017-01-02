@@ -46,6 +46,7 @@
 #define JucePlugin_ManufacturerEmail      "support@yourcompany.com"
 #define JucePlugin_ManufacturerCode       'Klan'
 #define JucePlugin_IsSynth                0
+#define JucePlugin_IsMidiEffect           0
 #define JucePlugin_WantsMidiInput         0
 #define JucePlugin_ProducesMidiOutput     0
 #define JucePlugin_SilenceInProducesSilenceOut  1

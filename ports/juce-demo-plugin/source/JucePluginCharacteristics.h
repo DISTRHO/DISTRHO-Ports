@@ -20,6 +20,7 @@
 #define JucePlugin_MaxNumOutputChannels 2
 #define JucePlugin_PreferredChannelConfigurations   {1, 1}, {2, 2}
 #define JucePlugin_IsSynth              0
+#define JucePlugin_IsMidiEffect         0
 #define JucePlugin_WantsMidiInput       1
 #define JucePlugin_ProducesMidiOutput   1
 #define JucePlugin_SilenceInProducesSilenceOut  0

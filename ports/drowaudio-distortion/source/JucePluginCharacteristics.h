@@ -271,6 +271,8 @@
 */
 #define JucePlugin_WinBag_path              "C:\\essentials\\PT_73_SDK\\WinBag"
 
+#define JucePlugin_IsMidiEffect         0
+
 #define JucePlugin_LV2URI               "http://www.drowaudio.co.uk/audio/audio_plugins/distortion"
 #define JucePlugin_LV2Category          "DistortionPlugin"
 #define JucePlugin_WantsLV2Latency      0

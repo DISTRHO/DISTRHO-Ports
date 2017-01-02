@@ -261,6 +261,8 @@
 */
 #define JucePlugin_RTASProductId            JucePlugin_PluginCode
 
+#define JucePlugin_IsMidiEffect             0
+
 #define JucePlugin_LV2URI                   "urn:juce:Vex"
 #define JucePlugin_LV2Category              "InstrumentPlugin"
 #define JucePlugin_WantsLV2Latency          0
