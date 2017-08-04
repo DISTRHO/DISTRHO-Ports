@@ -24,7 +24,7 @@ function make_library_project(name)
   package.config["Release"].defines      = { "NDEBUG=1" }
   package.config["Release"].buildoptions = { "-O3", "-fvisibility=hidden", "-fvisibility-inlines-hidden" }
 
-  if (not os.getenv("NOOPTIMIZATIONS")) then
+  if (not (os.getenv("NOOPTIMIZATIONS") or os.getenv("LINUX_EMBED"))) then
     package.config["Release"].buildoptions = {
         package.config["Release"].buildoptions,
         "-mtune=generic", "-msse", "-msse2"
@@ -46,6 +46,9 @@ function make_library_project(name)
   elseif (macosx) then
     package.defines      = { "MAC=1" }
     package.buildoptions = { package.buildoptions, "-ObjC++" }
+  elseif (os.getenv("LINUX_EMBED")) then
+    package.defines      = { "LINUX=1" }
+    package.buildoptions = { package.buildoptions, "-DJUCE_LINUX_EMBED=1", "-std=c++0x" }
   else
     package.defines      = { "LINUX=1" }
     package.buildoptions = { package.buildoptions, "`pkg-config --cflags alsa freetype2 x11 xext`", "-std=c++0x" }
@@ -92,7 +95,7 @@ function make_plugin_project(name, spec)
   package.config["Release"].buildoptions = { "-O3", "-ffast-math", "-fomit-frame-pointer", "-fvisibility=hidden", "-fvisibility-inlines-hidden" }
   package.config["Release"].links        = {}
 
-  if (not os.getenv("NOOPTIMIZATIONS")) then
+  if (not (os.getenv("NOOPTIMIZATIONS") or os.getenv("LINUX_EMBED"))) then
     package.config["Release"].buildoptions = {
       package.config["Release"].buildoptions,
       "-mtune=generic", "-msse", "-msse2", "-mfpmath=sse"
@@ -137,6 +140,10 @@ function make_plugin_project(name, spec)
     package.buildoptions = { package.buildoptions, "-std=c++0x" }
   end
 
+  if (os.getenv("LINUX_EMBED")) then
+    package.buildoptions = { package.buildoptions, "-DJUCE_LINUX_EMBED=1" }
+  end
+
   return package
 end
 
@@ -154,6 +161,8 @@ function make_juce_lv2_project(name)
     package.linkoptions = { package.linkoptions,
                             "-framework Accelerate", "-framework AudioToolbox", "-framework AudioUnit", "-framework Carbon", "-framework Cocoa",
                             "-framework CoreAudio", "-framework CoreAudioKit", "-framework CoreMIDI", "-framework IOKit", "-framework QuartzCore", "-framework WebKit" }
+  elseif (os.getenv("LINUX_EMBED")) then
+    package.links       = { "dl", "rt" }
   else
     package.links       = { "dl", "rt" }
     package.linkoptions = { package.linkoptions, "`pkg-config --libs freetype2 x11 xext`" }
