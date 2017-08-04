@@ -40,6 +40,7 @@ _old
 ports/_todo
 
 libs/juce/source/.gitignore
+libs/juce/source/.github
 libs/juce/source/ChangeList.txt
 libs/juce/source/amalgamation/
 libs/juce/source/docs/
