@@ -422,4 +422,23 @@
 */
 #define JUCETICE_INCLUDE_CURL_CODE 0
 
+//=============================================================================
+// Linux embed build
+
+#if JUCE_LINUX_EMBED
+ #undef JUCE_MODULE_AVAILABLE_juce_graphics
+ #undef JUCE_MODULE_AVAILABLE_juce_gui_basics
+ #undef JUCE_MODULE_AVAILABLE_juce_gui_extra
+ #undef JUCE_MODULE_AVAILABLE_juce_tracktion_marketplace
+ #define JUCE_MODULE_AVAILABLE_juce_graphics              0
+ #define JUCE_MODULE_AVAILABLE_juce_gui_basics            0
+ #define JUCE_MODULE_AVAILABLE_juce_gui_extra             0
+ #define JUCE_MODULE_AVAILABLE_juce_tracktion_marketplace 0
+
+ #undef JUCE_PLUGINHOST_LADSPA
+ #undef JUCE_PLUGINHOST_VST
+ #define JUCE_PLUGINHOST_LADSPA 0
+ #define JUCE_PLUGINHOST_VST    0
+#endif
+
 #endif // BUILD_JUCE_APPCONFIG_H_INCLUDED
