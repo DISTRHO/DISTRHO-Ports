@@ -435,8 +435,10 @@
  #define JUCE_MODULE_AVAILABLE_juce_gui_extra             0
  #define JUCE_MODULE_AVAILABLE_juce_tracktion_marketplace 0
 
+ #undef JUCE_ALSA
  #undef JUCE_PLUGINHOST_LADSPA
  #undef JUCE_PLUGINHOST_VST
+ #define JUCE_ALSA              0
  #define JUCE_PLUGINHOST_LADSPA 0
  #define JUCE_PLUGINHOST_VST    0
 #endif
