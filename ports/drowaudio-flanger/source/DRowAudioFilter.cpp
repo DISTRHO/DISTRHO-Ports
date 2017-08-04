@@ -442,7 +442,11 @@ void DRowAudioFilter::processBlock (AudioSampleBuffer& buffer,
 //==============================================================================
 AudioProcessorEditor* DRowAudioFilter::createEditor()
 {
+#if JUCE_LINUX_EMBED
+    return nullptr;
+#else
     return new DRowAudioEditorComponent (this);
+#endif
 }
 
 //==============================================================================

@@ -275,7 +275,11 @@ bool ThePilgrimAudioProcessor::hasEditor() const
 
 AudioProcessorEditor* ThePilgrimAudioProcessor::createEditor()
 {
+#if JUCE_LINUX_EMBED
+    return nullptr;
+#else
     return new ThePilgrimAudioProcessorEditor (this);
+#endif
 }
 
 //==============================================================================

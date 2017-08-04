@@ -331,7 +331,11 @@ void TalCore::processMidiPerSample(MidiBuffer::Iterator *midiIterator, MidiMessa
 
 AudioProcessorEditor* TalCore::createEditor()
 {
+#if JUCE_LINUX_EMBED
+    return nullptr;
+#else
     return new TalComponent (this);
+#endif
 }
 
 void TalCore::getStateInformation (MemoryBlock& destData)

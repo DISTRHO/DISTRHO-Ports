@@ -26,11 +26,14 @@
 	_smoothedValue_ - This should be used in the audio processing -
 	eg. for gain.. sample = sample * smoothedValue. **/
 
-class PluginParameter : public Component
+class PluginParameter
+#if ! JUCE_LINUX_EMBED
+    : public Component
+#endif
 {
 public:
 	PluginParameter();
-	~PluginParameter() override;
+	~PluginParameter();
 
 /**	Set the value of the parameter.
 	This would be the value set by the host/UI etc.

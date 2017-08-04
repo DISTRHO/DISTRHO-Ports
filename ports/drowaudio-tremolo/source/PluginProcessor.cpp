@@ -222,7 +222,11 @@ bool TremoloAudioProcessor::hasEditor() const
 
 AudioProcessorEditor* TremoloAudioProcessor::createEditor()
 {
+#if JUCE_LINUX_EMBED
+    return nullptr;
+#else
     return new TremoloAudioProcessorEditor (this);
+#endif
 }
 
 //==============================================================================

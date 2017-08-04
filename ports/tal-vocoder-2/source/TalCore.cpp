@@ -413,7 +413,11 @@ inline bool TalCore::getNextEvent(MidiBuffer::Iterator *midiIterator, const int 
 
 AudioProcessorEditor* TalCore::createEditor()
 {
+#if JUCE_LINUX_EMBED
+    return nullptr;
+#else
     return new TalComponent(this);
+#endif
 }
 
 void TalCore::getStateInformation (MemoryBlock& destData)

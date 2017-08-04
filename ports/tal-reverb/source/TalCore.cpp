@@ -214,7 +214,11 @@ void TalCore::processBlock (AudioSampleBuffer& buffer,
 
 AudioProcessorEditor* TalCore::createEditor()
 {
+#if JUCE_LINUX_EMBED
+    return nullptr;
+#else
     return new ReverbComponent (this);
+#endif
 }
 
 void TalCore::getStateInformation (MemoryBlock& destData)

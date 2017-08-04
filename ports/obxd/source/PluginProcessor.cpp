@@ -591,8 +591,12 @@ bool ObxdAudioProcessor::hasEditor() const
 
 AudioProcessorEditor* ObxdAudioProcessor::createEditor()
 {
+#if JUCE_LINUX_EMBED
+    return nullptr;
+#else
 	 return new ObxdAudioProcessorEditor (this);
 	//return NULL;
+#endif
 }
 
 //==============================================================================

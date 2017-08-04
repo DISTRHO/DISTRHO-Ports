@@ -312,8 +312,10 @@ void wolp::setParameter (int idx, float value)
 
     paraminfos[idx].dirty = true;
 
+#if ! JUCE_LINUX_EMBED
     if (getActiveEditor())
         sendChangeMessage();
+#endif
 }
 
 
@@ -394,6 +396,7 @@ void wolp::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 	}
 
 
+#if ! JUCE_LINUX_EMBED
 	tabbed_editor *e= (tabbed_editor*)getActiveEditor();
 	if(e)
 	{
@@ -416,6 +419,7 @@ void wolp::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 //	harmful in process callback?
 //		e->setPolyText(String("Poly: ") + String(nPoly));
 	}
+#endif
 }
 
 
@@ -510,8 +514,12 @@ void wolp::renderNextBlock (AudioSampleBuffer& outputBuffer,
 
 AudioProcessorEditor* wolp::createEditor()
 {
+#if JUCE_LINUX_EMBED
+        return nullptr;
+#else
 	tabbed_editor *e= new tabbed_editor(this);
 
 	return e;
+#endif
 }
 

@@ -300,7 +300,11 @@ bool LuftikusAudioProcessor::hasEditor() const
 
 AudioProcessorEditor* LuftikusAudioProcessor::createEditor()
 {
+#if JUCE_LINUX_EMBED
+    return nullptr;
+#else
 	return new LuftikusAudioProcessorEditor (this, guiType);
+#endif
 }
 
 //==============================================================================

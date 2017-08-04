@@ -347,7 +347,11 @@ bool TheFunctionAudioProcessor::hasEditor() const
 
 AudioProcessorEditor* TheFunctionAudioProcessor::createEditor()
 {
+#if JUCE_LINUX_EMBED
+    return nullptr;
+#else
     return new TheFunctionAudioProcessorEditor (this);
+#endif
 }
 
 //==============================================================================

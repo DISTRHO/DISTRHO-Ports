@@ -520,7 +520,11 @@ void DRowAudioFilter::setupFilter(LBCF &filter, float fbCoeff, float delayTime, 
 //==============================================================================
 AudioProcessorEditor* DRowAudioFilter::createEditor()
 {
+#if JUCE_LINUX_EMBED
+    return nullptr;
+#else
     return new DRowAudioEditorComponent (this);
+#endif
 }
 
 //==============================================================================
