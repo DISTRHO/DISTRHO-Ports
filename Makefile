@@ -99,6 +99,12 @@ lv2:
 	$(MAKE) -C ports lv2
 	$(MAKE) gen_lv2
 
+lv2_nogen:
+	$(MAKE) -C libs/drowaudio
+	$(MAKE) -C libs/juce
+	$(MAKE) -C libs/juced
+	$(MAKE) -C ports lv2
+
 vst:
 	$(MAKE) -C libs/drowaudio
 	$(MAKE) -C libs/juce
