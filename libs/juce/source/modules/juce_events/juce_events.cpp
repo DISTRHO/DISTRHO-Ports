@@ -55,10 +55,12 @@
  #import <IOKit/pwr_mgt/IOPMLib.h>
 
 #elif JUCE_LINUX
- #include <X11/Xlib.h>
- #include <X11/Xresource.h>
- #include <X11/Xutil.h>
- #undef KeyPress
+ #if ! JUCE_LINUX_EMBED
+  #include <X11/Xlib.h>
+  #include <X11/Xresource.h>
+  #include <X11/Xutil.h>
+  #undef KeyPress
+ #endif
  #include <unistd.h>
 #endif
 
@@ -90,6 +92,9 @@ namespace juce
 
 #elif JUCE_WINDOWS
  #include "native/juce_win32_Messaging.cpp"
+
+#elif JUCE_LINUX_EMBED
+ #include "native/juce_linux-embed_Messaging.cpp"
 
 #elif JUCE_LINUX
  #include "native/juce_ScopedXLock.h"
