@@ -76,6 +76,7 @@ namespace drow {
 #include "audio/fft/dRowAudio_FFT.cpp"
 #include "audio/fft/dRowAudio_LTAS.cpp"
 
+#if ! JUCE_LINUX_EMBED
 // Gui
 #include "gui/dRowAudio_AudioFileDropTarget.cpp"
 #include "gui/dRowAudio_GraphicalComponent.cpp"
@@ -96,6 +97,7 @@ namespace drow {
 #include "gui/audiothumbnail/dRowAudio_ColouredAudioThumbnail.cpp"
 #include "gui/audiothumbnail/dRowAudio_PositionableWaveDisplay.cpp"
 #include "gui/audiothumbnail/dRowAudio_DraggableWaveDisplay.cpp"
+#endif
 
 // maths
 #include "maths/dRowAudio_MathsUnitTests.cpp"
