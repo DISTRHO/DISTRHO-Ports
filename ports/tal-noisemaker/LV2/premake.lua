@@ -12,6 +12,15 @@ package.includepaths = {
   "./intermediate/Debug" --fake
 }
 
+if (os.getenv("LINUX_EMBED")) then
+package.files = {
+  matchfiles (
+    "../source/TalCore.cpp",
+    "../source/Engine/*.cpp",
+    "../../../libs/juce-plugin/JucePluginMain.cpp"
+  )
+}
+else
 package.files = {
   matchfiles (
     "../source/*.cpp",
@@ -19,3 +28,4 @@ package.files = {
     "../../../libs/juce-plugin/JucePluginMain.cpp"
   )
 }
+end

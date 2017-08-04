@@ -13,6 +13,14 @@ package.includepaths = {
   "../../drowaudio-common"
 }
 
+if (os.getenv("LINUX_EMBED")) then
+package.files = {
+  matchfiles (
+    "../source/DRowAudioFilter.cpp",
+    "../../../libs/juce-plugin/JucePluginMain.cpp"
+  )
+}
+else
 package.files = {
   matchfiles (
     "../source/*.cpp",
@@ -20,3 +28,4 @@ package.files = {
     "../../../libs/juce-plugin/JucePluginMain.cpp"
   )
 }
+end

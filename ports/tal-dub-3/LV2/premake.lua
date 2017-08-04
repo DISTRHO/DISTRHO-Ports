@@ -8,9 +8,18 @@ package.includepaths = {
   "." --fake
 }
 
+if (os.getenv("LINUX_EMBED")) then
+package.files = {
+  matchfiles (
+    "../source/TalCore.cpp",
+    "../../../libs/juce-plugin/JucePluginMain.cpp"
+  )
+}
+else
 package.files = {
   matchfiles (
     "../source/*.cpp",
     "../../../libs/juce-plugin/JucePluginMain.cpp"
   )
 }
+end

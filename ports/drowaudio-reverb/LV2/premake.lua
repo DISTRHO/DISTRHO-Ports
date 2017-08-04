@@ -13,6 +13,18 @@ package.includepaths = {
   "../../drowaudio-common"
 }
 
+if (os.getenv("LINUX_EMBED")) then
+package.files = {
+  matchfiles (
+    "../source/DRowAudioFilter.cpp",
+    "../../drowaudio-common/dRowAudio_AllpassFilter.cpp",
+    "../../drowaudio-common/dRowAudio_DelayRegister.cpp",
+    "../../drowaudio-common/dRowAudio_LBCF.cpp",
+    "../../drowaudio-common/dRowAudio_TappedDelayLine.cpp",
+    "../../../libs/juce-plugin/JucePluginMain.cpp"
+  )
+}
+else
 package.files = {
   matchfiles (
     "../source/*.cpp",
@@ -24,3 +36,4 @@ package.files = {
     "../../../libs/juce-plugin/JucePluginMain.cpp"
   )
 }
+end

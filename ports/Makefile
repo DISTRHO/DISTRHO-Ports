@@ -19,6 +19,27 @@ libs:
 
 lv2: libs
 	install -d ../bin/lv2
+ifeq ($(LINUX_EMBED),true)
+	$(MAKE) -C arctican-function/LV2
+	$(MAKE) -C arctican-pilgrim/LV2
+	$(MAKE) -C drowaudio-distortion/LV2
+	$(MAKE) -C drowaudio-distortionshaper/LV2
+	$(MAKE) -C drowaudio-flanger/LV2
+	$(MAKE) -C drowaudio-reverb/LV2
+	$(MAKE) -C drowaudio-tremolo/LV2
+	$(MAKE) -C luftikus/LV2
+	$(MAKE) -C obxd/LV2
+	$(MAKE) -C tal-dub-3/LV2
+	$(MAKE) -C tal-filter/LV2
+	$(MAKE) -C tal-filter-2/LV2
+	$(MAKE) -C tal-noisemaker/LV2
+	$(MAKE) -C tal-reverb/LV2
+	$(MAKE) -C tal-reverb-2/LV2
+	$(MAKE) -C tal-reverb-3/LV2
+	$(MAKE) -C tal-vocoder-2/LV2
+	$(MAKE) -C vex/LV2
+	$(MAKE) -C wolpertinger/LV2
+else
 	$(MAKE) -C arctican-function/LV2
 	$(MAKE) -C arctican-pilgrim/LV2
 	$(MAKE) -C dexed/LV2
@@ -49,6 +70,7 @@ lv2: libs
 	$(MAKE) -C tal-vocoder-2/LV2
 	$(MAKE) -C vex/LV2
 	$(MAKE) -C wolpertinger/LV2
+endif
 
 # -----------------------------------------
 # vst
