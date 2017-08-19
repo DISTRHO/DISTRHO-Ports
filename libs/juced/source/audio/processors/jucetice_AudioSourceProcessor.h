@@ -70,7 +70,9 @@ public:
     void getStateInformation (MemoryBlock& destData) override              { }
     void setStateInformation (const void* data,int sizeInBytes) override   { }
 
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
     AudioProcessorEditor* createEditor() override                          { return 0; }
+#endif
 
 private:
 

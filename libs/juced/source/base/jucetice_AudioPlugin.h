@@ -877,6 +877,7 @@ public:
     */
     MidiKeyboardState& getKeyboardState ()             { return keyboardState; }
 
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
     //==============================================================================
     /**
         Create the default editor for the processor
@@ -890,6 +891,7 @@ public:
     {
         return 0;
     }
+#endif
 
     //==============================================================================
     juce_UseDebuggingNewOperator

@@ -120,7 +120,7 @@ void GraphNodeComponent::mouseDrag (const MouseEvent& e)
         if (listener)
             listener->nodeMoved (this, x - lastX, y - lastY);
 
-        constrainer.applyBoundsToComponent (this, bounds);
+        constrainer.applyBoundsToComponent (*this, bounds);
     }
 }
 
