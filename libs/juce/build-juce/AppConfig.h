@@ -23,12 +23,11 @@
 #define JUCE_MODULE_AVAILABLE_juce_gui_basics            1
 #define JUCE_MODULE_AVAILABLE_juce_gui_extra             1
 #define JUCE_MODULE_AVAILABLE_juce_opengl                0
-#define JUCE_MODULE_AVAILABLE_juce_tracktion_marketplace 1
 #define JUCE_MODULE_AVAILABLE_juce_video                 0
+// TODO new modules
 
 //=============================================================================
 
-#define JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED 1
 #define JUCE_STANDALONE_APPLICATION 0
 
 //=============================================================================
@@ -343,7 +342,7 @@
     This lets you disable the WebBrowserComponent class (Mac and Windows).
     If you're not using any embedded web-pages, turning this off may reduce your code size.
 */
-#define JUCE_WEB_BROWSER 1
+#define JUCE_WEB_BROWSER 0
 
 /** Config: JUCE_ENABLE_LIVE_CONSTANT_EDITOR
     This lets you turn on the JUCE_ENABLE_LIVE_CONSTANT_EDITOR support. See the documentation
@@ -425,15 +424,13 @@
 //=============================================================================
 // Linux embed build
 
-#if JUCE_LINUX_EMBED
+#if JUCE_AUDIOPROCESSOR_NO_GUI
  #undef JUCE_MODULE_AVAILABLE_juce_graphics
  #undef JUCE_MODULE_AVAILABLE_juce_gui_basics
  #undef JUCE_MODULE_AVAILABLE_juce_gui_extra
- #undef JUCE_MODULE_AVAILABLE_juce_tracktion_marketplace
- #define JUCE_MODULE_AVAILABLE_juce_graphics              0
- #define JUCE_MODULE_AVAILABLE_juce_gui_basics            0
- #define JUCE_MODULE_AVAILABLE_juce_gui_extra             0
- #define JUCE_MODULE_AVAILABLE_juce_tracktion_marketplace 0
+ #define JUCE_MODULE_AVAILABLE_juce_graphics   0
+ #define JUCE_MODULE_AVAILABLE_juce_gui_basics 0
+ #define JUCE_MODULE_AVAILABLE_juce_gui_extra  0
 
  #undef JUCE_ALSA
  #undef JUCE_PLUGINHOST_LADSPA
