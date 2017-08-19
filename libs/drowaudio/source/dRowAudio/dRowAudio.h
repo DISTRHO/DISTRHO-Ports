@@ -379,7 +379,7 @@ using juce::UnitTest;
 #ifndef __DROWAUDIO_DRAGGABLEWAVEDISPLAY_H__
  #include "gui/audiothumbnail/dRowAudio_DraggableWaveDisplay.h"
 #endif 
- #if ! defined(__DROWAUDIO_DEFAULTCOLOURS_H__) && ! JUCE_LINUX_EMBED
+ #if ! defined(__DROWAUDIO_DEFAULTCOLOURS_H__) && ! JUCE_AUDIOPROCESSOR_NO_GUI
  #include "gui/dRowAudio_DefaultColours.h"
 #endif
 

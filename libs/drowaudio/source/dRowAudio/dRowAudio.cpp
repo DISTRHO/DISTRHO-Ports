@@ -76,7 +76,7 @@ namespace drow {
 #include "audio/fft/dRowAudio_FFT.cpp"
 #include "audio/fft/dRowAudio_LTAS.cpp"
 
-#if ! JUCE_LINUX_EMBED
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
 // Gui
 #include "gui/dRowAudio_AudioFileDropTarget.cpp"
 #include "gui/dRowAudio_GraphicalComponent.cpp"
