@@ -1,8 +1,8 @@
 diff --git a/modules/juce_audio_processors/format_types/juce_LADSPAPluginFormat.cpp b/modules/juce_audio_processors/format_types/juce_LADSPAPluginFormat.cpp
-index 1bb2413..8479bc3 100644
+index 7ec05c1..945f272 100644
 --- a/modules/juce_audio_processors/format_types/juce_LADSPAPluginFormat.cpp
 +++ b/modules/juce_audio_processors/format_types/juce_LADSPAPluginFormat.cpp
-@@ -26,7 +26,7 @@
+@@ -28,7 +28,7 @@
  
  } // (juce namespace)
  

@@ -1,8 +1,8 @@
 diff --git a/modules/juce_core/native/juce_linux_Files.cpp b/modules/juce_core/native/juce_linux_Files.cpp
-index 3c38624..a0941ab 100644
+index 1867cb7..3b239df 100644
 --- a/modules/juce_core/native/juce_linux_Files.cpp
 +++ b/modules/juce_core/native/juce_linux_Files.cpp
-@@ -219,17 +219,22 @@ bool Process::openDocument (const String& fileName, const String& parameters)
+@@ -206,17 +206,22 @@ bool Process::openDocument (const String& fileName, const String& parameters)
          cmdString = cmdLines.joinIntoString (" || ");
      }
  
@@ -30,11 +30,11 @@ index 3c38624..a0941ab 100644
  
      return cpid >= 0;
 diff --git a/modules/juce_core/native/juce_mac_Files.mm b/modules/juce_core/native/juce_mac_Files.mm
-index 0a00e92..fdebd69 100644
+index 36df598..1892af7 100644
 --- a/modules/juce_core/native/juce_mac_Files.mm
 +++ b/modules/juce_core/native/juce_mac_Files.mm
-@@ -110,23 +110,22 @@ namespace FileHelpers
- 
+@@ -102,23 +102,22 @@ namespace MacFileHelpers
+    #else
      static bool launchExecutable (const String& pathAndArguments)
      {
 -        const char* const argv[4] = { "/bin/sh", "-c", pathAndArguments.toUTF8(), 0 };
@@ -63,20 +63,20 @@ index 0a00e92..fdebd69 100644
 -        return true;
 +        return cpid >= 0;
      }
+    #endif
  }
- 
 diff --git a/modules/juce_core/native/juce_posix_SharedCode.h b/modules/juce_core/native/juce_posix_SharedCode.h
-index abcf358..17def66 100644
+index 0a5d97e..00eecfc 100644
 --- a/modules/juce_core/native/juce_posix_SharedCode.h
 +++ b/modules/juce_core/native/juce_posix_SharedCode.h
-@@ -1046,7 +1046,18 @@ public:
+@@ -1160,7 +1160,18 @@ public:
  
          if (pipe (pipeHandles) == 0)
          {
 +              Array<char*> argv;
 +              for (int i = 0; i < arguments.size(); ++i)
 +                  if (arguments[i].isNotEmpty())
-+                      argv.add (const_cast<char*> (arguments[i].toUTF8().getAddress()));
++                      argv.add (const_cast<char*> (arguments[i].toRawUTF8()));
 +
 +              argv.add (nullptr);
 +
@@ -88,7 +88,7 @@ index abcf358..17def66 100644
  
              if (result < 0)
              {
-@@ -1055,6 +1066,7 @@ public:
+@@ -1169,6 +1180,7 @@ public:
              }
              else if (result == 0)
              {
@@ -96,8 +96,8 @@ index abcf358..17def66 100644
                  // we're the child process..
                  close (pipeHandles[0]);   // close the read handle
  
-@@ -1069,16 +1081,10 @@ public:
-                     close (STDERR_FILENO);
+@@ -1183,16 +1195,10 @@ public:
+                     dup2 (open ("/dev/null", O_WRONLY), STDERR_FILENO);
  
                  close (pipeHandles[1]);
 +#endif
@@ -105,11 +105,11 @@ index abcf358..17def66 100644
 -                Array<char*> argv;
 -                for (int i = 0; i < arguments.size(); ++i)
 -                    if (arguments[i].isNotEmpty())
--                        argv.add (const_cast<char*> (arguments[i].toUTF8().getAddress()));
+-                        argv.add (const_cast<char*> (arguments[i].toRawUTF8()));
 -
 -                argv.add (nullptr);
 -
--                execvp (argv[0], argv.getRawDataPointer());
+-                execvp (exe.toRawUTF8(), argv.getRawDataPointer());
 -                exit (-1);
 +                if (execvp (argv[0], argv.getRawDataPointer()) < 0)
 +                    _exit (-1);

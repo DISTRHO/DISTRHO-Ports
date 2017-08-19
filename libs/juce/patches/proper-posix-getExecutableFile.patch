@@ -1,12 +1,13 @@
 diff --git a/modules/juce_core/native/juce_posix_SharedCode.h b/modules/juce_core/native/juce_posix_SharedCode.h
-index 17a5307..abcf358 100644
+index f6faa5b..0a5d97e 100644
 --- a/modules/juce_core/native/juce_posix_SharedCode.h
 +++ b/modules/juce_core/native/juce_posix_SharedCode.h
-@@ -596,12 +596,38 @@ File juce_getExecutableFile()
-         {
-             Dl_info exeInfo;
-             dladdr ((void*) juce_getExecutableFile, &exeInfo);
+@@ -647,12 +647,39 @@ File juce_getExecutableFile()
+ 
+             void* localSymbol = (void*) juce_getExecutableFile;
+             dladdr (localSymbol, &exeInfo);
 -            return CharPointer_UTF8 (exeInfo.dli_fname);
++
 +            const CharPointer_UTF8 filename (exeInfo.dli_fname);
 +
 +            // if the filename is absolute simply return it
@@ -37,7 +38,7 @@ index 17a5307..abcf358 100644
          }
      };
  
-     static String filename (DLAddrReader::getFilename());
+     static String filename = DLAddrReader::getFilename();
 -    return File::getCurrentWorkingDirectory().getChildFile (filename);
 +    return filename;
     #endif

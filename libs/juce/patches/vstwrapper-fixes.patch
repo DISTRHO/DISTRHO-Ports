@@ -1,16 +1,16 @@
 diff --git a/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp b/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
-index 0086d80..7e0564f 100644
+index ecab10a..e9d8f4a 100644
 --- a/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
 +++ b/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
-@@ -108,6 +108,7 @@
- #include "../utility/juce_IncludeModuleHeaders.h"
- #include "../utility/juce_FakeMouseMoveGenerator.h"
- #include "../utility/juce_WindowsHooks.h"
-+#include "modules/juce_audio_processors/format_types/juce_VSTMidiEventList.h"
+@@ -60,6 +60,7 @@
+ #endif
+ 
+ #include "../../juce_audio_processors/format_types/juce_VSTInterface.h"
++#include "../../juce_audio_processors/format_types/juce_VSTMidiEventList.h"
  
  #ifdef _MSC_VER
-  #pragma pack (pop)
-@@ -213,9 +214,9 @@ public:
+  #pragma warning (pop)
+@@ -179,9 +180,9 @@ struct SharedMessageThread  : public Thread
      void run() override
      {
          initialiseJuce_GUI();
@@ -19,37 +19,36 @@ index 0086d80..7e0564f 100644
          MessageManager::getInstance()->setCurrentThreadAsMessageThread();
 +        initialised = true;
  
-         while ((! threadShouldExit()) && MessageManager::getInstance()->runDispatchLoopUntil (250))
-         {}
-@@ -285,10 +286,6 @@ public:
-         setInitialDelay (filter->getLatencySamples());
-         programsAreChunks (true);
+         ScopedXDisplay xDisplay;
  
--        // NB: For reasons best known to themselves, some hosts fail to load/save plugin
--        // state correctly if the plugin doesn't report that it has at least 1 program.
--        jassert (af->getNumPrograms() > 0);
+@@ -268,9 +269,6 @@ public:
+         // You must at least have some channels
+         jassert (processor->isMidiEffect() || (maxNumInChannels > 0 || maxNumOutChannels > 0));
+ 
+-        if (processor->isMidiEffect())
+-            maxNumInChannels = maxNumOutChannels = 2;
 -
-         activePlugins.add (this);
-     }
+        #ifdef JucePlugin_PreferredChannelConfigurations
+         processor->setPlayConfigDetails (maxNumInChannels, maxNumOutChannels, 44100.0, 1024);
+        #endif
+@@ -1887,7 +1885,7 @@ private:
  
-@@ -352,7 +349,7 @@ public:
-     //==============================================================================
-     bool getEffectName (char* name) override
+     pointer_sized_int handleGetPlugInName (VstOpCodeArguments args)
      {
--        String (JucePlugin_Name).copyToUTF8 (name, 64);
-+        String (filter->getName()).copyToUTF8 (name, 64);
-         return true;
+-        String (JucePlugin_Name).copyToUTF8 ((char*) args.ptr, 64 + 1);
++        String (processor->getName()).copyToUTF8 ((char*) args.ptr, 64 + 1);
+         return 1;
      }
  
 diff --git a/modules/juce_audio_plugin_client/utility/juce_PluginUtilities.cpp b/modules/juce_audio_plugin_client/utility/juce_PluginUtilities.cpp
-index 1e87c49..5fdb8c2 100644
+index 4380839..757feae 100644
 --- a/modules/juce_audio_plugin_client/utility/juce_PluginUtilities.cpp
 +++ b/modules/juce_audio_plugin_client/utility/juce_PluginUtilities.cpp
-@@ -31,7 +31,6 @@
- #include "AppConfig.h"
+@@ -29,7 +29,6 @@
+ #endif
  
- #include "../utility/juce_CheckSettingMacros.h"
--#include "juce_IncludeModuleHeaders.h"
+ #include "../../juce_core/system/juce_TargetPlatform.h"
+-#include "../utility/juce_CheckSettingMacros.h"
+ #include "juce_IncludeModuleHeaders.h"
  
- #if _MSC_VER || JUCE_MINGW
- 
+ namespace juce

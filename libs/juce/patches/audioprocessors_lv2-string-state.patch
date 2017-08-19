@@ -1,9 +1,9 @@
 diff --git a/modules/juce_audio_processors/processors/juce_AudioProcessor.h b/modules/juce_audio_processors/processors/juce_AudioProcessor.h
-index 6cfad5d..be9aa3b 100644
+index 3aea53a..abde506 100644
 --- a/modules/juce_audio_processors/processors/juce_AudioProcessor.h
 +++ b/modules/juce_audio_processors/processors/juce_AudioProcessor.h
-@@ -652,6 +652,11 @@ public:
-     virtual void numChannelsChanged();
+@@ -1247,6 +1247,11 @@ public:
+     virtual void processorLayoutsChanged();
  
      //==============================================================================
 +    /** LV2 specific calls, saving/restore as string. */

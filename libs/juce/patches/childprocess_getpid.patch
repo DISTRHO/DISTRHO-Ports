@@ -1,8 +1,8 @@
 diff --git a/modules/juce_core/native/juce_posix_SharedCode.h b/modules/juce_core/native/juce_posix_SharedCode.h
-index e682eae..17a5307 100644
+index ea007b1..f6faa5b 100644
 --- a/modules/juce_core/native/juce_posix_SharedCode.h
 +++ b/modules/juce_core/native/juce_posix_SharedCode.h
-@@ -1121,6 +1121,11 @@ public:
+@@ -1234,6 +1234,11 @@ public:
          return 0;
      }
  
@@ -15,10 +15,10 @@ index e682eae..17a5307 100644
  
  private:
 diff --git a/modules/juce_core/native/juce_win32_Threads.cpp b/modules/juce_core/native/juce_win32_Threads.cpp
-index 1421c10..ca22ea0 100644
+index 68d891f..d38b733 100644
 --- a/modules/juce_core/native/juce_win32_Threads.cpp
 +++ b/modules/juce_core/native/juce_win32_Threads.cpp
-@@ -534,6 +534,11 @@ public:
+@@ -488,6 +488,11 @@ public:
          return (uint32) exitCode;
      }
  
@@ -31,10 +31,10 @@ index 1421c10..ca22ea0 100644
  
  private:
 diff --git a/modules/juce_core/threads/juce_ChildProcess.cpp b/modules/juce_core/threads/juce_ChildProcess.cpp
-index 4566b13..e984837 100644
+index 5648c5d..262882b 100644
 --- a/modules/juce_core/threads/juce_ChildProcess.cpp
 +++ b/modules/juce_core/threads/juce_ChildProcess.cpp
-@@ -81,6 +81,11 @@ String ChildProcess::readAllProcessOutput()
+@@ -75,6 +75,11 @@ String ChildProcess::readAllProcessOutput()
      return result.toString();
  }
  
@@ -47,10 +47,10 @@ index 4566b13..e984837 100644
  #if JUCE_UNIT_TESTS
  
 diff --git a/modules/juce_core/threads/juce_ChildProcess.h b/modules/juce_core/threads/juce_ChildProcess.h
-index 0adcb57..7a1c88c 100644
+index b2bd0e1..cbc380d 100644
 --- a/modules/juce_core/threads/juce_ChildProcess.h
 +++ b/modules/juce_core/threads/juce_ChildProcess.h
-@@ -106,6 +106,8 @@ public:
+@@ -99,6 +99,8 @@ public:
      */
      bool kill();
  
