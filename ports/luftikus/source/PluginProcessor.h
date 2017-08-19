@@ -120,8 +120,10 @@ public:
 	void processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages);
 
 	//==============================================================================
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
 	AudioProcessorEditor* createEditor();
 	bool hasEditor() const;
+#endif
 
 	//==============================================================================
 	const String getName() const;

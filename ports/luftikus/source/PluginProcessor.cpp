@@ -293,6 +293,7 @@ void LuftikusAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer
 }
 
 //==============================================================================
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
 bool LuftikusAudioProcessor::hasEditor() const
 {
 	return true; // (change this to false if you choose to not supply an editor)
@@ -300,12 +301,9 @@ bool LuftikusAudioProcessor::hasEditor() const
 
 AudioProcessorEditor* LuftikusAudioProcessor::createEditor()
 {
-#if JUCE_LINUX_EMBED
-    return nullptr;
-#else
 	return new LuftikusAudioProcessorEditor (this, guiType);
-#endif
 }
+#endif
 
 //==============================================================================
 void LuftikusAudioProcessor::getStateInformation (MemoryBlock& destData)

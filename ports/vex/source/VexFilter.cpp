@@ -487,7 +487,7 @@ void VexFilter::setStateInformation (const void* data_, int dataSize)
 
             getCallbackLock().exit();
 
-#if ! JUCE_LINUX_EMBED
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
             if (AudioProcessorEditor* const editor = getActiveEditor())
                 ((VexEditorComponent*)editor)->setNeedsUpdate();
 #endif
@@ -518,14 +518,12 @@ void VexFilter::getStateInformation (MemoryBlock& destData)
     destData.append(tmp.getData(), tmp.getSize());
 }
 
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
 AudioProcessorEditor* VexFilter::createEditor()
 {
-#if JUCE_LINUX_EMBED
-    return nullptr;
-#else
     return new VexEditorComponent(this, this, fArpSet1, fArpSet2, fArpSet3);
-#endif
 }
+#endif
 
 void VexFilter::getChangedParameters(bool params[92])
 {

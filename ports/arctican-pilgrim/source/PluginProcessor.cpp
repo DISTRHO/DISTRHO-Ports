@@ -268,6 +268,7 @@ void ThePilgrimAudioProcessor::updateFilter()
 }
 
 //==============================================================================
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
 bool ThePilgrimAudioProcessor::hasEditor() const
 {
     return true; // (change this to false if you choose to not supply an editor)
@@ -275,12 +276,9 @@ bool ThePilgrimAudioProcessor::hasEditor() const
 
 AudioProcessorEditor* ThePilgrimAudioProcessor::createEditor()
 {
-#if JUCE_LINUX_EMBED
-    return nullptr;
-#else
     return new ThePilgrimAudioProcessorEditor (this);
-#endif
 }
+#endif
 
 //==============================================================================
 void ThePilgrimAudioProcessor::getStateInformation (MemoryBlock& destData)

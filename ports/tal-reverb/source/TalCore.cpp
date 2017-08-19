@@ -212,14 +212,12 @@ void TalCore::processBlock (AudioSampleBuffer& buffer,
     }
 }
 
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
 AudioProcessorEditor* TalCore::createEditor()
 {
-#if JUCE_LINUX_EMBED
-    return nullptr;
-#else
     return new ReverbComponent (this);
-#endif
 }
+#endif
 
 void TalCore::getStateInformation (MemoryBlock& destData)
 {

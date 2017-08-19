@@ -32,8 +32,10 @@ public:
     void processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages) override;
 
     //==============================================================================
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
     AudioProcessorEditor* createEditor() override;
     bool hasEditor() const override;
+#endif
 
     double getTailLengthSeconds() const override { return 0.0; }
 

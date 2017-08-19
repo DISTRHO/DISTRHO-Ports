@@ -312,17 +312,15 @@ void TalCore::processBlock (AudioSampleBuffer& buffer,
     }
 }
 
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
 AudioProcessorEditor* TalCore::createEditor()
 {
-#if JUCE_LINUX_EMBED
-    return nullptr;
-#else
 	// Work around -> otherwise the combo box values will be overwritten
 	//TalComponent *tal = new TalComponent (this);
 	//sendChangeMessage (this);
     return new TalComponent (this);
-#endif
 }
+#endif
 
 void TalCore::getStateInformation (MemoryBlock& destData)
 {

@@ -385,14 +385,12 @@ void DRowAudioFilter::processBlock (AudioSampleBuffer& buffer,
 }
 
 //==============================================================================
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
 AudioProcessorEditor* DRowAudioFilter::createEditor()
 {
-#if JUCE_LINUX_EMBED
-    return nullptr;
-#else
     return new DRowAudioEditorComponent (this);
-#endif
 }
+#endif
 
 //==============================================================================
 void DRowAudioFilter::getStateInformation (MemoryBlock& destData)

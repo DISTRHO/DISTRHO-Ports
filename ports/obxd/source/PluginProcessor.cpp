@@ -584,6 +584,7 @@ void ObxdAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& mi
 }
 
 //==============================================================================
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
 bool ObxdAudioProcessor::hasEditor() const
 {
 	return true; // (change this to false if you choose to not supply an editor)
@@ -591,13 +592,10 @@ bool ObxdAudioProcessor::hasEditor() const
 
 AudioProcessorEditor* ObxdAudioProcessor::createEditor()
 {
-#if JUCE_LINUX_EMBED
-    return nullptr;
-#else
 	 return new ObxdAudioProcessorEditor (this);
 	//return NULL;
-#endif
 }
+#endif
 
 //==============================================================================
 void ObxdAudioProcessor::getStateInformation (MemoryBlock& destData)

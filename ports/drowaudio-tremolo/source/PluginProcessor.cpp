@@ -215,6 +215,7 @@ void TremoloAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer&
 }
 
 //==============================================================================
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
 bool TremoloAudioProcessor::hasEditor() const
 {
     return true; // (change this to false if you choose to not supply an editor)
@@ -222,12 +223,9 @@ bool TremoloAudioProcessor::hasEditor() const
 
 AudioProcessorEditor* TremoloAudioProcessor::createEditor()
 {
-#if JUCE_LINUX_EMBED
-    return nullptr;
-#else
     return new TremoloAudioProcessorEditor (this);
-#endif
 }
+#endif
 
 //==============================================================================
 void TremoloAudioProcessor::getStateInformation (MemoryBlock& destData)

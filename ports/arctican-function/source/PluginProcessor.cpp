@@ -339,6 +339,7 @@ void TheFunctionAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuf
 }
 
 
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
 //==============================================================================
 bool TheFunctionAudioProcessor::hasEditor() const
 {
@@ -347,12 +348,9 @@ bool TheFunctionAudioProcessor::hasEditor() const
 
 AudioProcessorEditor* TheFunctionAudioProcessor::createEditor()
 {
-#if JUCE_LINUX_EMBED
-    return nullptr;
-#else
     return new TheFunctionAudioProcessorEditor (this);
-#endif
 }
+#endif
 
 //==============================================================================
 void TheFunctionAudioProcessor::getStateInformation (MemoryBlock& destData)

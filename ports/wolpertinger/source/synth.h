@@ -416,7 +416,6 @@ class wolp:	public AudioProcessor,
 		wolp();
 		~wolp() override;
 
-                bool hasEditor() const override { return true; }
                 bool silenceInProducesSilenceOut() const override { return false; }
                 double getTailLengthSeconds() const override { return 0.0; }
 
@@ -435,7 +434,10 @@ class wolp:	public AudioProcessor,
 		bool isOutputChannelStereoPair (int index) const override { return true; }
 		bool acceptsMidi() const override  { return true; }
 		bool producesMidi() const override { return false; }
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
+                bool hasEditor() const override { return true; }
 		AudioProcessorEditor* createEditor() override;
+#endif
 		int getNumParameters() override { return param_size; }
 		const String getParameterName (int idx) override { return String(paraminfos[idx].label); }
 		float getParameter (int idx) override

@@ -27,7 +27,7 @@
 	eg. for gain.. sample = sample * smoothedValue. **/
 
 class PluginParameter
-#if ! JUCE_LINUX_EMBED
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
     : public Component
 #endif
 {

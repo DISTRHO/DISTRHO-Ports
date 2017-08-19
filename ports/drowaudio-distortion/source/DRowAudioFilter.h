@@ -49,8 +49,6 @@ public:
     DRowAudioFilter();
     ~DRowAudioFilter() override;
 
-    bool hasEditor() const override { return true; }
-
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;
@@ -59,7 +57,10 @@ public:
                        MidiBuffer& midiMessages) override;
 
     //==============================================================================
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
+    bool hasEditor() const override { return true; }
     AudioProcessorEditor* createEditor() override;
+#endif
 
     //==============================================================================
     const String getName() const override;

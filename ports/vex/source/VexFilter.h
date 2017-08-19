@@ -52,7 +52,6 @@ public:
     VexFilter();
     ~VexFilter();
 
-    bool hasEditor() const override { return true; }
     bool silenceInProducesSilenceOut() const override { return true; }
     double getTailLengthSeconds() const override { return 0.0; }
 
@@ -85,7 +84,10 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
     void getStateInformation (MemoryBlock& destData) override;
 
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
+    bool hasEditor() const override { return true; }
     AudioProcessorEditor* createEditor() override;
+#endif
 
     void getChangedParameters(bool params[92]) override;
     float getFilterParameterValue(const uint32_t index) const override;

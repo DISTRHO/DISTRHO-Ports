@@ -312,7 +312,7 @@ void wolp::setParameter (int idx, float value)
 
     paraminfos[idx].dirty = true;
 
-#if ! JUCE_LINUX_EMBED
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
     if (getActiveEditor())
         sendChangeMessage();
 #endif
@@ -396,7 +396,7 @@ void wolp::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 	}
 
 
-#if ! JUCE_LINUX_EMBED
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
 	tabbed_editor *e= (tabbed_editor*)getActiveEditor();
 	if(e)
 	{
@@ -512,14 +512,12 @@ void wolp::renderNextBlock (AudioSampleBuffer& outputBuffer,
 }
 
 
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
 AudioProcessorEditor* wolp::createEditor()
 {
-#if JUCE_LINUX_EMBED
-        return nullptr;
-#else
 	tabbed_editor *e= new tabbed_editor(this);
 
 	return e;
-#endif
 }
+#endif
 
