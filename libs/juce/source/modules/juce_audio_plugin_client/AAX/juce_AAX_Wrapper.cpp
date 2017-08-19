@@ -2,22 +2,24 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   Copyright (c) 2017 - ROLI Ltd.
 
-   Permission is granted to use this software under the terms of either:
-   a) the GPL v2 (or any later version)
-   b) the Affero GPL v3
+   JUCE is an open source library subject to commercial or open-source
+   licensing.
 
-   Details of these licenses can be found at: www.gnu.org/licenses
+   By using JUCE, you agree to the terms of both the JUCE 5 End-User License
+   Agreement and JUCE 5 Privacy Policy (both updated and effective as of the
+   27th April 2017).
 
-   JUCE is distributed in the hope that it will be useful, but WITHOUT ANY
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-   A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+   End User License Agreement: www.juce.com/juce-5-licence
+   Privacy Policy: www.juce.com/juce-5-privacy-policy
 
-   ------------------------------------------------------------------------------
+   Or: You may also use this code under the terms of the GPL v3 (see
+   www.gnu.org/licenses).
 
-   To release a closed-source product which uses JUCE, commercial licenses are
-   available: visit www.juce.com for more information.
+   JUCE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY, AND ALL WARRANTIES, WHETHER
+   EXPRESSED OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR PURPOSE, ARE
+   DISCLAIMED.
 
   ==============================================================================
 */
@@ -35,6 +37,7 @@
  #pragma clang diagnostic push
  #pragma clang diagnostic ignored "-Wnon-virtual-dtor"
  #pragma clang diagnostic ignored "-Wsign-conversion"
+ #pragma clang diagnostic ignored "-Wextra-semi"
 #endif
 
 #ifdef _MSC_VER
@@ -148,7 +151,7 @@ namespace AAXClasses
         {AAX_eStemFormat_None,     {AudioChannelSet::unknown, AudioChannelSet::unknown, AudioChannelSet::unknown, AudioChannelSet::unknown, AudioChannelSet::unknown, AudioChannelSet::unknown, AudioChannelSet::unknown, AudioChannelSet::unknown}},
     };
 
-    static AAX_EStemFormat aaxFormats[AAX_eStemFormatNum] =
+    static AAX_EStemFormat aaxFormats[] =
     {
         AAX_eStemFormat_Mono,
         AAX_eStemFormat_Stereo,
@@ -298,9 +301,10 @@ namespace AAXClasses
 
         PluginInstanceInfo* pluginInstance;
         int32_t* isPrepared;
-        int32_t* sideChainBuffers;
 
         float* const* meterTapBuffers;
+
+        int32_t* sideChainBuffers;
     };
 
     struct JUCEAlgorithmIDs
@@ -323,9 +327,9 @@ namespace AAXClasses
             pluginInstance    = AAX_FIELD_INDEX (JUCEAlgorithmContext, pluginInstance),
             preparedFlag      = AAX_FIELD_INDEX (JUCEAlgorithmContext, isPrepared),
 
-            sideChainBuffers  = AAX_FIELD_INDEX (JUCEAlgorithmContext, sideChainBuffers),
+            meterTapBuffers   = AAX_FIELD_INDEX (JUCEAlgorithmContext, meterTapBuffers),
 
-            meterTapBuffers   = AAX_FIELD_INDEX (JUCEAlgorithmContext, meterTapBuffers)
+            sideChainBuffers  = AAX_FIELD_INDEX (JUCEAlgorithmContext, sideChainBuffers)
         };
     };
 
@@ -610,29 +614,18 @@ namespace AAXClasses
             return AAX_SUCCESS;
         }
 
-        juce::MemoryBlock& getTemporaryChunkMemory() const
-        {
-            ScopedLock sl (perThreadDataLock);
-            const Thread::ThreadID currentThread = Thread::getCurrentThreadId();
-
-            if (ChunkMemoryBlock::Ptr m = perThreadFilterData [currentThread])
-                return m->data;
-
-            ChunkMemoryBlock::Ptr m (new ChunkMemoryBlock());
-            perThreadFilterData.set (currentThread, m);
-            return m->data;
-        }
-
         AAX_Result GetChunkSize (AAX_CTypeID chunkID, uint32_t* oSize) const override
         {
             if (chunkID != juceChunkType)
                 return AAX_CEffectParameters::GetChunkSize (chunkID, oSize);
 
-            juce::MemoryBlock& tempFilterData = getTemporaryChunkMemory();
-            tempFilterData.reset();
-            pluginInstance->getStateInformation (tempFilterData);
+            auto& chunkMemoryBlock = perThreadFilterData.get();
 
-            *oSize = (uint32_t) tempFilterData.getSize();
+            chunkMemoryBlock.data.reset();
+            pluginInstance->getStateInformation (chunkMemoryBlock.data);
+            chunkMemoryBlock.isValid = true;
+
+            *oSize = (uint32_t) chunkMemoryBlock.data.getSize();
             return AAX_SUCCESS;
         }
 
@@ -641,14 +634,15 @@ namespace AAXClasses
             if (chunkID != juceChunkType)
                 return AAX_CEffectParameters::GetChunk (chunkID, oChunk);
 
-            juce::MemoryBlock& tempFilterData = getTemporaryChunkMemory();
 
-            if (tempFilterData.getSize() == 0)
+            auto& chunkMemoryBlock = perThreadFilterData.get();
+
+            if (! chunkMemoryBlock.isValid)
                 return 20700; // AAX_ERROR_PLUGIN_API_INVALID_THREAD
 
-            oChunk->fSize = (int32_t) tempFilterData.getSize();
-            tempFilterData.copyTo (oChunk->fData, 0, tempFilterData.getSize());
-            tempFilterData.reset();
+            oChunk->fSize = (int32_t) chunkMemoryBlock.data.getSize();
+            chunkMemoryBlock.data.copyTo (oChunk->fData, 0, chunkMemoryBlock.data.getSize());
+            chunkMemoryBlock.isValid = false;
 
             return AAX_SUCCESS;
         }
@@ -702,6 +696,20 @@ namespace AAXClasses
                     for (size_t i = 0; i < numObjects; ++i)
                         new (objects + i) uint32_t (1);
 
+                    break;
+                }
+                case JUCEAlgorithmIDs::meterTapBuffers:
+                {
+                    // this is a dummy field only when there are no aaxMeters
+                    jassert (aaxMeters.size() == 0);
+
+                    {
+                        const size_t numObjects = dataSize / sizeof (float*);
+                        float** const objects = static_cast<float**> (data);
+
+                        for (size_t i = 0; i < numObjects; ++i)
+                            new (objects + i) (float*) (nullptr);
+                    }
                     break;
                 }
             }
@@ -888,11 +896,11 @@ namespace AAXClasses
                     case AAX_eFrameRate_Undeclared:    break;
                     case AAX_eFrameRate_24Frame:       info.frameRate = AudioPlayHead::fps24;       break;
                     case AAX_eFrameRate_25Frame:       info.frameRate = AudioPlayHead::fps25;       framesPerSec = 25.0; break;
-                    case AAX_eFrameRate_2997NonDrop:   info.frameRate = AudioPlayHead::fps2997;     framesPerSec = 29.97002997; break;
-                    case AAX_eFrameRate_2997DropFrame: info.frameRate = AudioPlayHead::fps2997drop; framesPerSec = 29.97002997; break;
+                    case AAX_eFrameRate_2997NonDrop:   info.frameRate = AudioPlayHead::fps2997;     framesPerSec = 30.0 * 1000.0 / 1001.0; break;
+                    case AAX_eFrameRate_2997DropFrame: info.frameRate = AudioPlayHead::fps2997drop; framesPerSec = 30.0 * 1000.0 / 1001.0; break;
                     case AAX_eFrameRate_30NonDrop:     info.frameRate = AudioPlayHead::fps30;       framesPerSec = 30.0; break;
                     case AAX_eFrameRate_30DropFrame:   info.frameRate = AudioPlayHead::fps30drop;   framesPerSec = 30.0; break;
-                    case AAX_eFrameRate_23976:         info.frameRate = AudioPlayHead::fps24;       framesPerSec = 23.976; break;
+                    case AAX_eFrameRate_23976:         info.frameRate = AudioPlayHead::fps24;       framesPerSec = 24.0 * 1000.0 / 1001.0; break;
                     default:                           break;
                 }
 
@@ -1619,11 +1627,10 @@ namespace AAXClasses
 
         Array<int> aaxMeters;
 
-        struct ChunkMemoryBlock  : public ReferenceCountedObject
+        struct ChunkMemoryBlock
         {
             juce::MemoryBlock data;
-
-            typedef ReferenceCountedObjectPtr<ChunkMemoryBlock> Ptr;
+            bool isValid;
         };
 
         // temporary filter data is generated in GetChunkSize
@@ -1632,7 +1639,7 @@ namespace AAXClasses
         // However, as GetChunkSize and GetChunk can be called
         // on different threads, we store it in thread dependant storage
         // in a hash map with the thread id as a key.
-        mutable HashMap<Thread::ThreadID, ChunkMemoryBlock::Ptr> perThreadFilterData;
+        mutable ThreadLocalValue<ChunkMemoryBlock> perThreadFilterData;
         CriticalSection perThreadDataLock;
 
         JUCE_DECLARE_NON_COPYABLE (JuceAAX_Processor)
@@ -1734,8 +1741,10 @@ namespace AAXClasses
         return meterIdx;
     }
 
-    static void createDescriptor (AAX_IComponentDescriptor& desc, int configIndex,
-                                  const AudioProcessor::BusesLayout& fullLayout, AudioProcessor& processor,
+    static void createDescriptor (AAX_IComponentDescriptor& desc,
+                                  const AudioProcessor::BusesLayout& fullLayout,
+                                  AudioProcessor& processor,
+                                  Array<int32>& pluginIds,
                                   const int numMeters)
     {
         AAX_EStemFormat aaxInputFormat  = getFormatForAudioChannelSet (fullLayout.getMainInputChannelSet(),  false);
@@ -1778,6 +1787,12 @@ namespace AAXClasses
 
             check (desc.AddMeters (JUCEAlgorithmIDs::meterTapBuffers, meterIDs.getData(), static_cast<uint32_t> (numMeters)));
         }
+        else
+        {
+            // AAX does not allow there to be any gaps in the fields of the algorithm context structure
+            // so just add a dummy one here if there aren't any meters
+            check (desc.AddPrivateData (JUCEAlgorithmIDs::meterTapBuffers, sizeof (uintptr_t)));
+        }
 
         // Create a property map
         AAX_IPropertyMap* const properties = desc.NewPropertyMap();
@@ -1797,10 +1812,22 @@ namespace AAXClasses
 
         // This value needs to match the RTAS wrapper's Type ID, so that
         // the host knows that the RTAS/AAX plugins are equivalent.
-        properties->AddProperty (AAX_eProperty_PlugInID_Native,     'jcaa' + configIndex);
+        const int32 pluginID = processor.getAAXPluginIDForMainBusConfig (fullLayout.getMainInputChannelSet(),
+                                                                         fullLayout.getMainOutputChannelSet(),
+                                                                         false);
+
+        // The plugin id generated from your AudioProcessor's getAAXPluginIDForMainBusConfig callback
+        // it not unique. Please fix your implementation!
+        jassert (! pluginIds.contains (pluginID));
+        pluginIds.add (pluginID);
+
+        properties->AddProperty (AAX_eProperty_PlugInID_Native, pluginID);
 
        #if ! JucePlugin_AAXDisableAudioSuite
-        properties->AddProperty (AAX_eProperty_PlugInID_AudioSuite, 'jyaa' + configIndex);
+        properties->AddProperty (AAX_eProperty_PlugInID_AudioSuite,
+                                 processor.getAAXPluginIDForMainBusConfig (fullLayout.getMainInputChannelSet(),
+                                                                           fullLayout.getMainOutputChannelSet(),
+                                                                           true));
        #endif
 
        #if JucePlugin_AAXDisableMultiMono
@@ -1853,8 +1880,16 @@ namespace AAXClasses
         const int numInputBuses  = plugin->getBusCount (true);
         const int numOutputBuses = plugin->getBusCount (false);
 
-        descriptor.AddName (JucePlugin_Desc);
-        descriptor.AddName (JucePlugin_Name);
+        auto pluginNames = plugin->getAlternateDisplayNames();
+
+        pluginNames.insert (0, JucePlugin_Desc);
+        pluginNames.insert (0, JucePlugin_Name);
+
+        pluginNames.removeDuplicates (false);
+
+        for (auto name : pluginNames)
+            descriptor.AddName (name.toRawUTF8());
+
         descriptor.AddCategory (JucePlugin_AAXCategory);
 
         const int numMeters = addAAXMeters (*plugin, descriptor);
@@ -1879,10 +1914,10 @@ namespace AAXClasses
         }
 
        #else
-        int configIndex = 0;
+        Array<int32> pluginIds;
 
-        const int numIns  = numInputBuses  > 0 ? AAX_eStemFormatNum : 0;
-        const int numOuts = numOutputBuses > 0 ? AAX_eStemFormatNum : 0;
+        const int numIns  = numInputBuses  > 0 ? numElementsInArray (aaxFormats) : 0;
+        const int numOuts = numOutputBuses > 0 ? numElementsInArray (aaxFormats) : 0;
 
         for (int inIdx = 0; inIdx < jmax (numIns, 1); ++inIdx)
         {
@@ -1900,14 +1935,14 @@ namespace AAXClasses
 
                 if (AAX_IComponentDescriptor* const desc = descriptor.NewComponentDescriptor())
                 {
-                    createDescriptor (*desc, configIndex++, fullLayout, *plugin, numMeters);
+                    createDescriptor (*desc, fullLayout, *plugin, pluginIds, numMeters);
                     check (descriptor.AddComponent (desc));
                 }
             }
         }
 
         // You don't have any supported layouts
-        jassert (configIndex > 0);
+        jassert (pluginIds.size() > 0);
        #endif
     }
 }
@@ -1938,5 +1973,10 @@ AAX_Result JUCE_CDECL GetEffectDescriptions (AAX_ICollection* collection)
 
     return AAX_ERROR_NULL_OBJECT;
 }
+
+//==============================================================================
+#if _MSC_VER || JUCE_MINGW
+extern "C" BOOL WINAPI DllMain (HINSTANCE instance, DWORD reason, LPVOID) { if (reason == DLL_PROCESS_ATTACH) Process::setCurrentModuleInstanceHandle (instance); return true; }
+#endif
 
 #endif
