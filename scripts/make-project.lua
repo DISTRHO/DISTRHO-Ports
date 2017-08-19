@@ -16,7 +16,8 @@ function make_library_project(name)
   package.objdir       = "intermediate"
   package.defines      = {}
   package.buildoptions = { "-fPIC", "-DPIC", "-Wall", "-pthread",
-                           "-Wno-multichar", "-Wno-misleading-indentation", "-Wno-unused-but-set-variable",
+                           "-DJUCE_APP_CONFIG_HEADER='<AppConfig.h>'",
+                           "-Wno-multichar", "-Wno-unused-but-set-variable", "-Wno-unused-function", "-Wno-strict-overflow",
                            os.getenv("CXXFLAGS") }
 
   package.config["Release"].target       = project.name
@@ -48,7 +49,7 @@ function make_library_project(name)
     package.buildoptions = { package.buildoptions, "-ObjC++" }
   elseif (os.getenv("LINUX_EMBED")) then
     package.defines      = { "LINUX=1" }
-    package.buildoptions = { package.buildoptions, "-DJUCE_LINUX_EMBED=1", "-std=c++0x" }
+    package.buildoptions = { package.buildoptions, "-DJUCE_AUDIOPROCESSOR_NO_GUI=1", "-std=c++0x" }
   else
     package.defines      = { "LINUX=1" }
     package.buildoptions = { package.buildoptions, "`pkg-config --cflags alsa freetype2 x11 xext`", "-std=c++0x" }
@@ -85,7 +86,9 @@ function make_plugin_project(name, spec)
   package.target       = project.name
   package.targetprefix = ""
   package.objdir       = "intermediate"
-  package.buildoptions = { "-Wall", "-Werror=deprecated-declarations", os.getenv("CXXFLAGS") }
+  package.buildoptions = { "-Wall", "-Werror=deprecated-declarations", "-pthread",
+                           "-DJUCE_APP_CONFIG_HEADER='<AppConfig.h>'",
+                           os.getenv("CXXFLAGS") }
   package.links        = {}
   package.linkoptions  = { "-pthread", os.getenv("LDFLAGS") }
 
@@ -141,7 +144,7 @@ function make_plugin_project(name, spec)
   end
 
   if (os.getenv("LINUX_EMBED")) then
-    package.buildoptions = { package.buildoptions, "-DJUCE_LINUX_EMBED=1" }
+    package.buildoptions = { package.buildoptions, "-DJUCE_AUDIOPROCESSOR_NO_GUI=1" }
   end
 
   return package
