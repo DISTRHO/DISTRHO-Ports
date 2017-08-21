@@ -29,6 +29,10 @@
 //=============================================================================
 
 #define JUCE_STANDALONE_APPLICATION 0
+#define JUCE_REPORT_APP_USAGE 0
+#define JUCE_DISPLAY_SPLASH_SCREEN 0
+#define JUCE_USE_DARK_SPLASH_SCREEN 0
+
 
 //=============================================================================
 // juce_audio_basics
