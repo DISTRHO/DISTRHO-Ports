@@ -40,8 +40,6 @@ ResizableWindow::ResizableWindow (const String& name, Colour bkgnd, bool shouldA
 
 ResizableWindow::~ResizableWindow()
 {
-    splashScreen.deleteAndZero();
-
     // Don't delete or remove the resizer components yourself! They're managed by the
     // ResizableWindow, and you should leave them alone! You may have deleted them
     // accidentally by careless use of deleteAllChildren()..?
