@@ -33,7 +33,6 @@
 #define JUCE_DISPLAY_SPLASH_SCREEN 0
 #define JUCE_USE_DARK_SPLASH_SCREEN 0
 
-
 //=============================================================================
 // juce_audio_basics
 

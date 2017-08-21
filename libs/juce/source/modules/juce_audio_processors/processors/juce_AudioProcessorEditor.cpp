@@ -51,23 +51,6 @@ int AudioProcessorEditor::getControlParameterIndex (Component&)  { return -1; }
 
 void AudioProcessorEditor::initialise()
 {
-    /*
-      ==========================================================================
-       In accordance with the terms of the JUCE 5 End-Use License Agreement, the
-       JUCE Code in SECTION A cannot be removed, changed or otherwise rendered
-       ineffective unless you have a JUCE Indie or Pro license, or are using
-       JUCE under the GPL v3 license.
-
-       End User License Agreement: www.juce.com/juce-5-licence
-      ==========================================================================
-    */
-
-    // BEGIN SECTION A
-
-    splashScreen = new JUCESplashScreen (*this);
-
-    // END SECTION A
-
     resizable = false;
 
     attachConstrainer (&defaultConstrainer);
