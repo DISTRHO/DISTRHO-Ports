@@ -7,12 +7,12 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Introjucer version: 3.1.0
+  Created with Introjucer version: 3.2.0
 
   ------------------------------------------------------------------------------
 
   The Introjucer is part of the JUCE library - "Jules' Utility Class Extensions"
-  Copyright 2004-13 by Raw Material Software Ltd.
+  Copyright (c) 2015 - ROLI Ltd.
 
   ==============================================================================
 */
@@ -59,11 +59,39 @@ public:
         }
     }
 };
+
+class AboutBox : public DialogWindow {
+public:
+    Image about_png;
+
+    AboutBox(Component *parent) : DialogWindow("About", Colour(0xFF000000), true) {
+        setUsingNativeTitleBar(false);
+        setAlwaysOnTop(true);
+        about_png = ImageCache::getFromMemory(BinaryData::about_png, BinaryData::about_pngSize);
+        setSize(about_png.getWidth(), about_png.getHeight());
+        centreAroundComponent (parent, getWidth(), getHeight());
+    }
+
+    void closeButtonPressed() {
+        setVisible (false);
+    }
+
+    void paint(Graphics &g) {
+        g.drawImage (about_png, 0, 0, about_png.getWidth(), about_png.getHeight(),
+                     0, 0, about_png.getWidth(), about_png.getHeight());
+        g.setColour(Colour(0xFF000000));
+        String ver("Version " DEXED_VERSION " ; build date " __DATE__ );
+        g.drawSingleLineText(ver, 18, 130);
+    }
+};
 //[/MiscUserDefs]
 
 //==============================================================================
 GlobalEditor::GlobalEditor ()
 {
+    //[Constructor_pre] You can add your own custom stuff here..
+    //[/Constructor_pre]
+
     addAndMakeVisible (lfoSpeed = new Slider ("lfoSpeed"));
     lfoSpeed->setRange (0, 99, 1);
     lfoSpeed->setSliderStyle (Slider::RotaryVerticalDrag);
@@ -224,6 +252,20 @@ GlobalEditor::GlobalEditor ()
     addAndMakeVisible (programSelector = new ProgramSelector());
     programSelector->setName ("programSelector");
 
+    addAndMakeVisible (aboutButton = new ImageButton ("aboutButton"));
+    aboutButton->setButtonText (String::empty);
+    aboutButton->addListener (this);
+
+    aboutButton->setImages (false, true, false,
+                            Image(), 1.000f, Colour (0x00000000),
+                            Image(), 1.000f, Colour (0x00000000),
+                            Image(), 1.000f, Colour (0x00000000));
+    addAndMakeVisible (tune = new Slider ("tune"));
+    tune->setRange (0, 1, 0);
+    tune->setSliderStyle (Slider::RotaryVerticalDrag);
+    tune->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
+    tune->addListener (this);
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -284,6 +326,8 @@ GlobalEditor::~GlobalEditor()
     monoMode = nullptr;
     lfoType = nullptr;
     programSelector = nullptr;
+    aboutButton = nullptr;
+    tune = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -306,6 +350,9 @@ void GlobalEditor::paint (Graphics& g)
 
 void GlobalEditor::resized()
 {
+    //[UserPreResize] Add your own custom resize code here..
+    //[/UserPreResize]
+
     lfoSpeed->setBounds (564, 50, 34, 34);
     lfoAmDepth->setBounds (686, 50, 34, 34);
     lfoPitchDepth->setBounds (646, 50, 34, 34);
@@ -338,6 +385,8 @@ void GlobalEditor::resized()
     monoMode->setBounds (249, 65, 48, 26);
     lfoType->setBounds (583, 8, 36, 26);
     programSelector->setBounds (153, 115, 112, 18);
+    aboutButton->setBounds (8, 11, 135, 46);
+    tune->setBounds (190, 9, 34, 34);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -450,6 +499,11 @@ void GlobalEditor::sliderValueChanged (Slider* sliderThatWasMoved)
         //[UserSliderCode_output] -- add your slider handling code here..
         //[/UserSliderCode_output]
     }
+    else if (sliderThatWasMoved == tune)
+    {
+        //[UserSliderCode_tune] -- add your slider handling code here..
+        //[/UserSliderCode_tune]
+    }
 
     //[UsersliderValueChanged_Post]
     //[/UsersliderValueChanged_Post]
@@ -503,6 +557,13 @@ void GlobalEditor::buttonClicked (Button* buttonThatWasClicked)
         repaint();
         //[/UserButtonCode_monoMode]
     }
+    else if (buttonThatWasClicked == aboutButton)
+    {
+        //[UserButtonCode_aboutButton] -- add your button handler code here..
+        AboutBox about(this->getParentComponent());
+        about.runModalLoop();
+        //[/UserButtonCode_aboutButton]
+    }
 
     //[UserbuttonClicked_Post]
     //[/UserbuttonClicked_Post]
@@ -536,14 +597,17 @@ void GlobalEditor::bind(DexedAudioProcessorEditor *edit) {
     processor->fxCutoff->bind(cutoff);
     processor->fxReso->bind(reso);
     processor->output->bind(output);
-    algoDisplay->algo = &(processor->data[134]);
+    processor->tune->bind(tune);
+    algoDisplay->algo = (char *) &(processor->data[134]);
     pitchEnvDisplay->pvalues = &(processor->data[126]);
 
+    algoDisplay->opStatus = processor->controllers.opSwitch;
+    
     editor = edit;
 
     midiMonitor = new MidiMonitor(&(processor->sysexComm));
-    addAndMakeVisible(midiMonitor);
-    midiMonitor->setBounds(155, 21, 80, 45);
+    //addAndMakeVisible(midiMonitor);
+    //midiMonitor->setBounds(155, 21, 80, 45);
 
     repaint();
 }
@@ -573,6 +637,15 @@ void GlobalEditor::updateVu(float f) {
 
 void GlobalEditor::setMonoState(bool state)  {
     monoMode->setToggleState(state ? Button::buttonDown : Button::buttonNormal, dontSendNotification);
+}
+
+void GlobalEditor::mouseDown(const MouseEvent &e) {
+    if ( e.mods.isRightButtonDown() || e.mods.isAnyModifierKeyDown() ) {
+        PopupMenu popup;
+        popup.addItem(1, "Send current program to DX7");
+        if ( popup.show() == 1 )
+           processor->sendCurrentSysexProgram();
+    }
 }
 //[/MiscUserCode]
 
@@ -705,6 +778,16 @@ BEGIN_JUCER_METADATA
   <GENERICCOMPONENT name="programSelector" id="990bbcccae72dbe6" memberName="programSelector"
                     virtualName="" explicitFocusOrder="0" pos="153 115 112 18" class="ProgramSelector"
                     params=""/>
+  <IMAGEBUTTON name="aboutButton" id="d195a60b29440aa1" memberName="aboutButton"
+               virtualName="" explicitFocusOrder="0" pos="8 11 135 46" buttonText=""
+               connectedEdges="0" needsCallback="1" radioGroupId="0" keepProportions="0"
+               resourceNormal="" opacityNormal="1" colourNormal="0" resourceOver=""
+               opacityOver="1" colourOver="0" resourceDown="" opacityDown="1"
+               colourDown="0"/>
+  <SLIDER name="tune" id="d22c34aa3363a28a" memberName="tune" virtualName=""
+          explicitFocusOrder="0" pos="190 9 34 34" min="0" max="1" int="0"
+          style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="0"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

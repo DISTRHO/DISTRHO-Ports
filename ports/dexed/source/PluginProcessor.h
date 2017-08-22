@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2013-2015 Pascal Gauthier.
+ * Copyright (c) 2013-2017 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@
 
 struct ProcessorVoice {
     int midi_note;
+    int velocity;
     bool keydown;
     bool sustained;
     bool live;
@@ -115,14 +116,17 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public 
     char clipboardContent;
     
     void resolvAppDir();
+    
+    void unpackOpSwitch(char packOpValue);
+    void packOpSwitch();
+    
 public :
     // in MIDI units (0x4000 is neutral)
     Controllers controllers;
-    StringArray programNames;    
-    char sysex[4096];    
-    char data[161];
+    StringArray programNames;
+    Cartridge currentCart;
+    uint8_t data[161];
 
-    //CartridgeManager cartManager;
     SysexComm sysexComm;
     VoiceStatus voiceStatus;
     File activeFileCartridge;
@@ -153,8 +157,9 @@ public :
     ScopedPointer<CtrlFloat> fxCutoff;
     ScopedPointer<CtrlFloat> fxReso;
     ScopedPointer<CtrlFloat> output;
+    ScopedPointer<Ctrl> tune;
 
-    int importSysex(const char *imported);
+    void loadCartridge(Cartridge &cart);
     void setDxValue(int offset, int v);
 
     //==============================================================================
@@ -184,7 +189,6 @@ public :
     bool hasEditor() const;
     void updateUI();
     bool peekVoiceStatus();
-    void unpackProgram(int idx);
     void updateProgramFromSysex(const uint8 *rawdata);
     void setupStartupCart();
     

@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2013-2015 Pascal Gauthier.
+ * Copyright (c) 2013-2017 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,9 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  *
  */
+
+#include <stdarg.h>
+#include <bitset>
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
@@ -54,19 +57,23 @@ DexedAudioProcessor::DexedAudioProcessor() {
     
     resolvAppDir();
 
+    TRACE("controler %s", controllers.opSwitch);
+    
     initCtrl();
     sendSysexChange = true;
     normalizeDxVelocity = false;
     sysexComm.listener = this;
-
+    showKeyboard = true;
+    
     memset(&voiceStatus, 0, sizeof(VoiceStatus));
+    setEngineType(DEXED_ENGINE_MARKI);
     
     controllers.values_[kControllerPitchRange] = 3;
     controllers.values_[kControllerPitchStep] = 0;
+    controllers.masterTune = 0;
+
     loadPreference();
-    
-    setEngineType(DEXED_ENGINE_MODERN);
-    
+
     for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
         voices[note].dx7_note = NULL;
     }
@@ -98,12 +105,17 @@ void DexedAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) 
 
     currentNote = 0;
     controllers.values_[kControllerPitch] = 0x2000;
-    controllers.values_[kControllerModWheel] = 0;
+    controllers.modwheel_cc = 0;
+    controllers.foot_cc = 0;
+    controllers.breath_cc = 0;
+    controllers.aftertouch_cc = 0;
     
     sustain = false;
     extra_buf_size = 0;
 
     keyboardState.reset();
+    
+    lfo.reset(data + 137);
     
     nextMidi = new MidiMessage(0xF0);
 	midiMsg = new MidiMessage(0xF0);
@@ -134,13 +146,13 @@ void DexedAudioProcessor::releaseResources() {
 }
 
 void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages) {
-    const int numSamples = buffer.getNumSamples();
+    int numSamples = buffer.getNumSamples();
     int i;
     
     if ( refreshVoice ) {
         for(i=0;i < MAX_ACTIVE_NOTES;i++) {
             if ( voices[i].live )
-                voices[i].dx7_note->update(data, voices[i].midi_note);
+                voices[i].dx7_note->update(data, voices[i].midi_note, voices[i].velocity);
         }
         lfo.reset(data + 137);
         refreshVoice = false;
@@ -190,11 +202,11 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
                     voices[note].dx7_note->compute(audiobuf.get(), lfovalue, lfodelay, &controllers);
                     
                     for (int j=0; j < N; ++j) {
-                        int32_t val = audiobuf.get()[j]; //& 0xFFFFF000);
+                        int32_t val = audiobuf.get()[j];
                         
                         val = val >> 4;
                         int clip_val = val < -(1 << 24) ? 0x8000 : val >= (1 << 24) ? 0x7fff : val >> 9;
-                        float f = ((float) clip_val) / (float) 32768;
+                        float f = ((float) clip_val) / (float) 0x8000;
                         if( f > 1 ) f = 1;
                         if( f < -1 ) f = -1;
                         sumbuf[j] += f;
@@ -231,11 +243,6 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
         else
             vuSignal = 0;
     }
-    
-    // DX7 is a mono synth
-    for (int channel = 1; channel < getTotalNumOutputChannels(); ++channel) {
-        buffer.copyFrom(channel, 0, channelData, numSamples, 1);
-    }
 }
 
 
@@ -266,36 +273,52 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
         case 0x90 :
             keydown(buf[1], buf[2]);
         return;
-
+            
         case 0xb0 : {
-            int controller = buf[1];
+            int ctrl = buf[1];
             int value = buf[2];
             
-            // mod wheel
-            if ( controller == 1 ) {
-                controllers.values_[kControllerModWheel] = value;
-                return;
-            }
-            
-            // pedal
-            if (controller == 64) {
-                sustain = value != 0;
-                if (!sustain) {
-                    for (int note = 0; note < MAX_ACTIVE_NOTES; note++) {
-                        if (voices[note].sustained && !voices[note].keydown) {
-                            voices[note].dx7_note->keyup();
-                            voices[note].sustained = false;
+            switch(ctrl) {
+                case 1:
+                    controllers.modwheel_cc = value;
+                    controllers.refresh();
+                    break;
+                case 2:
+                    controllers.breath_cc = value;
+                    controllers.refresh();
+                    break;
+                case 4:
+                    controllers.foot_cc = value;
+                    controllers.refresh();
+                    break;
+                case 64:
+                    sustain = value > 63;
+                    if (!sustain) {
+                        for (int note = 0; note < MAX_ACTIVE_NOTES; note++) {
+                            if (voices[note].sustained && !voices[note].keydown) {
+                                voices[note].dx7_note->keyup();
+                                voices[note].sustained = false;
+                            }
                         }
                     }
-                }
-                return;
+                    break;
+                case 123:
+                    panic();
+                    break;
             }
         }
         return;
 
         case 0xc0 :
             setCurrentProgram(buf[1]);
-        return;        
+        return;
+            
+        // aftertouch
+        case 0xd0 :
+            controllers.aftertouch_cc = buf[1];
+            controllers.refresh();
+        return;
+            
     }
 
     switch (cmd) {
@@ -303,7 +326,6 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
             controllers.values_[kControllerPitch] = buf[1] | (buf[2] << 7);
         break;
     }
-
 }
 
 void DexedAudioProcessor::keydown(uint8_t pitch, uint8_t velo) {
@@ -324,6 +346,7 @@ void DexedAudioProcessor::keydown(uint8_t pitch, uint8_t velo) {
             currentNote = (note + 1) % MAX_ACTIVE_NOTES;
             lfo.keydown();  // TODO: should only do this if # keys down was 0
             voices[note].midi_note = pitch;
+            voices[note].velocity = velo;
             voices[note].sustained = sustain;
             voices[note].keydown = true;
             voices[note].dx7_note->init(data, pitch, velo);
@@ -414,45 +437,72 @@ void DexedAudioProcessor::handleIncomingMidiMessage(MidiInput* source, const Mid
 
     sysexComm.inActivity = true;
 
-    if ( ! message.isSysEx() )
-        return;
-
-    //const uint8 *buf = msg->getSysExData();
     const uint8 *buf = message.getRawData();
     int sz = message.getRawDataSize();
 
-    if ( sz < 3 )
+    //TRACE("%X %X %X %X %X %X", buf[0], buf[1], buf[2], buf[3], buf[4], buf[5], buf[6]);
+
+    if ( ! message.isSysEx() )
         return;
-
-    TRACE("SYSEX RECEIVED %d", sz);
-
+    
     // test if it is a Yamaha Sysex
     if ( buf[1] != 0x43 ) {
         TRACE("not a yamaha sysex %d", buf[0]);
         return;
     }
+    
+    int substatus = buf[2] >> 4;
+    
+    if ( substatus == 0 ) {
+        // single voice dump
+        if ( buf[3] == 0 ) {
+            if ( sz < 156 ) {
+                TRACE("wrong single voice datasize %d", sz);
+                return;
+            }
+            
+            updateProgramFromSysex(buf+6);
+        }
         
-    // single voice dump
-    if ( buf[3] == 0 ) {
-         if ( sz < 155 ) {
-            TRACE("wrong single voice datasize %d", sz);
+        // 32 voice dump
+        if ( buf[3] == 9 ) {
+            if ( sz < 4104 ) {
+                TRACE("wrong 32 voice dump data size %d", sz);
+                return;
+            }
+            
+            Cartridge received;
+            if ( received.load(buf, sz) == 0 ) {
+                loadCartridge(received);
+                setCurrentProgram(0);
+            }
+        }
+    } else if ( substatus == 1 ) {
+        // parameter change
+        if ( sz < 7 ) {
+           TRACE("wrong single voice datasize %d", sz);
+           return;
+        }
+        
+        uint8 offset = (buf[3] << 7) + buf[4];
+        uint8 value = buf[5];
+        
+        TRACE("parameter change message offset:%d value:%d", offset, value);
+        
+        if ( offset > 155 ) {
+            TRACE("wrong offset size");
             return;
         }
-
-        updateProgramFromSysex(buf+6);
-    }
-
-    // 32 voice dump
-    if ( buf[3] == 9 ) {
-        if ( sz < 4104 ) {
-            TRACE("wrong 32 voice datasize %d", sz);
-            return;
+        
+        if ( offset == 155 ) {
+            unpackOpSwitch(value);
+        } else {
+            data[offset] = value;
         }
-        TRACE("update 32bulk voice");
-        importSysex((const char *)buf);
-        setCurrentProgram(0);
+    } else {
+        TRACE("unknown sysex substatus: %d", substatus);
     }
-
+    
     updateHostDisplay();
     forceRefreshUI = true;
 }
@@ -462,17 +512,17 @@ int DexedAudioProcessor::getEngineType() {
 }
 
 void DexedAudioProcessor::setEngineType(int tp) {
+    TRACE("settings engine %d", tp);
+    
     switch (tp)  {
-        case DEXED_ENGINE_MODERN :
-            controllers.core = &engineMsfa;
-            break;
         case DEXED_ENGINE_MARKI:
-            controllers.sinBitFilter = 0xFFFFC000;  // 10 bit
-            controllers.dacBitFilter = 0xFFFFF000;  // semi 14 bit
             controllers.core = &engineMkI;
             break;
         case DEXED_ENGINE_OPL:
             controllers.core = &engineOpl;
+            break;
+        default:
+            controllers.core = &engineMsfa;
             break;
     }
     engineType = tp;
@@ -580,4 +630,16 @@ AudioProcessorEditor* DexedAudioProcessor::createEditor() {
 
 void DexedAudioProcessor::handleAsyncUpdate() {
     updateUI();
+}
+
+void dexed_trace(const char *source, const char *fmt, ...) {
+    char output[4096];
+    va_list argptr;
+    va_start(argptr, fmt);
+    vsnprintf(output, 4095, fmt, argptr);
+    va_end(argptr);
+
+    String dest;
+    dest << source << " " << output;
+    Logger::writeToLog(dest);
 }

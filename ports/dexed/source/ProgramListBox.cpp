@@ -29,7 +29,9 @@ ProgramListBox::ProgramListBox(const String name, int numCols) : Component(name)
     selectedPgm = -1;
     hasContent = false;
     dragCandidate = -1;
+    pgmCandidate = -1;
     readOnly = false;
+    programNames.clear();
 }
 
 void ProgramListBox::paint(Graphics &g) {
@@ -85,9 +87,9 @@ void ProgramListBox::resized() {
     cellHeight = getHeight() / rows;
 }
 
-void ProgramListBox::setCartridge(char *sysex) {
-    extractProgramNames((const char *)sysex, programNames);
-    memcpy(cartContent, sysex, 4104);
+void ProgramListBox::setCartridge(Cartridge &cart) {
+    cartContent = cart;
+    cartContent.getProgramNames(programNames);
     hasContent = true;
     repaint();
 }
@@ -100,29 +102,36 @@ int ProgramListBox::programPosition(int x, int y) {
     return (y / cellHeight) + ((x / cellWidth) * rows);
 }
 
-void ProgramListBox::mouseDoubleClick(const MouseEvent &event) {
+void ProgramListBox::mouseDown(const MouseEvent &event) {
+    pgmCandidate = -1;
+    
     if ( ! hasContent )
         return;
-    if ( ! event.mods.isLeftButtonDown() )
-        return;
     
-    int pos = programPosition(event.getMouseDownX(), event.getMouseDownY());
-    if ( listener != nullptr )
-        listener->programSelected(this, pos);
+    if ( event.mods.isRightButtonDown() || event.mods.isAnyModifierKeyDown() ) {
+        int pos = programPosition(event.getMouseDownX(), event.getMouseDownY());
+        if ( listener != nullptr )
+            listener->programRightClicked(this, pos);
+        return;
+    }
+
+    pgmCandidate = programPosition(event.getMouseDownX(), event.getMouseDownY());
 }
 
-void ProgramListBox::mouseDown(const MouseEvent &event) {
-    if ( ! hasContent )
-        return;
-    if ( ! event.mods.isRightButtonDown() )
+void ProgramListBox::mouseUp(const MouseEvent &event) {
+    if ( pgmCandidate == -1 )
         return;
     
     int pos = programPosition(event.getMouseDownX(), event.getMouseDownY());
-    if ( listener != nullptr )
-        listener->programRightClicked(this, pos);
+    if ( pgmCandidate == pos) {
+        if ( listener != nullptr )
+            listener->programSelected(this, pgmCandidate);
+        pgmCandidate = -1;
+    }
 }
 
 void ProgramListBox::mouseDrag(const MouseEvent &event) {
+    pgmCandidate = -1;
     if ( ! hasContent )
         return;
     if ( dragCandidate != -1 )
@@ -138,7 +147,7 @@ void ProgramListBox::mouseDrag(const MouseEvent &event) {
         g.fillRect(0,0,cellWidth, cellHeight);
         g.setColour(Colours::white);
         g.drawFittedText(programNames[position], 0, 0, cellWidth, cellHeight, Justification::centred, true);
-        void *src = cartContent + (position*128);
+        void *src = cartContent.getRawVoice() + (position*128);
         var description = var(src, 128);
         dragContainer->startDragging(description, this, snapshot, false);
     }
@@ -148,9 +157,7 @@ void ProgramListBox::setSelected(int idx) {
     selectedPgm = idx;
 }
 
-char* ProgramListBox::getCurrentCart() {
-    if ( ! hasContent )
-        return nullptr;
+Cartridge &ProgramListBox::getCurrentCart() {
     return cartContent;
 }
 

@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2014-2015 Pascal Gauthier.
+ * Copyright (c) 2014-2017 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 #include <fstream>
 using namespace ::std;
 
-uint8_t sysexChecksum(const char *sysex, int size) {
+uint8_t sysexChecksum(const uint8_t *sysex, int size) {
     int sum = 0;
     int i;
     
@@ -36,71 +36,14 @@ uint8_t sysexChecksum(const char *sysex, int size) {
     return sum & 0x7F;
 }
 
-String normalizeSysexName(const char *sysexName) {
-    char buffer[11];
-
-    memcpy(buffer, sysexName, 10);
-    
-    for (int j = 0; j < 10; j++) {
-        char c = (unsigned char) buffer[j];
-        switch (c) {
-            case 92:
-                c = 'Y';
-                break; /* yen */
-            case 126:
-                c = '>';
-                break; /* >> */
-            case 127:
-                c = '<';
-                break; /* << */
-            default:
-                if (c < 32 || c > 127)
-                    c = 32;
-                break;
-        }
-        buffer[j] = c;
-    }
-    buffer[10] = 0;
-
-    return String(buffer);
-}
-
-
-void extractProgramNames(const char *block, StringArray &dest) {
-    dest.clear();
-    
-    for (int i = 0; i < 32; i++) {
-        dest.add(String(normalizeSysexName(block + ((i * 128) + 118))));
-    }
-}
-
-void exportSysexCart(char *dest, char *src, char sysexChl) {
-    uint8_t header[] = { 0xF0, 0x43, 0x00, 0x09, 0x20, 0x00 };
-    header[2] = sysexChl;
-    
-    memcpy(dest, header, 6);
-    
-    // copy 32 voices
-    memcpy(dest+6, src, 4096);
-    
-    // make checksum for dump
-    uint8_t footer[] = { sysexChecksum(src, 4096), 0xF7 };
-
-    memcpy(dest+4102, footer, 2);
-}
-
-
-void exportSysexPgm(char *dest, char *src, char sysexChl) {
+void exportSysexPgm(uint8_t *dest, uint8_t *src) {
     uint8_t header[] = { 0xF0, 0x43, 0x00, 0x00, 0x01, 0x1B };
-    header[2] = sysexChl;
-    
+   
     memcpy(dest, header, 6);
     
     // copy 1 unpacked voices
     memcpy(dest+6, src, 155);
-    
-    // put some logic to "mute" an operator if the level is 0
-    
+        
     // make checksum for dump
     uint8_t footer[] = { sysexChecksum(src, 155), 0xF7 };
     
@@ -110,8 +53,8 @@ void exportSysexPgm(char *dest, char *src, char sysexChl) {
 /**
  * Pack a program into a 32 packed sysex
  */
-void packProgram(uint8_t *dest, uint8_t *src, int idx, String name) {
-    uint8_t *bulk = dest + (idx * 128);
+void Cartridge::packProgram(uint8_t *src, int idx, String name, char *opSwitch) {
+    uint8_t *bulk = voiceData + 6 + (idx * 128);
     
     for(int op = 0; op < 6; op++) {
         // eg rate and level, brk pt, depth, scaling
@@ -125,7 +68,10 @@ void packProgram(uint8_t *dest, uint8_t *src, int idx, String name) {
         // kvs_ams
         bulk[pp+13] = (src[up+14]&0x03) | ((src[up+15]&0x07) << 2);
         // output lvl
-        bulk[pp+14] = src[up+16];
+        if ( opSwitch[op] == '0' )
+            bulk[pp+14] = 0;
+        else
+            bulk[pp+14] = src[up+16];
         // fcoarse_mode
         bulk[pp+15] = (src[up+17]&0x01) | ((src[up+18]&0x1f) << 1);
         // fine freq
@@ -171,8 +117,9 @@ char normparm(char value, char max, int id) {
     return v;
 }
 
-void unpackProgramFromSysex(char *unpackPgm, char *sysexCart, int idx) {
-    char *bulk = sysexCart + (idx * 128);
+void Cartridge::unpackProgram(uint8_t *unpackPgm, int idx) {
+    // TODO put this in uint8_t :D
+    char *bulk = (char *)voiceData + 6 + (idx * 128);
     
     for (int op = 0; op < 6; op++) {
         // eg rate and level, brk pt, depth, scaling
@@ -212,61 +159,57 @@ void unpackProgramFromSysex(char *unpackPgm, char *sysexCart, int idx) {
     unpackPgm[142] = (lpms_lfw_lks >> 1) & 7;
     unpackPgm[143] = lpms_lfw_lks >> 4;
     memcpy(unpackPgm + 144, bulk + 117, 11);  // transpose, name
-    unpackPgm[155] = 1;  // operator on/off
-    unpackPgm[156] = 1;
-    unpackPgm[157] = 1;
-    unpackPgm[158] = 1;
-    unpackPgm[159] = 1;
-    unpackPgm[160] = 1;
+    unpackPgm[155] = 63;  // operator on/off (DEPRECATED)
 }
 
-void DexedAudioProcessor::unpackProgram(int idx) {
-    unpackProgramFromSysex(data, sysex, idx);
+void DexedAudioProcessor::loadCartridge(Cartridge &sysex) {
+    currentCart = sysex;
+    currentCart.getProgramNames(programNames);
 }
 
-int DexedAudioProcessor::importSysex(const char *imported) {
-    memcpy(sysex, imported + 6, 4096);
-    
-    uint8_t checksum = sysexChecksum(((char *) &sysex), 4096);
-    extractProgramNames(sysex, programNames);
-    
-    if ( checksum != imported[4102] ) {
-        TRACE("sysex import checksum doesnt match %d != %d", checksum, imported[4102]);
-        return 1;
-    }
-    
-    return 0;
+void DexedAudioProcessor::packOpSwitch() {
+    char value = (controllers.opSwitch[5] == '1') << 5;
+    value += (controllers.opSwitch[4] == '1') << 4;
+    value += (controllers.opSwitch[3] == '1') << 3;
+    value += (controllers.opSwitch[2] == '1') << 2;
+    value += (controllers.opSwitch[1] == '1') << 1;
+    value += (controllers.opSwitch[0] == '1');
+    data[155] = value;
 }
 
-void DexedAudioProcessor::updateProgramFromSysex(const uint8 *rawdata) {
-    memcpy(data, rawdata, 161);
+void DexedAudioProcessor::unpackOpSwitch(char packOpValue) {
+    controllers.opSwitch[5] = (packOpValue & 32) + 48;
+    controllers.opSwitch[4] = (packOpValue & 16) + 48;
+    controllers.opSwitch[3] = (packOpValue & 8) + 48;
+    controllers.opSwitch[2] = (packOpValue & 4) + 48;
+    controllers.opSwitch[1] = (packOpValue & 2) + 48;
+    controllers.opSwitch[0] = (packOpValue & 1) + 48;
+}
+
+void DexedAudioProcessor::updateProgramFromSysex(const uint8_t *rawdata) {
+    memcpy(data, rawdata, 155);
+    unpackOpSwitch(rawdata[155]);
+    lfo.reset(data + 137);
     triggerAsyncUpdate();
 }
 
 void DexedAudioProcessor::setupStartupCart() {
-    char syx_data[4104];
-    memset(&syx_data, 0, 4104);
-    
     File startup = dexedCartDir.getChildFile("Dexed_01.syx");
+
+    if ( currentCart.load(startup) != -1 )
+        return;
     
-    if ( startup.exists() ) {
-        FileInputStream *fis = startup.createInputStream();
-        if ( fis == nullptr ) {
-            TRACE("unable to open default cartridge");
-            return;
-        }
-        fis->read(syx_data, 4104);
-        delete fis;
-    } else {
-        // The user deleted the file :/, load from the builtin zip file.
-        MemoryInputStream *mis = new MemoryInputStream(BinaryData::builtin_pgm_zip, BinaryData::builtin_pgm_zipSize, false);
-        ZipFile *builtin_pgm = new ZipFile(mis, true);
-        InputStream *is = builtin_pgm->createStreamForEntry(builtin_pgm->getIndexOfFileName(("Dexed_01.syx")));
-        is->read(syx_data, 4104);
-        delete is;
-        delete builtin_pgm;
-    }
-    importSysex((char *) &syx_data);
+    // The user deleted the file :/, load from the builtin zip file.
+    MemoryInputStream *mis = new MemoryInputStream(BinaryData::builtin_pgm_zip, BinaryData::builtin_pgm_zipSize, false);
+    ZipFile *builtin_pgm = new ZipFile(mis, true);
+    InputStream *is = builtin_pgm->createStreamForEntry(builtin_pgm->getIndexOfFileName(("Dexed_01.syx")));
+    Cartridge init;
+    
+    if ( init.load(*is) != -1 )
+        loadCartridge(init);
+
+    delete is;
+    delete builtin_pgm;
 }
 
 void DexedAudioProcessor::resetToInitVoice() {
@@ -303,9 +246,10 @@ void DexedAudioProcessor::pasteEnvFromClipboard(int destOp) {
 }
 
 void DexedAudioProcessor::sendCurrentSysexProgram() {
-    uint8_t raw[167];
+    uint8_t raw[163];
     
-    exportSysexPgm((char *) raw, data, sysexComm.getChl());
+    packOpSwitch();
+    exportSysexPgm(raw, data);
     if ( sysexComm.isOutputActive() ) {
         sysexComm.send(MidiMessage(raw, 163));
     }
@@ -314,7 +258,7 @@ void DexedAudioProcessor::sendCurrentSysexProgram() {
 void DexedAudioProcessor::sendCurrentSysexCartridge() {
     uint8_t raw[4104];
     
-    exportSysexCart((char *) raw, (char *) &sysex, sysexComm.getChl());
+    currentCart.saveVoice(raw);
     if ( sysexComm.isOutputActive() ) {
         sysexComm.send(MidiMessage(raw, 4104));
     }
@@ -323,18 +267,27 @@ void DexedAudioProcessor::sendCurrentSysexCartridge() {
 void DexedAudioProcessor::sendSysexCartridge(File cart) {
     if ( ! sysexComm.isOutputActive() )
         return;
-    String f = cart.getFullPathName();
-    uint8_t syx_data[4104];
-    ifstream fp_in(f.toRawUTF8(), ios::binary);
-    if (fp_in.fail()) {
+    
+    FileInputStream *fis = cart.createInputStream();
+    if ( fis == NULL ) {
+        String f = cart.getFullPathName();
         AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
                                           "Error",
                                           "Unable to open: " + f);
+    }
+    
+    uint8 syx_data[65535];
+    int sz = fis->read(syx_data, 65535);
+    delete fis;
+    
+    if (syx_data[0] != 0xF0) {
+        String f = cart.getFullPathName();
+        AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
+                                          "Error",
+                                          "File: " + f + " doesn't seems to contain any sysex data");
         return;
     }
-    fp_in.read((char *)syx_data, 4104);
-    fp_in.close();
-    sysexComm.send(MidiMessage(syx_data, 4104));
+    sysexComm.send(MidiMessage(syx_data, sz));
 }
 
 
@@ -359,15 +312,24 @@ void DexedAudioProcessor::getStateInformation(MemoryBlock& destData) {
     dexedState.setAttribute("currentProgram", currentProgram);
     dexedState.setAttribute("monoMode", monoMode);
     dexedState.setAttribute("engineType", (int) engineType);
+    dexedState.setAttribute("masterTune", controllers.masterTune);
+    dexedState.setAttribute("opSwitch", controllers.opSwitch);
+    
+    char mod_cfg[15];
+    controllers.wheel.setConfig(mod_cfg);
+    dexedState.setAttribute("wheelMod", mod_cfg);
+    controllers.foot.setConfig(mod_cfg);
+    dexedState.setAttribute("footMod", mod_cfg);
+    controllers.breath.setConfig(mod_cfg);
+    dexedState.setAttribute("breathMod", mod_cfg);
+    controllers.at.setConfig(mod_cfg);
+    dexedState.setAttribute("aftertouchMod", mod_cfg);
     
     if ( activeFileCartridge.exists() )
         dexedState.setAttribute("activeFileCartridge", activeFileCartridge.getFullPathName());
 
-    char sysex_blob[4104];
-    exportSysexCart((char *) &sysex_blob, (char *) sysex, 0);
-    
     NamedValueSet blobSet;
-    blobSet.set("sysex", var((void *) &sysex_blob, 4104));
+    blobSet.set("sysex", var((void *) currentCart.getVoiceSysex(), 4104));
     blobSet.set("program", var((void *) &data, 161));
     
     blobSet.copyToXmlAttributes(*dexedBlob);
@@ -391,8 +353,23 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
     fx.uiGain = root->getDoubleAttribute("gain");
     currentProgram = root->getIntAttribute("currentProgram");
     
-    setEngineType(root->getIntAttribute("engineType", 0));
+    String opSwitchValue = root->getStringAttribute("opSwitch");
+    if ( opSwitchValue.length() != 6 ) {
+        strcpy(controllers.opSwitch, "111111");
+    } else {
+        strncpy(controllers.opSwitch, opSwitchValue.toRawUTF8(), 6);
+    }
+    
+    controllers.wheel.parseConfig(root->getStringAttribute("wheelMod").toRawUTF8());
+    controllers.foot.parseConfig(root->getStringAttribute("footMod").toRawUTF8());
+    controllers.breath.parseConfig(root->getStringAttribute("breathMod").toRawUTF8());
+    controllers.at.parseConfig(root->getStringAttribute("aftertouchMod").toRawUTF8());
+    
+    controllers.refresh();
+    
+    setEngineType(root->getIntAttribute("engineType", 1));
     monoMode = root->getIntAttribute("monoMode", 0);
+    controllers.masterTune = root->getIntAttribute("masterTune", 0);
     
     File possibleCartridge = File(root->getStringAttribute("activeFileCartridge"));
     if ( possibleCartridge.exists() )
@@ -415,7 +392,9 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
         return;
     }
     
-    importSysex((char *) sysex_blob.getBinaryData()->getData());
+    Cartridge cart;
+    cart.load((uint8 *)sysex_blob.getBinaryData()->getData(), 4104);
+    loadCartridge(cart);
     memcpy(data, program.getBinaryData()->getData(), 161);
     
     lastStateSave = (long) time(NULL);
@@ -427,19 +406,32 @@ File DexedAudioProcessor::dexedAppDir;
 File DexedAudioProcessor::dexedCartDir;
 
 void DexedAudioProcessor::resolvAppDir() {
+    #if JUCE_MAC || JUCE_IOS
+        File parent = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getParentDirectory().getParentDirectory().getSiblingFile("Dexed");
     
-#if JUCE_MAC || JUCE_IOS
-    dexedAppDir = File("~/Library/Application Support/DigitalSuburban/Dexed");
-#elif JUCE_WINDOWS
-    dexedAppDir = File::getSpecialLocation(File::userApplicationDataDirectory).getChildFile("DigitalSuburban").getChildFile("Dexed");
-#else
-    char *xdgHome = getenv("XDG_DATA_HOME");
-    if ( xdgHome == nullptr ) {
-        dexedAppDir = File("~/.local/share").getChildFile("DigitalSuburban").getChildFile("Dexed");
-    } else {
-        dexedAppDir = File(xdgHome).getChildFile("DigitalSuburban").getChildFile("Dexed");
-    }
-#endif
+        if ( parent.isDirectory() ) {
+            dexedAppDir = parent;
+        } else {
+            dexedAppDir = File("~/Library/Application Support/DigitalSuburban/Dexed");
+        }
+    #elif JUCE_WINDOWS
+        if ( File::getSpecialLocation(File::currentExecutableFile).getSiblingFile("Dexed").isDirectory() ) {
+            dexedAppDir = File::getSpecialLocation(File::currentExecutableFile).getSiblingFile("Dexed");
+        } else {
+            dexedAppDir = File::getSpecialLocation(File::userApplicationDataDirectory).getChildFile("DigitalSuburban").getChildFile("Dexed");
+        }
+    #else
+        if ( File::getSpecialLocation(File::currentExecutableFile).getSiblingFile("Dexed").isDirectory() ) {
+            dexedAppDir = File::getSpecialLocation(File::currentExecutableFile).getSiblingFile("Dexed");
+        } else {
+            char *xdgHome = getenv("XDG_DATA_HOME");
+            if ( xdgHome == nullptr ) {
+                dexedAppDir = File("~/.local/share").getChildFile("DigitalSuburban").getChildFile("Dexed");
+            } else {
+                dexedAppDir = File(xdgHome).getChildFile("DigitalSuburban").getChildFile("Dexed");
+            }
+        }
+    #endif
     
     if ( ! dexedAppDir.exists() ) {
         dexedAppDir.createDirectory();

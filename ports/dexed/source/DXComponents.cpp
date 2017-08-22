@@ -1,4 +1,4 @@
-/**
+﻿/**
  *
  * Copyright (c) 2014 Pascal Gauthier.
  *
@@ -157,13 +157,13 @@ static double getDuration(int p_rate, int p_level_l, int p_level_r) {
 }
 
 EnvDisplay::EnvDisplay() {
-    pvalues = (char *) &TMP_LEVEL_PTR;
+    pvalues = (uint8_t *) &TMP_LEVEL_PTR;
 }
 
 void EnvDisplay::paint(Graphics &g) {
     int h = getHeight();
-    char *rates = pvalues;
-    char *levels = pvalues + 4;
+    uint8_t *rates = pvalues;
+    uint8_t *levels = pvalues + 4;
     
     double d[4];
     double keyoff = 0.0;
@@ -250,15 +250,15 @@ void EnvDisplay::paint(Graphics &g) {
 }
 
 PitchEnvDisplay::PitchEnvDisplay() {
-    pvalues = (char *) &TMP_LEVEL_PTR;
+    pvalues = (uint8_t *) &TMP_LEVEL_PTR;
     vPos = 0;
 }
 
 void PitchEnvDisplay::paint(Graphics &g) {
     g.setColour(Colours::white);
     
-    char *levels = pvalues + 4;
-    char *rates = pvalues;
+    uint8_t *levels = pvalues + 4;
+    uint8_t *rates = pvalues;
     
     float dist[4];
     float total = 0;
@@ -363,25 +363,22 @@ ComboBoxImage::ComboBoxImage() {
     itemPos[0] = -1;
 }
 
-static void comboBoxPopupMenuFinishedCallback (int result, ComboBoxImage* combo)
-{
-    if (combo != nullptr)
-    {
+static void comboBoxPopupMenuFinishedCallback (int result, ComboBoxImage* combo) {
+    if (combo != nullptr) {
         combo->hidePopup();
-
+        
         if (result != 0)
             combo->setSelectedId (result);
     }
 }
 
 void ComboBoxImage::showPopup() {
-
     popup.showMenuAsync (PopupMenu::Options().withTargetComponent (this)
-                                             .withItemThatMustBeVisible (getSelectedId())
-                                             .withMinimumWidth (getWidth())
-                                             .withMaximumNumColumns (1)
-                                             .withStandardItemHeight (itemHeight),
-                         ModalCallbackFunction::forComponent (comboBoxPopupMenuFinishedCallback, this));
+                         .withItemThatMustBeVisible(getSelectedId())
+                         .withMinimumWidth(getWidth())
+                         .withMaximumNumColumns(1)
+                         .withStandardItemHeight(itemHeight),
+                         ModalCallbackFunction::forComponent(comboBoxPopupMenuFinishedCallback, this));
 }
 
 void ComboBoxImage::setImage(Image image) {
@@ -411,5 +408,35 @@ void ComboBoxImage::setImage(Image image, int pos[]) {
         itemPos[i] = pos[i];
 }
 
+void ProgramSelector::mouseDown(const MouseEvent &event) {
+    if ( event.x < getWidth() - 8) {
+        ComboBox::mouseDown(event);
+        return;
+    }
+    
+    int cur = getSelectedItemIndex();
+    if ( event.y < getHeight() / 2 ) {
+        if ( cur == 0 )
+            cur = 31;
+        else
+            cur--;
+    } else {
+        if ( cur == 31 )
+            cur = 0;
+        else
+            cur++;
+    }
+    setSelectedItemIndex(cur);
+}
+
 void ProgramSelector::paint(Graphics &g) {
+    int x = getWidth();
+    int y = getHeight();
+    
+    Path path;
+    path.addTriangle(x-8, y/2-1, x-4, 2,   x, y/2-1);
+    path.addTriangle(x-8, y/2+1, x-4, y-2, x, y/2+1);
+    
+    g.setColour(Colours::white);
+    g.fillPath(path);
 }

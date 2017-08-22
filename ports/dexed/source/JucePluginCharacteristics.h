@@ -33,10 +33,10 @@
  #define JucePlugin_ManufacturerEmail      ""
 #endif
 #ifndef  JucePlugin_ManufacturerCode
- #define JucePlugin_ManufacturerCode       'DGSB'
+ #define JucePlugin_ManufacturerCode       0x44475342 // 'DGSB'
 #endif
 #ifndef  JucePlugin_PluginCode
- #define JucePlugin_PluginCode             'Dexd'
+ #define JucePlugin_PluginCode             0x44657864 // 'Dexd'
 #endif
 #ifndef  JucePlugin_MaxNumInputChannels
  #define JucePlugin_MaxNumInputChannels    0
