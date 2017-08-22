@@ -37,7 +37,7 @@ namespace tomatl { namespace dsp {
 	{
 	public:
 		SpectroCalculator(double sampleRate, std::pair<double, double> attackRelease, size_t index, size_t fftSize = 1024, size_t channelCount = 2) : 
-			mWindowFunction(new WindowFunction<double>(fftSize, WindowFunctionFactory::getWindowCalculator<double>(WindowFunctionFactory::windowHann), true))
+			mWindowFunction(new WindowFunction<T>(fftSize, WindowFunctionFactory::getWindowCalculator<double>(WindowFunctionFactory::windowHann), true))
 		{
 			mData = new std::pair<double, double>[fftSize];
 			memset(mData, 0x0, sizeof(std::pair<double, double>) * fftSize);
@@ -45,11 +45,8 @@ namespace tomatl { namespace dsp {
 			mFftSize = fftSize;
 			mIndex = index;
 			mSampleRate = sampleRate;
-
-			for (int i = 0; i < channelCount; ++i)
-			{
-				mBuffers.push_back(new OverlappingBufferSequence<T>(mFftSize * 2, mFftSize));
-			}
+			mChannelCount = 0;
+			checkChannelCount(channelCount);
 
 			setAttackSpeed(attackRelease.first);
 			setReleaseSpeed(attackRelease.second);
@@ -67,13 +64,40 @@ namespace tomatl { namespace dsp {
 			mBuffers.clear();
 		}
 
+		bool checkChannelCount(size_t channelCount)
+		{
+			if (channelCount != mChannelCount)
+			{
+				mChannelCount = channelCount;
+
+				for (int i = 0; i < mBuffers.size(); ++i)
+				{
+					TOMATL_DELETE(mBuffers[i]);
+				}
+
+				mBuffers.clear();
+
+				for (int i = 0; i < mChannelCount; ++i)
+				{
+					mBuffers.push_back(new OverlappingBufferSequence<T>(mFftSize * 2, mFftSize));
+				}
+
+				setReleaseSpeed(mReleaseMs);
+				setAttackSpeed(mAttackMs);
+
+				return true;
+			}
+
+			return false;
+		}
+
 		bool checkSampleRate(double sampleRate)
 		{
 			if (sampleRate != mSampleRate)
 			{
 				mSampleRate = sampleRate;
-				setAttackSpeed(mAttackRelease.first);
-				setReleaseSpeed(mAttackRelease.second);
+				setAttackSpeed(mAttackMs);
+				setReleaseSpeed(mReleaseMs);
 
 				return true;
 			}
@@ -83,11 +107,13 @@ namespace tomatl { namespace dsp {
 
 		void setReleaseSpeed(double speed)
 		{
+			mReleaseMs = speed;
 			mAttackRelease.second = tomatl::dsp::EnvelopeWalker::calculateCoeff(speed, mSampleRate / mFftSize / mBuffers[0]->getOverlappingFactor() * mChannelCount);
 		}
 
 		void setAttackSpeed(double speed)
 		{
+			mAttackMs = speed;
 			mAttackRelease.first = tomatl::dsp::EnvelopeWalker::calculateCoeff(speed, mSampleRate / mFftSize / mBuffers[0]->getOverlappingFactor() * mChannelCount);
 		}
 
@@ -181,6 +207,8 @@ namespace tomatl { namespace dsp {
 		size_t mFftSize;
 		size_t mIndex;
 		double mSampleRate;
+		double mAttackMs;
+		double mReleaseMs;
 	};
 
 }}
