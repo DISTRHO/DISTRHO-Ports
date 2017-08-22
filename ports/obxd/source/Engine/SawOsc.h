@@ -26,44 +26,51 @@
 #include "BlepData.h"
 class SawOsc 
 {
-	DelayLine* del1;
-	float *buffer1;
+	DelayLine<Samples> del1;
+	float buffer1[Samples*2];
 	const int hsam;
 	const int n;
+	float const * blepPTR;
 	int bP1;
 public:
 	SawOsc() : hsam(Samples)
 		, n(Samples*2)
 	{
 		bP1=0;
-		del1 = new DelayLine(hsam);
-		buffer1= new float[n];
+		//del1 = new DelayLine(hsam);
+		//buffer1= new float[n];
 		for(int i = 0 ; i < n ; i++)
 			buffer1[i]=0;
+		blepPTR = blep;
 	}
 	~SawOsc()
 	{
-		delete del1;
-		delete buffer1;
+		//delete del1;
+		//delete buffer1;
+	}
+	inline void setDecimation()
+	{
+		blepPTR = blepd2;
+	}
+	inline void removeDecimation()
+	{
+		blepPTR = blep;
 	}
 	inline float aliasReduction()
 	{
 		return -getNextBlep(buffer1,bP1);
 	}
-	inline void processMaster(float x,float delta,bool& hardSyncReset,float& hardSyncFrac)
+	inline void processMaster(float x,float delta)
 	{
 		if(x >= 1.0f)
 		{
 			x-=1.0f;
-			hardSyncFrac = x/delta;
 			mixInImpulseCenter(buffer1,bP1,x/delta, 1);
-			hardSyncReset = true;
 		}
 	}
 	inline float getValue(float x)
 	{
-		del1->feedDelay(x - 0.5);
-		return del1->getDelayedSample();
+		return del1.feedReturn(x-0.5);
 	}
 	inline float getValueFast(float x)
 	{
@@ -95,30 +102,19 @@ public:
 	{
 		int lpIn =(int)(B_OVERSAMPLING*(offset));
 		float frac = offset * B_OVERSAMPLING - lpIn;
-		for(int i = 0 ; i <n;i++)
+		float f1 = 1.0f-frac;
+		for(int i = 0 ; i < Samples;i++)
 		{
-			float mixvalue = 0;
-			mixvalue = (blep[lpIn]*(1-frac)+blep[lpIn+1]*(frac));
-			if(i>=Samples)
-				mixvalue-=1;
+			float mixvalue = (blepPTR[lpIn]*f1+blepPTR[lpIn+1]*frac);
 			buf[(bpos+i)&(n-1)]  += mixvalue*scale;
 			lpIn += B_OVERSAMPLING;
 		}
-	}
-	inline float getDelayedSample(float* buf,int& dpos)
-	{
-		int idx;
-		idx = dpos-(hsam);
-		if(idx <0)
-			idx+=hsam;
-		return buf[idx];
-	}
-	inline void feedDelay(float* buf,int& dpos,float sm)
-	{
-		buf[dpos] = sm;
-		dpos++;
-		if(dpos >= (hsam))
-			dpos-=(hsam);
+		for(int i = Samples ; i <n;i++)
+		{
+			float mixvalue = (blepPTR[lpIn]*f1+blepPTR[lpIn+1]*frac);
+			buf[(bpos+i)&(n-1)]  -= mixvalue*scale;
+			lpIn += B_OVERSAMPLING;
+		}
 	}
 	inline float getNextBlep(float* buf,int& bpos) 
 	{
@@ -126,10 +122,7 @@ public:
 		bpos++;
 
 		// Wrap pos
-		if (bpos>=n) 
-		{
-			bpos -= n;
-		}
+		bpos&=(n-1);
 		return buf[bpos];
 	}
 };

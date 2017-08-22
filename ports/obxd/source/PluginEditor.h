@@ -22,29 +22,25 @@
 //==============================================================================
 /**
 */
-class ObxdAudioProcessorEditor  :
+class ObxdAudioProcessorEditor :
 	public AudioProcessorEditor,
-                          public ChangeListener,
-						  public Slider::Listener,
-						  public Button::Listener,
-						  public ComboBox::Listener//,
-						 // public AudioProcessorListener
-
+	// public AudioProcessorListener,
+	public ChangeListener,
+	public Slider::Listener,
+	public Button::Listener,
+	public ComboBox::Listener
 {
 public:
-    ObxdAudioProcessorEditor (ObxdAudioProcessor* ownerFilter);
+    ObxdAudioProcessorEditor(ObxdAudioProcessor* ownerFilter);
     ~ObxdAudioProcessorEditor();
 
-	    //==============================================================================
-    /** Our demo filter is a ChangeBroadcaster, and will call us back when one of
-        its parameters changes.
-    */
+	void mouseUp(const MouseEvent& e);
+	void paint(Graphics& g);
+
+	//==============================================================================
 	void changeListenerCallback (ChangeBroadcaster* source);
-	int changeListenerCallback (void*){return 0;};
 
-
-
-
+private:
 	Knob* addNormalKnob(int x , int y ,ObxdAudioProcessor* filter, int parameter,String name,float defval);
 	Knob* addTinyKnob(int x , int y ,ObxdAudioProcessor* filter, int parameter,String name,float defval);
 	void placeLabel(int x , int y,String text);
@@ -56,14 +52,17 @@ public:
 	void buttonClicked (Button *);
     void comboBoxChanged(ComboBox*);
 
-    void updateParametersFromFilter();
+    Knob* addNormalKnobClassic(int x , int y ,ObxdAudioProcessor* filter, int parameter,String name,float defval);
+    Knob* addTinyKnobClassic(int x , int y ,ObxdAudioProcessor* filter, int parameter,String name,float defval);
+    TooglableButton* addNormalTooglableButtonClassic(int x , int y , ObxdAudioProcessor* filter,int parameter,String name);
+	ButtonList* addNormalButtonListClassic(int x , int y ,int width, ObxdAudioProcessor* filter,int parameter,String name,Image img);
 
-    //==============================================================================
-    /** Standard Juce paint callback. */
-    void paint (Graphics& g);
+	void rebuildComponents();
 
-    /** Standard Juce resize callback. */
-    //void resized();
+	//==============================================================================
+	ObxdAudioProcessor* getFilter() noexcept    { return (ObxdAudioProcessor*)getAudioProcessor();}
+
+	//==============================================================================
 	Knob* cutoffKnob,*resonanceKnob,*osc1PitchKnob,*osc2PitchKnob,*osc2DetuneKnob,*volumeKnob,
 		*portamentoKnob,*voiceDetuneKnob,*filterEnvelopeAmtKnob,*pulseWidthKnob,*xmodKnob,*multimodeKnob,*attackKnob,*decayKnob,*sustainKnob,*releaseKnob,
 		*fattackKnob,*fdecayKnob,*fsustainKnob,*freleaseKnob,*osc1MixKnob,*osc2MixKnob,*noiseMixKnob,
@@ -72,22 +71,18 @@ public:
 		*lfoFrequencyKnob,*lfoAmt1Knob,*lfoAmt2Knob,
 		*pan1Knob,*pan2Knob,*pan3Knob,*pan4Knob,*pan5Knob,*pan6Knob,*pan7Knob,*pan8Knob,
 		*brightnessKnob,*envPitchModKnob,
-		*bendLfoRateKnob
-		,*veloAmpEnvKnob,*veloFltEnvKnob,*transposeKnob;
+		*bendLfoRateKnob,*veloAmpEnvKnob,*veloFltEnvKnob,*transposeKnob;
 
 	TooglableButton* hardSyncButton,*osc1SawButton,*osc2SawButton,*osc1PulButton,*osc2PulButton,*filterKeyFollowButton,*unisonButton,*pitchQuantButton,
 		*filterHQButton,*filterBPBlendButton,
 		*lfoSinButton,*lfoSquareButton,*lfoSHButton,*lfoOsc1Button,*lfoOsc2Button,*lfoFilterButton,
 		*lfoPwm1Button,*lfoPwm2Button,
 		*bendRangeButton,*bendOsc2OnlyButton,
-	*fourPoleButton,*asPlayedAllocButton;
+		*fourPoleButton,*asPlayedAllocButton;
 
 	ButtonList *voiceSwitch,*legatoSwitch;
-    //==============================================================================
-    // This is just a standard Juce paint method...
-//    void paint (Graphics& g);
-	ObxdAudioProcessor* getFilter() noexcept    { return (ObxdAudioProcessor*)getAudioProcessor();}
-};
 
+	File skinFolder;
+};
 
 #endif  // PLUGINEDITOR_H_INCLUDED

@@ -24,7 +24,7 @@
 #pragma once
 #include "SynthEngine.h"
 
-const float PSSC = 0.0120;
+const float PSSC = 0.0030;
 class ParamSmoother
 {
 	private:

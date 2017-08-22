@@ -101,6 +101,10 @@ public:
             coef = (float)((log(0.00001) - log(Value+0.0001)) / (SampleRate * (release) / 1000));
             state = 4;
         }
+	inline bool isActive()
+	{
+		return state!=5;
+	}
 	inline float processSample()
         {
             switch (state)
@@ -132,8 +136,9 @@ public:
                 case 3: Value = jmin(sustain, 0.9f);
                     break;
                 case 4:
-                   // if (Value > 10e-6)
+                    if (Value > 20e-6)
                         Value = Value + Value * coef + dc;
+					else state = 5;
                     break;
                 case 5:
                     Value = 0.0f;

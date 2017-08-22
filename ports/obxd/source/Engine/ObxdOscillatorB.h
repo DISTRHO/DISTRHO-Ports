@@ -2,7 +2,7 @@
 	==============================================================================
 	This file is part of Obxd synthesizer.
 
-	Copyright © 2013-2014 Filatov Vadim
+	Copyright ï¿½ 2013-2014 Filatov Vadim
 	
 	Contact author via email :
 	justdat_@_e1.ru
@@ -50,13 +50,12 @@ private:
 	//blep const
 	const int n;
 	const int hsam;
-	const float *Blep;
 	//delay line implements fixed sample delay
-	DelayLine *del1,*del2;
-	DelayLine *xmodd;
-	DelayLineBoolean *syncd;
-	DelayLine *syncFracd;
-	DelayLine *cvd;
+	DelayLine<Samples> del1,del2;
+	DelayLine<Samples> xmodd;
+	DelayLineBoolean<Samples> syncd;
+	DelayLine<Samples> syncFracd;
+	DelayLine<Samples> cvd;
 	Random wn;
 	SawOsc o1s,o2s;
 	PulseOsc o1p,o2p;
@@ -65,6 +64,8 @@ public:
 
 	float tune;//+-1 
 	int oct;
+
+	float dirt;
 
 	float notePlaying;
 
@@ -95,11 +96,11 @@ public:
 	ObxdOscillatorB() : 
 		n(Samples*2),
 		hsam(Samples),
-		Blep(blep),
 		o1s(),o2s(),
 		o1p(),o2p(),
 		o1t(),o2t()
 	{
+		dirt = 0.1;
 		totalDetune = 0;
 		wn = Random(Random::getSystemRandom().nextInt64());
 		osc1Factor = wn.nextFloat()-0.5;
@@ -118,25 +119,42 @@ public:
 		notePlaying = 30;
 		pulseWidth = 0;
 		o1mx=o2mx=0;
-		Blep = blep;
 		x1=wn.nextFloat();
 		x2=wn.nextFloat();
 
-		del1 = new DelayLine(hsam);
-		del2 = new DelayLine(hsam);
-		xmodd = new DelayLine(hsam);
-		syncd = new DelayLineBoolean(hsam);
-		syncFracd =  new DelayLine(hsam);
-		cvd = new DelayLine(hsam);
+		//del1 = new DelayLine(hsam);
+		//del2 = new DelayLine(hsam);
+		//xmodd = new DelayLine(hsam);
+		//syncd = new DelayLineBoolean(hsam);
+		//syncFracd =  new DelayLine(hsam);
+		//cvd = new DelayLine(hsam);
 	}
 	~ObxdOscillatorB()
 	{
-		delete del1;
-		delete del2;
-		delete xmodd;
-		delete cvd;
-		delete syncd;
-		delete syncFracd;
+		//delete del1;
+		//delete del2;
+		//delete xmodd;
+		//delete cvd;
+		//delete syncd;
+		//delete syncFracd;
+	}
+	void setDecimation()
+	{
+		o1p.setDecimation();
+		o1t.setDecimation();
+		o1s.setDecimation();
+		o2p.setDecimation();
+		o2t.setDecimation();
+		o2s.setDecimation();
+	}
+	void removeDecimation()
+	{
+		o1p.removeDecimation();
+		o1t.removeDecimation();
+		o1s.removeDecimation();
+		o2p.removeDecimation();
+		o2t.removeDecimation();
+		o2s.removeDecimation();
 	}
 	void setSampleRate(float sr)
 	{
@@ -145,35 +163,38 @@ public:
 	}
 	inline float ProcessSample()
 	{
-		pitch1 = getPitch(notePlaying + (quantizeCw?((int)(osc1p)):osc1p)+ pto1 + tune + oct+totalDetune*osc1Factor);
-		if(pitch1 > 21000)
-			pitch1 = 21000;
+		float noiseGen = wn.nextFloat()-0.5;
+		pitch1 = getPitch(dirt * noiseGen + notePlaying + (quantizeCw?((int)(osc1p)):osc1p)+ pto1 + tune + oct+totalDetune*osc1Factor);
 		bool hsr = false;
 		float hsfrac=0;
-		float fs = pitch1*(sampleRateInv);
+		float fs = jmin(pitch1*(sampleRateInv),0.45f);
 		x1+=fs;
 		hsfrac = 0;
 		float osc1mix=0.0f;
 		float pwcalc =jlimit<float>(0.1f,1.0f,(pulseWidth + pw1)*0.5f + 0.5f);
 
 		if(osc1Pul)
-			o1p.processMaster(x1,fs,hsr,hsfrac,pwcalc,pw1w);
+			o1p.processMaster(x1,fs,pwcalc,pw1w);
 		if(osc1Saw)
-			o1s.processMaster(x1,fs,hsr,hsfrac);
+			o1s.processMaster(x1,fs);
 		else if(!osc1Pul)
-			o1t.processMaster(x1,fs,hsr,hsfrac);
+			o1t.processMaster(x1,fs);
 
 		if(x1 >= 1.0f)
+		{
 			x1-=1.0f;
+			hsfrac = x1/fs;
+			hsr = true;
+		}
+
+		
 
 		pw1w = pwcalc;
 
 		hsr &= hardSync;
 		//Delaying our hard sync gate signal and frac
-		syncd->feedDelay(hsr);
-		syncFracd ->feedDelay(hsfrac);
-		hsr = syncd->getDelayedSample();
-		hsfrac = syncFracd->getDelayedSample();
+		hsr = syncd.feedReturn(hsr) != 0.0f;
+		hsfrac = syncFracd.feedReturn(hsfrac);
 
 		if(osc1Pul)
 			osc1mix += o1p.getValue(x1,pwcalc) + o1p.aliasReduction();
@@ -184,13 +205,10 @@ public:
 		//Pitch control needs additional delay buffer to compensate
 		//This will give us less aliasing on xmod
 		//Hard sync gate signal delayed too
-		cvd->feedDelay( getPitch(notePlaying + osc2Det + (quantizeCw?((int)(osc2p)):osc2p) + pto2+ osc1mix *xmod + tune + oct +totalDetune*osc2Factor));
-		pitch2 = cvd->getDelayedSample();
+		noiseGen = wn.nextFloat()-0.5;
+		pitch2 = getPitch(cvd.feedReturn(dirt *noiseGen + notePlaying + osc2Det + (quantizeCw?((int)(osc2p)):osc2p) + pto2+ osc1mix *xmod + tune + oct +totalDetune*osc2Factor));
 
-
-		if(pitch2>21000)
-			pitch2=21000;
-		fs = pitch2 * (sampleRateInv);
+		fs = jmin(pitch2 * (sampleRateInv),0.45f);
 
 		pwcalc = jlimit<float>(0.1f,1.0f,(pulseWidth + pw2)*0.5f + 0.5f);
 
@@ -218,9 +236,8 @@ public:
 			x2 =fracMaster;
 		}
 		//Delaying osc1 signal
-		xmodd ->feedDelay(osc1mix);
 		//And getting delayed back
-		osc1mix = xmodd->getDelayedSample();
+		osc1mix = xmodd.feedReturn(osc1mix);
 
 		if(osc2Pul)
 			osc2mix += o2p.getValue(x2,pwcalc) + o2p.aliasReduction();
@@ -229,8 +246,8 @@ public:
 		else if(!osc2Pul)
 			osc2mix = o2t.getValue(x2) + o2t.aliasReduction();
 
-		//mixing 
-		float res =o1mx*osc1mix + o2mx *osc2mix + (wn.nextFloat()-0.5)*(nmx*1.3);
+		//mixing
+		float res =o1mx*osc1mix + o2mx *osc2mix + (noiseGen)*(nmx*1.3 + 0.0006);
 		return res*3;
 	}
 };

@@ -23,87 +23,49 @@
  */
 #pragma once
 #include "SynthEngine.h"
-class DelayLine
+//Always feed first then get delayed sample!
+#define DEMAX 64
+template<unsigned int DM> class DelayLine
 {
 private:
-	float* dl;
+	float dl[DEMAX];
 	int iidx;
-	int maxc;
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(DelayLine)
 public:
-	DelayLine() 
+		DelayLine() 
 	{
-		dl  = NULL;
 		iidx = 0;
-		maxc=0;
+		zeromem(dl,sizeof(float)*DEMAX);
+		//jassert(DM > DMAX);
 	}
-	DelayLine(int count)
-	{
-		iidx=0;
-		maxc=count;
-		dl = new float[maxc];
-		for(int i = 0 ; i < maxc;i++)
-			dl[i]=0;
-	}
-	~DelayLine()
-	{
-		delete dl;
-	}
-	inline void feedDelay(float sm)
+	inline float feedReturn(float sm)
 	{
 		dl[iidx] = sm;
-		iidx++;
-		if(iidx >= (maxc))
-			iidx-=(maxc);
+		iidx--;
+		iidx=(iidx&(DEMAX-1));
+		return dl[(iidx + DM)&(DEMAX-1)];
 	}
-	inline float getDelayedSample()
+	inline void fillZeroes()
 	{
-		int idx;
-		idx = iidx-(maxc);
-		if(idx <0)
-			idx+=maxc;
-		return dl[idx];
+		zeromem(dl,DEMAX*sizeof(float));
 	}
 };
-class DelayLineBoolean
+template<unsigned int DM> class DelayLineBoolean
 {
 private:
-	bool* dl;
+	bool dl[DEMAX];
 	int iidx;
-	int maxc;
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(DelayLineBoolean)
 public:
-	DelayLineBoolean() 
+		DelayLineBoolean() 
 	{
-		dl  = NULL;
 		iidx = 0;
-		maxc=0;
+		zeromem(dl,sizeof(bool)*DEMAX);
 	}
-	DelayLineBoolean(int count)
-	{
-		iidx=0;
-		maxc=count;
-		dl = new bool[maxc];
-		for(int i = 0 ; i < maxc;i++)
-			dl[i]=0;
-	}
-	~DelayLineBoolean()
-	{
-		delete dl;
-	}
-	inline void feedDelay(bool sm)
+		inline float feedReturn(bool sm)
 	{
 		dl[iidx] = sm;
-		iidx++;
-		if(iidx >= (maxc))
-			iidx-=(maxc);
+		iidx--;
+		iidx=(iidx&(DEMAX-1));
+		return dl[(iidx + DM)&(DEMAX-1)];
 	}
-	inline bool getDelayedSample()
-	{
-		int idx;
-		idx = iidx-(maxc);
-		if(idx <0)
-			idx+=maxc;
-		return dl[idx];
-	}
+
 };

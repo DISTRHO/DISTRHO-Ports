@@ -2,7 +2,7 @@
 	==============================================================================
 	This file is part of Obxd synthesizer.
 
-	Copyright © 2013-2014 Filatov Vadim
+	Copyright ï¿½ 2013-2014 Filatov Vadim
 	
 	Contact author via email :
 	justdat_@_e1.ru
@@ -45,9 +45,9 @@ public:
 	{
 		return ((getSelectedId()-1)/ (float)(count-1));
 	}
-	void setValue(float val,NotificationType notification)
+	void setValue(float val,NotificationType notify)
 	{
-		setSelectedId((int)(val*(count -1) + 1),notification);
+		setSelectedId((int)(val*(count -1) + 1),notify);
 	}
 	void paintOverChildren(Graphics& g)
 	{

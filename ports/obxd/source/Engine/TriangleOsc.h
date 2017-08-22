@@ -26,44 +26,52 @@
 #include "BlepData.h"
 class TriangleOsc 
 {
-	DelayLine* del1;
+	DelayLine<Samples> del1;
 	bool fall;
-	float *buffer1,*buffer2;
+	float buffer1[Samples*2];
 	const int hsam;
 	const int n;
+	float const * blepPTR;
+	float const * blampPTR;
 
 	int bP1,bP2;
 public:
 	TriangleOsc() : hsam(Samples)
 		, n(Samples*2)
 	{
-		del1 =new DelayLine(hsam);
+		//del1 =new DelayLine(hsam);
 		fall = false;
 		bP1=bP2=0;
-		buffer1= new float[n];
+	//	buffer1= new float[n];
 		for(int i = 0 ; i < n ; i++)
 			buffer1[i]=0;
-		buffer2= new float[n];
-		for(int i = 0 ; i < n ; i++)
-			buffer2[i]=0;
+		blepPTR = blep;
+		blampPTR = blamp;
 	}
 	~TriangleOsc()
 	{
-		delete buffer1;
-		delete buffer2;
-		delete del1;
+		//delete buffer1;
+		//delete del1;
+	}
+	inline void setDecimation()
+	{
+		blepPTR = blepd2;
+		blampPTR = blampd2;
+	}
+	inline void removeDecimation()
+	{
+		blepPTR = blep;
+		blampPTR = blamp;
 	}
 	inline float aliasReduction()
 	{
 		return -getNextBlep(buffer1,bP1);
 	}
-	inline void processMaster(float x,float delta,bool& hardSyncReset,float& hardSyncFrac)
+	inline void processMaster(float x,float delta)
 	{
 		if(x >= 1.0)
 		{
 			x-=1.0;
-			hardSyncFrac = x/delta;
-			hardSyncReset = true;
 			mixInBlampCenter(buffer1,bP1,x/delta,-4*Samples*delta);
 		}
 		if(x >= 0.5 && x - delta < 0.5)
@@ -73,16 +81,13 @@ public:
 		if(x >= 1.0)
 		{
 			x-=1.0;
-			hardSyncFrac = x/delta;
-			hardSyncReset = true;
 			mixInBlampCenter(buffer1,bP1,x/delta,-4*Samples*delta);
 		}
 	}
 	inline float getValue(float x)
 	{
 		float mix = x < 0.5 ? 2*x-0.5 : 1.5-2*x;
-		del1->feedDelay(mix);
-		return del1->getDelayedSample();
+		return del1.feedReturn(mix);
 	}
 	inline float getValueFast(float x)
 	{
@@ -140,45 +145,31 @@ public:
 	{
 		int lpIn =(int)(B_OVERSAMPLING*(offset));
 		float frac = offset * B_OVERSAMPLING - lpIn;
-		for(int i = 0 ; i <n;i++)
+		float f1 = 1.0f-frac;
+		for(int i = 0 ; i < n;i++)
 		{
-			float mixvalue = 0;
-			mixvalue = (blamp[lpIn]*(1-frac)+blamp[lpIn+1]*(frac));
-			//Substract trivial ramp
-			if(i >=Samples) 
-				mixvalue   -=  ((lpIn + frac) / (B_OVERSAMPLING * Samples)) - 1;
-			buf[(bpos+i)&(n-1)]  +=mixvalue*scale;
-			lpIn += B_OVERSAMPLING;
-		}
-	}
-	inline void mixInImpulseCenter(float * buf,int& bpos,float offset, float scale) 
-	{
-		int lpIn =(int)(B_OVERSAMPLING*(offset));
-		float frac = offset * B_OVERSAMPLING - lpIn;
-		for(int i = 0 ; i <n;i++)
-		{
-			float mixvalue = 0;
-			mixvalue = (blep[lpIn]*(1-frac)+blep[lpIn+1]*(frac));
-			if(i>=Samples)
-				mixvalue-=1;
+			float mixvalue = (blampPTR[lpIn]*f1+blampPTR[lpIn+1]*(frac));
 			buf[(bpos+i)&(n-1)]  += mixvalue*scale;
 			lpIn += B_OVERSAMPLING;
 		}
 	}
-	inline float getDelayedSample(float* buf,int& dpos)
+		inline void mixInImpulseCenter(float * buf,int& bpos,float offset, float scale) 
 	{
-		int idx;
-		idx = dpos-(hsam);
-		if(idx <0)
-			idx+=hsam;
-		return buf[idx];
-	}
-	inline void feedDelay(float* buf,int& dpos,float sm)
-	{
-		buf[dpos] = sm;
-		dpos++;
-		if(dpos >= (hsam))
-			dpos-=(hsam);
+		int lpIn =(int)(B_OVERSAMPLING*(offset));
+		float frac = offset * B_OVERSAMPLING - lpIn;
+		float f1 = 1.0f-frac;
+		for(int i = 0 ; i < Samples;i++)
+		{
+			float mixvalue = (blepPTR[lpIn]*f1+blepPTR[lpIn+1]*(frac));
+			buf[(bpos+i)&(n-1)]  += mixvalue*scale;
+			lpIn += B_OVERSAMPLING;
+		}
+		for(int i = Samples ; i <n;i++)
+		{
+			float mixvalue = (blepPTR[lpIn]*f1+blepPTR[lpIn+1]*(frac));
+			buf[(bpos+i)&(n-1)]  -= mixvalue*scale;
+			lpIn += B_OVERSAMPLING;
+		}
 	}
 	inline float getNextBlep(float* buf,int& bpos) 
 	{
@@ -186,10 +177,7 @@ public:
 		bpos++;
 
 		// Wrap pos
-		if (bpos>=n) 
-		{
-			bpos -= n;
-		}
+		bpos&=(n-1);
 		return buf[bpos];
 	}
 };

@@ -13,33 +13,51 @@ It contains the basic startup code for a Juce application.
 
 //==============================================================================
 #define S(T) (juce::String(T))
-ObxdAudioProcessor::ObxdAudioProcessor() : programs()
+
+//==============================================================================
+ObxdAudioProcessor::ObxdAudioProcessor()
+	: programs()
+	, configLock("__" JucePlugin_Name "ConfigLock__")
 {
-	synth = new SynthEngine();
-	synth->setSampleRate(44100);
+	isHostAutomatedChange = true;
+
+	synth.setSampleRate(44100);
+
+	PropertiesFile::Options options;
+	options.applicationName = JucePlugin_Name;
+	options.storageFormat = PropertiesFile::storeAsXML;
+	options.millisecondsBeforeSaving = 2500;
+	options.processLock = &configLock;
+	config = new PropertiesFile(getDocumentFolder().getChildFile("Settings.xml"), options);
+
+	currentSkin = config->containsKey("skin") ? config->getValue("skin") : "discoDSP Grey";
+	currentBank = "Init";
+
+	scanAndUpdateBanks();
 	initAllParams();
-	rnd = Random();
-	nextMidi = midiMsg = NULL;
+
+	if (bankFiles.size() > 0)
+	{
+		loadFromFXBFile(bankFiles[0]);
+	}
 }
 
 ObxdAudioProcessor::~ObxdAudioProcessor()
 {
-	delete synth;
-	delete nextMidi;
-	delete midiMsg;
+	config->saveIfNeeded();
+	config = nullptr;
 }
+
 //==============================================================================
 void ObxdAudioProcessor::initAllParams()
 {
-	for(int i = 0 ; i < PARAM_COUNT;i++)
-		setParameter(i,programs.currentProgramPtr->values[i]);
-}
-//==============================================================================
-const String ObxdAudioProcessor::getName() const
-{
-	return JucePlugin_Name;
+	for (int i = 0 ; i < PARAM_COUNT; i++)
+	{
+		setParameter(i, programs.currentProgramPtr->values[i]);
+	}
 }
 
+//==============================================================================
 int ObxdAudioProcessor::getNumParameters()
 {
 	return PARAM_COUNT;
@@ -55,223 +73,271 @@ void ObxdAudioProcessor::setParameter (int index, float newValue)
 	programs.currentProgramPtr->values[index] = newValue;
 	switch(index)
 	{
+	case SELF_OSC_PUSH:
+		synth.processSelfOscPush(newValue);
+		break;
+	case PW_ENV_BOTH:
+		synth.processPwEnvBoth(newValue);
+		break;
+	case PW_OSC2_OFS:
+		synth.processPwOfs(newValue);
+		break;
+	case ENV_PITCH_BOTH:
+		synth.processPitchModBoth(newValue);
+		break;
+	case FENV_INVERT:
+		synth.processInvertFenv(newValue);
+		break;
+	case LEVEL_DIF:
+		synth.processLoudnessDetune(newValue);
+		break;
+	case PW_ENV:
+		synth.processPwEnv(newValue);
+		break;
+	case LFO_SYNC:
+		synth.procLfoSync(newValue);
+		break;
+	case ECONOMY_MODE:
+		synth.procEconomyMode(newValue);
+		break;
 	case VAMPENV:
-		synth->procAmpVelocityAmount(newValue);
+		synth.procAmpVelocityAmount(newValue);
 		break;
 	case VFLTENV:
-		synth->procFltVelocityAmount(newValue);
+		synth.procFltVelocityAmount(newValue);
 		break;
 	case ASPLAYEDALLOCATION:
-		synth->procAsPlayedAlloc(newValue);
+		synth.procAsPlayedAlloc(newValue);
 		break;
 	case BENDLFORATE:
-		synth->procModWheelFrequency(newValue);
+		synth.procModWheelFrequency(newValue);
 		break;
 	case FOURPOLE:
-		synth->processFourPole(newValue);
+		synth.processFourPole(newValue);
 		break;
 	case LEGATOMODE:
-		synth->processLegatoMode(newValue);
+		synth.processLegatoMode(newValue);
 		break;
 	case ENVPITCH:
-		synth->processEnvelopeToPitch(newValue);
+		synth.processEnvelopeToPitch(newValue);
 		break;
 	case OSCQuantize:
-		synth->processPitchQuantization(newValue);
+		synth.processPitchQuantization(newValue);
 		break;
 	case VOICE_COUNT:
-		synth->setVoiceCount(newValue);
+		synth.setVoiceCount(newValue);
 		break;
 	case BANDPASS:
-		synth->processBandpassSw(newValue);
+		synth.processBandpassSw(newValue);
 		break;
 	case FILTER_WARM:
-		synth->processOversampling(newValue);
+		synth.processOversampling(newValue);
 		break;
 	case BENDOSC2:
-		synth->procPitchWheelOsc2Only(newValue);
+		synth.procPitchWheelOsc2Only(newValue);
 		break;
 	case BENDRANGE:
-		synth->procPitchWheelAmount(newValue);
+		synth.procPitchWheelAmount(newValue);
 		break;
 	case NOISEMIX:
-		synth->processNoiseMix(newValue);
+		synth.processNoiseMix(newValue);
 		break;
 	case OCTAVE:
-		synth->processOctave(newValue);
+		synth.processOctave(newValue);
 		break;
 	case TUNE:
-		synth->processTune(newValue);
+		synth.processTune(newValue);
 		break;
 	case BRIGHTNESS:
-		synth->processBrightness(newValue);
+		synth.processBrightness(newValue);
 		break;
 	case MULTIMODE:
-		synth->processMultimode(newValue);
+		synth.processMultimode(newValue);
 		break;
 	case LFOFREQ:
-		synth->processLfoFrequency(newValue);
+		synth.processLfoFrequency(newValue);
 		break;
 	case LFO1AMT:
-		synth->processLfoAmt1(newValue);
+		synth.processLfoAmt1(newValue);
 		break;
 	case LFO2AMT:
-		synth->processLfoAmt2(newValue);
+		synth.processLfoAmt2(newValue);
 		break;
 	case LFOSINWAVE:
-		synth->processLfoSine(newValue);
+		synth.processLfoSine(newValue);
 		break;
 	case LFOSQUAREWAVE:
-		synth->processLfoSquare(newValue);
+		synth.processLfoSquare(newValue);
 		break;
 	case LFOSHWAVE:
-		synth->processLfoSH(newValue);
+		synth.processLfoSH(newValue);
 		break;
 	case LFOFILTER:
-		synth->processLfoFilter(newValue);
+		synth.processLfoFilter(newValue);
 		break;
 	case LFOOSC1:
-		synth->processLfoOsc1(newValue);
+		synth.processLfoOsc1(newValue);
 		break;
 	case LFOOSC2:
-		synth->processLfoOsc2(newValue);
+		synth.processLfoOsc2(newValue);
 		break;
 	case LFOPW1:
-		synth->processLfoPw1(newValue);
+		synth.processLfoPw1(newValue);
 		break;
 	case LFOPW2:
-		synth->processLfoPw2(newValue);
+		synth.processLfoPw2(newValue);
 		break;
 	case PORTADER:
-		synth->processPortamentoDetune(newValue);
+		synth.processPortamentoDetune(newValue);
 		break;
 	case FILTERDER:
-		synth->processFilterDetune(newValue);
+		synth.processFilterDetune(newValue);
 		break;
 	case ENVDER:
-		synth->processEnvelopeDetune(newValue);
+		synth.processEnvelopeDetune(newValue);
 		break;
 	case XMOD:
-		synth->processOsc2Xmod(newValue);
+		synth.processOsc2Xmod(newValue);
 		break;
 	case OSC2HS:
-		synth->processOsc2HardSync(newValue);
+		synth.processOsc2HardSync(newValue);
 		break;
 	case OSC2P:
-		synth->processOsc2Pitch(newValue);
+		synth.processOsc2Pitch(newValue);
 		break;
 	case OSC1P:
-		synth->processOsc1Pitch(newValue);
+		synth.processOsc1Pitch(newValue);
 		break;
 	case PORTAMENTO:
-		synth->processPortamento(newValue);
+		synth.processPortamento(newValue);
 		break;
 	case UNISON:
-		synth->processUnison(newValue);
+		synth.processUnison(newValue);
 		break;
 	case FLT_KF:
-		synth->processFilterKeyFollow(newValue);
+		synth.processFilterKeyFollow(newValue);
 		break;
 	case OSC1MIX:
-		synth->processOsc1Mix(newValue);
+		synth.processOsc1Mix(newValue);
 		break;
 	case OSC2MIX:
-		synth->processOsc2Mix(newValue);
+		synth.processOsc2Mix(newValue);
 		break;
 	case PW:
-		synth->processPulseWidth(newValue);
+		synth.processPulseWidth(newValue);
 		break;
 	case OSC1Saw:
-		synth->processOsc1Saw(newValue);
+		synth.processOsc1Saw(newValue);
 		break;
 	case OSC2Saw:
-		synth->processOsc2Saw(newValue);
+		synth.processOsc2Saw(newValue);
 		break;
 	case OSC1Pul:
-		synth->processOsc1Pulse(newValue);
+		synth.processOsc1Pulse(newValue);
 		break;
 	case OSC2Pul:
-		synth->processOsc2Pulse(newValue);
+		synth.processOsc2Pulse(newValue);
 		break;
 	case VOLUME:
-		synth->processVolume(newValue);
+		synth.processVolume(newValue);
 		break;
 	case UDET:
-		synth->processDetune(newValue);
+		synth.processDetune(newValue);
 		break;
 	case OSC2_DET:
-		synth->processOsc2Det(newValue);
+		synth.processOsc2Det(newValue);
 		break;
 	case CUTOFF:
-		synth->processCutoff(newValue);
+		synth.processCutoff(newValue);
 		break;
 	case RESONANCE:
-		synth->processResonance(newValue);
+		synth.processResonance(newValue);
 		break;
 	case ENVELOPE_AMT:
-		synth->processFilterEnvelopeAmt(newValue);
+		synth.processFilterEnvelopeAmt(newValue);
 		break;
 	case LATK:
-		synth->processLoudnessEnvelopeAttack(newValue);
+		synth.processLoudnessEnvelopeAttack(newValue);
 		break;
 	case LDEC:
-		synth->processLoudnessEnvelopeDecay(newValue);
+		synth.processLoudnessEnvelopeDecay(newValue);
 		break;
 	case LSUS:
-		synth->processLoudnessEnvelopeSustain(newValue);
+		synth.processLoudnessEnvelopeSustain(newValue);
 		break;
 	case LREL:
-		synth->processLoudnessEnvelopeRelease(newValue);
+		synth.processLoudnessEnvelopeRelease(newValue);
 		break;
 	case FATK:
-		synth->processFilterEnvelopeAttack(newValue);
+		synth.processFilterEnvelopeAttack(newValue);
 		break;
 	case FDEC:
-		synth->processFilterEnvelopeDecay(newValue);
+		synth.processFilterEnvelopeDecay(newValue);
 		break;
 	case FSUS:
-		synth->processFilterEnvelopeSustain(newValue);
+		synth.processFilterEnvelopeSustain(newValue);
 		break;
 	case FREL:
-		synth->processFilterEnvelopeRelease(newValue);
+		synth.processFilterEnvelopeRelease(newValue);
 		break;
 	case PAN1:
-		synth->processPan(newValue,1);
+		synth.processPan(newValue,1);
 		break;
 	case PAN2:
-		synth->processPan(newValue,2);
+		synth.processPan(newValue,2);
 		break;
 	case PAN3:
-		synth->processPan(newValue,3);
+		synth.processPan(newValue,3);
 		break;
 	case PAN4:
-		synth->processPan(newValue,4);
+		synth.processPan(newValue,4);
 		break;
 	case PAN5:
-		synth->processPan(newValue,5);
+		synth.processPan(newValue,5);
 		break;
 	case PAN6:
-		synth->processPan(newValue,6);
+		synth.processPan(newValue,6);
 		break;
 	case PAN7:
-		synth->processPan(newValue,7);
+		synth.processPan(newValue,7);
 		break;
 	case PAN8:
-		synth->processPan(newValue,8);
+		synth.processPan(newValue,8);
 		break;
 	}
-	sendChangeMessage();
+	//DIRTY HACK
+	//This should be checked to avoid stalling on gui update
+	//It is needed because some hosts do  wierd stuff
+	if(isHostAutomatedChange)
+		sendChangeMessage();
 }
+
 const String ObxdAudioProcessor::getParameterName (int index)
 {
 	switch(index)
 	{
-	case UNDEFINED:
-		return S("unused");
-	case UNDEFINED2:
-		return S("unused2");
-	case UNDEFINED3:
-		return S("unused3");
+	case SELF_OSC_PUSH:
+		return S("SelfOscPush");
+	case ENV_PITCH_BOTH:
+		return S("EnvPitchBoth");
+	case FENV_INVERT:
+		return S("FenvInvert");
+	case PW_OSC2_OFS:
+		return S("PwOfs");
+	case LEVEL_DIF:
+		return S("LevelDif");
+	case PW_ENV_BOTH:
+		return S("PwEnvBoth");
+	case PW_ENV:
+		return S("PwEnv");
+	case LFO_SYNC:
+		return S("LfoSync");
+	case ECONOMY_MODE:
+		return S("EconomyMode");
+	case UNUSED_1:
+		return S("Unused 1");
+	case UNUSED_2:
+		return S("Unused 2");
 	case VAMPENV:
 		return S("VAmpFactor");
 	case VFLTENV:
@@ -417,6 +483,12 @@ const String ObxdAudioProcessor::getParameterText (int index)
 	return String(programs.currentProgramPtr->values[index],2);
 }
 
+//==============================================================================
+const String ObxdAudioProcessor::getName() const
+{
+	return JucePlugin_Name;
+}
+
 const String ObxdAudioProcessor::getInputChannelName (int channelIndex) const
 {
 	return String (channelIndex + 1);
@@ -464,6 +536,8 @@ double ObxdAudioProcessor::getTailLengthSeconds() const
 {
 	return 0.0;
 }
+
+//==============================================================================
 int ObxdAudioProcessor::getNumPrograms()
 {
 	return PROGRAMCOUNT;
@@ -478,8 +552,12 @@ void ObxdAudioProcessor::setCurrentProgram (int index)
 {
 	programs.currentProgram = index;
 	programs.currentProgramPtr = programs.programs + programs.currentProgram;
+	isHostAutomatedChange = false;
 	for(int i = 0 ; i < PARAM_COUNT;i++)
 		setParameter(i,programs.currentProgramPtr->values[i]);
+	isHostAutomatedChange = true;
+	sendChangeMessage();
+	updateHostDisplay();
 }
 
 const String ObxdAudioProcessor::getProgramName (int index)
@@ -497,174 +575,361 @@ void ObxdAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
 	// Use this method as the place to do any pre-playback
 	// initialisation that you need..
-	delete nextMidi;
-	delete midiMsg;
-	nextMidi= new MidiMessage(0xF0);
-	midiMsg = new MidiMessage(0xF0);
-	synth->setSampleRate(sampleRate);
+	nextMidi = MidiMessage(0xF0);
+	midiMsg  = MidiMessage(0xF0);
+	synth.setSampleRate(sampleRate);
 }
 
 void ObxdAudioProcessor::releaseResources()
 {
-	delete nextMidi;
-	delete midiMsg;
-	nextMidi = midiMsg = NULL;
+
 }
 
 inline void ObxdAudioProcessor::processMidiPerSample(MidiBuffer::Iterator* iter,const int samplePos)
 {
 	while (getNextEvent(iter, samplePos))
 	{
-		if(midiMsg->isNoteOn())
+		if(midiMsg.isNoteOn())
 		{
-			synth->procNoteOn(midiMsg->getNoteNumber(),midiMsg->getFloatVelocity());
+			synth.procNoteOn(midiMsg.getNoteNumber(),midiMsg.getFloatVelocity());
 		}
-		if (midiMsg->isNoteOff())
+		if (midiMsg.isNoteOff())
 		{
-			synth->procNoteOff(midiMsg->getNoteNumber());
+			synth.procNoteOff(midiMsg.getNoteNumber());
 		}
-		if(midiMsg->isPitchWheel())
+		if(midiMsg.isPitchWheel())
 		{
 			// [0..16383] center = 8192;
-			synth->procPitchWheel((midiMsg->getPitchWheelValue()-8192) / 8192.0);
+			synth.procPitchWheel((midiMsg.getPitchWheelValue()-8192) / 8192.0);
 		}
-		if(midiMsg->isController() && midiMsg->getControllerNumber()==1)
+		if(midiMsg.isController() && midiMsg.getControllerNumber()==1)
+			synth.procModWheel(midiMsg.getControllerValue() / 127.0);
+		if(midiMsg.isSustainPedalOn())
 		{
-			synth->procModWheel(midiMsg->getControllerValue() / 127.0);
+			synth.sustainOn();
 		}
-		if(midiMsg->isSustainPedalOn())
+		if(midiMsg.isSustainPedalOff() || midiMsg.isAllNotesOff()||midiMsg.isAllSoundOff())
 		{
-			synth->sustainOn();
+			synth.sustainOff();
 		}
-		if(midiMsg->isSustainPedalOff() || midiMsg->isAllNotesOff()||midiMsg->isAllSoundOff())
+		if(midiMsg.isAllNotesOff())
 		{
-			synth->sustainOff();
+			synth.allNotesOff();
 		}
-		if(midiMsg->isAllNotesOff())
+		if(midiMsg.isAllSoundOff())
 		{
-			synth->allNotesOff();
-		}
-		if(midiMsg->isAllSoundOff())
-		{
-			synth->allSoundOff();
+			synth.allSoundOff();
 		}
 
 	}
 }
+
 bool ObxdAudioProcessor::getNextEvent(MidiBuffer::Iterator* iter,const int samplePos)
 {
 	if (hasMidiMessage && midiEventPos <= samplePos)
 	{
-		*midiMsg = *nextMidi;
-		hasMidiMessage = iter->getNextEvent(*nextMidi, midiEventPos);
+		midiMsg = nextMidi;
+		hasMidiMessage = iter->getNextEvent(nextMidi, midiEventPos);
 		return true;
 	} 
 	return false;
 }
+
 void ObxdAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 {
-	//SSE flags set
-	//_MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
-	//_MM_SET_DENORMALS_ZERO_MODE(_MM_DENORMALS_ZERO_ON);
 	MidiBuffer::Iterator ppp(midiMessages);
-	const ScopedLock sl (this->getCallbackLock());
-	hasMidiMessage = ppp.getNextEvent(*nextMidi,midiEventPos);
+	hasMidiMessage = ppp.getNextEvent(nextMidi,midiEventPos);
+
 	int samplePos = 0;
 	int numSamples = buffer.getNumSamples();
 	float* channelData1 = buffer.getWritePointer(0);
 	float* channelData2 = buffer.getWritePointer(1);
+
+	AudioPlayHead::CurrentPositionInfo pos;
+    if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (pos))
+    {
+		synth.setPlayHead(pos.bpm,pos.ppqPosition);
+    }
+
 	while (samplePos < numSamples)
 	{
 		processMidiPerSample(&ppp,samplePos);
 
-		synth->processSample(channelData1+samplePos,channelData2+samplePos);
+		synth.processSample(channelData1+samplePos,channelData2+samplePos);
 
 		samplePos++;
 	}
 }
 
 //==============================================================================
-#if ! JUCE_AUDIOPROCESSOR_NO_GUI
 bool ObxdAudioProcessor::hasEditor() const
 {
-	return true; // (change this to false if you choose to not supply an editor)
+	return true;
 }
 
 AudioProcessorEditor* ObxdAudioProcessor::createEditor()
 {
-	 return new ObxdAudioProcessorEditor (this);
-	//return NULL;
+	return new ObxdAudioProcessorEditor (this);
 }
-#endif
 
 //==============================================================================
 void ObxdAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
-	//XmlElement* const xmlState = getXmlFromBinary(;
-	// You should use this method to store your parameters in the memory block.
-	// You could do that either as raw data, or use the XML or ValueTree classes
-	// as intermediaries to make it easy to save and load complex data.
 	XmlElement xmlState = XmlElement("Datsounds");
-	xmlState.setAttribute(S("currentProgram"),programs.currentProgram);
-	XmlElement* xprogs=  new XmlElement("programs");
-	for(int i = 0 ; i < PROGRAMCOUNT;i++)
-		 {
-			 XmlElement* xpr = new XmlElement("program");
-			 xpr->setAttribute(S("programName"),programs.programs[i].name);
-			 for(int k = 0 ; k < PARAM_COUNT;k++)
-			 {
-				 xpr->setAttribute(String(k), programs.programs[i].values[k]);
-			 }
-			 xprogs->addChildElement(xpr);
-		 }
-		xmlState.addChildElement(xprogs);
-		 copyXmlToBinary(xmlState,destData);
+	xmlState.setAttribute(S("currentProgram"), programs.currentProgram);
+
+	XmlElement* xprogs = new XmlElement("programs");
+	for (int i = 0; i < PROGRAMCOUNT; ++i)
+	{
+		XmlElement* xpr = new XmlElement("program");
+		xpr->setAttribute(S("programName"), programs.programs[i].name);
+
+		for (int k = 0; k < PARAM_COUNT; ++k)
+		{
+			xpr->setAttribute(String(k), programs.programs[i].values[k]);
+		}
+
+		xprogs->addChildElement(xpr);
+	}
+
+	xmlState.addChildElement(xprogs);
+
+	copyXmlToBinary(xmlState,destData);
 }
 
 void ObxdAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
-	// You should use this method to restore your parameters from this memory block,
-	// whose contents will have been created by the getStateInformation() call.
-	XmlElement* const xmlState = getXmlFromBinary(data,sizeInBytes);
-	XmlElement* xprogs = xmlState->getFirstChildElement();
-	if(xprogs->hasTagName(S("programs")));
+	if (XmlElement* const xmlState = getXmlFromBinary(data,sizeInBytes))
 	{
-		int i = 0 ;
-		forEachXmlChildElement (*xprogs, e)
-            {
+		XmlElement* xprogs = xmlState->getFirstChildElement();
+		if (xprogs->hasTagName(S("programs")))
+		{
+			int i = 0;
+			forEachXmlChildElement(*xprogs, e)
+			{
 				programs.programs[i].setDefaultValues();
-				for(int k = 0 ; k < PARAM_COUNT;k++)
+
+				for (int k = 0; k < PARAM_COUNT; ++k)
 				{
-					programs.programs[i].values[k] = e->getDoubleAttribute(String(k),programs.programs[i].values[k]);
+					programs.programs[i].values[k] = e->getDoubleAttribute(String(k), programs.programs[i].values[k]);
 				}
-				programs.programs[i].name= e->getStringAttribute(S("programName"),S("Default"));
-                i++;
-            }
+
+				programs.programs[i].name = e->getStringAttribute(S("programName"), S("Default"));
+
+				++i;
+			}
+		}
+
+		setCurrentProgram(xmlState->getIntAttribute(S("currentProgram"), 0));
+
+		delete xmlState;
 	}
-	setCurrentProgram(xmlState->getIntAttribute(S("currentProgram"),0));
-	delete xmlState;
 }
+
 void  ObxdAudioProcessor::setCurrentProgramStateInformation(const void* data,int sizeInBytes)
 {
-	XmlElement* const e = getXmlFromBinary(data,sizeInBytes);
-	programs.currentProgramPtr->setDefaultValues();
-	for(int k = 0 ; k < PARAM_COUNT;k++)
-				{
-					programs.currentProgramPtr->values[k] = e->getDoubleAttribute(String(k),programs.currentProgramPtr->values[k]);
-				}
-	programs.currentProgramPtr->name =  e->getStringAttribute(S("programName"),S("Default"));
-	setCurrentProgram(programs.currentProgram);
+	if (XmlElement* const e = getXmlFromBinary(data, sizeInBytes))
+	{
+		programs.currentProgramPtr->setDefaultValues();
+
+		for (int k = 0; k < PARAM_COUNT; ++k)
+		{
+			programs.currentProgramPtr->values[k] = e->getDoubleAttribute(String(k), programs.currentProgramPtr->values[k]);
+		}
+
+		programs.currentProgramPtr->name =  e->getStringAttribute(S("programName"), S("Default"));
+
+		setCurrentProgram(programs.currentProgram);
+
+		delete e;
+	}
 }
+
 void ObxdAudioProcessor::getCurrentProgramStateInformation(MemoryBlock& destData)
 {
 	XmlElement xmlState = XmlElement("Datsounds");
-	for(int k = 0 ; k < PARAM_COUNT;k++)
-				{
-				 xmlState.setAttribute(String(k), programs.currentProgramPtr->values[k]);
+
+	for (int k = 0; k < PARAM_COUNT; ++k)
+	{
+		xmlState.setAttribute(String(k), programs.currentProgramPtr->values[k]);
 	}
-	xmlState.setAttribute(S("programName"),programs.currentProgramPtr->name);
-		 copyXmlToBinary(xmlState,destData);
+
+	xmlState.setAttribute(S("programName"), programs.currentProgramPtr->name);
+
+	copyXmlToBinary(xmlState, destData);
 }
+
+//==============================================================================
+bool ObxdAudioProcessor::loadFromFXBFile(const File& fxbFile)
+{
+	MemoryBlock mb;
+	if (! fxbFile.loadFileAsData(mb))
+		return false;
+
+	const void* const data = mb.getData();
+	const size_t dataSize = mb.getSize();
+
+	if (dataSize < 28)
+		return false;
+
+	const fxSet* const set = (const fxSet*) data;
+
+	if ((! compareMagic (set->chunkMagic, "CcnK")) || fxbSwap (set->version) > fxbVersionNum)
+		return false;
+
+	if (compareMagic (set->fxMagic, "FxBk"))
+	{
+		// bank of programs
+		if (fxbSwap (set->numPrograms) >= 0)
+		{
+			const int oldProg = getCurrentProgram();
+			const int numParams = fxbSwap (((const fxProgram*) (set->programs))->numParams);
+			const int progLen = (int) sizeof (fxProgram) + (numParams - 1) * (int) sizeof (float);
+
+			for (int i = 0; i < fxbSwap (set->numPrograms); ++i)
+			{
+				if (i != oldProg)
+				{
+					const fxProgram* const prog = (const fxProgram*) (((const char*) (set->programs)) + i * progLen);
+					if (((const char*) prog) - ((const char*) set) >= (ssize_t) dataSize)
+						return false;
+
+					if (fxbSwap (set->numPrograms) > 0)
+						setCurrentProgram (i);
+
+					if (! restoreProgramSettings (prog))
+						return false;
+				}
+			}
+
+			if (fxbSwap (set->numPrograms) > 0)
+				setCurrentProgram (oldProg);
+
+			const fxProgram* const prog = (const fxProgram*) (((const char*) (set->programs)) + oldProg * progLen);
+			if (((const char*) prog) - ((const char*) set) >= (ssize_t) dataSize)
+				return false;
+
+			if (! restoreProgramSettings (prog))
+				return false;
+		}
+	}
+	else if (compareMagic (set->fxMagic, "FxCk"))
+	{
+		// single program
+		const fxProgram* const prog = (const fxProgram*) data;
+
+		if (! compareMagic (prog->chunkMagic, "CcnK"))
+			return false;
+
+		changeProgramName (getCurrentProgram(), prog->prgName);
+
+		for (int i = 0; i < fxbSwap (prog->numParams); ++i)
+			setParameter (i, fxbSwapFloat (prog->params[i]));
+	}
+	else if (compareMagic (set->fxMagic, "FBCh"))
+	{
+		// non-preset chunk
+		const fxChunkSet* const cset = (const fxChunkSet*) data;
+
+		if ((size_t) fxbSwap (cset->chunkSize) + sizeof (fxChunkSet) - 8 > (size_t) dataSize)
+			return false;
+
+		setStateInformation(cset->chunk, fxbSwap (cset->chunkSize));
+	}
+	else if (compareMagic (set->fxMagic, "FPCh"))
+	{
+		// preset chunk
+		const fxProgramSet* const cset = (const fxProgramSet*) data;
+
+		if ((size_t) fxbSwap (cset->chunkSize) + sizeof (fxProgramSet) - 8 > (size_t) dataSize)
+			return false;
+
+		setCurrentProgramStateInformation(cset->chunk, fxbSwap (cset->chunkSize));
+
+		changeProgramName (getCurrentProgram(), cset->name);
+	}
+	else
+	{
+		return false;
+	}
+
+	currentBank = fxbFile.getFileName();
+
+	updateHostDisplay();
+
+	return true;
+}
+
+bool ObxdAudioProcessor::restoreProgramSettings(const fxProgram* const prog)
+{
+	if (compareMagic (prog->chunkMagic, "CcnK")
+		&& compareMagic (prog->fxMagic, "FxCk"))
+	{
+		changeProgramName (getCurrentProgram(), prog->prgName);
+
+		for (int i = 0; i < fxbSwap (prog->numParams); ++i)
+			setParameter (i, fxbSwapFloat (prog->params[i]));
+
+		return true;
+	}
+
+	return false;
+}
+
+//==============================================================================
+void ObxdAudioProcessor::scanAndUpdateBanks()
+{
+	bankFiles.clearQuick();
+
+	DirectoryIterator it(getBanksFolder(), false, "*.fxb", File::findFiles);
+	while (it.next())
+	{
+		bankFiles.add(it.getFile());
+	}
+}
+
+const Array<File>& ObxdAudioProcessor::getBankFiles() const
+{
+	return bankFiles;
+}
+
+File ObxdAudioProcessor::getCurrentBankFile() const
+{
+	return getBanksFolder().getChildFile(currentBank);
+}
+
+//==============================================================================
+File ObxdAudioProcessor::getDocumentFolder() const
+{
+	File folder = File::getSpecialLocation(File::userDocumentsDirectory).getChildFile("discoDSP").getChildFile("OB-Xd");
+	if (folder.isSymbolicLink())
+		folder = folder.getLinkedTarget();
+	return folder;
+}
+
+File ObxdAudioProcessor::getSkinFolder() const
+{
+	return getDocumentFolder().getChildFile("Skins");
+}
+
+File ObxdAudioProcessor::getBanksFolder() const
+{
+	return getDocumentFolder().getChildFile("Banks");
+}
+
+File ObxdAudioProcessor::getCurrentSkinFolder() const
+{
+	return getSkinFolder().getChildFile(currentSkin);
+}
+
+void ObxdAudioProcessor::setCurrentSkinFolder(const String& folderName)
+{
+	currentSkin = folderName;
+
+	config->setValue("skin", folderName);
+	config->setNeedsToBeSaved(true);
+}
+
 //==============================================================================
 // This creates new instances of the plugin..
 AudioProcessor* JUCE_CALLTYPE createPluginFilter()

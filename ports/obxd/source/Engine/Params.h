@@ -2,7 +2,7 @@
 	==============================================================================
 	This file is part of Obxd synthesizer.
 
-	Copyright © 2013-2014 Filatov Vadim
+	Copyright ï¿½ 2013-2014 Filatov Vadim
 	
 	Contact author via email :
 	justdat_@_e1.ru
@@ -27,12 +27,12 @@
 class ObxdParams
 {
 public:
-	float* values;
+	float values[PARAM_COUNT];
 	String name;
 	ObxdParams()
 	{
 		name = "Default";
-		values = new float[PARAM_COUNT];
+		//values = new float[PARAM_COUNT];
 		setDefaultValues();
 	}
 	void setDefaultValues()
@@ -47,7 +47,7 @@ public:
 		values[TUNE] = 0.5f;
 		values[OSC2_DET]=0.4;
 		values[LSUS]=1.0f;
-		values[CUTOFF]=0.5f;
+		values[CUTOFF]=1.0f;
 		values[VOLUME]=0.5f;
 		values[OSC1MIX]=1;
 		values[OSC2MIX]=1;
@@ -64,10 +64,16 @@ public:
 		values[PAN6]=0.5;
 		values[PAN7]=0.5;
 		values[PAN8]=0.5;
+		values[ECONOMY_MODE] = 1;
+		values[ENVDER] = 0.3;
+		values[FILTERDER]=0.3;
+		values[LEVEL_DIF]=0.3;
+		values[PORTADER]=0.3;
+		values[UDET]=0.2;
 	}
 	~ObxdParams()
 	{
-		delete values;
+		//delete values;
 	}
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ObxdParams)
+	//JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ObxdParams)
 };
