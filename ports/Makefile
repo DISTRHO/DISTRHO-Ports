@@ -51,6 +51,7 @@ else
 	$(MAKE) -C drumsynth/LV2
 	$(MAKE) -C easySSP/LV2
 	$(MAKE) -C eqinox/LV2
+	$(MAKE) -C HiReSam/LV2
 # 	$(MAKE) -C juce-demo-host/LV2
 	$(MAKE) -C juce-demo-plugin/LV2
 	$(MAKE) -C klangfalter/LV2
@@ -59,6 +60,7 @@ else
 	$(MAKE) -C luftikus/LV2
 	$(MAKE) -C obxd/LV2
 	$(MAKE) -C pitchedDelay/LV2
+	$(MAKE) -C refine/LV2
 	$(MAKE) -C stereosourceseparation/LV2
 	$(MAKE) -C tal-dub-3/LV2
 	$(MAKE) -C tal-filter/LV2
@@ -88,6 +90,7 @@ vst: libs
 	$(MAKE) -C drumsynth/VST
 	$(MAKE) -C easySSP/VST
 	$(MAKE) -C eqinox/VST
+	$(MAKE) -C HiReSam/VST
 # 	$(MAKE) -C juce-demo-host/VST
 	$(MAKE) -C juce-demo-plugin/VST
 	$(MAKE) -C klangfalter/VST
@@ -96,6 +99,7 @@ vst: libs
 	$(MAKE) -C luftikus/VST
 	$(MAKE) -C obxd/VST
 	$(MAKE) -C pitchedDelay/VST
+	$(MAKE) -C refine/VST
 	$(MAKE) -C stereosourceseparation/VST
 	$(MAKE) -C tal-dub-3/VST
 	$(MAKE) -C tal-filter/VST
@@ -124,6 +128,7 @@ clean:
 	$(MAKE) clean -C drumsynth/LV2
 	$(MAKE) clean -C easySSP/LV2
 	$(MAKE) clean -C eqinox/LV2
+	$(MAKE) clean -C HiReSam/LV2
 	$(MAKE) clean -C juce-demo-host/LV2
 	$(MAKE) clean -C juce-demo-plugin/LV2
 	$(MAKE) clean -C klangfalter/LV2
@@ -132,6 +137,7 @@ clean:
 	$(MAKE) clean -C luftikus/LV2
 	$(MAKE) clean -C obxd/LV2
 	$(MAKE) clean -C pitchedDelay/LV2
+	$(MAKE) clean -C refine/LV2
 	$(MAKE) clean -C stereosourceseparation/LV2
 	$(MAKE) clean -C tal-dub-3/LV2
 	$(MAKE) clean -C tal-filter/LV2
@@ -156,6 +162,7 @@ clean:
 	$(MAKE) clean -C drumsynth/VST
 	$(MAKE) clean -C easySSP/VST
 	$(MAKE) clean -C eqinox/VST
+	$(MAKE) clean -C HiReSam/LV2
 	$(MAKE) clean -C juce-demo-host/VST
 	$(MAKE) clean -C juce-demo-plugin/VST
 	$(MAKE) clean -C klangfalter/VST
@@ -164,6 +171,7 @@ clean:
 	$(MAKE) clean -C luftikus/VST
 	$(MAKE) clean -C obxd/VST
 	$(MAKE) clean -C pitchedDelay/VST
+	$(MAKE) clean -C refine/VST
 	$(MAKE) clean -C stereosourceseparation/VST
 	$(MAKE) clean -C tal-dub-3/VST
 	$(MAKE) clean -C tal-filter/VST
