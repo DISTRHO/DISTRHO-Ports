@@ -37,11 +37,19 @@
  #if (! defined MAC_OS_X_VERSION_MIN_REQUIRED) || (! defined MAC_OS_X_VERSION_10_11) || (MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_11)
   #error AUv3 needs Deployment Target OS X 10.11 or higher to compile
  #endif
+ #if (defined MAC_OS_X_VERSION_10_13) && (MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_13)
+  #define JUCE_AUV3_MIDI_OUTPUT_SUPPORTED 1
+  #define JUCE_AUV3_VIEW_CONFIG_SUPPORTED 1
+ #endif
 #endif
 
 #if JUCE_IOS
  #if (! defined __IPHONE_OS_VERSION_MIN_REQUIRED) || (! defined __IPHONE_9_0) || (__IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_9_0)
   #error AUv3 needs Deployment Target iOS 9.0 or higher to compile
+ #endif
+ #if (defined __IPHONE_11_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_11_0)
+  #define JUCE_AUV3_MIDI_OUTPUT_SUPPORTED 1
+  #define JUCE_AUV3_VIEW_CONFIG_SUPPORTED 1
  #endif
 #endif
 
@@ -97,6 +105,15 @@ struct AudioProcessorHolder  : public ReferenceCountedObject
     AudioProcessor* operator->() noexcept       { return processor; }
     AudioProcessor* get() noexcept              { return processor; }
 
+    struct ViewConfig
+    {
+        double width;
+        double height;
+        bool hostHasMIDIController;
+    };
+
+    ScopedPointer<ViewConfig> viewConfiguration;
+
     typedef ReferenceCountedObjectPtr<AudioProcessorHolder> Ptr;
 
 private:
@@ -121,8 +138,7 @@ public:
                                                                           error: error
                                                                       juceClass: this])
        #pragma clang diagnostic pop
-    {
-    }
+    {}
 
     JuceAudioUnitv3Base (AUAudioUnit* audioUnit) : au (audioUnit)
     {
@@ -134,39 +150,14 @@ public:
 
     //==============================================================================
     AUAudioUnit* getAudioUnit() noexcept                                   { return au; }
-    virtual int getVirtualMIDICableCount()                                 { return 0; }
-    virtual void reset()                                                   {}
-    virtual bool shouldChangeToFormat (AVAudioFormat* format, AUAudioUnitBus* bus)
-    {
-        objc_super s = { getAudioUnit(), [AUAudioUnit class] };
-        return (ObjCMsgSendSuper<BOOL, AVAudioFormat*,AUAudioUnitBus* > (&s, @selector (shouldChangeToFormat:forBus:), format, bus) == YES);
-    }
-
-    virtual AUAudioUnitPreset* getCurrentPreset()                          { return nullptr; }
-    virtual void setCurrentPreset(AUAudioUnitPreset*)                      {}
-    virtual NSTimeInterval getLatency()                                    { return 0.0; }
-    virtual NSTimeInterval getTailTime()                                   { return 0.0; }
-    virtual bool getCanProcessInPlace()                                    { return false; }
-    virtual bool getRenderingOffline()                                     { return false; }
 
     //==============================================================================
-    virtual AUAudioUnitBusArray* getInputBusses()          = 0;
-    virtual AUAudioUnitBusArray* getOutputBusses()         = 0;
-    virtual AUParameterTree* getParameterTree()            = 0;
-    virtual AUInternalRenderBlock getInternalRenderBlock() = 0;
-    virtual void setRenderingOffline (bool offline)        = 0;
-    virtual NSArray<NSNumber*> *getChannelCapabilities()   = 0;
+    virtual void reset()                                                   = 0;
 
     //==============================================================================
-    virtual NSArray<NSNumber*>* parametersForOverviewWithCount (int)
-    {
-        return [NSArray<NSNumber*> array];
-    }
-
-    virtual NSArray<AUAudioUnitPreset*>* getFactoryPresets()
-    {
-        return [NSArray<AUAudioUnitPreset*> array];
-    }
+    virtual AUAudioUnitPreset* getCurrentPreset()                          = 0;
+    virtual void setCurrentPreset(AUAudioUnitPreset*)                      = 0;
+    virtual NSArray<AUAudioUnitPreset*>* getFactoryPresets()               = 0;
 
     virtual NSDictionary<NSString*, id>* getFullState()
     {
@@ -180,6 +171,34 @@ public:
         ObjCMsgSendSuper<void, NSDictionary<NSString*, id>*> (&s, @selector (setFullState:), state);
     }
 
+    virtual AUParameterTree* getParameterTree()                            = 0;
+    virtual NSArray<NSNumber*>* parametersForOverviewWithCount (int)       = 0;
+
+    //==============================================================================
+    virtual NSTimeInterval getLatency()                                    = 0;
+    virtual NSTimeInterval getTailTime()                                   = 0;
+
+    //==============================================================================
+    virtual AUAudioUnitBusArray* getInputBusses()                          = 0;
+    virtual AUAudioUnitBusArray* getOutputBusses()                         = 0;
+    virtual NSArray<NSNumber*>* getChannelCapabilities()                   = 0;
+    virtual bool shouldChangeToFormat (AVAudioFormat*, AUAudioUnitBus*)    = 0;
+
+    //==============================================================================
+    virtual int getVirtualMIDICableCount()                                 = 0;
+    virtual bool getSupportsMPE()                                          = 0;
+    virtual NSArray<NSString*>* getMIDIOutputNames()                       = 0;
+
+    //==============================================================================
+    virtual AUInternalRenderBlock getInternalRenderBlock()                 = 0;
+    virtual bool getCanProcessInPlace()                                    { return false; }
+    virtual bool getRenderingOffline()                                     = 0;
+    virtual void setRenderingOffline (bool offline)                        = 0;
+
+    //==============================================================================
+    virtual NSString* getContextName()      const                          = 0;
+    virtual void setContextName (NSString*)                                = 0;
+
     virtual bool allocateRenderResourcesAndReturnError (NSError **outError)
     {
         objc_super s = { getAudioUnit(), [AUAudioUnit class] };
@@ -191,6 +210,12 @@ public:
         objc_super s = { getAudioUnit(), [AUAudioUnit class] };
         ObjCMsgSendSuper<void> (&s, @selector (deallocateRenderResources));
     }
+
+    //==============================================================================
+   #if JUCE_AUV3_VIEW_CONFIG_SUPPORTED
+    virtual NSIndexSet* getSupportedViewConfigurations (NSArray<AUAudioUnitViewConfiguration*>*) = 0;
+    virtual void selectViewConfiguration (AUAudioUnitViewConfiguration*)   = 0;
+   #endif
 
 private:
     struct Class  : public ObjCClass<AUAudioUnit>
@@ -212,31 +237,55 @@ private:
                        @encode (AudioComponentDescription),
                        @encode (AudioComponentInstantiationOptions), "^@");
 
-            addMethod (@selector (dealloc),                                 dealloc,                               "v@:");
-            addMethod (@selector (inputBusses),                             getInputBusses,                        "@@:");
-            addMethod (@selector (outputBusses),                            getOutputBusses,                       "@@:");
-            addMethod (@selector (parameterTree),                           getParameterTree,                      "@@:");
-            addMethod (@selector (deallocateRenderResources),               deallocateRenderResources,             "v@:");
-            addMethod (@selector (reset),                                   reset,                                 "v@:");
-            addMethod (@selector (shouldChangeToFormat:forBus:),            shouldChangeToFormat,                  "B@:@@");
-            addMethod (@selector (factoryPresets),                          getFactoryPresets,                     "@@:");
-            addMethod (@selector (currentPreset),                           getCurrentPreset,                      "@@:");
-            addMethod (@selector (setCurrentPreset:),                       setCurrentPreset,                      "v@:@");
-            addMethod (@selector (fullState),                               getFullState,                          "@@:");
-            addMethod (@selector (setFullState:),                           setFullState,                          "v@:@");
-            addMethod (@selector (channelCapabilities),                     getChannelCapabilities,                "@@:");
-            addMethod (@selector (allocateRenderResourcesAndReturnError:),  allocateRenderResourcesAndReturnError, "B@:^@");
+            addMethod (@selector (dealloc),                         dealloc,                        "v@:");
 
+            //==============================================================================
+            addMethod (@selector (reset),                           reset,                          "v@:");
+
+            //==============================================================================
+            addMethod (@selector (currentPreset),                   getCurrentPreset,               "@@:");
+            addMethod (@selector (setCurrentPreset:),               setCurrentPreset,               "v@:@");
+            addMethod (@selector (factoryPresets),                  getFactoryPresets,              "@@:");
+            addMethod (@selector (fullState),                       getFullState,                   "@@:");
+            addMethod (@selector (setFullState:),                   setFullState,                   "v@:@");
+            addMethod (@selector (parameterTree),                   getParameterTree,               "@@:");
             addMethod (@selector (parametersForOverviewWithCount:), parametersForOverviewWithCount, "@@:", @encode (NSInteger));
+
+            //==============================================================================
+            addMethod (@selector (latency),                         getLatency,                     @encode (NSTimeInterval), "@:");
+            addMethod (@selector (tailTime),                        getTailTime,                    @encode (NSTimeInterval),  "@:");
+
+            //==============================================================================
+            addMethod (@selector (inputBusses),                     getInputBusses,                 "@@:");
+            addMethod (@selector (outputBusses),                    getOutputBusses,                "@@:");
+            addMethod (@selector (channelCapabilities),             getChannelCapabilities,         "@@:");
+            addMethod (@selector (shouldChangeToFormat:forBus:),    shouldChangeToFormat,           "B@:@@");
+
+            //==============================================================================
+            addMethod (@selector (virtualMIDICableCount),           getVirtualMIDICableCount,       @encode (NSInteger), "@:");
+            addMethod (@selector (supportsMPE),                     getSupportsMPE,                 @encode (BOOL),      "@:");
+
+           #if JUCE_AUV3_MIDI_OUTPUT_SUPPORTED
+            addMethod (@selector (MIDIOutputNames),                 getMIDIOutputNames,             "@@:");
+           #endif
+
+            //==============================================================================
+            addMethod (@selector (internalRenderBlock),             getInternalRenderBlock,         @encode (AUInternalRenderBlock), "@:");
+            addMethod (@selector (canProcessInPlace),               getCanProcessInPlace,           @encode (BOOL), "@:");
+            addMethod (@selector (isRenderingOffline),              getRenderingOffline,            @encode (BOOL),  "@:");
             addMethod (@selector (setRenderingOffline:),            setRenderingOffline,            "v@:", @encode (BOOL));
+            addMethod (@selector (allocateRenderResourcesAndReturnError:),  allocateRenderResourcesAndReturnError, "B@:^@");
+            addMethod (@selector (deallocateRenderResources),       deallocateRenderResources,      "v@:");
 
+            //==============================================================================
+            addMethod (@selector (contextName),                     getContextName,                 "@@:");
+            addMethod (@selector (setContextName:),                  setContextName,                 "v@:@");
 
-            addMethod (@selector (internalRenderBlock),   getInternalRenderBlock,   @encode (AUInternalRenderBlock), "@:");
-            addMethod (@selector (virtualMIDICableCount), getVirtualMIDICableCount, @encode (NSInteger),             "@:");
-            addMethod (@selector (latency),               getLatency,               @encode (NSTimeInterval),        "@:");
-            addMethod (@selector (tailTime),              getTailTime,              @encode (NSTimeInterval),        "@:");
-            addMethod (@selector (canProcessInPlace),     getCanProcessInPlace,     @encode (BOOL),                  "@:");
-            addMethod (@selector (isRenderingOffline),    getRenderingOffline,      @encode (BOOL),                  "@:");
+            //==============================================================================
+           #if JUCE_AUV3_VIEW_CONFIG_SUPPORTED
+            addMethod (@selector (supportedViewConfigurations:),    getSupportedViewConfigurations, "@@:@");
+            addMethod (@selector (selectViewConfiguration:),        selectViewConfiguration,        "v@:@");
+           #endif
 
             registerClass();
         }
@@ -274,27 +323,51 @@ private:
         }
 
         static void dealloc (id self, SEL)                                                          { delete _this (self); }
-        static AUAudioUnitBusArray* getInputBusses   (id self, SEL)                                 { return _this (self)->getInputBusses(); }
-        static AUAudioUnitBusArray* getOutputBusses  (id self, SEL)                                 { return _this (self)->getOutputBusses(); }
-        static AUParameterTree*     getParameterTree (id self, SEL)                                 { return _this (self)->getParameterTree(); }
-        static AUInternalRenderBlock getInternalRenderBlock (id self, SEL)                          { return _this (self)->getInternalRenderBlock();  }
-        static BOOL allocateRenderResourcesAndReturnError (id self, SEL, NSError** error)           { return _this (self)->allocateRenderResourcesAndReturnError (error) ? YES : NO; }
-        static void deallocateRenderResources (id self, SEL)                                        { _this (self)->deallocateRenderResources(); }
+
+        //==============================================================================
         static void reset (id self, SEL)                                                            { _this (self)->reset(); }
-        static NSInteger getVirtualMIDICableCount (id self, SEL)                                    { return _this (self)->getVirtualMIDICableCount(); }
-        static BOOL shouldChangeToFormat (id self, SEL, AVAudioFormat* format, AUAudioUnitBus* bus) { return _this (self)->shouldChangeToFormat (format, bus) ? YES : NO; }
-        static NSArray<NSNumber*>* parametersForOverviewWithCount (id self, SEL, NSInteger count)   { return _this (self)->parametersForOverviewWithCount (static_cast<int> (count)); }
-        static NSArray<AUAudioUnitPreset*>* getFactoryPresets (id self, SEL)                        { return _this (self)->getFactoryPresets(); }
+
+        //==============================================================================
         static AUAudioUnitPreset* getCurrentPreset (id self, SEL)                                   { return _this (self)->getCurrentPreset(); }
         static void setCurrentPreset (id self, SEL, AUAudioUnitPreset* preset)                      { return _this (self)->setCurrentPreset (preset); }
+        static NSArray<AUAudioUnitPreset*>* getFactoryPresets (id self, SEL)                        { return _this (self)->getFactoryPresets(); }
         static NSDictionary<NSString*, id>* getFullState (id self, SEL)                             { return _this (self)->getFullState(); }
         static void setFullState (id self, SEL, NSDictionary<NSString *, id>* state)                { return _this (self)->setFullState (state); }
+        static AUParameterTree*     getParameterTree (id self, SEL)                                 { return _this (self)->getParameterTree(); }
+        static NSArray<NSNumber*>* parametersForOverviewWithCount (id self, SEL, NSInteger count)   { return _this (self)->parametersForOverviewWithCount (static_cast<int> (count)); }
+
+        //==============================================================================
         static NSTimeInterval getLatency (id self, SEL)                                             { return _this (self)->getLatency(); }
         static NSTimeInterval getTailTime (id self, SEL)                                            { return _this (self)->getTailTime(); }
+
+        //==============================================================================
+        static AUAudioUnitBusArray* getInputBusses   (id self, SEL)                                 { return _this (self)->getInputBusses(); }
+        static AUAudioUnitBusArray* getOutputBusses  (id self, SEL)                                 { return _this (self)->getOutputBusses(); }
+        static NSArray<NSNumber*>* getChannelCapabilities (id self, SEL)                            { return _this (self)->getChannelCapabilities(); }
+        static BOOL shouldChangeToFormat (id self, SEL, AVAudioFormat* format, AUAudioUnitBus* bus) { return _this (self)->shouldChangeToFormat (format, bus) ? YES : NO; }
+
+        //==============================================================================
+        static NSInteger getVirtualMIDICableCount (id self, SEL)                                    { return _this (self)->getVirtualMIDICableCount(); }
+        static BOOL getSupportsMPE (id self, SEL)                                                   { return _this (self)->getSupportsMPE() ? YES : NO; }
+        static NSArray<NSString*>* getMIDIOutputNames (id self, SEL)                                { return _this (self)->getMIDIOutputNames(); }
+
+        //==============================================================================
+        static AUInternalRenderBlock getInternalRenderBlock (id self, SEL)                          { return _this (self)->getInternalRenderBlock();  }
         static BOOL getCanProcessInPlace (id self, SEL)                                             { return _this (self)->getCanProcessInPlace() ? YES : NO; }
         static BOOL getRenderingOffline (id self, SEL)                                              { return _this (self)->getRenderingOffline() ? YES : NO; }
         static void setRenderingOffline (id self, SEL, BOOL renderingOffline)                       { _this (self)->setRenderingOffline (renderingOffline); }
-        static NSArray<NSNumber*>* getChannelCapabilities (id self, SEL)                            { return _this (self)->getChannelCapabilities(); }
+        static BOOL allocateRenderResourcesAndReturnError (id self, SEL, NSError** error)           { return _this (self)->allocateRenderResourcesAndReturnError (error) ? YES : NO; }
+        static void deallocateRenderResources (id self, SEL)                                        { _this (self)->deallocateRenderResources(); }
+
+        //==============================================================================
+        static NSString* getContextName (id self, SEL)                                              { return _this (self)->getContextName(); }
+        static void setContextName (id self, SEL, NSString* str)                                    { return _this (self)->setContextName (str); }
+
+        //==============================================================================
+       #if JUCE_AUV3_VIEW_CONFIG_SUPPORTED
+        static NSIndexSet* getSupportedViewConfigurations (id self, SEL, NSArray<AUAudioUnitViewConfiguration*>* configs) { return _this (self)->getSupportedViewConfigurations (configs); }
+        static void selectViewConfiguration (id self, SEL, AUAudioUnitViewConfiguration* config)    { _this (self)->selectViewConfiguration (config); }
+       #endif
     };
 
     static JuceAudioUnitv3Base* create (AUAudioUnit*, AudioComponentDescription, AudioComponentInstantiationOptions, NSError**);
@@ -410,16 +483,14 @@ public:
         addAudioUnitBusses (false);
     }
 
-    //==============================================================================
     AudioProcessor& getAudioProcessor() const noexcept        { return **processorHolder; }
-    AUAudioUnitBusArray* getInputBusses() override            { return inputBusses;  }
-    AUAudioUnitBusArray* getOutputBusses() override           { return outputBusses; }
-    AUParameterTree*     getParameterTree() override          { return paramTree; }
-    AUInternalRenderBlock getInternalRenderBlock() override   { return internalRenderBlock;  }
-    NSArray<AUAudioUnitPreset*>* getFactoryPresets() override { return factoryPresets; }
-    bool getRenderingOffline() override                       { return getAudioProcessor().isNonRealtime(); }
-    void setRenderingOffline (bool offline) override          { getAudioProcessor().setNonRealtime (offline); }
-    NSArray<NSNumber*>* getChannelCapabilities() override     { return channelCapabilities; }
+
+    //==============================================================================
+    void reset() override
+    {
+        midiMessages.clear();
+        lastTimeStamp.mSampleTime = std::numeric_limits<Float64>::max();
+    }
 
     //==============================================================================
     AUAudioUnitPreset* getCurrentPreset() override
@@ -442,7 +513,11 @@ public:
             getAudioProcessor().setCurrentProgram (idx);
     }
 
-    //==============================================================================
+    NSArray<AUAudioUnitPreset*>* getFactoryPresets() override
+    {
+        return factoryPresets;
+    }
+
     NSDictionary<NSString*, id>* getFullState() override
     {
         NSMutableDictionary<NSString*, id>* retval = [[NSMutableDictionary<NSString*, id> alloc] init];
@@ -508,7 +583,11 @@ public:
         [modifiedState release];
     }
 
-    //==============================================================================
+    AUParameterTree* getParameterTree() override
+    {
+        return paramTree;
+    }
+
     NSArray<NSNumber*>* parametersForOverviewWithCount (int count) override
     {
         const int n = static_cast<int> ([overviewParams count]);
@@ -522,6 +601,68 @@ public:
         return [retval autorelease];
     }
 
+    //==============================================================================
+    NSTimeInterval getLatency() override
+    {
+        auto& p = getAudioProcessor();
+        return p.getLatencySamples() / p.getSampleRate();
+    }
+
+    NSTimeInterval getTailTime() override
+    {
+        return getAudioProcessor().getTailLengthSeconds();
+    }
+
+    //==============================================================================
+    AUAudioUnitBusArray* getInputBusses() override            { return inputBusses;  }
+    AUAudioUnitBusArray* getOutputBusses() override           { return outputBusses; }
+    NSArray<NSNumber*>* getChannelCapabilities() override     { return channelCapabilities; }
+
+    bool shouldChangeToFormat (AVAudioFormat* format, AUAudioUnitBus* auBus) override
+    {
+        const bool isInput = ([auBus busType] == AUAudioUnitBusTypeInput);
+        const int busIdx = static_cast<int> ([auBus index]);
+        const int newNumChannels = static_cast<int> ([format channelCount]);
+
+        AudioProcessor& processor = getAudioProcessor();
+
+        if (AudioProcessor::Bus* bus = processor.getBus (isInput, busIdx))
+        {
+          #ifdef JucePlugin_PreferredChannelConfigurations
+            ignoreUnused (bus);
+
+            short configs[][2] = {JucePlugin_PreferredChannelConfigurations};
+
+            if (! AudioUnitHelpers::isLayoutSupported (processor, isInput, busIdx, newNumChannels, configs))
+                return false;
+          #else
+            const AVAudioChannelLayout* layout    = [format channelLayout];
+            const AudioChannelLayoutTag layoutTag = (layout != nullptr ? [layout layoutTag] : 0);
+
+            if (layoutTag != 0)
+            {
+                AudioChannelSet newLayout = CoreAudioLayouts::fromCoreAudio (layoutTag);
+
+                if (newLayout.size() != newNumChannels)
+                    return false;
+
+                if (! bus->isLayoutSupported (newLayout))
+                    return false;
+            }
+            else
+            {
+                if (! bus->isNumberOfChannelsSupported (newNumChannels))
+                    return false;
+            }
+           #endif
+
+            return true;
+        }
+
+        return false;
+    }
+
+    //==============================================================================
     int getVirtualMIDICableCount() override
     {
        #if JucePlugin_WantsMidiInput
@@ -529,6 +670,38 @@ public:
        #else
         return 0;
        #endif
+    }
+
+    bool getSupportsMPE() override
+    {
+        return getAudioProcessor().supportsMPE();
+    }
+
+    NSArray<NSString*>* getMIDIOutputNames() override
+    {
+       #if JucePlugin_ProducesMidiOutput
+        return @[@"MIDI Out"];
+       #else
+        return @[];
+       #endif
+    }
+
+    //==============================================================================
+    AUInternalRenderBlock getInternalRenderBlock() override   { return internalRenderBlock;  }
+    bool getRenderingOffline() override                       { return getAudioProcessor().isNonRealtime(); }
+    void setRenderingOffline (bool offline) override          { getAudioProcessor().setNonRealtime (offline); }
+
+    //==============================================================================
+    NSString* getContextName() const    override              { return juceStringToNS (contextName); }
+    void setContextName (NSString* str) override
+    {
+        if (str != nullptr)
+        {
+            AudioProcessor::TrackProperties props;
+            props.name = nsStringToJuce (str);
+
+            getAudioProcessor().updateTrackProperties (props);
+        }
     }
 
     //==============================================================================
@@ -563,13 +736,7 @@ public:
                 const AudioChannelLayoutTag layoutTag = (layout != nullptr ? [layout layoutTag] : 0);
 
                 if (layoutTag != 0)
-                {
-                    AudioChannelLayout caLayout;
-
-                    zerostruct (caLayout);
-                    caLayout.mChannelLayoutTag = layoutTag;
-                    newLayout = CoreAudioLayouts::fromCoreAudio (caLayout);
-                }
+                    newLayout = CoreAudioLayouts::fromCoreAudio (layoutTag);
                 else
                     newLayout = bus->supportedLayoutWithChannels (static_cast<int> ([format channelCount]));
 
@@ -641,60 +808,45 @@ public:
         JuceAudioUnitv3Base::deallocateRenderResources();
     }
 
-    void reset() override
-    {
-        midiMessages.clear();
-        lastTimeStamp.mSampleTime = std::numeric_limits<Float64>::max();
-    }
-
     //==============================================================================
-    bool shouldChangeToFormat (AVAudioFormat* format, AUAudioUnitBus* auBus) override
+   #if JUCE_AUV3_VIEW_CONFIG_SUPPORTED
+    NSIndexSet* getSupportedViewConfigurations (NSArray<AUAudioUnitViewConfiguration*>* configs) override
     {
-        const bool isInput = ([auBus busType] == AUAudioUnitBusTypeInput);
-        const int busIdx = static_cast<int> ([auBus index]);
-        const int newNumChannels = static_cast<int> ([format channelCount]);
+        auto supportedViewIndecies = [[NSMutableIndexSet alloc] init];
+        auto n = [configs count];
 
-        AudioProcessor& processor = getAudioProcessor();
-
-        if (AudioProcessor::Bus* bus = processor.getBus (isInput, busIdx))
+        if (auto* editor = getAudioProcessor().createEditorIfNeeded())
         {
-          #ifdef JucePlugin_PreferredChannelConfigurations
-            ignoreUnused (bus);
+            // If you hit this assertion then your plug-in's editor is reporting that it doesn't support
+            // any host MIDI controller configurations!
+            jassert (editor->supportsHostMIDIControllerPresence (true) || editor->supportsHostMIDIControllerPresence (false));
 
-            short configs[][2] = {JucePlugin_PreferredChannelConfigurations};
-
-            if (! AudioUnitHelpers::isLayoutSupported (processor, isInput, busIdx, newNumChannels, configs))
-                return false;
-          #else
-            const AVAudioChannelLayout* layout    = [format channelLayout];
-            const AudioChannelLayoutTag layoutTag = (layout != nullptr ? [layout layoutTag] : 0);
-
-            if (layoutTag != 0)
+            for (auto i = 0u; i < n; ++i)
             {
-                AudioChannelLayout caLayout;
+                if (auto* viewConfiguration = [configs objectAtIndex:i])
+                {
+                    if (editor->supportsHostMIDIControllerPresence ([viewConfiguration hostHasController] == YES))
+                    {
+                        auto* constrainer = editor->getConstrainer();
+                        auto height = (int) [viewConfiguration height];
+                        auto width  = (int) [viewConfiguration width];
 
-                zerostruct (caLayout);
-                caLayout.mChannelLayoutTag = layoutTag;
-                AudioChannelSet newLayout = CoreAudioLayouts::fromCoreAudio (caLayout);
-
-                if (newLayout.size() != newNumChannels)
-                    return false;
-
-                if (! bus->isLayoutSupported (newLayout))
-                    return false;
+                        if (height <= constrainer->getMaximumHeight() && height >= constrainer->getMinimumHeight()
+                         && width  <= constrainer->getMaximumWidth()  && width  >= constrainer->getMinimumWidth())
+                            [supportedViewIndecies addIndex: i];
+                    }
+                }
             }
-            else
-            {
-                if (! bus->isNumberOfChannelsSupported (newNumChannels))
-                    return false;
-            }
-           #endif
-
-            return true;
         }
 
-        return false;
+        return [supportedViewIndecies autorelease];
     }
+
+    void selectViewConfiguration (AUAudioUnitViewConfiguration* config) override
+    {
+        processorHolder->viewConfiguration = new AudioProcessorHolder::ViewConfig { [config width], [config height], [config hostHasController] == YES };
+    }
+   #endif
 
     //==============================================================================
     void audioProcessorChanged (AudioProcessor* processor) override
@@ -719,15 +871,6 @@ public:
             }
         }
     }
-
-    //==============================================================================
-    NSTimeInterval getLatency() override
-    {
-        auto& p = getAudioProcessor();
-        return p.getLatencySamples() / p.getSampleRate();
-    }
-
-    NSTimeInterval getTailTime() override       { return getAudioProcessor().getTailLengthSeconds(); }
 
     //==============================================================================
     bool getCurrentPosition (CurrentPositionInfo& info) override
@@ -802,6 +945,7 @@ public:
         return true;
     }
 
+    //==============================================================================
     static void removeEditor (AudioProcessor& processor)
     {
         ScopedLock editorLock (processor.getCallbackLock());
@@ -818,7 +962,7 @@ private:
     struct BusBuffer
     {
         BusBuffer (AUAudioUnitBus* bus, int maxFramesPerBuffer)
-            : auBus (bus), bufferList (nullptr),
+            : auBus (bus),
               maxFrames (maxFramesPerBuffer),
               numberOfChannels (static_cast<int> ([[auBus format] channelCount])),
               isInterleaved ([[auBus format] isInterleaved])
@@ -893,7 +1037,7 @@ private:
     private:
         AUAudioUnitBus* auBus;
         HeapBlock<char> bufferListStorage;
-        AudioBufferList* bufferList;
+        AudioBufferList* bufferList = nullptr;
         int maxFrames, numberOfChannels;
         bool isInterleaved;
         AudioSampleBuffer scratchBuffer;
@@ -1048,6 +1192,7 @@ private:
                                            static_cast<int> (maxFrames)));
     }
 
+    //==============================================================================
     void processEvents (const AURenderEvent *__nullable realtimeEventListHead, int numParams, AUEventSampleTime startTime)
     {
         for (const AURenderEvent* event = realtimeEventListHead; event != nullptr; event = event->head.next)
@@ -1175,6 +1320,17 @@ private:
 
             // process audio
             processBlock (audioBuffer.getBuffer (frameCount), midiMessages);
+
+            // send MIDI
+           #if JucePlugin_ProducesMidiOutput && JUCE_AUV3_MIDI_OUTPUT_SUPPORTED
+            auto midiOut = [au MIDIOutputEventBlock];
+            MidiMessage msg;
+            int samplePosition;
+
+            for (MidiBuffer::Iterator it (midiMessages); it.getNextEvent (msg, samplePosition);)
+                midiOut (samplePosition, 0, msg.getRawDataSize(), msg.getRawData());
+           #endif
+
             midiMessages.clear();
         }
 
@@ -1288,8 +1444,8 @@ private:
     AUParameterObserverToken editorObserverToken;
 
     ScopedPointer<AUParameterTree> paramTree;
-    ScopedPointer<NSMutableArray<NSNumber*> > overviewParams;
-    ScopedPointer<NSMutableArray<NSNumber*> > channelCapabilities;
+    ScopedPointer<NSMutableArray<NSNumber*>> overviewParams;
+    ScopedPointer<NSMutableArray<NSNumber*>> channelCapabilities;
 
     ScopedPointer<NSMutableArray<AUAudioUnitPreset*> > factoryPresets;
 
@@ -1306,6 +1462,8 @@ private:
 
     AudioTimeStamp lastTimeStamp;
     CurrentPositionInfo lastAudioHead;
+
+    String contextName;
 };
 
 const double JuceAudioUnitv3::kDefaultSampleRate = 44100.0;
@@ -1320,9 +1478,8 @@ JuceAudioUnitv3Base* JuceAudioUnitv3Base::create (AUAudioUnit* audioUnit, AudioC
 class JuceAUViewController
 {
 public:
-
     JuceAUViewController (AUViewController<AUAudioUnitFactory>* p)
-        : myself (p), processorHolder (nullptr), preferredSize (1.0f, 1.0f)
+        : myself (p)
     {
         jassert (MessageManager::getInstance()->isThisTheMessageThread());
 
@@ -1370,6 +1527,9 @@ public:
         {
             if (AudioProcessorEditor* editor = getAudioProcessor().getActiveEditor())
             {
+                if (processorHolder->viewConfiguration != nullptr)
+                    editor->hostMIDIControllerIsAvailable (processorHolder->viewConfiguration->hostHasMIDIController);
+
                 editor->setBounds (convertToRectInt ([[myself view] bounds]));
 
                 if (JUCE_IOS_MAC_VIEW* peerView = [[[myself view] subviews] objectAtIndex: 0])
@@ -1433,8 +1593,8 @@ public:
 private:
     //==============================================================================
     AUViewController<AUAudioUnitFactory>* myself;
-    AudioProcessorHolder::Ptr processorHolder;
-    Rectangle<int> preferredSize;
+    AudioProcessorHolder::Ptr processorHolder = nullptr;
+    Rectangle<int> preferredSize { 1, 1 };
 
     //==============================================================================
     AUAudioUnit* createAudioUnitOnMessageThread (const AudioComponentDescription& descr, NSError** error)

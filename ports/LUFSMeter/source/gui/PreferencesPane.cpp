@@ -96,7 +96,7 @@ PreferencesPane::PreferencesPane (const Value& loudnessBarWidth,
     loudnessBarRange.getMinValueObject().referTo (loudnessBarMinValue);
     loudnessBarRange.getMaxValueObject().referTo (loudnessBarMaxValue);
     loudnessBarRange.setTextBoxStyle (Slider::NoTextBox, isReadOnly, textEntryBoxWidth, textEntryBoxHeight);
-    loudnessBarRange.setPopupDisplayEnabled (true, this);
+    loudnessBarRange.setPopupDisplayEnabled (true, true, this);
     loudnessBarRange.setTextValueSuffix (" LUFS");
     addAndMakeVisible (&loudnessBarRange);
     

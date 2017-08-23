@@ -26,7 +26,7 @@ TheFunctionAudioProcessorEditor::TheFunctionAudioProcessorEditor (TheFunctionAud
     gainSlider.setRange (0.0, 1.0, 0.001);
     gainSlider.setTextBoxStyle(Slider::NoTextBox, false, 0, 0);
 
-    gainSlider.setPopupDisplayEnabled(true,0);
+    gainSlider.setPopupDisplayEnabled(true, true, this);
     gainSlider.setReadoutType("gain");
 
     // Gain L Slider
@@ -36,7 +36,7 @@ TheFunctionAudioProcessorEditor::TheFunctionAudioProcessorEditor (TheFunctionAud
     gainLSlider.setRange (0.0, 1.0, 0.001);
     gainLSlider.setTextBoxStyle(Slider::NoTextBox, false, 0, 0);
 
-    gainLSlider.setPopupDisplayEnabled(true,0);
+    gainLSlider.setPopupDisplayEnabled(true, true, this);
     gainLSlider.setReadoutType("gain");
 
     // Pan L Slider
@@ -46,7 +46,7 @@ TheFunctionAudioProcessorEditor::TheFunctionAudioProcessorEditor (TheFunctionAud
     panLSlider.setRange (0.0, 1.0, 0.001);
     panLSlider.setTextBoxStyle(Slider::NoTextBox, false, 0, 0);
 
-    panLSlider.setPopupDisplayEnabled(true,0);
+    panLSlider.setPopupDisplayEnabled(true, true, this);
     panLSlider.setReadoutType("pan");
 
     // Pan R Slider
@@ -56,7 +56,7 @@ TheFunctionAudioProcessorEditor::TheFunctionAudioProcessorEditor (TheFunctionAud
     panRSlider.setRange (0.0, 1.0, 0.001);
     panRSlider.setTextBoxStyle(Slider::NoTextBox, false, 0, 0);
 
-    panRSlider.setPopupDisplayEnabled(true,0);
+    panRSlider.setPopupDisplayEnabled(true, true, this);
     panRSlider.setReadoutType("pan");
 
     // Gain R Slider
@@ -66,7 +66,7 @@ TheFunctionAudioProcessorEditor::TheFunctionAudioProcessorEditor (TheFunctionAud
     gainRSlider.setRange (0.0, 1.0, 0.001);
     gainRSlider.setTextBoxStyle(Slider::NoTextBox, false, 0, 0);
 
-    gainRSlider.setPopupDisplayEnabled(true,0);
+    gainRSlider.setPopupDisplayEnabled(true, true, this);
     gainRSlider.setReadoutType("gain");
 
     // Phase Button
