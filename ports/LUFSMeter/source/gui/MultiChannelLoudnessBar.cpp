@@ -49,7 +49,7 @@ MultiChannelLoudnessBar::~MultiChannelLoudnessBar ()
     maxLoudness.removeListener(this);
 }
 
-void MultiChannelLoudnessBar::setLoudness (const Array<float>& multiChannelLoudness)
+void MultiChannelLoudnessBar::setLoudness (const vector<float>& multiChannelLoudness)
 {
     if (multiChannelLoudness.size() != currentMultiChannelLoudness.size())
     {
@@ -92,7 +92,7 @@ void MultiChannelLoudnessBar::paint (Graphics& g)
     g.setColour (colour);
     
     float topLeftX = 0.0f;
-    for (int channel = 0; channel < currentMultiChannelLoudness.size(); ++channel)
+    for (size_t channel = 0; channel < currentMultiChannelLoudness.size(); ++channel)
     {
         float loudnessOfThisChannel = currentMultiChannelLoudness[channel];
         

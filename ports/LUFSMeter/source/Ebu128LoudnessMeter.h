@@ -5,7 +5,7 @@
  
  
  This file is part of the LUFS Meter audio measurement plugin.
- Copyright 2011-14 by Klangfreund, Samuel Gaehwiler.
+ Copyright 2011-2016 by Klangfreund, Samuel Gaehwiler.
  
  -------------------------------------------------------------------------------
  
@@ -20,8 +20,7 @@
  -------------------------------------------------------------------------------
  
  To release a closed-source product which uses the LUFS Meter or parts of it,
- a commercial license is available. Visit www.klangfreund.com/lufsmeter for more
- information.
+ get in contact via www.klangfreund.com/contact/.
  
  ===============================================================================
  */
@@ -32,8 +31,10 @@
 
 #include "MacrosAndJuceHeaders.h"
 #include "filters/SecondOrderIIRFilter.h"
+#include <map>
 #include <vector>
 
+using std::map;
 using std::vector;
 
 /**
@@ -42,7 +43,7 @@ using std::vector;
  The loudness is measured according to the documents
  (List)
  - EBU - R 128
- - ITU 1770 Rev 2
+ - ITU 1770 Rev 2,3 and 4
  - EBU - Tech 3341 (EBU mode metering)
  - EBU - Tech 3342 (LRA, loudness range)
  - EBU - Tech 3343
@@ -50,8 +51,8 @@ using std::vector;
 class Ebu128LoudnessMeter     //: public AudioProcessor
 {
 public:
-    Ebu128LoudnessMeter ();
-    ~Ebu128LoudnessMeter ();
+    Ebu128LoudnessMeter();
+    ~Ebu128LoudnessMeter();
     
     // --------- AudioProcessor methods ---------
 //    const String getName ();
@@ -73,21 +74,30 @@ public:
     
     void processBlock (AudioSampleBuffer &buffer);
     
-    const Array<float>& getShortTermLoudnessForIndividualChannels();
-    float getShortTermLoudness();
+    float getShortTermLoudness() const;
+    float getMaximumShortTermLoudness() const;
     
-    const Array<float>& getMomentaryLoudnessForIndividualChannels();
-    float getMomentaryLoudness();
+    vector<float>& getMomentaryLoudnessForIndividualChannels();
+    float getMomentaryLoudness() const;
+    float getMaximumMomentaryLoudness() const;
     
-    float getIntegratedLoudness();
+    float getIntegratedLoudness() const;
     
-    float getLoudnessRangeStart();
-    float getLoudnessRangeEnd();
-    float getLoudnessRange();
+    float getLoudnessRangeStart() const;
+    float getLoudnessRangeEnd() const;
+    float getLoudnessRange() const;
+    
+    /** Returns the time passed since the last reset.
+        In seconds.
+     */
+    float getMeasurementDuration() const;
+
+    void setFreezeLoudnessRangeOnSilence (bool freeze);
     
     void reset();
     
 private:
+    static int round (double d);
     
     /** The buffer given to processBlock() will be copied to this buffer, such
      that the filtering and squaring won't affect the audio output. I.e. thanks
@@ -99,7 +109,7 @@ private:
     
     SecondOrderIIRFilter preFilter;
     SecondOrderIIRFilter revisedLowFrequencyBCurveFilter;
-    
+
     int numberOfBins;
     int numberOfSamplesPerBin;
     int numberOfSamplesInAllBins;
@@ -108,7 +118,13 @@ private:
     
     int numberOfBinsToCover100ms;
     int numberOfBinsSinceLastGateMeasurementForI;
-    int millisecondsSinceLastGateMeasurementForLRA;
+    // int millisecondsSinceLastGateMeasurementForLRA;
+    
+    /** The duration of the current measurement.
+        
+        duration * 0.1 = the measurement duration in seconds.
+      */
+    int measurementDuration;
     
     /**
      After the samples are filtered and squared, they need to be
@@ -133,7 +149,7 @@ private:
      But if you ask for a measurement at time t, it will be the
      accurate measurement at time t - dt, where dt \in e.g. [0, 1/20s].
      */
-    OwnedArray <OwnedArray<double>> bin;
+    vector<vector<double>> bin;
     
     int currentBin;
     int numberOfSamplesInTheCurrentBin;
@@ -143,19 +159,18 @@ private:
      3 seconds.
      A value for each channel.
      */
-    OwnedArray<double> averageOfTheLast3s;
+    vector<double> averageOfTheLast3s;
     
     /*
      The average of the filtered and squared samples of the last
      400 milliseconds.
      A value for each channel.
      */
-    OwnedArray<double> averageOfTheLast400ms;
+    vector<double> averageOfTheLast400ms;
     
-    Array<double> channelWeighting;
+    vector<double> channelWeighting;
     
-    Array<float> shortTermLoudness;
-    Array<float> momentaryLoudness;
+    vector<float> momentaryLoudnessForIndividualChannels;
     
     /** If there is no signal at all, the methods getShortTermLoudness() and
      getMomentaryLoudness() would perform a log10(0) which would result in
@@ -175,23 +190,19 @@ private:
     double sumOfAllBlocksToCalculateRelativeThreshold;
     double relativeThreshold;
     
-    int LRAnumberOfBlocksToCalculateRelativeThreshold;
-    double LRAsumOfAllBlocksToCalculateRelativeThreshold;
-    double LRArelativeThreshold;
+    int numberOfBlocksToCalculateRelativeThresholdLRA;
+    double sumOfAllBlocksToCalculateRelativeThresholdLRA;
+    double relativeThresholdLRA;
     
-    
+    /** A lower bound for the histograms (for I and LRA).
+        If a measured block has a value lower than this, it will not be
+        considered in the calculation for I and LRA.
+
+        Without the possibility to increase the pre-measurement-gain at any
+        point after the measurement has started, this could have been set
+        to the absoluteThreshold = -70 LUFS.
+     */
     static const double lowestBlockLoudnessToConsider;
-    static const double highestBlockLoudnessToConsider;
-    /** The difference in loudness between two adjacent bins in the histogram.
-     Measured in LU;
-     */
-    static const double histogramLoudnessStepSize;
-    
-    /** Two adjacant bins in the histogram also correspond to two weighted
-     sums. They are related by this factor.
-     WeightedSum2 = WeightedSum1 * histogramWeightedSumStepFactor.
-     */
-    static const double histogramWeightedSumStepFactor;
     
     /** Storage for the loudnesses of all 400ms blocks since the last reset.
      
@@ -199,14 +210,21 @@ private:
      bigger than the relative threshold are needed to calculate the gated
      loudness (integrated loudness), it is mandatory to keep track of all
      block loudnesses.
-     */
-    vector<int> histogramOfBlockLoudness;
-    
-    /** The main loudness value of interest.
      
-     It is the return value of getIntegratedLoudness().
+     Adjacent bins are set apart by 0.1 LU which seems to be sufficient.
+     
+     Key value = Loudness * 10 (to get an integer value).
      */
+    map<int,int> histogramOfBlockLoudness;
+    
+    /** The main loudness value of interest. */
     float integratedLoudness;
+
+    float shortTermLoudness;
+    float maximumShortTermLoudness;
+
+    float momentaryLoudness;
+    float maximumMomentaryLoudness;
     
     /** Like histogramOfBlockLoudness, but for the measurement of the
      loudness range.
@@ -215,7 +233,7 @@ private:
      loudness range, because the measurement blocks for the loudness
      range need to be of length 3s. Vs 400ms.
      */
-    vector<int> LRAhistogramOfBlockLoudness;
+    map<int,int> histogramOfBlockLoudnessLRA;
     
     /**
      The return values for the corresponding get member functions.
@@ -224,10 +242,11 @@ private:
      */
     float loudnessRangeStart;
     float loudnessRangeEnd;
-    
+
+    bool freezeLoudnessRangeOnSilence;
+    bool currentBlockIsSilent;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Ebu128LoudnessMeter);
-    
 };
 
 #endif // __EBU128_LOUDNESS_METER__

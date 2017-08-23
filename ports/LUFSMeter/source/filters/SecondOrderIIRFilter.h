@@ -5,7 +5,7 @@
  
  
  This file is part of the LUFS Meter audio measurement plugin.
- Copyright 2011-12 by Klangfreund, Samuel Gaehwiler.
+ Copyright 2011-2016 by Klangfreund, Samuel Gaehwiler.
  
  -------------------------------------------------------------------------------
  
@@ -20,8 +20,7 @@
  -------------------------------------------------------------------------------
  
  To release a closed-source product which uses the LUFS Meter or parts of it,
- a commercial license is available. Visit www.klangfreund.com/lufsmeter for more
- information.
+ get in contact via www.klangfreund.com/contact/.
  
  ===============================================================================
  */
@@ -30,7 +29,6 @@
 #define __FILTER_OF_SECOND_ORDER__
 
 #include "../MacrosAndJuceHeaders.h"
-
 
 //==============================================================================
 /** A second order IIR (infinite inpulse response) filter.
@@ -80,6 +78,7 @@ protected:
     /** Filter coefficients, valid for a sample rate of 48000 Hertz.
      */
     double b0_at48k, b1_at48k, b2_at48k, a1_at48k, a2_at48k;
+
     /** Filter coefficients for the used sample rate. They are set in
      prepareToPlay.
      */
@@ -89,15 +88,18 @@ private:
      prepareToPlay to calculate the filter coefficients.
      */
     double Q, VH, VB, VL, arctanK;
-    //==============================================================================
-    /** Will store the the previous value of the variable
-     factorForB2 for every audio channel.
+
+    /** Number of audio channels.
      */
-    Array<double> z1;
-    /** Will store the previous value of z1 for every
-     audio channel.
+    int numberOfChannels;
+
+    /** Stores the previous value of the variable factorForB2 for every audio channel.
      */
-    Array<double> z2;
+    HeapBlock<double> z1;
+
+    /** Stores the previous value of z1 for every audio channel.
+     */
+    HeapBlock<double> z2;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SecondOrderIIRFilter);
 };

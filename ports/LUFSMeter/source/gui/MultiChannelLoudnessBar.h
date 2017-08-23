@@ -32,6 +32,7 @@
 
 #include "../MacrosAndJuceHeaders.h"
 
+using std::vector;
 
 
 //==============================================================================
@@ -55,7 +56,7 @@ public:
     
     ~MultiChannelLoudnessBar ();
     
-    void setLoudness (const Array<float>& multiChannelLoudness);
+    void setLoudness (const vector<float>& multiChannelLoudness);
     
     void valueChanged (Value & value) override;
     
@@ -82,7 +83,7 @@ private:
     
     Colour colour;
     
-    Array<float> currentMultiChannelLoudness;
+    vector<float> currentMultiChannelLoudness;
     Value minLoudness;
     Value maxLoudness;
 };
