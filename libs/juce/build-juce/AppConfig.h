@@ -65,6 +65,7 @@
 */
 #if LINUX
  #define JUCE_ALSA 1
+ #define JUCE_ALSA_MIDI_NAME "JuceMidi"
 #else
  #define JUCE_ALSA 0
 #endif
