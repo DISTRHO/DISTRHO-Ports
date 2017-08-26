@@ -1,7 +1,10 @@
 # -----------------------------------------
 # Compile all the Ports
 
-PREFIX = /usr/local
+PREFIX  := /usr/local
+LIBDIR  := $(PREFIX)/lib
+SRCDIR  := $(PREFIX)/src
+DESTDIR :=
 
 # -----------------------------------------
 # all
@@ -19,36 +22,36 @@ all:
 
 install:
 	# make dirs
-	install -d $(DESTDIR)$(PREFIX)/lib/lv2/
-	install -d $(DESTDIR)$(PREFIX)/lib/vst/
-	install -d $(DESTDIR)/usr/src/distrho/libs/juce/build-juce/
-	install -d $(DESTDIR)/usr/src/distrho/libs/juce/source/
-	install -d $(DESTDIR)/usr/src/distrho/libs/juce-plugin/
-	install -d $(DESTDIR)/usr/src/distrho/scripts/
+	install -d $(DESTDIR)$(LIBDIR)/lv2/
+	install -d $(DESTDIR)$(LIBDIR)/vst/
+	install -d $(DESTDIR)$(SRCDIR)/distrho/libs/juce/build-juce/
+	install -d $(DESTDIR)$(SRCDIR)/distrho/libs/juce/source/
+	install -d $(DESTDIR)$(SRCDIR)/distrho/libs/juce-plugin/
+	install -d $(DESTDIR)$(SRCDIR)/distrho/scripts/
 
 	# install plugins
 ifneq (,$(wildcard bin/lv2/TheFunction.lv2))
-	cp -r bin/lv2/*.lv2/        $(DESTDIR)$(PREFIX)/lib/lv2/
-	cp -r static-lv2-ttl/*.lv2/ $(DESTDIR)$(PREFIX)/lib/lv2/
+	cp -r bin/lv2/*.lv2/        $(DESTDIR)$(LIBDIR)/lv2/
+	cp -r static-lv2-ttl/*.lv2/ $(DESTDIR)$(LIBDIR)/lv2/
 endif
 ifneq (,$(wildcard bin/vst/TheFunction.so))
-	cp -r bin/vst/*             $(DESTDIR)$(PREFIX)/lib/vst/
+	cp -r bin/vst/*             $(DESTDIR)$(LIBDIR)/vst/
 endif
 
 	# install source needed for extra builds
-	install -m 644 libs/libjuce.a           $(DESTDIR)/usr/src/distrho/libs/
-	install -m 755 libs/lv2_ttl_generator   $(DESTDIR)/usr/src/distrho/libs/
-	install -m 644 libs/juce/build-juce/*.h $(DESTDIR)/usr/src/distrho/libs/juce/build-juce/
-	install -m 644 libs/juce-plugin/*.cpp   $(DESTDIR)/usr/src/distrho/libs/juce-plugin/
-	install -m 644 libs/juce-plugin/*.h     $(DESTDIR)/usr/src/distrho/libs/juce-plugin/
-	install -m 644 scripts/*.lua            $(DESTDIR)/usr/src/distrho/scripts/
-	install -m 755 scripts/*.sh             $(DESTDIR)/usr/src/distrho/scripts/
+	install -m 644 libs/libjuce.a           $(DESTDIR)$(SRCDIR)/distrho/libs/
+	install -m 755 libs/lv2_ttl_generator   $(DESTDIR)$(SRCDIR)/distrho/libs/
+	install -m 644 libs/juce/build-juce/*.h $(DESTDIR)$(SRCDIR)/distrho/libs/juce/build-juce/
+	install -m 644 libs/juce-plugin/*.cpp   $(DESTDIR)$(SRCDIR)/distrho/libs/juce-plugin/
+	install -m 644 libs/juce-plugin/*.h     $(DESTDIR)$(SRCDIR)/distrho/libs/juce-plugin/
+	install -m 644 scripts/*.lua            $(DESTDIR)$(SRCDIR)/distrho/scripts/
+	install -m 755 scripts/*.sh             $(DESTDIR)$(SRCDIR)/distrho/scripts/
 
-	find libs/juce/source/ -type f -name "*.h" -exec cp -v --parents {} $(DESTDIR)/usr/src/distrho/ \;
+	find libs/juce/source/ -type f -name "*.h" -exec cp -v --parents {} $(DESTDIR)$(SRCDIR)/distrho/ \;
 
-	cp -v --parents -r libs/juce/source/modules/juce_audio_plugin_client/LV2/*                            $(DESTDIR)/usr/src/distrho/
-	cp -v --parents    libs/juce/source/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp         $(DESTDIR)/usr/src/distrho/
-	cp -v --parents    libs/juce/source/modules/juce_audio_plugin_client/utility/juce_PluginUtilities.cpp $(DESTDIR)/usr/src/distrho/
+	cp -v --parents -r libs/juce/source/modules/juce_audio_plugin_client/LV2/*                            $(DESTDIR)$(SRCDIR)/distrho/
+	cp -v --parents    libs/juce/source/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp         $(DESTDIR)$(SRCDIR)/distrho/
+	cp -v --parents    libs/juce/source/modules/juce_audio_plugin_client/utility/juce_PluginUtilities.cpp $(DESTDIR)$(SRCDIR)/distrho/
 
 # -----------------------------------------
 # gen
