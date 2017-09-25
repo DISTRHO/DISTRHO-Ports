@@ -79,7 +79,7 @@ BasicFileBrowser::BasicFileBrowser (int flags_,
     addAndMakeVisible (list);
     	
     fileListComponent->addListener (this);
-	list->getViewport()->getVerticalScrollBar()->setAutoHide (false);
+	list->getViewport()->getVerticalScrollBar().setAutoHide (false);
 		
 	resizer = new ResizableCornerComponent (this, &resizeLimits);
 	addAndMakeVisible (resizer);
@@ -257,12 +257,12 @@ void BasicFileBrowser::resized()
     if (list != nullptr)
     {
         list->setBounds (0, 0, width, height);
-        ScrollBar *bar = list->getVerticalScrollBar();
-        const int size = roundToInt (bar->getWidth() * 1.5f);
+        ScrollBar &bar = list->getVerticalScrollBar();
+        const int size = roundToInt (bar.getWidth() * 1.5f);
 
         if (showResizer)
         {
-            bar->setTransform (AffineTransform::scale (1, (height - (float) size) / height));
+            bar.setTransform (AffineTransform::scale (1, (height - (float) size) / height));
             
             resizeLimits.setSizeLimits (150, height, 1600, height);
             resizer->setBounds (roundToInt (width - size * (2.0f / 3.0f)), height - size,
@@ -270,7 +270,7 @@ void BasicFileBrowser::resized()
         }
         else 
         {
-            bar->setTransform (AffineTransform::identity);
+            bar.setTransform (AffineTransform::identity);
         }
     }
 }
