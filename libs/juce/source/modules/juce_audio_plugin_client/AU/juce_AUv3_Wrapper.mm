@@ -57,9 +57,10 @@
  #error AUv3 needs Objective-C 2 support (compile with 64-bit)
 #endif
 
+#define JUCE_CORE_INCLUDE_OBJC_HELPERS 1
+
 #include "../utility/juce_IncludeSystemHeaders.h"
 #include "../utility/juce_IncludeModuleHeaders.h"
-#include "../../juce_core/native/juce_osx_ObjCHelpers.h"
 #include "../../juce_graphics/native/juce_mac_CoreGraphicsHelpers.h"
 
 #include "../../juce_audio_basics/native/juce_mac_CoreAudioLayouts.h"
@@ -82,7 +83,9 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wnullability-completeness"
 
-// TODO: ask Timur: use SFINAE to automatically generate this for all NSObjects
+using namespace juce;
+
+// TODO: use SFINAE to automatically generate this for all NSObjects
 template <> struct ContainerDeletePolicy<AUAudioUnitBusArray>                   { static void destroy (NSObject* o) { [o release]; } };
 template <> struct ContainerDeletePolicy<AUParameterTree>                       { static void destroy (NSObject* o) { [o release]; } };
 template <> struct ContainerDeletePolicy<NSMutableArray<AUParameterNode *> >    { static void destroy (NSObject* o) { [o release]; } };
@@ -884,6 +887,7 @@ public:
 
         switch (lastTimeStamp.mSMPTETime.mType)
         {
+            case kSMPTETimeType2398:        info.frameRate = AudioPlayHead::fps23976; break;
             case kSMPTETimeType24:          info.frameRate = AudioPlayHead::fps24; break;
             case kSMPTETimeType25:          info.frameRate = AudioPlayHead::fps25; break;
             case kSMPTETimeType2997:        info.frameRate = AudioPlayHead::fps2997; break;
@@ -1098,7 +1102,7 @@ private:
                                                       | kAudioUnitParameterFlag_HasCFNameString
                                                       | kAudioUnitParameterFlag_ValuesHaveStrings);
 
-           #if JucePlugin_AUHighResolutionParameters
+           #if ! JUCE_FORCE_LEGACY_PARAMETER_AUTOMATION_TYPE
             flags |= (UInt32) kAudioUnitParameterFlag_IsHighResolution;
            #endif
 
@@ -1383,7 +1387,7 @@ private:
 
     void valueChangedForObserver(AUParameterAddress, AUValue)
     {
-        // this will have already been handled bny valueChangedFromHost
+        // this will have already been handled by valueChangedFromHost
     }
 
     //==============================================================================

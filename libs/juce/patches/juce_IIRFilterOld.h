@@ -25,6 +25,8 @@
 #ifndef __JUCE_IIRFILTER_OLD_JUCEHEADER__
 #define __JUCE_IIRFILTER_OLD_JUCEHEADER__
 
+namespace juce
+{
 
 //==============================================================================
 /**
@@ -144,5 +146,6 @@ protected:
     JUCE_LEAK_DETECTOR (IIRFilterOld)
 };
 
+} // namespace juce
 
 #endif   // __JUCE_IIRFILTER_OLD_JUCEHEADER__

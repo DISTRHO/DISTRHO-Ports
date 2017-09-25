@@ -31,14 +31,13 @@
 #include "../../juce_core/system/juce_TargetPlatform.h"
 #include "juce_IncludeModuleHeaders.h"
 
-namespace juce
-{
-    AudioProcessor::WrapperType PluginHostType::jucePlugInClientCurrentWrapperType = AudioProcessor::wrapperType_Undefined;
-}
+using namespace juce;
 
-//==============================================================================
 namespace juce
 {
+
+AudioProcessor::WrapperType PluginHostType::jucePlugInClientCurrentWrapperType = AudioProcessor::wrapperType_Undefined;
+
 #ifndef JUCE_VST3_CAN_REPLACE_VST2
  #define JUCE_VST3_CAN_REPLACE_VST2 1
 #endif
@@ -142,7 +141,7 @@ bool JUCE_API handleManufacturerSpecificVST2Opcode (int32 index, pointer_sized_i
 }
 #endif
 
-}  // namespace juce
+} // namespace juce
 
 //==============================================================================
 /** Somewhere in the codebase of your plugin, you need to implement this function

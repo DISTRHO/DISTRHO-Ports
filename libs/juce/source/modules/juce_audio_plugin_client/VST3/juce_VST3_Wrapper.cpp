@@ -204,17 +204,26 @@ public:
         Param (AudioProcessor& p, int index, Vst::ParamID paramID)  : owner (p), paramIndex (index)
         {
             info.id = paramID;
+
             toString128 (info.title, p.getParameterName (index));
             toString128 (info.shortTitle, p.getParameterName (index, 8));
             toString128 (info.units, p.getParameterLabel (index));
 
-            const int numSteps = p.getParameterNumSteps (index);
-            info.stepCount = (Steinberg::int32) (numSteps > 0 && numSteps < 0x7fffffff ? numSteps - 1 : 0);
+            info.stepCount = (Steinberg::int32) 0;
+
+           #if ! JUCE_FORCE_LEGACY_PARAMETER_AUTOMATION_TYPE
+            if (p.isParameterDiscrete (index))
+           #endif
+            {
+                const int numSteps = p.getParameterNumSteps (index);
+                info.stepCount = (Steinberg::int32) (numSteps > 0 && numSteps < 0x7fffffff ? numSteps - 1 : 0);
+            }
+
             info.defaultNormalizedValue = p.getParameterDefaultValue (index);
             jassert (info.defaultNormalizedValue >= 0 && info.defaultNormalizedValue <= 1.0f);
             info.unitId = Vst::kRootUnitId;
 
-            // is this a meter?
+            // Is this a meter?
             if (((p.getParameterCategory (index) & 0xffff0000) >> 16) == 2)
                 info.flags = Vst::ParameterInfo::kIsReadOnly;
             else
@@ -872,27 +881,21 @@ private:
         {
             if (rectToCheck != nullptr && component != nullptr)
             {
-                // checkSizeConstraint
-                auto juceRect = Rectangle<int>::leftTopRightBottom (rectToCheck->left, rectToCheck->top,
-                                                                    rectToCheck->right, rectToCheck->bottom);
-
                 if (auto* editor = component->pluginEditor.get())
                 {
+                    // checkSizeConstraint
+                    auto juceRect = editor->getLocalArea (component, Rectangle<int>::leftTopRightBottom (rectToCheck->left, rectToCheck->top,
+                                                                                                         rectToCheck->right, rectToCheck->bottom));
                     if (auto* constrainer = editor->getConstrainer())
                     {
-                        auto scaledMin = component->getLocalArea (editor, Rectangle<int> (constrainer->getMinimumWidth(),
-                                                                                          constrainer->getMinimumHeight()));
+                        Rectangle<int> limits (0, 0, constrainer->getMaximumWidth(), constrainer->getMaximumHeight());
+                        constrainer->checkBounds (juceRect, editor->getBounds(), limits, false, false, false, false);
 
-                        auto scaledMax = component->getLocalArea (editor, Rectangle<int> (constrainer->getMaximumWidth(),
-                                                                                          constrainer->getMaximumHeight()));
-
-                        juceRect.setSize (jlimit (scaledMin.getWidth(),  scaledMax.getWidth(),  juceRect.getWidth()),
-                                          jlimit (scaledMin.getHeight(), scaledMax.getHeight(), juceRect.getHeight()));
+                        juceRect = component->getLocalArea (editor, juceRect);
+                        rectToCheck->right  = rectToCheck->left + juceRect.getWidth();
+                        rectToCheck->bottom = rectToCheck->top  + juceRect.getHeight();
                     }
                 }
-
-                rectToCheck->right  = rectToCheck->left + juceRect.getWidth();
-                rectToCheck->bottom = rectToCheck->top  + juceRect.getHeight();
 
                 return kResultTrue;
             }
@@ -1020,7 +1023,7 @@ private:
                    #if JUCE_WINDOWS
                     setSize (w, h);
                    #else
-                    if (owner.macHostWindow != nullptr && ! (host.isWavelab() || host.isReaper()))
+                    if (owner.macHostWindow != nullptr && ! (host.isWavelab() || host.isReaper() || host.isBitwigStudio()))
                         juce::setNativeHostWindowSizeVST (owner.macHostWindow, this, w, h, owner.isNSView);
                    #endif
 
@@ -1651,7 +1654,7 @@ public:
     bool getCurrentPosition (CurrentPositionInfo& info) override
     {
         info.timeInSamples              = jmax ((juce::int64) 0, processContext.projectTimeSamples);
-        info.timeInSeconds              = processContext.systemTime / 1000000000.0;
+        info.timeInSeconds              = static_cast<double> (info.timeInSamples) / processContext.sampleRate;
         info.bpm                        = jmax (1.0, processContext.tempo);
         info.timeSigNumerator           = jmax (1, (int) processContext.timeSigNumerator);
         info.timeSigDenominator         = jmax (1, (int) processContext.timeSigDenominator);
@@ -1669,7 +1672,14 @@ public:
         {
             switch (processContext.frameRate.framesPerSecond)
             {
-                case 24: info.frameRate = AudioPlayHead::fps24; break;
+                case 24:
+                {
+                    if ((processContext.frameRate.flags & Vst::FrameRate::kPullDownRate) != 0)
+                        info.frameRate = AudioPlayHead::fps23976;
+                    else
+                        info.frameRate = AudioPlayHead::fps24;
+                }
+                break;
                 case 25: info.frameRate = AudioPlayHead::fps25; break;
                 case 29: info.frameRate = AudioPlayHead::fps30drop; break;
 
@@ -1835,12 +1845,20 @@ public:
         auto numOutputBuses = pluginInstance->getBusCount (false);
 
         for (int i = 0; i < numInputBuses; ++i)
-            if (pluginInstance->getChannelLayoutOfBus (true,  i).isDiscreteLayout())
+        {
+            auto layout = pluginInstance->getChannelLayoutOfBus (true,  i);
+
+            if (layout.isDiscreteLayout() && ! layout.isDisabled())
                 return false;
+        }
 
         for (int i = 0; i < numOutputBuses; ++i)
-            if (pluginInstance->getChannelLayoutOfBus (false, i).isDiscreteLayout())
+        {
+            auto layout = pluginInstance->getChannelLayoutOfBus (false,  i);
+
+            if (layout.isDiscreteLayout() && ! layout.isDisabled())
                 return false;
+        }
 
         return true;
     }

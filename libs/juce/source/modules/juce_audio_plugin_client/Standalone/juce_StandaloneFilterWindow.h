@@ -24,7 +24,8 @@
   ==============================================================================
 */
 
-#pragma once
+namespace juce
+{
 
 //==============================================================================
 /**
@@ -255,7 +256,7 @@ public:
                                                           totalInChannels,
                                                           totalOutChannels,
                                                           totalOutChannels));
-        o.content->setSize (500, 450);
+        o.content->setSize (500, 550);
 
         o.dialogTitle                   = TRANS("Audio/MIDI Settings");
         o.dialogBackgroundColour        = o.content->getLookAndFeel().findColour (ResizableWindow::backgroundColourId);
@@ -787,9 +788,13 @@ private:
             shouldShowNotification = newInputMutedValue;
             notification.setVisible (shouldShowNotification);
 
+           #if JUCE_IOS || JUCE_ANDROID
+            resized();
+           #else
             setSize (editor->getWidth(),
                      editor->getHeight()
                      + (shouldShowNotification ? NotificationArea::height : 0));
+           #endif
         }
 
         void valueChanged (Value& value) override     { inputMutedChanged (value.getValue()); }
@@ -841,3 +846,5 @@ StandalonePluginHolder* StandalonePluginHolder::getInstance()
 
     return nullptr;
 }
+
+} // namespace juce
