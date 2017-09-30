@@ -39,6 +39,9 @@ namespace zlibNamespace
    #if __has_warning("-Wcomma")
     #pragma clang diagnostic ignored "-Wcomma"
    #endif
+  #elif JUCE_GCC && (__GNUC__ >= 7)
+   #pragma GCC diagnostic push
+   #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
   #endif
 
   #undef OS_CODE
@@ -74,6 +77,8 @@ namespace zlibNamespace
 
   #if JUCE_CLANG
    #pragma clang diagnostic pop
+  #elif JUCE_GCC && (__GNUC__ >= 7)
+   #pragma GCC diagnostic pop
   #endif
  #else
   #include JUCE_ZLIB_INCLUDE_PATH
@@ -136,7 +141,7 @@ public:
             {
             case Z_STREAM_END:
                 finished = true;
-                // deliberate fall-through
+                // fall-through
             case Z_OK:
                 data += dataSize - stream.avail_in;
                 dataSize = (z_uInt) stream.avail_in;
