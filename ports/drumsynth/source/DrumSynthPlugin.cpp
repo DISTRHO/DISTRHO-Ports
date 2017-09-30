@@ -50,7 +50,7 @@ DrumSynthPlugin::DrumSynthPlugin()
     setNumParameters (TOTAL_PARAMETERS);
 
     // add a wave sound, which will get applied to some of the notes..
-    BitArray drumNotes;
+    BigInteger drumNotes;
     for (int noteNumber = 0; noteNumber < TOTAL_DRUM_NOTES; noteNumber++)
     {
         drumNotes.setBit (START_DRUM_NOTES_OFFSET + noteNumber);

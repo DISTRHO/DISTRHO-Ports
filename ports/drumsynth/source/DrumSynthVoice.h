@@ -54,7 +54,7 @@ class DrumSynthSound : public SynthesiserSound
 {
 public:
 
-    DrumSynthSound (const BitArray& midiNotes_)
+    DrumSynthSound (const BigInteger& midiNotes_)
         : midiNotes (midiNotes_)
     {
     }
@@ -72,7 +72,7 @@ public:
 private:
 
     // this will contain the notes that this sound is attached to.
-    BitArray midiNotes;
+    BigInteger midiNotes;
 };
 
 

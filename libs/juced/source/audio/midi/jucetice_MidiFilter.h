@@ -82,7 +82,7 @@ protected:
          useVelocityFilter    : 1,
          usePitchWeelFilter   : 1;   
 
-    BitArray channels;
+    BigInteger channels;
     int noteMin, noteMax;
     int velocityMin, velocityMax;
     int pitchMin, pitchMax;
