@@ -705,7 +705,7 @@ namespace NetWrapperFunctions
 cURL::cURL (const NetworkOperationMode& newMode)
     : Thread (T("CurlThread")),
       mode (newMode),
-      currentError (String::empty),
+      currentError (String()),
       curl (0)
 {
 	bl = new MemoryBlock (0);

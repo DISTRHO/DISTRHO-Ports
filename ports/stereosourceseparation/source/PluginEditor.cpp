@@ -31,7 +31,7 @@ StereoSourceSeparationAudioProcessorEditor::StereoSourceSeparationAudioProcessor
     widthSlider->setValue(12.5);
     widthSlider->addListener(this);
     
-    addAndMakeVisible (modeLabel = new Label (String::empty, "Mode"));
+    addAndMakeVisible (modeLabel = new Label (String(), "Mode"));
     modeLabel->setFont (Font (16.00f, Font::bold));
     modeLabel->setJustificationType (Justification::centred);
     modeLabel->setEditable (false, false, false);
@@ -39,7 +39,7 @@ StereoSourceSeparationAudioProcessorEditor::StereoSourceSeparationAudioProcessor
     modeLabel->setColour (TextEditor::textColourId, Colours::wheat);
     modeLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
     
-    addAndMakeVisible (filterLabel = new Label (String::empty, "Filter Type"));
+    addAndMakeVisible (filterLabel = new Label (String(), "Filter Type"));
     filterLabel->setFont (Font (16.00f, Font::bold));
     filterLabel->setJustificationType (Justification::centred);
     filterLabel->setEditable (false, false, false);
@@ -91,7 +91,7 @@ StereoSourceSeparationAudioProcessorEditor::StereoSourceSeparationAudioProcessor
     cutofffreqSlider->setValue(20);
     cutofffreqSlider->addListener(this);
     
-    addAndMakeVisible (freqLabel = new Label (String::empty,"Cutoff frequency :"));
+    addAndMakeVisible (freqLabel = new Label (String(),"Cutoff frequency :"));
     freqLabel->setFont (Font (18.00f, Font::bold));
     freqLabel->setJustificationType (Justification::centred);
     freqLabel->setEditable (false, false, false);
@@ -99,7 +99,7 @@ StereoSourceSeparationAudioProcessorEditor::StereoSourceSeparationAudioProcessor
     freqLabel->setColour (TextEditor::textColourId, Colours::wheat);
     freqLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
     
-    addAndMakeVisible (freqVal = new Label (String::empty, "400 Hz"));
+    addAndMakeVisible (freqVal = new Label (String(), "400 Hz"));
     freqVal->setFont (Font (16.00f, Font::bold));
     freqVal->setJustificationType (Justification::centred);
     freqVal->setEditable (false, false, false);
@@ -107,7 +107,7 @@ StereoSourceSeparationAudioProcessorEditor::StereoSourceSeparationAudioProcessor
     freqVal->setColour (TextEditor::textColourId, Colours::wheat);
     freqVal->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
     
-    addAndMakeVisible (lowboundLabel = new Label (String::empty, "0"));
+    addAndMakeVisible (lowboundLabel = new Label (String(), "0"));
     lowboundLabel->setFont (Font (16.00f, Font::bold));
     lowboundLabel->setJustificationType (Justification::centred);
     lowboundLabel->setEditable (false, false, false);
@@ -115,7 +115,7 @@ StereoSourceSeparationAudioProcessorEditor::StereoSourceSeparationAudioProcessor
     lowboundLabel->setColour (TextEditor::textColourId, Colours::wheat);
     lowboundLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
     
-    addAndMakeVisible (highboundLabel = new Label (String::empty, "8000"));
+    addAndMakeVisible (highboundLabel = new Label (String(), "8000"));
     highboundLabel->setFont (Font (16.00f, Font::bold));
     highboundLabel->setJustificationType (Justification::centred);
     highboundLabel->setEditable (false, false, false);
@@ -127,7 +127,7 @@ StereoSourceSeparationAudioProcessorEditor::StereoSourceSeparationAudioProcessor
     resetButton->setColour(TextButton::buttonColourId, Colours::wheat);
     resetButton->addListener (this);
     
-    addAndMakeVisible (dirLabel = new Label (String::empty,"Direction : "));
+    addAndMakeVisible (dirLabel = new Label (String(),"Direction : "));
     dirLabel->setFont (Font (20.00f, Font::bold));
     dirLabel->setJustificationType (Justification::centred);
     dirLabel->setEditable (false, false, false);
@@ -135,7 +135,7 @@ StereoSourceSeparationAudioProcessorEditor::StereoSourceSeparationAudioProcessor
     dirLabel->setColour (TextEditor::textColourId, Colours::wheat);
     dirLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
     
-    addAndMakeVisible (widLabel = new Label (String::empty,"Width : +/-"));
+    addAndMakeVisible (widLabel = new Label (String(),"Width : +/-"));
     widLabel->setFont (Font (20.00f, Font::bold));
     widLabel->setJustificationType (Justification::centred);
     widLabel->setEditable (false, false, false);
@@ -143,7 +143,7 @@ StereoSourceSeparationAudioProcessorEditor::StereoSourceSeparationAudioProcessor
     widLabel->setColour (TextEditor::textColourId, Colours::wheat);
     widLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
     
-    addAndMakeVisible (dirVal = new Label (String::empty, "0"));
+    addAndMakeVisible (dirVal = new Label (String(), "0"));
     dirVal->setFont (Font (20.00f, Font::bold));
     dirVal->setJustificationType (Justification::centred);
     dirVal->setEditable (false, false, false);
@@ -151,7 +151,7 @@ StereoSourceSeparationAudioProcessorEditor::StereoSourceSeparationAudioProcessor
     dirVal->setColour (TextEditor::textColourId, Colours::wheat);
     dirVal->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
     
-    addAndMakeVisible (widVal = new Label (String::empty, "22.5"));
+    addAndMakeVisible (widVal = new Label (String(), "22.5"));
     widVal->setFont (Font (20.00f, Font::bold));
     widVal->setJustificationType (Justification::centred);
     widVal->setEditable (false, false, false);
@@ -159,7 +159,7 @@ StereoSourceSeparationAudioProcessorEditor::StereoSourceSeparationAudioProcessor
     widVal->setColour (TextEditor::textColourId, Colours::wheat);
     widVal->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
     
-    addAndMakeVisible (sideVal = new Label (String::empty, "M"));
+    addAndMakeVisible (sideVal = new Label (String(), "M"));
     sideVal->setFont (Font (20.00f, Font::bold));
     sideVal->setJustificationType (Justification::centred);
     sideVal->setEditable (false, false, false);

@@ -69,7 +69,7 @@ MusicLibraryTable::MusicLibraryTable()
 	table.getHeader().setColumnVisible (MusicColumns::Location, false);
 	table.getHeader().setColumnVisible (MusicColumns::Modified, false);
 	
-	setFilterText (String::empty);
+	setFilterText (String());
 }
 
 MusicLibraryTable::~MusicLibraryTable()
@@ -94,7 +94,7 @@ void MusicLibraryTable::setFilterText (const String& filterString)
     if (currentLibrary != nullptr)
         currentLibrary->getParserLock().enter();
     
-	if (filterString == String::empty)
+	if (filterString.isEmpty())
 	{
 		filteredDataList = dataList;
 		filteredNumRows = filteredDataList.getNumChildren();

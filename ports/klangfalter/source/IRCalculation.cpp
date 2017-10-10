@@ -121,7 +121,7 @@ void IRCalculation::run()
   for (size_t i=0; i<agents.size(); ++i)
   {
     const juce::File file = agents[i]->getFile();
-    if (file != juce::File::nonexistent)
+    if (file.exists())
     {
       double sampleRate;
       FloatBuffer::Ptr buffer = importAudioFile(file, agents[i]->getFileChannel(), sampleRate);
@@ -256,7 +256,7 @@ FloatBuffer::Ptr IRCalculation::importAudioFile(const File& file, size_t fileCha
 {
   fileSampleRate = 0.0;
 
-  if (file == File::nonexistent)
+  if (! file.exists())
   {
     return FloatBuffer::Ptr();
   }

@@ -28,7 +28,7 @@ TremoloAudioProcessorEditor::TremoloAudioProcessorEditor (TremoloAudioProcessor*
 		addAndMakeVisible (sliders[i]);
 
 		String labelName = ownerFilter->getParameterName (i);
-		labels.add (new Label (String::empty, labelName));
+		labels.add (new Label (String(), labelName));
 		addAndMakeVisible (labels[i]);
 		labels[i]->setJustificationType (Justification::left);
 		labels[i]->attachToComponent (sliders[i], false);

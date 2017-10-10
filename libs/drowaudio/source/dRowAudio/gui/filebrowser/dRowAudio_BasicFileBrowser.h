@@ -69,7 +69,7 @@ public:
         @param browserMode              The intended purpose for the browser - see the
         FileChooserMode enum for the various options
         @param initialFileOrDirectory   The file or directory that should be selected when
-        the component begins. If this is File::nonexistent,
+        the component begins. If this is File(),
         a default directory will be chosen.
         @param fileFilter               an optional filter to use to determine which files
         are shown. If this is 0 then all files are displayed. Note

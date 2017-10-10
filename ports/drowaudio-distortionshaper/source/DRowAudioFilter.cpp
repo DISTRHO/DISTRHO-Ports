@@ -69,16 +69,16 @@ DRowAudioFilter::DRowAudioFilter()
 	params[POSTFILTER].setStep(1.0);
 
 
-	params[X1].init(parameterNames[X1], UnitGeneric, String::empty,
+	params[X1].init(parameterNames[X1], UnitGeneric, String(),
 					0.25, 0.0, 1.0, 0.25);
 
-	params[Y1].init(parameterNames[Y1], UnitGeneric, String::empty,
+	params[Y1].init(parameterNames[Y1], UnitGeneric, String(),
 					0.25, 0.0, 1.0, 0.25);
 
-	params[X2].init(parameterNames[X2], UnitGeneric, String::empty,
+	params[X2].init(parameterNames[X2], UnitGeneric, String(),
 					0.75, 0.0, 1.0, 0.75);
 
-	params[Y2].init(parameterNames[Y2], UnitGeneric, String::empty,
+	params[Y2].init(parameterNames[Y2], UnitGeneric, String(),
 					0.75, 0.0, 1.0, 0.75);
 
 	// initialiase and fill the buffer
@@ -168,7 +168,7 @@ const String DRowAudioFilter::getParameterName (int index)
 		if (index == i)
 			return String(parameterNames[i]);
 
-    return String::empty;
+    return String();
 }
 
 const String DRowAudioFilter::getParameterText (int index)
@@ -177,7 +177,7 @@ const String DRowAudioFilter::getParameterText (int index)
 		if (index == i)
 			return String(params[i].getValue(), 2);
 
-    return String::empty;
+    return String();
 }
 
 PluginParameter* DRowAudioFilter::getParameterPointer(int index)

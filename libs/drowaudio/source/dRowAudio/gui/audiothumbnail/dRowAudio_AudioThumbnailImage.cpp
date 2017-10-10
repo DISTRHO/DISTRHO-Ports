@@ -91,7 +91,7 @@ const Image AudioThumbnailImage::getImageAtTime (double startTime, double durati
     }
     else
     {
-        return Image::null;
+        return Image();
     }
 }
 

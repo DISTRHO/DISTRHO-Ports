@@ -70,7 +70,7 @@ void IRBrowserComponent::init(Processor* processor)
                                                                       "Audio Files");
   
   _directoryContent = new juce::DirectoryContentsList(_fileFilter, *_timeSliceThread);
-  _directoryContent->setDirectory(settings ? settings->getImpulseResponseDirectory() : juce::File::nonexistent, true, true);
+  _directoryContent->setDirectory(settings ? settings->getImpulseResponseDirectory() : juce::File(), true, true);
   
   _fileTreeComponent = new juce::FileTreeComponent(*_directoryContent);
   _fileTreeComponent->addListener(this);
@@ -132,7 +132,7 @@ void IRBrowserComponent::selectionChanged()
   {
     juce::String infoText;
     
-    const juce::File file = _fileTreeComponent ? _fileTreeComponent->getSelectedFile() : juce::File::nonexistent;
+    const juce::File file = _fileTreeComponent ? _fileTreeComponent->getSelectedFile() : juce::File();
 
     if (!file.isDirectory() && _processor)
     {
@@ -157,7 +157,7 @@ void IRBrowserComponent::selectionChanged()
           const TrueStereoPairs trueStereoPairs = findTrueStereoPairs(file, sampleCount, sampleRate);        
           for (size_t i=0; i<trueStereoPairs.size(); ++i)
           {
-            if (trueStereoPairs[i].first != file && trueStereoPairs[i].first != juce::File::nonexistent)
+            if (trueStereoPairs[i].first != file && trueStereoPairs[i].first.exists())
             {
               infoText += juce::String("\n");
               infoText += juce::String("\nFile Pair For True-Stereo:");
@@ -304,13 +304,13 @@ bool IRBrowserComponent::readAudioFileInfo(const juce::File& file, size_t& chann
 
 IRBrowserComponent::TrueStereoPairs IRBrowserComponent::findTrueStereoPairs(const juce::File& file, size_t sampleCount, double sampleRate) const
 {
-  if (file == juce::File::nonexistent || file.isDirectory())
+  if (! file.exists() || file.isDirectory())
   {
     return TrueStereoPairs();
   }
 
   const juce::File directory = file.getParentDirectory();
-  if (file == juce::File::nonexistent || file.isDirectory())
+  if (! file.exists() || file.isDirectory())
   {
     return TrueStereoPairs();
   }
@@ -337,7 +337,7 @@ IRBrowserComponent::TrueStereoPairs IRBrowserComponent::findTrueStereoPairs(cons
                                                                 pairsLeft[i].second,
                                                                 sampleCount,
                                                                 sampleRate);
-    if (matchingFile != juce::File::nonexistent)
+    if (matchingFile.exists())
     {
       TrueStereoPairs trueStereoPairs;
       trueStereoPairs.push_back(std::make_pair(file, 0));
@@ -366,7 +366,7 @@ IRBrowserComponent::TrueStereoPairs IRBrowserComponent::findTrueStereoPairs(cons
                                                                 pairsRight[i].second,
                                                                 sampleCount,
                                                                 sampleRate);
-    if (matchingFile != juce::File::nonexistent)
+    if (matchingFile.exists())
     {
       TrueStereoPairs trueStereoPairs;
       trueStereoPairs.push_back(std::make_pair(matchingFile, 0));
@@ -420,5 +420,5 @@ juce::File IRBrowserComponent::checkMatchingTrueStereoFile(const juce::String& f
     }
   }
 
-  return juce::File::nonexistent;
+  return juce::File();
 }

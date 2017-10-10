@@ -892,7 +892,7 @@ void ScriptableEngine::removeResolveFilePath (const File& directoryToLookInto)
 
 File ScriptableEngine::findResolveFilePaths (const String& fileName)
 {
-	File fileFound = File::nonexistent;
+	File fileFound;
 
 	int pathToResolve = resolvePaths.size();
 	for (int i=0; i<pathToResolve; i++)

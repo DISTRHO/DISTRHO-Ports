@@ -62,7 +62,7 @@ public:
     int getNumPrograms() { return 0; }
     int getCurrentProgram() { return 0; }
     void setCurrentProgram(int) {}
-    const String getProgramName(int) { return String::empty; }
+    const String getProgramName(int) { return String(); }
     void changeProgramName(int, const juce::String&) {}
 
     const String getInputChannelName (const int channelIndex) const override;

@@ -262,7 +262,7 @@ void XEQPlugin::getStateInformation (MemoryBlock& destData)
 
         equalizer.addToXML (&xml);
 
-        String xmlString = xml.createDocument (String::empty);
+        String xmlString = xml.createDocument (String());
         destData.append ((const char*) xmlString.toUTF8(), xmlString.length());
     }
     catch (...)

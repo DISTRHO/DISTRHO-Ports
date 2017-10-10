@@ -271,7 +271,7 @@ void MainHostWindow::getCommandInfo (const CommandID commandID, ApplicationComma
         break;
 
     case CommandIDs::showPluginListEditor:
-        result.setInfo ("Edit the list of available plug-Ins...", String::empty, category, 0);
+        result.setInfo ("Edit the list of available plug-Ins...", String(), category, 0);
         result.addDefaultKeypress ('p', ModifierKeys::commandModifier);
         break;
 
@@ -295,7 +295,7 @@ bool MainHostWindow::perform (const InvocationInfo& info)
         break;
 
     case CommandIDs::saveAs:
-        graph.saveAs (File::nonexistent, true, true, true);
+        graph.saveAs (File(), true, true, true);
         break;
 
     case CommandIDs::showPluginListEditor:

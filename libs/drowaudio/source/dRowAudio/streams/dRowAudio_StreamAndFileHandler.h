@@ -72,7 +72,7 @@ public:
     void clear()
     {
         inputType = noInput;
-        currentFile = File::nonexistent;
+        currentFile = File();
         inputStream = nullptr;
     }
     
@@ -182,7 +182,7 @@ public:
     bool setMemoryInputStream (MemoryInputStream* newMemoryInputStream)
     {
         inputType = memoryInputStream;
-        currentFile = File::nonexistent;
+        currentFile = File();
         inputStream = newMemoryInputStream;
         
         return streamChanged (inputStream);
@@ -194,7 +194,7 @@ public:
     bool setMemoryBlock (MemoryBlock& inputBlock)
     {
         inputType = memoryBlock;
-        currentFile = File::nonexistent;
+        currentFile = File();
         inputStream = new MemoryInputStream (inputBlock, false);
         
         return streamChanged (inputStream);

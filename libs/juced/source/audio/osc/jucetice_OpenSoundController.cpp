@@ -177,7 +177,7 @@ String OpenSoundController::getPathIndexed (const String& address, const int ind
     if (++count == index)
         return address.substring (old);
 
-    return String::empty;
+    return String();
 }
 
 END_JUCE_NAMESPACE

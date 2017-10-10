@@ -47,7 +47,7 @@
 //==============================================================================
 
 /** Returns the Resources folder in the package contents on a Mac and if an equivalent exists on Windows.
-	This will return File::nonexistent if the file does not exist so check for this first.
+	This will return File() if the file does not exist so check for this first.
  */
 inline static File getResourcesFolder()
 {
@@ -69,7 +69,7 @@ inline static String stripFileProtocolForLocal (const String& pathToStrip)
 		return URL::removeEscapeChars (temp);
 	}
 	
-	return String::empty;
+	return String();
 }
 
 /** Converts an iTunes formatted date string (e.g. 2010-12-27T17:44:32Z)
@@ -163,7 +163,7 @@ inline static String findKeyFromChemicalWebsite (const String& releaseNo, const 
         }
     }
     
-    return String::empty;
+    return String();
 }
 
 //==============================================================================
@@ -198,7 +198,7 @@ inline static void drawBufferToImage (const Image& image, const float* samples, 
 /** Dumps a given image to a File in png format.
     If the file parameter is nonexistant a temp file will be created on the desktop.
  */
-inline static void saveImageToFile (const Image& image, File file = File::nonexistent)
+inline static void saveImageToFile (const Image& image, File file = File())
 {
     if (! file.exists())
         file = File::getSpecialLocation (File::userDesktopDirectory).getNonexistentChildFile ("tempImage", ".png");
@@ -257,7 +257,7 @@ public:
         ReferenceCountedValueTree* refTree
         = dynamic_cast<ReferenceCountedValueTree*> (treeObject.getObject());
         
-        return refTree == nullptr ? ValueTree::invalid : refTree->getValueTree();
+        return refTree == nullptr ? ValueTree() : refTree->getValueTree();
     }
 
 private:
@@ -315,7 +315,7 @@ public:
         ReferenceCountedIdentifier* refIdentifer
         = dynamic_cast<ReferenceCountedIdentifier*> (identiferObject.getObject());
         
-        return refIdentifer == nullptr ? Identifier::null : refIdentifer->getIdentifier();
+        return refIdentifer == nullptr ? Identifier() : refIdentifer->getIdentifier();
     }
 
 private:
@@ -401,7 +401,7 @@ static bool writeValueTreeToFile (const ValueTree& treeToWrite, const File& file
             ScopedPointer<XmlElement> treeAsXml (treeToWrite.createXml());
             
             if (treeAsXml != nullptr)
-                return treeAsXml->writeToFile (fileToWriteTo, String::empty, "UTF-8", 200);
+                return treeAsXml->writeToFile (fileToWriteTo, String(), "UTF-8", 200);
             
             return false;
         }
@@ -444,7 +444,7 @@ inline static ValueTree readValueTreeFromFile (const File& fileToReadFrom)
         return ValueTree::readFromStream (*fileInputStream);
     }
     
-    return ValueTree::invalid;
+    return ValueTree();
 }
 
 //==============================================================================

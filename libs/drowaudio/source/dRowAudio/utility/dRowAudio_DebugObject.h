@@ -139,7 +139,7 @@ public:
         {
             case xmlType:           return getStringFromXml (objectXml, true);
             case valueTreeType:     return getStringFromValueTree();
-            default:                return String::empty;
+            default:                return String();
         }
     }
     
@@ -156,7 +156,7 @@ private:
         if (xml == nullptr)
             return "invalid XmlElement";
         
-        return String(NewLine::getDefault()) + xml->createDocument (String::empty, false, includeXmlHeader);
+        return String(NewLine::getDefault()) + xml->createDocument (String(), false, includeXmlHeader);
     }
 
     String getStringFromValueTree() const

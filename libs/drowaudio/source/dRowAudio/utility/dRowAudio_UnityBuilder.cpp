@@ -81,7 +81,7 @@ bool UnityBuilder::processDirectory (const File& sourceDirectory)
         }
         
         // now write the output files
-        File outputFile (destinationFile == File::nonexistent ? sourceDirectory : destinationFile);
+        File outputFile (destinationFile.exists() ? destinationFile : sourceDirectory);
         
         if (outputFile.hasWriteAccess())
         {

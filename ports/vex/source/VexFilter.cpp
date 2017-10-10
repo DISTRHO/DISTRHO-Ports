@@ -542,7 +542,7 @@ String VexFilter::getFilterWaveName(const int part) const
 {
     if (part >= 1 && part <= 3)
         return fSynth.getWaveName(part);
-    return String::empty;
+    return String();
 }
 
 void VexFilter::editorParameterChanged(const uint32_t index, const float value)

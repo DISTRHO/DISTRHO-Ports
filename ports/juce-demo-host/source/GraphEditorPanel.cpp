@@ -687,7 +687,7 @@ public:
                            -arrowL, -arrowW,
                            arrowL, 0.0f);
 
-        arrow.applyTransform (AffineTransform::identity
+        arrow.applyTransform (AffineTransform()
                                 .rotated (float_Pi * 0.5f - (float) atan2 (x2 - x1, y2 - y1))
                                 .translated ((x1 + x2) * 0.5f,
                                              (y1 + y2) * 0.5f));
@@ -894,7 +894,7 @@ void GraphEditorPanel::dragConnector (const MouseEvent& e)
 
     if (draggingConnector != nullptr)
     {
-        draggingConnector->setTooltip (String::empty);
+        draggingConnector->setTooltip (String());
 
         int x = e2.x;
         int y = e2.y;
@@ -938,7 +938,7 @@ void GraphEditorPanel::endDraggingConnector (const MouseEvent& e)
     if (draggingConnector == nullptr)
         return;
 
-    draggingConnector->setTooltip (String::empty);
+    draggingConnector->setTooltip (String());
 
     const MouseEvent e2 (e.getEventRelativeTo (this));
 

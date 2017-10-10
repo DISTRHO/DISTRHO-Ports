@@ -179,7 +179,7 @@ OperatorEditor::OperatorEditor ()
     vu->setName ("vu");
 
     addAndMakeVisible (opMode = new ToggleButton ("opMode"));
-    opMode->setButtonText (String::empty);
+    opMode->setButtonText (String());
     opMode->addListener (this);
 
     addAndMakeVisible (kbdLeftCurve = new ComboBoxImage());

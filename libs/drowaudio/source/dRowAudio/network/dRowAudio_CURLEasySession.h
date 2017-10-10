@@ -62,8 +62,8 @@ public:
 	CURLEasySession (String localPath,
                      String remotePath,
                      bool upload,
-                     String username = String::empty,
-                     String password = String::empty);
+                     String username = String(),
+                     String password = String());
     
     /** Destructor. */
 	~CURLEasySession();
@@ -78,7 +78,7 @@ public:
 	void setLocalFile (File newLocalFile);
 	
     /** Returns the local file being used.
-        If an input stream has been specified this will return File::nonexistent.
+        If an input stream has been specified this will return File().
      */
 	File getLocalFile()     {	return localFile;	}
 	

@@ -56,15 +56,15 @@ SettingsDialogComponent::SettingsDialogComponent (Processor& processor)
       _selectIRDirectoryButton (0),
       cachedImage_hifilofi_jpg (0)
 {
-    addAndMakeVisible (_irDirectoryGroupComponent = new GroupComponent (String::empty,
+    addAndMakeVisible (_irDirectoryGroupComponent = new GroupComponent (String(),
                                                                         L"Impulse Response Directory"));
     _irDirectoryGroupComponent->setColour (GroupComponent::textColourId, Colour (0xff202020));
 
-    addAndMakeVisible (_aboutGroupComponent = new GroupComponent (String::empty,
+    addAndMakeVisible (_aboutGroupComponent = new GroupComponent (String(),
                                                                   L"About"));
     _aboutGroupComponent->setColour (GroupComponent::textColourId, Colour (0xff202020));
 
-    addAndMakeVisible (_nameVersionLabel = new Label (String::empty,
+    addAndMakeVisible (_nameVersionLabel = new Label (String(),
                                                       L"KlangFalter - Version <Unknown>"));
     _nameVersionLabel->setFont (Font (15.0000f, Font::plain));
     _nameVersionLabel->setJustificationType (Justification::centredLeft);
@@ -73,7 +73,7 @@ SettingsDialogComponent::SettingsDialogComponent (Processor& processor)
     _nameVersionLabel->setColour (TextEditor::textColourId, Colour (0xff202020));
     _nameVersionLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_copyrightLabel = new Label (String::empty,
+    addAndMakeVisible (_copyrightLabel = new Label (String(),
                                                     L"Copyright (c) 2013 HiFi-LoFi"));
     _copyrightLabel->setFont (Font (15.0000f, Font::plain));
     _copyrightLabel->setJustificationType (Justification::centredLeft);
@@ -82,7 +82,7 @@ SettingsDialogComponent::SettingsDialogComponent (Processor& processor)
     _copyrightLabel->setColour (TextEditor::textColourId, Colour (0xff202020));
     _copyrightLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_myLabel = new Label (String::empty,
+    addAndMakeVisible (_myLabel = new Label (String(),
                                              L"Modified by falkTX"));
     _myLabel->setFont (Font (15.0000f, Font::plain));
     _myLabel->setJustificationType (Justification::centredLeft);
@@ -96,11 +96,11 @@ SettingsDialogComponent::SettingsDialogComponent (Processor& processor)
     _licenseHyperlink->setTooltip (L"http://www.gnu.org/licenses");
     _licenseHyperlink->setButtonText (L"Licensed under GPL3");
 
-    addAndMakeVisible (_infoGroupComponent = new GroupComponent (String::empty,
+    addAndMakeVisible (_infoGroupComponent = new GroupComponent (String(),
                                                                  L"Plugin Information"));
     _infoGroupComponent->setColour (GroupComponent::textColourId, Colour (0xff202020));
 
-    addAndMakeVisible (_juceVersionPrefixLabel = new Label (String::empty,
+    addAndMakeVisible (_juceVersionPrefixLabel = new Label (String(),
                                                             L"JUCE Version:"));
     _juceVersionPrefixLabel->setFont (Font (15.0000f, Font::plain));
     _juceVersionPrefixLabel->setJustificationType (Justification::centredLeft);
@@ -109,7 +109,7 @@ SettingsDialogComponent::SettingsDialogComponent (Processor& processor)
     _juceVersionPrefixLabel->setColour (TextEditor::textColourId, Colour (0xff202020));
     _juceVersionPrefixLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_juceVersionLabel = new Label (String::empty,
+    addAndMakeVisible (_juceVersionLabel = new Label (String(),
                                                       L"<Unknown>"));
     _juceVersionLabel->setFont (Font (15.0000f, Font::plain));
     _juceVersionLabel->setJustificationType (Justification::centredLeft);
@@ -118,7 +118,7 @@ SettingsDialogComponent::SettingsDialogComponent (Processor& processor)
     _juceVersionLabel->setColour (TextEditor::textColourId, Colour (0xff202020));
     _juceVersionLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_numberInputsPrefixLabel = new Label (String::empty,
+    addAndMakeVisible (_numberInputsPrefixLabel = new Label (String(),
                                                              L"Input Channels:"));
     _numberInputsPrefixLabel->setFont (Font (15.0000f, Font::plain));
     _numberInputsPrefixLabel->setJustificationType (Justification::centredLeft);
@@ -127,7 +127,7 @@ SettingsDialogComponent::SettingsDialogComponent (Processor& processor)
     _numberInputsPrefixLabel->setColour (TextEditor::textColourId, Colour (0xff202020));
     _numberInputsPrefixLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_numberInputsLabel = new Label (String::empty,
+    addAndMakeVisible (_numberInputsLabel = new Label (String(),
                                                        L"<Unknown>"));
     _numberInputsLabel->setFont (Font (15.0000f, Font::plain));
     _numberInputsLabel->setJustificationType (Justification::centredLeft);
@@ -136,7 +136,7 @@ SettingsDialogComponent::SettingsDialogComponent (Processor& processor)
     _numberInputsLabel->setColour (TextEditor::textColourId, Colour (0xff202020));
     _numberInputsLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_numberOutputsPrefixLabel = new Label (String::empty,
+    addAndMakeVisible (_numberOutputsPrefixLabel = new Label (String(),
                                                               L"Output Channels:"));
     _numberOutputsPrefixLabel->setFont (Font (15.0000f, Font::plain));
     _numberOutputsPrefixLabel->setJustificationType (Justification::centredLeft);
@@ -145,7 +145,7 @@ SettingsDialogComponent::SettingsDialogComponent (Processor& processor)
     _numberOutputsPrefixLabel->setColour (TextEditor::textColourId, Colour (0xff202020));
     _numberOutputsPrefixLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_numberOutputsLabel = new Label (String::empty,
+    addAndMakeVisible (_numberOutputsLabel = new Label (String(),
                                                         L"<Unknown>"));
     _numberOutputsLabel->setFont (Font (15.0000f, Font::plain));
     _numberOutputsLabel->setJustificationType (Justification::centredLeft);
@@ -154,7 +154,7 @@ SettingsDialogComponent::SettingsDialogComponent (Processor& processor)
     _numberOutputsLabel->setColour (TextEditor::textColourId, Colour (0xff202020));
     _numberOutputsLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_sseOptimizationPrefixLabel = new Label (String::empty,
+    addAndMakeVisible (_sseOptimizationPrefixLabel = new Label (String(),
                                                                 L"SSE Optimization:"));
     _sseOptimizationPrefixLabel->setFont (Font (15.0000f, Font::plain));
     _sseOptimizationPrefixLabel->setJustificationType (Justification::centredLeft);
@@ -163,7 +163,7 @@ SettingsDialogComponent::SettingsDialogComponent (Processor& processor)
     _sseOptimizationPrefixLabel->setColour (TextEditor::textColourId, Colour (0xff202020));
     _sseOptimizationPrefixLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_sseOptimizationLabel = new Label (String::empty,
+    addAndMakeVisible (_sseOptimizationLabel = new Label (String(),
                                                           L"<Unknown>"));
     _sseOptimizationLabel->setFont (Font (15.0000f, Font::plain));
     _sseOptimizationLabel->setJustificationType (Justification::centredLeft);
@@ -172,7 +172,7 @@ SettingsDialogComponent::SettingsDialogComponent (Processor& processor)
     _sseOptimizationLabel->setColour (TextEditor::textColourId, Colour (0xff202020));
     _sseOptimizationLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_headBlockSizePrefixLabel = new Label (String::empty,
+    addAndMakeVisible (_headBlockSizePrefixLabel = new Label (String(),
                                                               L"Head Block Size:"));
     _headBlockSizePrefixLabel->setFont (Font (15.0000f, Font::plain));
     _headBlockSizePrefixLabel->setJustificationType (Justification::centredLeft);
@@ -181,7 +181,7 @@ SettingsDialogComponent::SettingsDialogComponent (Processor& processor)
     _headBlockSizePrefixLabel->setColour (TextEditor::textColourId, Colour (0xff202020));
     _headBlockSizePrefixLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_headBlockSizeLabel = new Label (String::empty,
+    addAndMakeVisible (_headBlockSizeLabel = new Label (String(),
                                                         L"<Unknown>"));
     _headBlockSizeLabel->setFont (Font (15.0000f, Font::plain));
     _headBlockSizeLabel->setJustificationType (Justification::centredLeft);
@@ -190,7 +190,7 @@ SettingsDialogComponent::SettingsDialogComponent (Processor& processor)
     _headBlockSizeLabel->setColour (TextEditor::textColourId, Colour (0xff202020));
     _headBlockSizeLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_tailBlockSizePrefixLabel = new Label (String::empty,
+    addAndMakeVisible (_tailBlockSizePrefixLabel = new Label (String(),
                                                               L"Tail Block Size:"));
     _tailBlockSizePrefixLabel->setFont (Font (15.0000f, Font::plain));
     _tailBlockSizePrefixLabel->setJustificationType (Justification::centredLeft);
@@ -199,7 +199,7 @@ SettingsDialogComponent::SettingsDialogComponent (Processor& processor)
     _tailBlockSizePrefixLabel->setColour (TextEditor::textColourId, Colour (0xff202020));
     _tailBlockSizePrefixLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_tailBlockSizeLabel = new Label (String::empty,
+    addAndMakeVisible (_tailBlockSizeLabel = new Label (String(),
                                                         L"<Unknown>"));
     _tailBlockSizeLabel->setFont (Font (15.0000f, Font::plain));
     _tailBlockSizeLabel->setJustificationType (Justification::centredLeft);
@@ -208,7 +208,7 @@ SettingsDialogComponent::SettingsDialogComponent (Processor& processor)
     _tailBlockSizeLabel->setColour (TextEditor::textColourId, Colour (0xff202020));
     _tailBlockSizeLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_selectIRDirectoryButton = new TextButton (String::empty));
+    addAndMakeVisible (_selectIRDirectoryButton = new TextButton (String()));
     _selectIRDirectoryButton->setButtonText (L"Select Directory");
     _selectIRDirectoryButton->setConnectedEdges (Button::ConnectedOnLeft | Button::ConnectedOnRight);
     _selectIRDirectoryButton->addListener (this);

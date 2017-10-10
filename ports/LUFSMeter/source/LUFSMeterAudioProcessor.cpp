@@ -76,12 +76,12 @@ void LUFSMeterAudioProcessor::setParameter (int index, float newValue)
 
 const String LUFSMeterAudioProcessor::getParameterName (int index)
 {
-    return String::empty;
+    return String();
 }
 
 const String LUFSMeterAudioProcessor::getParameterText (int index)
 {
-    return String::empty;
+    return String();
 }
 
 const String LUFSMeterAudioProcessor::getInputChannelName (int channelIndex) const
@@ -148,7 +148,7 @@ void LUFSMeterAudioProcessor::setCurrentProgram (int index)
 
 const String LUFSMeterAudioProcessor::getProgramName (int index)
 {
-    return String::empty;
+    return String();
 }
 
 void LUFSMeterAudioProcessor::changeProgramName (int index, const String& newName)

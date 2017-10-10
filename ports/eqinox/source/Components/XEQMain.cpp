@@ -57,14 +57,14 @@ XEQMain::XEQMain (XEQPlugin* plugin_)
 {
     addAndMakeVisible (eqgraph = new EQGraph());
 
-    addAndMakeVisible (eq1Gain = new ImageSlider (String::empty));
+    addAndMakeVisible (eq1Gain = new ImageSlider (String()));
     eq1Gain->setTooltip ("Band 1 Gain");
     eq1Gain->setRange (0, 1, 0.0001);
     eq1Gain->setSliderStyle (Slider::LinearVertical);
     eq1Gain->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     eq1Gain->addListener (this);
 
-    addAndMakeVisible (eq1Bw = new ParameterSlider (String::empty));
+    addAndMakeVisible (eq1Bw = new ParameterSlider (String()));
     eq1Bw->setTooltip ("Band 1 Q");
     eq1Bw->setRange (0, 1, 0.0001);
     eq1Bw->setSliderStyle (Slider::RotaryVerticalDrag);
@@ -72,7 +72,7 @@ XEQMain::XEQMain (XEQPlugin* plugin_)
     eq1Bw->setColour (Slider::rotarySliderFillColourId, Colours::azure);
     eq1Bw->addListener (this);
 
-    addAndMakeVisible (eq1Freq = new ParameterSlider (String::empty));
+    addAndMakeVisible (eq1Freq = new ParameterSlider (String()));
     eq1Freq->setTooltip ("Band 1 Frequency");
     eq1Freq->setRange (0, 1, 0.0001);
     eq1Freq->setSliderStyle (Slider::RotaryVerticalDrag);
@@ -80,14 +80,14 @@ XEQMain::XEQMain (XEQPlugin* plugin_)
     eq1Freq->setColour (Slider::rotarySliderFillColourId, Colours::azure);
     eq1Freq->addListener (this);
 
-    addAndMakeVisible (eq2Gain = new ImageSlider (String::empty));
+    addAndMakeVisible (eq2Gain = new ImageSlider (String()));
     eq2Gain->setTooltip ("Band 2 Gain");
     eq2Gain->setRange (0, 1, 0.0001);
     eq2Gain->setSliderStyle (Slider::LinearVertical);
     eq2Gain->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     eq2Gain->addListener (this);
 
-    addAndMakeVisible (eq2Bw = new ParameterSlider (String::empty));
+    addAndMakeVisible (eq2Bw = new ParameterSlider (String()));
     eq2Bw->setTooltip ("Band 2 Q");
     eq2Bw->setRange (0, 1, 0.0001);
     eq2Bw->setSliderStyle (Slider::RotaryVerticalDrag);
@@ -95,7 +95,7 @@ XEQMain::XEQMain (XEQPlugin* plugin_)
     eq2Bw->setColour (Slider::rotarySliderFillColourId, Colours::azure);
     eq2Bw->addListener (this);
 
-    addAndMakeVisible (eq2Freq = new ParameterSlider (String::empty));
+    addAndMakeVisible (eq2Freq = new ParameterSlider (String()));
     eq2Freq->setTooltip ("Band 2 Frequency");
     eq2Freq->setRange (0, 1, 0.0001);
     eq2Freq->setSliderStyle (Slider::RotaryVerticalDrag);
@@ -103,14 +103,14 @@ XEQMain::XEQMain (XEQPlugin* plugin_)
     eq2Freq->setColour (Slider::rotarySliderFillColourId, Colours::azure);
     eq2Freq->addListener (this);
 
-    addAndMakeVisible (eq3Gain = new ImageSlider (String::empty));
+    addAndMakeVisible (eq3Gain = new ImageSlider (String()));
     eq3Gain->setTooltip ("Band 3 Gain");
     eq3Gain->setRange (0, 1, 0.0001);
     eq3Gain->setSliderStyle (Slider::LinearVertical);
     eq3Gain->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     eq3Gain->addListener (this);
 
-    addAndMakeVisible (eq3Bw = new ParameterSlider (String::empty));
+    addAndMakeVisible (eq3Bw = new ParameterSlider (String()));
     eq3Bw->setTooltip ("Band 3 Q");
     eq3Bw->setRange (0, 1, 0.0001);
     eq3Bw->setSliderStyle (Slider::RotaryVerticalDrag);
@@ -118,7 +118,7 @@ XEQMain::XEQMain (XEQPlugin* plugin_)
     eq3Bw->setColour (Slider::rotarySliderFillColourId, Colours::azure);
     eq3Bw->addListener (this);
 
-    addAndMakeVisible (eq3Freq = new ParameterSlider (String::empty));
+    addAndMakeVisible (eq3Freq = new ParameterSlider (String()));
     eq3Freq->setTooltip ("Band 3 Frequency");
     eq3Freq->setRange (0, 1, 0.0001);
     eq3Freq->setSliderStyle (Slider::RotaryVerticalDrag);
@@ -126,14 +126,14 @@ XEQMain::XEQMain (XEQPlugin* plugin_)
     eq3Freq->setColour (Slider::rotarySliderFillColourId, Colours::azure);
     eq3Freq->addListener (this);
 
-    addAndMakeVisible (eq4Gain = new ImageSlider (String::empty));
+    addAndMakeVisible (eq4Gain = new ImageSlider (String()));
     eq4Gain->setTooltip ("Band 4 Gain");
     eq4Gain->setRange (0, 1, 0.0001);
     eq4Gain->setSliderStyle (Slider::LinearVertical);
     eq4Gain->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     eq4Gain->addListener (this);
 
-    addAndMakeVisible (eq4Bw = new ParameterSlider (String::empty));
+    addAndMakeVisible (eq4Bw = new ParameterSlider (String()));
     eq4Bw->setTooltip ("Band 4 Q");
     eq4Bw->setRange (0, 1, 0.0001);
     eq4Bw->setSliderStyle (Slider::RotaryVerticalDrag);
@@ -141,7 +141,7 @@ XEQMain::XEQMain (XEQPlugin* plugin_)
     eq4Bw->setColour (Slider::rotarySliderFillColourId, Colours::azure);
     eq4Bw->addListener (this);
 
-    addAndMakeVisible (eq4Freq = new ParameterSlider (String::empty));
+    addAndMakeVisible (eq4Freq = new ParameterSlider (String()));
     eq4Freq->setTooltip ("Band 4 Frequency");
     eq4Freq->setRange (0, 1, 0.0001);
     eq4Freq->setSliderStyle (Slider::RotaryVerticalDrag);
@@ -149,14 +149,14 @@ XEQMain::XEQMain (XEQPlugin* plugin_)
     eq4Freq->setColour (Slider::rotarySliderFillColourId, Colours::azure);
     eq4Freq->addListener (this);
 
-    addAndMakeVisible (eq5Gain = new ImageSlider (String::empty));
+    addAndMakeVisible (eq5Gain = new ImageSlider (String()));
     eq5Gain->setTooltip ("Band 5 Gain");
     eq5Gain->setRange (0, 1, 0.0001);
     eq5Gain->setSliderStyle (Slider::LinearVertical);
     eq5Gain->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     eq5Gain->addListener (this);
 
-    addAndMakeVisible (eq5Bw = new ParameterSlider (String::empty));
+    addAndMakeVisible (eq5Bw = new ParameterSlider (String()));
     eq5Bw->setTooltip ("Band 5 Q");
     eq5Bw->setRange (0, 1, 0.0001);
     eq5Bw->setSliderStyle (Slider::RotaryVerticalDrag);
@@ -164,7 +164,7 @@ XEQMain::XEQMain (XEQPlugin* plugin_)
     eq5Bw->setColour (Slider::rotarySliderFillColourId, Colours::azure);
     eq5Bw->addListener (this);
 
-    addAndMakeVisible (eq5Freq = new ParameterSlider (String::empty));
+    addAndMakeVisible (eq5Freq = new ParameterSlider (String()));
     eq5Freq->setTooltip ("Band 5 Frequency");
     eq5Freq->setRange (0, 1, 0.0001);
     eq5Freq->setSliderStyle (Slider::RotaryVerticalDrag);
@@ -172,14 +172,14 @@ XEQMain::XEQMain (XEQPlugin* plugin_)
     eq5Freq->setColour (Slider::rotarySliderFillColourId, Colours::azure);
     eq5Freq->addListener (this);
 
-    addAndMakeVisible (eq6Gain = new ImageSlider (String::empty));
+    addAndMakeVisible (eq6Gain = new ImageSlider (String()));
     eq6Gain->setTooltip ("Band 6 Gain");
     eq6Gain->setRange (0, 1, 0.0001);
     eq6Gain->setSliderStyle (Slider::LinearVertical);
     eq6Gain->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     eq6Gain->addListener (this);
 
-    addAndMakeVisible (eq6Bw = new ParameterSlider (String::empty));
+    addAndMakeVisible (eq6Bw = new ParameterSlider (String()));
     eq6Bw->setTooltip ("Band 6 Q");
     eq6Bw->setRange (0, 1, 0.0001);
     eq6Bw->setSliderStyle (Slider::RotaryVerticalDrag);
@@ -187,7 +187,7 @@ XEQMain::XEQMain (XEQPlugin* plugin_)
     eq6Bw->setColour (Slider::rotarySliderFillColourId, Colours::azure);
     eq6Bw->addListener (this);
 
-    addAndMakeVisible (eq6Freq = new ParameterSlider (String::empty));
+    addAndMakeVisible (eq6Freq = new ParameterSlider (String()));
     eq6Freq->setTooltip ("Band 6 Frequency");
     eq6Freq->setRange (0, 1, 0.0001);
     eq6Freq->setSliderStyle (Slider::RotaryVerticalDrag);
@@ -206,13 +206,13 @@ XEQMain::XEQMain (XEQPlugin* plugin_)
     label->setColour (TextEditor::textColourId, Colours::white);
     label->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (gainSlider = new ImageSlider (String::empty));
+    addAndMakeVisible (gainSlider = new ImageSlider (String()));
     gainSlider->setRange (0, 1, 0.0001);
     gainSlider->setSliderStyle (Slider::LinearVertical);
     gainSlider->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     gainSlider->addListener (this);
 
-    addAndMakeVisible (drywetSlider = new ImageSlider (String::empty));
+    addAndMakeVisible (drywetSlider = new ImageSlider (String()));
     drywetSlider->setRange (0, 1, 0.0001);
     drywetSlider->setSliderStyle (Slider::LinearVertical);
     drywetSlider->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);

@@ -166,7 +166,7 @@ const String DRowAudioFilter::getParameterName (int index)
 		if (index == i)
 			return String(parameterNames[i]);
 
-    return String::empty;
+    return String();
 }
 
 const String DRowAudioFilter::getParameterText (int index)
@@ -175,7 +175,7 @@ const String DRowAudioFilter::getParameterText (int index)
 		if (index == i)
 			return String(params[i].getValue(), 2);
 
-    return String::empty;
+    return String();
 }
 
 PluginParameter* DRowAudioFilter::getParameterPointer(int index)

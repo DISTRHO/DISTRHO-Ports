@@ -78,7 +78,7 @@ String secondsToStringWithUnitTotal4(double value);
  of 4 digits the unit-suffix "s" or "ms".  */
 
 String valueToStringWithTotalNumDigits(double value, int totalNumDigits = 3, 
-                                       const String& suffix = String::empty);
+                                       const String& suffix = String());
 /**< Converts a value into a juce-string with adjustable total number of 
  decimal digits and an optional suffix.  */
 

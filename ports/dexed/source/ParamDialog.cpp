@@ -48,14 +48,14 @@ ParamDialog::ParamDialog ()
     addAndMakeVisible (sysexIn = new ComboBox ("sysexIn"));
     sysexIn->setEditableText (false);
     sysexIn->setJustificationType (Justification::centredLeft);
-    sysexIn->setTextWhenNothingSelected (String::empty);
+    sysexIn->setTextWhenNothingSelected (String());
     sysexIn->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
     sysexIn->addListener (this);
 
     addAndMakeVisible (sysexOut = new ComboBox ("sysexOut"));
     sysexOut->setEditableText (false);
     sysexOut->setJustificationType (Justification::centredLeft);
-    sysexOut->setTextWhenNothingSelected (String::empty);
+    sysexOut->setTextWhenNothingSelected (String());
     sysexOut->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
     sysexOut->addListener (this);
 
@@ -68,7 +68,7 @@ ParamDialog::ParamDialog ()
     addAndMakeVisible (engineReso = new ComboBox ("new combo box"));
     engineReso->setEditableText (false);
     engineReso->setJustificationType (Justification::centredLeft);
-    engineReso->setTextWhenNothingSelected (String::empty);
+    engineReso->setTextWhenNothingSelected (String());
     engineReso->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
     engineReso->addItem (TRANS("Modern (24-bit)"), 1);
     engineReso->addItem (TRANS("Mark I"), 2);
@@ -76,7 +76,7 @@ ParamDialog::ParamDialog ()
     engineReso->addListener (this);
 
     addAndMakeVisible (showKeyboard = new ToggleButton ("showKeyboard"));
-    showKeyboard->setButtonText (String::empty);
+    showKeyboard->setButtonText (String());
 
     addAndMakeVisible (whlRange = new Slider ("whlRange"));
     whlRange->setRange (0, 99, 1);
@@ -103,51 +103,51 @@ ParamDialog::ParamDialog ()
     atRange->addListener (this);
 
     addAndMakeVisible (whlEg = new ToggleButton ("whlEg"));
-    whlEg->setButtonText (String::empty);
+    whlEg->setButtonText (String());
     whlEg->addListener (this);
 
     addAndMakeVisible (ftEg = new ToggleButton ("ftEg"));
-    ftEg->setButtonText (String::empty);
+    ftEg->setButtonText (String());
     ftEg->addListener (this);
 
     addAndMakeVisible (brEg = new ToggleButton ("brEg"));
-    brEg->setButtonText (String::empty);
+    brEg->setButtonText (String());
     brEg->addListener (this);
 
     addAndMakeVisible (atEg = new ToggleButton ("atEg"));
-    atEg->setButtonText (String::empty);
+    atEg->setButtonText (String());
     atEg->addListener (this);
 
     addAndMakeVisible (whlAmp = new ToggleButton ("whlAmp"));
-    whlAmp->setButtonText (String::empty);
+    whlAmp->setButtonText (String());
     whlAmp->addListener (this);
 
     addAndMakeVisible (ftAmp = new ToggleButton ("ftAmp"));
-    ftAmp->setButtonText (String::empty);
+    ftAmp->setButtonText (String());
     ftAmp->addListener (this);
 
     addAndMakeVisible (brAmp = new ToggleButton ("brAmp"));
-    brAmp->setButtonText (String::empty);
+    brAmp->setButtonText (String());
     brAmp->addListener (this);
 
     addAndMakeVisible (atAmp = new ToggleButton ("atAmp"));
-    atAmp->setButtonText (String::empty);
+    atAmp->setButtonText (String());
     atAmp->addListener (this);
 
     addAndMakeVisible (whlPitch = new ToggleButton ("whlPitch"));
-    whlPitch->setButtonText (String::empty);
+    whlPitch->setButtonText (String());
     whlPitch->addListener (this);
 
     addAndMakeVisible (ftPitch = new ToggleButton ("ftPitch"));
-    ftPitch->setButtonText (String::empty);
+    ftPitch->setButtonText (String());
     ftPitch->addListener (this);
 
     addAndMakeVisible (brPitch = new ToggleButton ("brPitch"));
-    brPitch->setButtonText (String::empty);
+    brPitch->setButtonText (String());
     brPitch->addListener (this);
 
     addAndMakeVisible (atPitch = new ToggleButton ("atPitch"));
-    atPitch->setButtonText (String::empty);
+    atPitch->setButtonText (String());
     atPitch->addListener (this);
 
 

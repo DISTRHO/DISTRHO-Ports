@@ -7,7 +7,7 @@ index 3aea53a..abde506 100644
  
      //==============================================================================
 +    /** LV2 specific calls, saving/restore as string. */
-+    virtual String getStateInformationString () { return String::empty; }
++    virtual String getStateInformationString () { return String(); }
 +    virtual void setStateInformationString (const String&) {}
 +
 +    //==============================================================================

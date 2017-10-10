@@ -86,7 +86,7 @@ const String TremoloAudioProcessor::getParameterName (int index)
     if (index >= 0 && index < parameters.size())
         return parameters[index]->getName();
 
-    return String::empty;
+    return String();
 }
 
 const String TremoloAudioProcessor::getParameterText (int index)
@@ -94,7 +94,7 @@ const String TremoloAudioProcessor::getParameterText (int index)
     if (index >= 0 && index < parameters.size())
         return String (parameters[index]->getValue(), 2);
 
-    return String::empty;
+    return String();
 }
 
 const String TremoloAudioProcessor::getInputChannelName (int channelIndex) const
@@ -151,7 +151,7 @@ void TremoloAudioProcessor::setCurrentProgram (int /*index*/)
 
 const String TremoloAudioProcessor::getProgramName (int /*index*/)
 {
-    return String::empty;
+    return String();
 }
 
 void TremoloAudioProcessor::changeProgramName (int /*index*/, const String& /*newName*/)

@@ -135,7 +135,7 @@ public:
 
 	virtual String getParamUnit(int /*index*/)
 	{
-		return String::empty;
+		return String();
 	}
 
 private:

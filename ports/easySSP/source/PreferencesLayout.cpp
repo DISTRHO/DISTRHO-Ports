@@ -44,7 +44,7 @@ PreferencesLayout::PreferencesLayout (AdmvAudioProcessor* plugin)
     addAndMakeVisible (mGoniometerScaleModeBox = new ComboBox ("goniometer scale mode"));
     mGoniometerScaleModeBox->setEditableText (false);
     mGoniometerScaleModeBox->setJustificationType (Justification::centredLeft);
-    mGoniometerScaleModeBox->setTextWhenNothingSelected (String::empty);
+    mGoniometerScaleModeBox->setTextWhenNothingSelected (String());
     mGoniometerScaleModeBox->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
     mGoniometerScaleModeBox->addItem (TRANS("Auto"), 1);
     mGoniometerScaleModeBox->addItem (TRANS("Manual"), 2);
@@ -67,7 +67,7 @@ PreferencesLayout::PreferencesLayout (AdmvAudioProcessor* plugin)
     addAndMakeVisible (mSpectrumFillModeBox = new ComboBox ("spectrum fill mode box"));
     mSpectrumFillModeBox->setEditableText (false);
     mSpectrumFillModeBox->setJustificationType (Justification::centredLeft);
-    mSpectrumFillModeBox->setTextWhenNothingSelected (String::empty);
+    mSpectrumFillModeBox->setTextWhenNothingSelected (String());
     mSpectrumFillModeBox->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
     mSpectrumFillModeBox->addItem (TRANS("Semi-transparent"), 1);
     mSpectrumFillModeBox->addItem (TRANS("None"), 2);
@@ -76,7 +76,7 @@ PreferencesLayout::PreferencesLayout (AdmvAudioProcessor* plugin)
     addAndMakeVisible (mOutputModeBox = new ComboBox ("output mode box"));
     mOutputModeBox->setEditableText (false);
     mOutputModeBox->setJustificationType (Justification::centredLeft);
-    mOutputModeBox->setTextWhenNothingSelected (String::empty);
+    mOutputModeBox->setTextWhenNothingSelected (String());
     mOutputModeBox->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
     mOutputModeBox->addItem (TRANS("No change"), 1);
     mOutputModeBox->addItem (TRANS("Mute all"), 2);

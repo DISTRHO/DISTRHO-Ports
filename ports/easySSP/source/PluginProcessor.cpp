@@ -45,12 +45,12 @@ void AdmvAudioProcessor::setParameter (int index, float newValue)
 
 const String AdmvAudioProcessor::getParameterName (int index)
 {
-	return String::empty;
+	return String();
 }
 
 const String AdmvAudioProcessor::getParameterText (int index)
 {
-	return String::empty;
+	return String();
 }
 
 const String AdmvAudioProcessor::getInputChannelName (int channelIndex) const
@@ -117,7 +117,7 @@ void AdmvAudioProcessor::setCurrentProgram (int index)
 
 const String AdmvAudioProcessor::getProgramName (int index)
 {
-	return String::empty;
+	return String();
 }
 
 void AdmvAudioProcessor::changeProgramName (int index, const String& newName)

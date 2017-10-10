@@ -31,7 +31,7 @@
 
 BEGIN_JUCE_NAMESPACE
 
-SymbolButton::SymbolButton() : ToggleButton(String::empty)
+SymbolButton::SymbolButton() : ToggleButton(String())
 {
  setSize(16, 16);
  symbolIndex = 0;

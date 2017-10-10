@@ -72,7 +72,7 @@ String PianoGridKeyboard::getWhiteNoteText (const int midiNoteNumber)
     if (midiNoteNumber % 12 == 0)
         return MidiMessage::getMidiNoteName (midiNoteNumber, true, true, getOctaveForMiddleC ());
 
-    return String::empty;
+    return String();
 }
 
 //==============================================================================

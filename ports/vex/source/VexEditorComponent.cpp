@@ -142,7 +142,7 @@ VexEditorComponent::VexEditorComponent(AudioProcessor* const proc, Callback* con
 
     //PART ON/OFF
     addAndMakeVisible(TB1 = new TextButton("TB1"));
-    TB1->setButtonText(String::empty);
+    TB1->setButtonText(String());
     TB1->addListener(this);
     TB1->setColour(TextButton::buttonColourId, Colours::darkred.withAlpha(0.5f));
     TB1->setColour(TextButton::buttonOnColourId, Colours::red);
@@ -150,7 +150,7 @@ VexEditorComponent::VexEditorComponent(AudioProcessor* const proc, Callback* con
     TB1->setToggleState(false, dontSendNotification);
 
     addAndMakeVisible(TB2 = new TextButton("TB2"));
-    TB2->setButtonText(String::empty);
+    TB2->setButtonText(String());
     TB2->addListener(this);
     TB2->setColour(TextButton::buttonColourId, Colours::darkred.withAlpha(0.5f));
     TB2->setColour(TextButton::buttonOnColourId, Colours::red);
@@ -158,7 +158,7 @@ VexEditorComponent::VexEditorComponent(AudioProcessor* const proc, Callback* con
     TB2->setToggleState(false, dontSendNotification);
 
     addAndMakeVisible(TB3 = new TextButton("TB3"));
-    TB3->setButtonText(String::empty);
+    TB3->setButtonText(String());
     TB3->addListener(this);
     TB3->setColour(TextButton::buttonColourId, Colours::darkred.withAlpha(0.5f));
     TB3->setColour(TextButton::buttonOnColourId, Colours::red);
@@ -167,7 +167,7 @@ VexEditorComponent::VexEditorComponent(AudioProcessor* const proc, Callback* con
 
     //Peggy ON/OFF
     addAndMakeVisible(TB4 = new TextButton("TB4"));
-    TB4->setButtonText(String::empty);
+    TB4->setButtonText(String());
     TB4->addListener(this);
     TB4->setColour(TextButton::buttonColourId, Colours::darkblue.withAlpha(0.5f));
     TB4->setColour(TextButton::buttonOnColourId, Colours::blue);
@@ -175,7 +175,7 @@ VexEditorComponent::VexEditorComponent(AudioProcessor* const proc, Callback* con
     TB4->setToggleState(false, dontSendNotification);
 
     addAndMakeVisible(TB5 = new TextButton("TB5"));
-    TB5->setButtonText(String::empty);
+    TB5->setButtonText(String());
     TB5->addListener(this);
     TB5->setColour(TextButton::buttonColourId, Colours::darkblue.withAlpha(0.5f));
     TB5->setColour(TextButton::buttonOnColourId, Colours::blue);
@@ -183,7 +183,7 @@ VexEditorComponent::VexEditorComponent(AudioProcessor* const proc, Callback* con
     TB5->setToggleState(false, dontSendNotification);
 
     addAndMakeVisible(TB6 = new TextButton("TB6"));
-    TB6->setButtonText(String::empty);
+    TB6->setButtonText(String());
     TB6->addListener(this);
     TB6->setColour(TextButton::buttonColourId, Colours::darkblue.withAlpha(0.5f));
     TB6->setColour(TextButton::buttonOnColourId, Colours::blue);

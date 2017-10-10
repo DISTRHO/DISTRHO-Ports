@@ -123,7 +123,7 @@ const String LuftikusAudioProcessor::getParameterName (int index)
 		return "MasterVol";
 	default:
 		jassertfalse;
-		return String::empty;
+		return String();
 	}
 }
 
@@ -229,7 +229,7 @@ void LuftikusAudioProcessor::setCurrentProgram (int /*index*/)
 
 const String LuftikusAudioProcessor::getProgramName (int /*index*/)
 {
-	return String::empty;
+	return String();
 }
 
 void LuftikusAudioProcessor::changeProgramName (int /*index*/, const String& /*newName*/)

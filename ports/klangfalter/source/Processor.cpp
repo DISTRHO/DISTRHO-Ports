@@ -203,7 +203,7 @@ void Processor::setCurrentProgram (int /*index*/)
 
 const String Processor::getProgramName (int /*index*/)
 {
-  return String::empty;
+  return String();
 }
 
 void Processor::changeProgramName (int /*index*/, const String& /*newName*/)
@@ -819,7 +819,7 @@ bool Processor::irAvailable() const
 {
   for (auto it=_agents.begin(); it!=_agents.end(); ++it)
   {
-    if ((*it)->getFile() != File::nonexistent)
+    if ((*it)->getFile().exists())
     {
       return true;
     }

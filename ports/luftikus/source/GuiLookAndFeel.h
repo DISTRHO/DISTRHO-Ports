@@ -48,7 +48,7 @@ class GuiSlider : public Slider,
                   public Slider::Listener
 {
 public:
-	explicit GuiSlider (const String& componentName = String::empty);
+	explicit GuiSlider (const String& componentName = String());
 
 	GuiSlider (SliderStyle style, TextEntryBoxPosition textBoxPosition);
 

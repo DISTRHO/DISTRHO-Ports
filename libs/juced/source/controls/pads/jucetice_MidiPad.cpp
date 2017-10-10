@@ -92,7 +92,7 @@ bool MidiPad::hitTest (int x, int y)
 //==============================================================================
 bool MidiPad::isInterestedInFileDrag (const StringArray& files)
 {
-    File file = File(files.joinIntoString(String::empty,0,1));
+    File file = File(files.joinIntoString(String(),0,1));
     if (file.hasFileExtension("png") ||
         file.hasFileExtension("gif") ||
         file.hasFileExtension("jpg") ||
@@ -105,7 +105,7 @@ bool MidiPad::isInterestedInFileDrag (const StringArray& files)
 void MidiPad::filesDropped(const juce::StringArray &filenames, int mouseX, int mouseY)
 {
     if (isInterestedInFileDrag(filenames)) {
-        String filename = filenames.joinIntoString(String::empty,0,1);
+        String filename = filenames.joinIntoString(String(),0,1);
         File file = File(filename);
         Drawable* image = Drawable::createFromImageFile(file);
         drawableButton->setImages(image);

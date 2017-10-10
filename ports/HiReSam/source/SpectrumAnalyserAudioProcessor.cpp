@@ -50,12 +50,12 @@ void SpectrumAnalyserAudioProcessor::setParameter (int index, float newValue)
 
 const String SpectrumAnalyserAudioProcessor::getParameterName (int index)
 {
-    return String::empty;
+    return String();
 }
 
 const String SpectrumAnalyserAudioProcessor::getParameterText (int index)
 {
-    return String::empty;
+    return String();
 }
 
 const String SpectrumAnalyserAudioProcessor::getInputChannelName (int channelIndex) const
@@ -122,7 +122,7 @@ void SpectrumAnalyserAudioProcessor::setCurrentProgram (int index)
 
 const String SpectrumAnalyserAudioProcessor::getProgramName (int index)
 {
-    return String::empty;
+    return String();
 }
 
 void SpectrumAnalyserAudioProcessor::changeProgramName (int index, const String& newName)

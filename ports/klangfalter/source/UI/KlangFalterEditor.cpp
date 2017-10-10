@@ -160,7 +160,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _wetLevelLabel->setColour (TextEditor::textColourId, Colours::black);
     _wetLevelLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_drySlider = new Slider (String::empty));
+    addAndMakeVisible (_drySlider = new Slider (String()));
     _drySlider->setRange (0, 10, 0);
     _drySlider->setSliderStyle (Slider::LinearVertical);
     _drySlider->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
@@ -168,13 +168,13 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
 
     addAndMakeVisible (_decibelScaleOut = new DecibelScale());
 
-    addAndMakeVisible (_wetSlider = new Slider (String::empty));
+    addAndMakeVisible (_wetSlider = new Slider (String()));
     _wetSlider->setRange (0, 10, 0);
     _wetSlider->setSliderStyle (Slider::LinearVertical);
     _wetSlider->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     _wetSlider->addListener (this);
 
-    addAndMakeVisible (_browseButton = new TextButton (String::empty));
+    addAndMakeVisible (_browseButton = new TextButton (String()));
     _browseButton->setTooltip (L"Show Browser For Impulse Response Selection");
     _browseButton->setButtonText (L"Show Browser");
     _browseButton->setConnectedEdges (Button::ConnectedOnBottom);
@@ -183,14 +183,14 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
 
     addAndMakeVisible (_irBrowserComponent = new IRBrowserComponent());
 
-    addAndMakeVisible (_settingsButton = new TextButton (String::empty));
+    addAndMakeVisible (_settingsButton = new TextButton (String()));
     _settingsButton->setButtonText (L"Settings");
     _settingsButton->setConnectedEdges (Button::ConnectedOnRight | Button::ConnectedOnTop);
     _settingsButton->addListener (this);
     _settingsButton->setColour (TextButton::textColourOnId, Colour (0xff202020));
     _settingsButton->setColour (TextButton::textColourOffId, Colour (0xff202020));
 
-    addAndMakeVisible (_wetButton = new TextButton (String::empty));
+    addAndMakeVisible (_wetButton = new TextButton (String()));
     _wetButton->setTooltip (L"Wet Signal On/Off");
     _wetButton->setButtonText (L"Wet");
     _wetButton->setConnectedEdges (Button::ConnectedOnLeft | Button::ConnectedOnRight);
@@ -200,7 +200,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _wetButton->setColour (TextButton::textColourOnId, Colour (0xff202020));
     _wetButton->setColour (TextButton::textColourOffId, Colour (0xff202020));
 
-    addAndMakeVisible (_dryButton = new TextButton (String::empty));
+    addAndMakeVisible (_dryButton = new TextButton (String()));
     _dryButton->setTooltip (L"Dry Signal On/Off");
     _dryButton->setButtonText (L"Dry");
     _dryButton->setConnectedEdges (Button::ConnectedOnLeft | Button::ConnectedOnRight);
@@ -210,7 +210,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _dryButton->setColour (TextButton::textColourOnId, Colour (0xff202020));
     _dryButton->setColour (TextButton::textColourOffId, Colour (0xff202020));
 
-    addAndMakeVisible (_autogainButton = new TextButton (String::empty));
+    addAndMakeVisible (_autogainButton = new TextButton (String()));
     _autogainButton->setTooltip (L"Autogain On/Off");
     _autogainButton->setButtonText (L"Autogain 0.0dB");
     _autogainButton->setConnectedEdges (Button::ConnectedOnLeft | Button::ConnectedOnRight);
@@ -220,7 +220,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _autogainButton->setColour (TextButton::textColourOnId, Colour (0xff202020));
     _autogainButton->setColour (TextButton::textColourOffId, Colour (0xff202020));
 
-    addAndMakeVisible (_reverseButton = new TextButton (String::empty));
+    addAndMakeVisible (_reverseButton = new TextButton (String()));
     _reverseButton->setTooltip (L"Reverse Impulse Response");
     _reverseButton->setButtonText (L"Reverse");
     _reverseButton->setConnectedEdges (Button::ConnectedOnLeft | Button::ConnectedOnRight);
@@ -230,7 +230,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _reverseButton->setColour (TextButton::textColourOnId, Colour (0xff202020));
     _reverseButton->setColour (TextButton::textColourOffId, Colour (0xff202020));
 
-    addAndMakeVisible (_hiFreqLabel = new Label (String::empty,
+    addAndMakeVisible (_hiFreqLabel = new Label (String(),
                                                  L"15.2kHz"));
     _hiFreqLabel->setFont (Font (11.0000f, Font::plain));
     _hiFreqLabel->setJustificationType (Justification::centred);
@@ -239,7 +239,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _hiFreqLabel->setColour (TextEditor::textColourId, Colours::black);
     _hiFreqLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_hiGainLabel = new Label (String::empty,
+    addAndMakeVisible (_hiGainLabel = new Label (String(),
                                                  L"0.0dB"));
     _hiGainLabel->setFont (Font (11.0000f, Font::plain));
     _hiGainLabel->setJustificationType (Justification::centred);
@@ -248,7 +248,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _hiGainLabel->setColour (TextEditor::textColourId, Colours::black);
     _hiGainLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_hiGainHeaderLabel = new Label (String::empty,
+    addAndMakeVisible (_hiGainHeaderLabel = new Label (String(),
                                                        L"Gain"));
     _hiGainHeaderLabel->setFont (Font (11.0000f, Font::plain));
     _hiGainHeaderLabel->setJustificationType (Justification::centred);
@@ -257,7 +257,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _hiGainHeaderLabel->setColour (TextEditor::textColourId, Colours::black);
     _hiGainHeaderLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_hiFreqHeaderLabel = new Label (String::empty,
+    addAndMakeVisible (_hiFreqHeaderLabel = new Label (String(),
                                                        L"Freq"));
     _hiFreqHeaderLabel->setFont (Font (11.0000f, Font::plain));
     _hiFreqHeaderLabel->setJustificationType (Justification::centred);
@@ -266,7 +266,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _hiFreqHeaderLabel->setColour (TextEditor::textColourId, Colours::black);
     _hiFreqHeaderLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_hiGainSlider = new Slider (String::empty));
+    addAndMakeVisible (_hiGainSlider = new Slider (String()));
     _hiGainSlider->setRange (-30, 30, 0);
     _hiGainSlider->setSliderStyle (Slider::RotaryVerticalDrag);
     _hiGainSlider->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
@@ -274,7 +274,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _hiGainSlider->setColour (Slider::rotarySliderFillColourId, Colour (0xb1606060));
     _hiGainSlider->addListener (this);
 
-    addAndMakeVisible (_hiFreqSlider = new Slider (String::empty));
+    addAndMakeVisible (_hiFreqSlider = new Slider (String()));
     _hiFreqSlider->setRange (2000, 20000, 0);
     _hiFreqSlider->setSliderStyle (Slider::RotaryVerticalDrag);
     _hiFreqSlider->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
@@ -282,7 +282,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _hiFreqSlider->setColour (Slider::rotarySliderFillColourId, Colour (0xb1606060));
     _hiFreqSlider->addListener (this);
 
-    addAndMakeVisible (_loFreqLabel = new Label (String::empty,
+    addAndMakeVisible (_loFreqLabel = new Label (String(),
                                                  L"1234Hz"));
     _loFreqLabel->setFont (Font (11.0000f, Font::plain));
     _loFreqLabel->setJustificationType (Justification::centred);
@@ -291,7 +291,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _loFreqLabel->setColour (TextEditor::textColourId, Colours::black);
     _loFreqLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_loGainLabel = new Label (String::empty,
+    addAndMakeVisible (_loGainLabel = new Label (String(),
                                                  L"0.0dB"));
     _loGainLabel->setFont (Font (11.0000f, Font::plain));
     _loGainLabel->setJustificationType (Justification::centred);
@@ -300,7 +300,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _loGainLabel->setColour (TextEditor::textColourId, Colours::black);
     _loGainLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_loGainHeaderLabel = new Label (String::empty,
+    addAndMakeVisible (_loGainHeaderLabel = new Label (String(),
                                                        L"Gain"));
     _loGainHeaderLabel->setFont (Font (11.0000f, Font::plain));
     _loGainHeaderLabel->setJustificationType (Justification::centred);
@@ -309,7 +309,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _loGainHeaderLabel->setColour (TextEditor::textColourId, Colours::black);
     _loGainHeaderLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_loFreqHeaderLabel = new Label (String::empty,
+    addAndMakeVisible (_loFreqHeaderLabel = new Label (String(),
                                                        L"Freq"));
     _loFreqHeaderLabel->setFont (Font (11.0000f, Font::plain));
     _loFreqHeaderLabel->setJustificationType (Justification::centred);
@@ -318,7 +318,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _loFreqHeaderLabel->setColour (TextEditor::textColourId, Colours::black);
     _loFreqHeaderLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_loGainSlider = new Slider (String::empty));
+    addAndMakeVisible (_loGainSlider = new Slider (String()));
     _loGainSlider->setRange (-30, 30, 0);
     _loGainSlider->setSliderStyle (Slider::RotaryVerticalDrag);
     _loGainSlider->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
@@ -326,7 +326,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _loGainSlider->setColour (Slider::rotarySliderFillColourId, Colour (0xb1606060));
     _loGainSlider->addListener (this);
 
-    addAndMakeVisible (_loFreqSlider = new Slider (String::empty));
+    addAndMakeVisible (_loFreqSlider = new Slider (String()));
     _loFreqSlider->setRange (20, 2000, 0);
     _loFreqSlider->setSliderStyle (Slider::RotaryVerticalDrag);
     _loFreqSlider->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
@@ -336,7 +336,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
 
     addAndMakeVisible (_levelMeterOut = new LevelMeter());
 
-    addAndMakeVisible (_levelMeterOutLabelButton = new TextButton (String::empty));
+    addAndMakeVisible (_levelMeterOutLabelButton = new TextButton (String()));
     _levelMeterOutLabelButton->setTooltip (L"Switches Between Out/Wet Level Measurement");
     _levelMeterOutLabelButton->setButtonText (L"Out");
     _levelMeterOutLabelButton->setConnectedEdges (Button::ConnectedOnLeft | Button::ConnectedOnRight);
@@ -346,7 +346,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _levelMeterOutLabelButton->setColour (TextButton::textColourOnId, Colour (0xff202020));
     _levelMeterOutLabelButton->setColour (TextButton::textColourOffId, Colour (0xff202020));
 
-    addAndMakeVisible (_levelMeterDryLabel = new Label (String::empty,
+    addAndMakeVisible (_levelMeterDryLabel = new Label (String(),
                                                         L"Dry"));
     _levelMeterDryLabel->setFont (Font (11.0000f, Font::plain));
     _levelMeterDryLabel->setJustificationType (Justification::centred);
@@ -355,7 +355,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _levelMeterDryLabel->setColour (TextEditor::textColourId, Colour (0xff202020));
     _levelMeterDryLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_lowEqButton = new TextButton (String::empty));
+    addAndMakeVisible (_lowEqButton = new TextButton (String()));
     _lowEqButton->setButtonText (L"Low Cut");
     _lowEqButton->setConnectedEdges (Button::ConnectedOnLeft | Button::ConnectedOnRight);
     _lowEqButton->addListener (this);
@@ -364,7 +364,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _lowEqButton->setColour (TextButton::textColourOnId, Colour (0xff202020));
     _lowEqButton->setColour (TextButton::textColourOffId, Colour (0xff202020));
 
-    addAndMakeVisible (_lowCutFreqLabel = new Label (String::empty,
+    addAndMakeVisible (_lowCutFreqLabel = new Label (String(),
                                                      L"1234Hz"));
     _lowCutFreqLabel->setFont (Font (11.0000f, Font::plain));
     _lowCutFreqLabel->setJustificationType (Justification::centred);
@@ -373,7 +373,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _lowCutFreqLabel->setColour (TextEditor::textColourId, Colours::black);
     _lowCutFreqLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_lowCutFreqHeaderLabel = new Label (String::empty,
+    addAndMakeVisible (_lowCutFreqHeaderLabel = new Label (String(),
                                                            L"Freq"));
     _lowCutFreqHeaderLabel->setFont (Font (11.0000f, Font::plain));
     _lowCutFreqHeaderLabel->setJustificationType (Justification::centred);
@@ -382,7 +382,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _lowCutFreqHeaderLabel->setColour (TextEditor::textColourId, Colours::black);
     _lowCutFreqHeaderLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_lowCutFreqSlider = new Slider (String::empty));
+    addAndMakeVisible (_lowCutFreqSlider = new Slider (String()));
     _lowCutFreqSlider->setRange (20, 2000, 0);
     _lowCutFreqSlider->setSliderStyle (Slider::RotaryVerticalDrag);
     _lowCutFreqSlider->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
@@ -390,7 +390,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _lowCutFreqSlider->setColour (Slider::rotarySliderFillColourId, Colour (0xb1606060));
     _lowCutFreqSlider->addListener (this);
 
-    addAndMakeVisible (_highCutFreqLabel = new Label (String::empty,
+    addAndMakeVisible (_highCutFreqLabel = new Label (String(),
                                                       L"15.2kHz"));
     _highCutFreqLabel->setFont (Font (11.0000f, Font::plain));
     _highCutFreqLabel->setJustificationType (Justification::centred);
@@ -399,7 +399,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _highCutFreqLabel->setColour (TextEditor::textColourId, Colours::black);
     _highCutFreqLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_highCutFreqHeaderLabel = new Label (String::empty,
+    addAndMakeVisible (_highCutFreqHeaderLabel = new Label (String(),
                                                             L"Freq"));
     _highCutFreqHeaderLabel->setFont (Font (11.0000f, Font::plain));
     _highCutFreqHeaderLabel->setJustificationType (Justification::centred);
@@ -408,7 +408,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _highCutFreqHeaderLabel->setColour (TextEditor::textColourId, Colours::black);
     _highCutFreqHeaderLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_highCutFreqSlider = new Slider (String::empty));
+    addAndMakeVisible (_highCutFreqSlider = new Slider (String()));
     _highCutFreqSlider->setRange (2000, 20000, 0);
     _highCutFreqSlider->setSliderStyle (Slider::RotaryVerticalDrag);
     _highCutFreqSlider->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
@@ -416,7 +416,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _highCutFreqSlider->setColour (Slider::rotarySliderFillColourId, Colour (0xb1606060));
     _highCutFreqSlider->addListener (this);
 
-    addAndMakeVisible (_highEqButton = new TextButton (String::empty));
+    addAndMakeVisible (_highEqButton = new TextButton (String()));
     _highEqButton->setButtonText (L"High Cut");
     _highEqButton->setConnectedEdges (Button::ConnectedOnLeft | Button::ConnectedOnRight);
     _highEqButton->addListener (this);
@@ -425,7 +425,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _highEqButton->setColour (TextButton::textColourOnId, Colour (0xff202020));
     _highEqButton->setColour (TextButton::textColourOffId, Colour (0xff202020));
 
-    addAndMakeVisible (_attackShapeLabel = new Label (String::empty,
+    addAndMakeVisible (_attackShapeLabel = new Label (String(),
                                                       L"1.0"));
     _attackShapeLabel->setFont (Font (11.0000f, Font::plain));
     _attackShapeLabel->setJustificationType (Justification::centred);
@@ -434,7 +434,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _attackShapeLabel->setColour (TextEditor::textColourId, Colours::black);
     _attackShapeLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_endLabel = new Label (String::empty,
+    addAndMakeVisible (_endLabel = new Label (String(),
                                               L"100%"));
     _endLabel->setFont (Font (11.0000f, Font::plain));
     _endLabel->setJustificationType (Justification::centred);
@@ -443,7 +443,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _endLabel->setColour (TextEditor::textColourId, Colours::black);
     _endLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_endSlider = new Slider (String::empty));
+    addAndMakeVisible (_endSlider = new Slider (String()));
     _endSlider->setRange (0, 1, 0);
     _endSlider->setSliderStyle (Slider::RotaryVerticalDrag);
     _endSlider->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
@@ -451,7 +451,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _endSlider->setColour (Slider::rotarySliderFillColourId, Colour (0xb1606060));
     _endSlider->addListener (this);
 
-    addAndMakeVisible (_attackShapeSlider = new Slider (String::empty));
+    addAndMakeVisible (_attackShapeSlider = new Slider (String()));
     _attackShapeSlider->setRange (0, 10, 0);
     _attackShapeSlider->setSliderStyle (Slider::RotaryVerticalDrag);
     _attackShapeSlider->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
@@ -460,7 +460,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _attackShapeSlider->addListener (this);
     _attackShapeSlider->setSkewFactor (0.5);
 
-    addAndMakeVisible (_decayShapeLabel = new Label (String::empty,
+    addAndMakeVisible (_decayShapeLabel = new Label (String(),
                                                      L"1.0"));
     _decayShapeLabel->setFont (Font (11.0000f, Font::plain));
     _decayShapeLabel->setJustificationType (Justification::centred);
@@ -469,7 +469,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _decayShapeLabel->setColour (TextEditor::textColourId, Colours::black);
     _decayShapeLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_decayShapeHeaderLabel = new Label (String::empty,
+    addAndMakeVisible (_decayShapeHeaderLabel = new Label (String(),
                                                            L"Shape"));
     _decayShapeHeaderLabel->setFont (Font (11.0000f, Font::plain));
     _decayShapeHeaderLabel->setJustificationType (Justification::centred);
@@ -478,7 +478,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _decayShapeHeaderLabel->setColour (TextEditor::textColourId, Colours::black);
     _decayShapeHeaderLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_decayShapeSlider = new Slider (String::empty));
+    addAndMakeVisible (_decayShapeSlider = new Slider (String()));
     _decayShapeSlider->setRange (0, 10, 0);
     _decayShapeSlider->setSliderStyle (Slider::RotaryVerticalDrag);
     _decayShapeSlider->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
@@ -487,7 +487,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _decayShapeSlider->addListener (this);
     _decayShapeSlider->setSkewFactor (0.5);
 
-    addAndMakeVisible (_attackShapeHeaderLabel = new Label (String::empty,
+    addAndMakeVisible (_attackShapeHeaderLabel = new Label (String(),
                                                             L"Shape"));
     _attackShapeHeaderLabel->setFont (Font (11.0000f, Font::plain));
     _attackShapeHeaderLabel->setJustificationType (Justification::centred);
@@ -496,7 +496,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _attackShapeHeaderLabel->setColour (TextEditor::textColourId, Colours::black);
     _attackShapeHeaderLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_endHeaderLabel = new Label (String::empty,
+    addAndMakeVisible (_endHeaderLabel = new Label (String(),
                                                     L"End"));
     _endHeaderLabel->setFont (Font (11.0000f, Font::plain));
     _endHeaderLabel->setJustificationType (Justification::centred);
@@ -505,7 +505,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _endHeaderLabel->setColour (TextEditor::textColourId, Colours::black);
     _endHeaderLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_beginLabel = new Label (String::empty,
+    addAndMakeVisible (_beginLabel = new Label (String(),
                                                 L"100%"));
     _beginLabel->setFont (Font (11.0000f, Font::plain));
     _beginLabel->setJustificationType (Justification::centred);
@@ -514,7 +514,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _beginLabel->setColour (TextEditor::textColourId, Colours::black);
     _beginLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_beginSlider = new Slider (String::empty));
+    addAndMakeVisible (_beginSlider = new Slider (String()));
     _beginSlider->setRange (0, 1, 0);
     _beginSlider->setSliderStyle (Slider::RotaryVerticalDrag);
     _beginSlider->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
@@ -522,7 +522,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _beginSlider->setColour (Slider::rotarySliderFillColourId, Colour (0xb1606060));
     _beginSlider->addListener (this);
 
-    addAndMakeVisible (_beginHeaderLabel = new Label (String::empty,
+    addAndMakeVisible (_beginHeaderLabel = new Label (String(),
                                                       L"Begin"));
     _beginHeaderLabel->setFont (Font (11.0000f, Font::plain));
     _beginHeaderLabel->setJustificationType (Justification::centred);
@@ -531,7 +531,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _beginHeaderLabel->setColour (TextEditor::textColourId, Colours::black);
     _beginHeaderLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_widthLabel = new Label (String::empty,
+    addAndMakeVisible (_widthLabel = new Label (String(),
                                                 L"1.0"));
     _widthLabel->setFont (Font (11.0000f, Font::plain));
     _widthLabel->setJustificationType (Justification::centred);
@@ -540,7 +540,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _widthLabel->setColour (TextEditor::textColourId, Colours::black);
     _widthLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_widthHeaderLabel = new Label (String::empty,
+    addAndMakeVisible (_widthHeaderLabel = new Label (String(),
                                                       L"Width"));
     _widthHeaderLabel->setFont (Font (11.0000f, Font::plain));
     _widthHeaderLabel->setJustificationType (Justification::centred);
@@ -549,7 +549,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _widthHeaderLabel->setColour (TextEditor::textColourId, Colours::black);
     _widthHeaderLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_widthSlider = new Slider (String::empty));
+    addAndMakeVisible (_widthSlider = new Slider (String()));
     _widthSlider->setRange (0, 10, 0);
     _widthSlider->setSliderStyle (Slider::RotaryVerticalDrag);
     _widthSlider->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
@@ -558,7 +558,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _widthSlider->addListener (this);
     _widthSlider->setSkewFactor (0.30102);
 
-    addAndMakeVisible (_predelayLabel = new Label (String::empty,
+    addAndMakeVisible (_predelayLabel = new Label (String(),
                                                    L"0ms"));
     _predelayLabel->setFont (Font (11.0000f, Font::plain));
     _predelayLabel->setJustificationType (Justification::centred);
@@ -567,7 +567,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _predelayLabel->setColour (TextEditor::textColourId, Colours::black);
     _predelayLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_predelayHeaderLabel = new Label (String::empty,
+    addAndMakeVisible (_predelayHeaderLabel = new Label (String(),
                                                          L"Gap"));
     _predelayHeaderLabel->setFont (Font (11.0000f, Font::plain));
     _predelayHeaderLabel->setJustificationType (Justification::centred);
@@ -576,7 +576,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _predelayHeaderLabel->setColour (TextEditor::textColourId, Colours::black);
     _predelayHeaderLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_predelaySlider = new Slider (String::empty));
+    addAndMakeVisible (_predelaySlider = new Slider (String()));
     _predelaySlider->setRange (0, 1000, 0);
     _predelaySlider->setSliderStyle (Slider::RotaryVerticalDrag);
     _predelaySlider->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
@@ -584,7 +584,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _predelaySlider->setColour (Slider::rotarySliderFillColourId, Colour (0xb1606060));
     _predelaySlider->addListener (this);
 
-    addAndMakeVisible (_stretchLabel = new Label (String::empty,
+    addAndMakeVisible (_stretchLabel = new Label (String(),
                                                   L"100%"));
     _stretchLabel->setFont (Font (11.0000f, Font::plain));
     _stretchLabel->setJustificationType (Justification::centred);
@@ -593,7 +593,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _stretchLabel->setColour (TextEditor::textColourId, Colours::black);
     _stretchLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_stretchHeaderLabel = new Label (String::empty,
+    addAndMakeVisible (_stretchHeaderLabel = new Label (String(),
                                                         L"Stretch"));
     _stretchHeaderLabel->setFont (Font (11.0000f, Font::plain));
     _stretchHeaderLabel->setJustificationType (Justification::centred);
@@ -602,7 +602,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _stretchHeaderLabel->setColour (TextEditor::textColourId, Colours::black);
     _stretchHeaderLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_stretchSlider = new Slider (String::empty));
+    addAndMakeVisible (_stretchSlider = new Slider (String()));
     _stretchSlider->setRange (0, 2, 0);
     _stretchSlider->setSliderStyle (Slider::RotaryVerticalDrag);
     _stretchSlider->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
@@ -610,7 +610,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _stretchSlider->setColour (Slider::rotarySliderFillColourId, Colour (0xb1606060));
     _stretchSlider->addListener (this);
 
-    addAndMakeVisible (_attackHeaderLabel = new Label (String::empty,
+    addAndMakeVisible (_attackHeaderLabel = new Label (String(),
                                                        L"Attack"));
     _attackHeaderLabel->setFont (Font (15.0000f, Font::plain));
     _attackHeaderLabel->setJustificationType (Justification::centred);
@@ -619,7 +619,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _attackHeaderLabel->setColour (TextEditor::textColourId, Colour (0xff202020));
     _attackHeaderLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_attackLengthLabel = new Label (String::empty,
+    addAndMakeVisible (_attackLengthLabel = new Label (String(),
                                                        L"0ms"));
     _attackLengthLabel->setFont (Font (11.0000f, Font::plain));
     _attackLengthLabel->setJustificationType (Justification::centred);
@@ -628,7 +628,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _attackLengthLabel->setColour (TextEditor::textColourId, Colours::black);
     _attackLengthLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_attackLengthSlider = new Slider (String::empty));
+    addAndMakeVisible (_attackLengthSlider = new Slider (String()));
     _attackLengthSlider->setRange (0, 1, 0);
     _attackLengthSlider->setSliderStyle (Slider::RotaryVerticalDrag);
     _attackLengthSlider->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
@@ -637,7 +637,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _attackLengthSlider->addListener (this);
     _attackLengthSlider->setSkewFactor (0.5);
 
-    addAndMakeVisible (_attackLengthHeaderLabel = new Label (String::empty,
+    addAndMakeVisible (_attackLengthHeaderLabel = new Label (String(),
                                                              L"Length"));
     _attackLengthHeaderLabel->setFont (Font (11.0000f, Font::plain));
     _attackLengthHeaderLabel->setJustificationType (Justification::centred);
@@ -646,7 +646,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _attackLengthHeaderLabel->setColour (TextEditor::textColourId, Colours::black);
     _attackLengthHeaderLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_decayHeaderLabel = new Label (String::empty,
+    addAndMakeVisible (_decayHeaderLabel = new Label (String(),
                                                       L"Decay"));
     _decayHeaderLabel->setFont (Font (15.0000f, Font::plain));
     _decayHeaderLabel->setJustificationType (Justification::centred);
@@ -655,7 +655,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _decayHeaderLabel->setColour (TextEditor::textColourId, Colour (0xff202020));
     _decayHeaderLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_impulseResponseHeaderLabel = new Label (String::empty,
+    addAndMakeVisible (_impulseResponseHeaderLabel = new Label (String(),
                                                                 L"Impulse Response"));
     _impulseResponseHeaderLabel->setFont (Font (15.0000f, Font::plain));
     _impulseResponseHeaderLabel->setJustificationType (Justification::centred);
@@ -664,7 +664,7 @@ KlangFalterEditor::KlangFalterEditor (Processor& processor)
     _impulseResponseHeaderLabel->setColour (TextEditor::textColourId, Colour (0xff202020));
     _impulseResponseHeaderLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (_stereoHeaderLabel = new Label (String::empty,
+    addAndMakeVisible (_stereoHeaderLabel = new Label (String(),
                                                        L"Stereo"));
     _stereoHeaderLabel->setFont (Font (15.0000f, Font::plain));
     _stereoHeaderLabel->setJustificationType (Justification::centred);

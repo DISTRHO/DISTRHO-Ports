@@ -62,11 +62,11 @@ IRComponent::IRComponent ()
     _channelComboBox->setTooltip (L"Select Channel Of Currently Loaded Audio File");
     _channelComboBox->setEditableText (false);
     _channelComboBox->setJustificationType (Justification::centred);
-    _channelComboBox->setTextWhenNothingSelected (String::empty);
+    _channelComboBox->setTextWhenNothingSelected (String());
     _channelComboBox->setTextWhenNoChoicesAvailable (L"(no choices)");
     _channelComboBox->addListener (this);
 
-    addAndMakeVisible (_channelHeaderLabel = new Label (String::empty,
+    addAndMakeVisible (_channelHeaderLabel = new Label (String(),
                                                         L"Channel:"));
     _channelHeaderLabel->setFont (Font (15.0000f, Font::plain));
     _channelHeaderLabel->setJustificationType (Justification::centredLeft);
@@ -219,7 +219,7 @@ void IRComponent::irChanged()
   if (_irAgent)
   {
     const File file = _irAgent->getFile();
-    if (file != File::nonexistent)
+    if (file.exists())
     {
       const Processor& processor = _irAgent->getProcessor();
       const unsigned fileSampleCount = static_cast<unsigned>(_irAgent->getFileSampleCount());

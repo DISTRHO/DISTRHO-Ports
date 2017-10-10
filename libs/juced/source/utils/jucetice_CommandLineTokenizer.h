@@ -71,7 +71,7 @@ public:
     //==============================================================================
 	/** Variables getter with casting */
 	String getOptionString (const String& tokenToSearch,
-							const String& defValue = String::empty,
+							const String& defValue = String(),
 							const bool caseSensitive = true);
 
 	bool getOptionBool (const String& tokenToSearch,

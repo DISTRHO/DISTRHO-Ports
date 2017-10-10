@@ -44,7 +44,7 @@ void CommandLineTokenizer::parseCommandLine (const String& commandLine)
 		if (section < parse.length() )
 			parse = parse.substring (section+1,parse.length()).trim();
 		else
-			parse = String::empty;
+			parse = String();
 	}
 }
 

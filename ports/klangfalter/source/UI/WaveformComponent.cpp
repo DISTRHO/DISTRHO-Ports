@@ -81,7 +81,7 @@ void WaveformComponent::paint(Graphics& g)
   const juce::Colour scaleColour = customLookAndFeel.getScaleColour();
   
   // Something to paint?
-  if (!_irAgent || _irAgent->getFile() == juce::File::nonexistent)
+  if (!_irAgent || !_irAgent->getFile().exists())
   {
     g.setColour(scaleColour);
     g.drawText("No Impulse Response", 0, 0, width, height, Justification(Justification::centred), false);

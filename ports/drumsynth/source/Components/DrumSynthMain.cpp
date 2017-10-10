@@ -83,19 +83,19 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
       importBankButton (0),
       exportBankButton (0)
 {
-    addAndMakeVisible (importButton = new TextButton (String::empty));
+    addAndMakeVisible (importButton = new TextButton (String()));
     importButton->setButtonText ("preset");
     importButton->setConnectedEdges (Button::ConnectedOnBottom);
     importButton->addListener (this);
     importButton->setColour (TextButton::buttonColourId, Colour (0xffc8c8c8));
 
-    addAndMakeVisible (exportButton = new TextButton (String::empty));
+    addAndMakeVisible (exportButton = new TextButton (String()));
     exportButton->setButtonText ("preset");
     exportButton->setConnectedEdges (Button::ConnectedOnBottom);
     exportButton->addListener (this);
     exportButton->setColour (TextButton::buttonColourId, Colour (0xff7c7c7c));
 
-    addAndMakeVisible (currentDrum = new Slider (String::empty));
+    addAndMakeVisible (currentDrum = new Slider (String()));
     currentDrum->setRange (0, 24, 1);
     currentDrum->setSliderStyle (Slider::IncDecButtons);
     currentDrum->setTextBoxStyle (Slider::TextBoxLeft, false, 40, 20);
@@ -107,7 +107,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     addAndMakeVisible (midiKeyboard = new DrumSynthKeyboard (this,
                                                              *(plugin->getKeyboardState())));
 
-    addAndMakeVisible (labelDrum = new Label (String::empty,
+    addAndMakeVisible (labelDrum = new Label (String(),
                                               "Drum\n"));
     labelDrum->setFont (Font (13.6000f, Font::bold | Font::italic));
     labelDrum->setJustificationType (Justification::centredLeft);
@@ -118,7 +118,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     labelDrum->setColour (TextEditor::textColourId, Colours::black);
     labelDrum->setColour (TextEditor::backgroundColourId, Colour (0xffffff));
 
-    addAndMakeVisible (labelDrumName = new Label (String::empty,
+    addAndMakeVisible (labelDrumName = new Label (String(),
                                                   "Preset"));
     labelDrumName->setFont (Font (13.6000f, Font::bold | Font::italic));
     labelDrumName->setJustificationType (Justification::centredLeft);
@@ -128,7 +128,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     labelDrumName->setColour (TextEditor::textColourId, Colours::black);
     labelDrumName->setColour (TextEditor::backgroundColourId, Colour (0xffffff));
 
-    addAndMakeVisible (drumName = new TextEditor (String::empty));
+    addAndMakeVisible (drumName = new TextEditor (String()));
     drumName->setMultiLine (false);
     drumName->setReturnKeyStartsNewLine (false);
     drumName->setReadOnly (false);
@@ -137,7 +137,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     drumName->setPopupMenuEnabled (false);
     drumName->setText ("Unset");
 
-    addAndMakeVisible (versionLabel = new Label (String::empty,
+    addAndMakeVisible (versionLabel = new Label (String(),
                                                  "v0.1.0"));
     versionLabel->setFont (Font (Font::getDefaultMonospacedFontName(), 9.3000f, Font::plain));
     versionLabel->setJustificationType (Justification::centredLeft);
@@ -145,7 +145,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     versionLabel->setColour (TextEditor::textColourId, Colours::black);
     versionLabel->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (tuningSlider = new ParameterSlider (String::empty));
+    addAndMakeVisible (tuningSlider = new ParameterSlider (String()));
     tuningSlider->setTooltip ("Tuning");
     tuningSlider->setRange (-24, 24, 0.0001);
     tuningSlider->setSliderStyle (Slider::RotaryVerticalDrag);
@@ -155,7 +155,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     tuningSlider->setColour (Slider::rotarySliderOutlineColourId, Colour (0x66000000));
     tuningSlider->addListener (this);
 
-    addAndMakeVisible (stretchSlider = new ParameterSlider (String::empty));
+    addAndMakeVisible (stretchSlider = new ParameterSlider (String()));
     stretchSlider->setTooltip ("Stretch");
     stretchSlider->setRange (10, 200, 0.0001);
     stretchSlider->setSliderStyle (Slider::RotaryVerticalDrag);
@@ -165,7 +165,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     stretchSlider->setColour (Slider::rotarySliderOutlineColourId, Colour (0x66000000));
     stretchSlider->addListener (this);
 
-    addAndMakeVisible (gainSlider = new ParameterSlider (String::empty));
+    addAndMakeVisible (gainSlider = new ParameterSlider (String()));
     gainSlider->setTooltip ("Overall gain");
     gainSlider->setRange (-60, 10, 0.0001);
     gainSlider->setSliderStyle (Slider::RotaryVerticalDrag);
@@ -175,7 +175,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     gainSlider->setColour (Slider::rotarySliderOutlineColourId, Colour (0x66000000));
     gainSlider->addListener (this);
 
-    addAndMakeVisible (resonanceSlider = new ParameterSlider (String::empty));
+    addAndMakeVisible (resonanceSlider = new ParameterSlider (String()));
     resonanceSlider->setTooltip ("Filter resonance");
     resonanceSlider->setRange (0, 100, 0.0001);
     resonanceSlider->setSliderStyle (Slider::RotaryVerticalDrag);
@@ -185,12 +185,12 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     resonanceSlider->setColour (Slider::rotarySliderOutlineColourId, Colour (0x66000000));
     resonanceSlider->addListener (this);
 
-    addAndMakeVisible (filterButton = new ParameterLedButton (String::empty));
+    addAndMakeVisible (filterButton = new ParameterLedButton (String()));
     filterButton->setConnectedEdges (Button::ConnectedOnLeft | Button::ConnectedOnRight);
     filterButton->addListener (this);
     filterButton->setColour (TextButton::buttonColourId, Colour (0xab000000));
 
-    addAndMakeVisible (hipassButton = new ParameterLedButton (String::empty));
+    addAndMakeVisible (hipassButton = new ParameterLedButton (String()));
     hipassButton->setConnectedEdges (Button::ConnectedOnLeft | Button::ConnectedOnRight);
     hipassButton->addListener (this);
     hipassButton->setColour (TextButton::buttonColourId, Colour (0xab000000));
@@ -206,12 +206,12 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     envelopeTabs->addTab ("Filter", Colour (0xff69c369), new DrumSynthEnvelope (PP_MAIN_ENV_T1TIME, this, plugin), true);
     envelopeTabs->setCurrentTabIndex (0);
 
-    addAndMakeVisible (panicButton = new TextButton (String::empty));
+    addAndMakeVisible (panicButton = new TextButton (String()));
     panicButton->setButtonText ("Panic");
     panicButton->addListener (this);
     panicButton->setColour (TextButton::buttonColourId, Colour (0xffedb292));
 
-    addAndMakeVisible (toneLevelSlider = new ParameterSlider (String::empty));
+    addAndMakeVisible (toneLevelSlider = new ParameterSlider (String()));
     toneLevelSlider->setTooltip ("Tone Level");
     toneLevelSlider->setRange (0, 200, 0.0001);
     toneLevelSlider->setSliderStyle (Slider::RotaryVerticalDrag);
@@ -221,7 +221,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     toneLevelSlider->setColour (Slider::rotarySliderOutlineColourId, Colour (0x66000000));
     toneLevelSlider->addListener (this);
 
-    addAndMakeVisible (toneFreq1Slider = new ParameterSlider (String::empty));
+    addAndMakeVisible (toneFreq1Slider = new ParameterSlider (String()));
     toneFreq1Slider->setTooltip ("Tone Frequency 2");
     toneFreq1Slider->setRange (20, 22050, 0.0001);
     toneFreq1Slider->setSliderStyle (Slider::RotaryVerticalDrag);
@@ -231,7 +231,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     toneFreq1Slider->setColour (Slider::rotarySliderOutlineColourId, Colour (0x66000000));
     toneFreq1Slider->addListener (this);
 
-    addAndMakeVisible (toneFreq2Slider = new ParameterSlider (String::empty));
+    addAndMakeVisible (toneFreq2Slider = new ParameterSlider (String()));
     toneFreq2Slider->setTooltip ("Tone Frequency 2");
     toneFreq2Slider->setRange (20, 22050, 0.0001);
     toneFreq2Slider->setSliderStyle (Slider::RotaryVerticalDrag);
@@ -241,7 +241,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     toneFreq2Slider->setColour (Slider::rotarySliderOutlineColourId, Colour (0x66000000));
     toneFreq2Slider->addListener (this);
 
-    addAndMakeVisible (toneDroopSlider = new ParameterSlider (String::empty));
+    addAndMakeVisible (toneDroopSlider = new ParameterSlider (String()));
     toneDroopSlider->setTooltip ("Tone Droop");
     toneDroopSlider->setRange (0, 100, 0.0001);
     toneDroopSlider->setSliderStyle (Slider::RotaryVerticalDrag);
@@ -251,7 +251,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     toneDroopSlider->setColour (Slider::rotarySliderOutlineColourId, Colour (0x66000000));
     toneDroopSlider->addListener (this);
 
-    addAndMakeVisible (tonePhaseSlider = new ParameterSlider (String::empty));
+    addAndMakeVisible (tonePhaseSlider = new ParameterSlider (String()));
     tonePhaseSlider->setTooltip ("Phase");
     tonePhaseSlider->setRange (0, 90, 0.0001);
     tonePhaseSlider->setSliderStyle (Slider::RotaryVerticalDrag);
@@ -261,17 +261,17 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     tonePhaseSlider->setColour (Slider::rotarySliderOutlineColourId, Colour (0x66000000));
     tonePhaseSlider->addListener (this);
 
-    addAndMakeVisible (toneOnButton = new ParameterLedButton (String::empty));
+    addAndMakeVisible (toneOnButton = new ParameterLedButton (String()));
     toneOnButton->setConnectedEdges (Button::ConnectedOnLeft | Button::ConnectedOnRight);
     toneOnButton->addListener (this);
     toneOnButton->setColour (TextButton::buttonColourId, Colour (0xab000000));
 
-    addAndMakeVisible (overOnButton = new ParameterLedButton (String::empty));
+    addAndMakeVisible (overOnButton = new ParameterLedButton (String()));
     overOnButton->setConnectedEdges (Button::ConnectedOnLeft | Button::ConnectedOnRight);
     overOnButton->addListener (this);
     overOnButton->setColour (TextButton::buttonColourId, Colour (0xab000000));
 
-    addAndMakeVisible (overLevelSlider = new ParameterSlider (String::empty));
+    addAndMakeVisible (overLevelSlider = new ParameterSlider (String()));
     overLevelSlider->setTooltip ("Overtone Level");
     overLevelSlider->setRange (0, 200, 0.0001);
     overLevelSlider->setSliderStyle (Slider::RotaryVerticalDrag);
@@ -281,7 +281,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     overLevelSlider->setColour (Slider::rotarySliderOutlineColourId, Colour (0x66000000));
     overLevelSlider->addListener (this);
 
-    addAndMakeVisible (overParamSlider = new ParameterSlider (String::empty));
+    addAndMakeVisible (overParamSlider = new ParameterSlider (String()));
     overParamSlider->setTooltip ("Overtone Param");
     overParamSlider->setRange (0, 100, 0.0001);
     overParamSlider->setSliderStyle (Slider::RotaryVerticalDrag);
@@ -291,27 +291,27 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     overParamSlider->setColour (Slider::rotarySliderOutlineColourId, Colour (0x66000000));
     overParamSlider->addListener (this);
 
-    addAndMakeVisible (overFilterButton = new ParameterLedButton (String::empty));
+    addAndMakeVisible (overFilterButton = new ParameterLedButton (String()));
     overFilterButton->setConnectedEdges (Button::ConnectedOnLeft | Button::ConnectedOnRight);
     overFilterButton->addListener (this);
     overFilterButton->setColour (TextButton::buttonColourId, Colour (0xab000000));
 
-    addAndMakeVisible (overMethod1Button = new ParameterLedButton (String::empty));
+    addAndMakeVisible (overMethod1Button = new ParameterLedButton (String()));
     overMethod1Button->setConnectedEdges (Button::ConnectedOnLeft | Button::ConnectedOnRight);
     overMethod1Button->addListener (this);
     overMethod1Button->setColour (TextButton::buttonColourId, Colour (0xab000000));
 
-    addAndMakeVisible (overMethod2Button = new ParameterLedButton (String::empty));
+    addAndMakeVisible (overMethod2Button = new ParameterLedButton (String()));
     overMethod2Button->setConnectedEdges (Button::ConnectedOnLeft | Button::ConnectedOnRight);
     overMethod2Button->addListener (this);
     overMethod2Button->setColour (TextButton::buttonColourId, Colour (0xab000000));
 
-    addAndMakeVisible (overMethod3Button = new ParameterLedButton (String::empty));
+    addAndMakeVisible (overMethod3Button = new ParameterLedButton (String()));
     overMethod3Button->setConnectedEdges (Button::ConnectedOnLeft | Button::ConnectedOnRight);
     overMethod3Button->addListener (this);
     overMethod3Button->setColour (TextButton::buttonColourId, Colour (0xab000000));
 
-    addAndMakeVisible (overFreq1Slider = new ParameterSlider (String::empty));
+    addAndMakeVisible (overFreq1Slider = new ParameterSlider (String()));
     overFreq1Slider->setTooltip ("Overtone 1 Frequency");
     overFreq1Slider->setRange (20, 22050, 0.0001);
     overFreq1Slider->setSliderStyle (Slider::RotaryVerticalDrag);
@@ -321,7 +321,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     overFreq1Slider->setColour (Slider::rotarySliderOutlineColourId, Colour (0x66000000));
     overFreq1Slider->addListener (this);
 
-    addAndMakeVisible (overFreq2Slider = new ParameterSlider (String::empty));
+    addAndMakeVisible (overFreq2Slider = new ParameterSlider (String()));
     overFreq2Slider->setTooltip ("Overtone 2 Frequency");
     overFreq2Slider->setRange (20, 22050, 0.0001);
     overFreq2Slider->setSliderStyle (Slider::RotaryVerticalDrag);
@@ -331,17 +331,17 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     overFreq2Slider->setColour (Slider::rotarySliderOutlineColourId, Colour (0x66000000));
     overFreq2Slider->addListener (this);
 
-    addAndMakeVisible (overTrack1Button = new ParameterLedButton (String::empty));
+    addAndMakeVisible (overTrack1Button = new ParameterLedButton (String()));
     overTrack1Button->setConnectedEdges (Button::ConnectedOnLeft | Button::ConnectedOnRight);
     overTrack1Button->addListener (this);
     overTrack1Button->setColour (TextButton::buttonColourId, Colour (0xab000000));
 
-    addAndMakeVisible (overTrack2Button = new ParameterLedButton (String::empty));
+    addAndMakeVisible (overTrack2Button = new ParameterLedButton (String()));
     overTrack2Button->setConnectedEdges (Button::ConnectedOnLeft | Button::ConnectedOnRight);
     overTrack2Button->addListener (this);
     overTrack2Button->setColour (TextButton::buttonColourId, Colour (0xab000000));
 
-    addAndMakeVisible (overWave1Slider = new ParameterSlider (String::empty));
+    addAndMakeVisible (overWave1Slider = new ParameterSlider (String()));
     overWave1Slider->setTooltip ("Overtone 1 Wave");
     overWave1Slider->setRange (0, 4, 1);
     overWave1Slider->setSliderStyle (Slider::RotaryVerticalDrag);
@@ -351,7 +351,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     overWave1Slider->setColour (Slider::rotarySliderOutlineColourId, Colour (0x66000000));
     overWave1Slider->addListener (this);
 
-    addAndMakeVisible (overWave2Slider = new ParameterSlider (String::empty));
+    addAndMakeVisible (overWave2Slider = new ParameterSlider (String()));
     overWave2Slider->setTooltip ("Overtone 2 Wave");
     overWave2Slider->setRange (0, 4, 1);
     overWave2Slider->setSliderStyle (Slider::RotaryVerticalDrag);
@@ -361,7 +361,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     overWave2Slider->setColour (Slider::rotarySliderOutlineColourId, Colour (0x66000000));
     overWave2Slider->addListener (this);
 
-    addAndMakeVisible (band1LevelSlider = new ParameterSlider (String::empty));
+    addAndMakeVisible (band1LevelSlider = new ParameterSlider (String()));
     band1LevelSlider->setTooltip ("Noise Band 1 Level");
     band1LevelSlider->setRange (0, 200, 0.0001);
     band1LevelSlider->setSliderStyle (Slider::RotaryVerticalDrag);
@@ -371,7 +371,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     band1LevelSlider->setColour (Slider::rotarySliderOutlineColourId, Colour (0x66000000));
     band1LevelSlider->addListener (this);
 
-    addAndMakeVisible (band1FreqSlider = new ParameterSlider (String::empty));
+    addAndMakeVisible (band1FreqSlider = new ParameterSlider (String()));
     band1FreqSlider->setTooltip ("Noise Band 1 Frequency");
     band1FreqSlider->setRange (20, 22050, 0.0001);
     band1FreqSlider->setSliderStyle (Slider::RotaryVerticalDrag);
@@ -381,7 +381,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     band1FreqSlider->setColour (Slider::rotarySliderOutlineColourId, Colour (0x66000000));
     band1FreqSlider->addListener (this);
 
-    addAndMakeVisible (band1DeltaSlider = new ParameterSlider (String::empty));
+    addAndMakeVisible (band1DeltaSlider = new ParameterSlider (String()));
     band1DeltaSlider->setTooltip ("Noise Band 1 Delta Frequency");
     band1DeltaSlider->setRange (0, 100, 0.0001);
     band1DeltaSlider->setSliderStyle (Slider::RotaryVerticalDrag);
@@ -391,17 +391,17 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     band1DeltaSlider->setColour (Slider::rotarySliderOutlineColourId, Colour (0x66000000));
     band1DeltaSlider->addListener (this);
 
-    addAndMakeVisible (band1OnButton = new ParameterLedButton (String::empty));
+    addAndMakeVisible (band1OnButton = new ParameterLedButton (String()));
     band1OnButton->setConnectedEdges (Button::ConnectedOnLeft | Button::ConnectedOnRight);
     band1OnButton->addListener (this);
     band1OnButton->setColour (TextButton::buttonColourId, Colour (0xab000000));
 
-    addAndMakeVisible (band2OnButton = new ParameterLedButton (String::empty));
+    addAndMakeVisible (band2OnButton = new ParameterLedButton (String()));
     band2OnButton->setConnectedEdges (Button::ConnectedOnLeft | Button::ConnectedOnRight);
     band2OnButton->addListener (this);
     band2OnButton->setColour (TextButton::buttonColourId, Colour (0xab000000));
 
-    addAndMakeVisible (band2LevelSlider = new ParameterSlider (String::empty));
+    addAndMakeVisible (band2LevelSlider = new ParameterSlider (String()));
     band2LevelSlider->setTooltip ("Noise Band 2 Level");
     band2LevelSlider->setRange (0, 200, 0.0001);
     band2LevelSlider->setSliderStyle (Slider::RotaryVerticalDrag);
@@ -411,7 +411,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     band2LevelSlider->setColour (Slider::rotarySliderOutlineColourId, Colour (0x66000000));
     band2LevelSlider->addListener (this);
 
-    addAndMakeVisible (band2FreqSlider = new ParameterSlider (String::empty));
+    addAndMakeVisible (band2FreqSlider = new ParameterSlider (String()));
     band2FreqSlider->setTooltip ("Noise Band 2 Frequency");
     band2FreqSlider->setRange (20, 22050, 0.0001);
     band2FreqSlider->setSliderStyle (Slider::RotaryVerticalDrag);
@@ -421,7 +421,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     band2FreqSlider->setColour (Slider::rotarySliderOutlineColourId, Colour (0x66000000));
     band2FreqSlider->addListener (this);
 
-    addAndMakeVisible (band2DeltaSlider = new ParameterSlider (String::empty));
+    addAndMakeVisible (band2DeltaSlider = new ParameterSlider (String()));
     band2DeltaSlider->setTooltip ("Noise Band 2 Delta Frequency");
     band2DeltaSlider->setRange (0, 100, 0.0001);
     band2DeltaSlider->setSliderStyle (Slider::RotaryVerticalDrag);
@@ -431,12 +431,12 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     band2DeltaSlider->setColour (Slider::rotarySliderOutlineColourId, Colour (0x66000000));
     band2DeltaSlider->addListener (this);
 
-    addAndMakeVisible (noiseOnButton = new ParameterLedButton (String::empty));
+    addAndMakeVisible (noiseOnButton = new ParameterLedButton (String()));
     noiseOnButton->setConnectedEdges (Button::ConnectedOnLeft | Button::ConnectedOnRight);
     noiseOnButton->addListener (this);
     noiseOnButton->setColour (TextButton::buttonColourId, Colour (0xab000000));
 
-    addAndMakeVisible (noiseLevelSlider = new ParameterSlider (String::empty));
+    addAndMakeVisible (noiseLevelSlider = new ParameterSlider (String()));
     noiseLevelSlider->setTooltip ("Noise Level");
     noiseLevelSlider->setRange (0, 200, 0.0001);
     noiseLevelSlider->setSliderStyle (Slider::RotaryVerticalDrag);
@@ -446,7 +446,7 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     noiseLevelSlider->setColour (Slider::rotarySliderOutlineColourId, Colour (0x66000000));
     noiseLevelSlider->addListener (this);
 
-    addAndMakeVisible (noiseSlopeSlider = new ParameterSlider (String::empty));
+    addAndMakeVisible (noiseSlopeSlider = new ParameterSlider (String()));
     noiseSlopeSlider->setTooltip ("Noise Slope");
     noiseSlopeSlider->setRange (-100, 100, 1);
     noiseSlopeSlider->setSliderStyle (Slider::RotaryVerticalDrag);
@@ -456,13 +456,13 @@ DrumSynthMain::DrumSynthMain (DrumSynthPlugin* plugin_, DrumSynthComponent* edit
     noiseSlopeSlider->setColour (Slider::rotarySliderOutlineColourId, Colour (0x66000000));
     noiseSlopeSlider->addListener (this);
 
-    addAndMakeVisible (importBankButton = new TextButton (String::empty));
+    addAndMakeVisible (importBankButton = new TextButton (String()));
     importBankButton->setButtonText ("bank");
     importBankButton->setConnectedEdges (Button::ConnectedOnTop);
     importBankButton->addListener (this);
     importBankButton->setColour (TextButton::buttonColourId, Colour (0xffc8c8c8));
 
-    addAndMakeVisible (exportBankButton = new TextButton (String::empty));
+    addAndMakeVisible (exportBankButton = new TextButton (String()));
     exportBankButton->setButtonText ("bank");
     exportBankButton->setConnectedEdges (Button::ConnectedOnTop);
     exportBankButton->addListener (this);
@@ -963,7 +963,7 @@ void DrumSynthMain::buttonClicked (Button* buttonThatWasClicked)
     if (buttonThatWasClicked == importButton)
     {
         //[UserButtonCode_importButton] -- add your button handler code here..
-        FileChooser myChooser ("Import a DS file...", File::nonexistent, "*.ds", false);
+        FileChooser myChooser ("Import a DS file...", File(), "*.ds", false);
         if (myChooser.browseForFileToOpen())
         {
             File fileToLoad = myChooser.getResult();
@@ -978,7 +978,7 @@ void DrumSynthMain::buttonClicked (Button* buttonThatWasClicked)
     else if (buttonThatWasClicked == exportButton)
     {
         //[UserButtonCode_exportButton] -- add your button handler code here..
-        FileChooser myChooser ("Export a DS file...", File::nonexistent, "*.ds", false);
+        FileChooser myChooser ("Export a DS file...", File(), "*.ds", false);
         if (myChooser.browseForFileToSave(true))
         {
             File fileToSave = myChooser.getResult().withFileExtension ("ds");
@@ -1103,7 +1103,7 @@ void DrumSynthMain::buttonClicked (Button* buttonThatWasClicked)
     else if (buttonThatWasClicked == importBankButton)
     {
         //[UserButtonCode_importBankButton] -- add your button handler code here..
-        FileChooser myChooser ("Import a DS bank file...", File::nonexistent, "*.bds", false);
+        FileChooser myChooser ("Import a DS bank file...", File(), "*.bds", false);
         if (myChooser.browseForFileToOpen())
         {
             MemoryBlock fileData;
@@ -1121,7 +1121,7 @@ void DrumSynthMain::buttonClicked (Button* buttonThatWasClicked)
     else if (buttonThatWasClicked == exportBankButton)
     {
         //[UserButtonCode_exportBankButton] -- add your button handler code here..
-        FileChooser myChooser ("Save a DS bank file...", File::nonexistent, "*.bds", false);
+        FileChooser myChooser ("Save a DS bank file...", File(), "*.bds", false);
         if (myChooser.browseForFileToSave (true))
         {
             MemoryBlock fileData;

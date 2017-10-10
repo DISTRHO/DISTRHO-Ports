@@ -104,7 +104,7 @@ XmlElement* SaveState(const File& irDirectory, Processor& processor)
     }
       
     const File irFile = irAgent->getFile();
-    if (irFile == File::nonexistent)
+    if (! irFile.exists())
     {
       continue;
     }
@@ -173,7 +173,7 @@ bool LoadState(const File& irDirectory, XmlElement& element, Processor& processo
     }
     klanginternal::IRAgentConfiguration configuration;
     configuration._irAgent = irAgent;
-    configuration._file = irElement->getStringAttribute("file", String::empty);
+    configuration._file = irElement->getStringAttribute("file", String());
     configuration._fileChannel = irElement->getIntAttribute("fileChannel", -1);
     irConfigurations.push_back(configuration);
   }

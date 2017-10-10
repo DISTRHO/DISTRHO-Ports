@@ -603,7 +603,7 @@ void DrumSynthPlugin::getStateInformation (MemoryBlock& destData)
             xml.addChildElement (e);
         }
 
-        String xmlString = xml.createDocument (String::empty);
+        String xmlString = xml.createDocument (String());
         destData.append ((const char*) xmlString.toUTF8(), xmlString.length());
 
 #ifndef JUCE_DEBUG
@@ -702,7 +702,7 @@ String DrumSynthPlugin::getStateInformationString ()
         xml.addChildElement (e);
     }
 
-    return xml.createDocument (String::empty);
+    return xml.createDocument (String());
 }
 
 void DrumSynthPlugin::setStateInformationString (const String& data)

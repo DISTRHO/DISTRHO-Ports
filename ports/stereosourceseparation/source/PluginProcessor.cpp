@@ -132,7 +132,7 @@ const String StereoSourceSeparationAudioProcessor::getParameterName (int index)
             return "CutOffFrequency";
             
         default:
-            return String::empty;
+            return String();
     }
 }
 
@@ -205,7 +205,7 @@ void StereoSourceSeparationAudioProcessor::setCurrentProgram (int index)
 
 const String StereoSourceSeparationAudioProcessor::getProgramName (int index)
 {
-    return String::empty;
+    return String();
 }
 
 void StereoSourceSeparationAudioProcessor::changeProgramName (int index, const String& newName)

@@ -323,7 +323,7 @@ String LuftikusAudioProcessorEditor::getTooltip()
 	if (rect.contains(getMouseXYRelative()))
 		return "Click here to toggle tooltips";
 	
-	return String::empty;
+	return String();
 }
 
 void LuftikusAudioProcessorEditor::modalReturn(int returnValue)

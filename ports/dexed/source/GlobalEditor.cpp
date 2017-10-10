@@ -183,7 +183,7 @@ GlobalEditor::GlobalEditor ()
     transpose->addListener (this);
 
     addAndMakeVisible (oscSync = new ToggleButton ("oscSync"));
-    oscSync->setButtonText (String::empty);
+    oscSync->setButtonText (String());
     oscSync->addListener (this);
 
     addAndMakeVisible (pitchModSens = new Slider ("pitchModSens"));
@@ -193,7 +193,7 @@ GlobalEditor::GlobalEditor ()
     pitchModSens->addListener (this);
 
     addAndMakeVisible (lfoSync = new ToggleButton ("lfoSync"));
-    lfoSync->setButtonText (String::empty);
+    lfoSync->setButtonText (String());
     lfoSync->addListener (this);
 
     addAndMakeVisible (pitchEnvDisplay = new PitchEnvDisplay());
@@ -243,7 +243,7 @@ GlobalEditor::GlobalEditor ()
     storeButton->addListener (this);
 
     addAndMakeVisible (monoMode = new ToggleButton ("monoMode"));
-    monoMode->setButtonText (String::empty);
+    monoMode->setButtonText (String());
     monoMode->addListener (this);
 
     addAndMakeVisible (lfoType = new ComboBoxImage());
@@ -253,7 +253,7 @@ GlobalEditor::GlobalEditor ()
     programSelector->setName ("programSelector");
 
     addAndMakeVisible (aboutButton = new ImageButton ("aboutButton"));
-    aboutButton->setButtonText (String::empty);
+    aboutButton->setButtonText (String());
     aboutButton->addListener (this);
 
     aboutButton->setImages (false, true, false,

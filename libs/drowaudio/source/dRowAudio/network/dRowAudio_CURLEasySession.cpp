@@ -44,7 +44,7 @@ namespace drow {
 //==============================================================================
 CURLEasySession::CURLEasySession()
     : handle      (CURLManager::getInstance()->createEasyCurlHandle()),
-	  remotePath  (String::empty),
+	  remotePath  (String()),
 	  progress    (1.0f)
 {
 	enableFullDebugging (true);
@@ -80,7 +80,7 @@ CURLEasySession::~CURLEasySession()
 //==============================================================================
 void CURLEasySession::setInputStream (InputStream* newInputStream)
 {
-    localFile = File::nonexistent;
+    localFile = File();
     inputStream = newInputStream;
 }
 
@@ -116,7 +116,7 @@ String CURLEasySession::getCurrentWorkingDirectory()
 	if (res == CURLE_OK && CharPointer_ASCII::isValidString (url, 1000))
 		return String (url);
 	else
-		return String::empty;
+		return String();
 }
 
 StringArray CURLEasySession::getDirectoryListing()
@@ -165,7 +165,7 @@ StringArray CURLEasySession::getDirectoryListing()
 //    else
 //    {
 //        DBG("CURLE_NOT_OK");
-//        return String::empty;
+//        return String();
 //    }
 //}
 

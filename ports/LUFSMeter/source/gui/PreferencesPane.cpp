@@ -38,7 +38,7 @@ PreferencesPane::PreferencesPane (const Value& loudnessBarWidth,
                                   const Value& showLoudnessRangeHistoryValue,
                                   const Value& showShortTermLoudnessHistoryValue,
                                   const Value& showMomentaryLoudnessHistoryValue)
-  : loudnessHistoryGroup (String::empty, "History Graph"),
+  : loudnessHistoryGroup (String(), "History Graph"),
     showIntegratedLoudnessHistory ("I"),
     showLoudnessRangeHistory("LRA"),
     showShortTimeLoudnessHistory ("S"),

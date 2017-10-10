@@ -97,7 +97,7 @@ juce::File Settings::getImpulseResponseDirectory()
       return dir;
     }
   }
-  return juce::File::nonexistent;
+  return juce::File();
 }
 
 

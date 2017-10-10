@@ -38,7 +38,7 @@ AnimatedSidePanel::AnimatedSidePanel ()
     topRightHandleWidth (titleHeight + borderSize),
     panelIsVisible (false),
     xPositionWhenHidden (0),
-    showOrHideButton (String::empty, DrawableButton::ImageOnButtonBackground)
+    showOrHideButton (String(), DrawableButton::ImageOnButtonBackground)
 {
     setSize (widthWithoutHandle + topRightHandleWidth, 170);
     

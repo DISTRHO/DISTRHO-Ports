@@ -80,7 +80,7 @@ PitchedDelayTab::PitchedDelayTab (PitchedDelayAudioProcessor* processor, int del
 	cbSync->setTooltip (L"Quantisation");
 	cbSync->setEditableText (false);
 	cbSync->setJustificationType (Justification::centredLeft);
-	cbSync->setTextWhenNothingSelected (String::empty);
+	cbSync->setTextWhenNothingSelected (String());
 	cbSync->setTextWhenNoChoicesAvailable (L"(no choices)");
 	cbSync->addItem (L"seconds", 1);
 	cbSync->addItem (L"1/2", 2);
@@ -162,7 +162,7 @@ PitchedDelayTab::PitchedDelayTab (PitchedDelayAudioProcessor* processor, int del
 	cbFilter->setTooltip (L"Filter Type. Maximum filter gain is limited to 0 dB to avoid feedback oscillation.");
 	cbFilter->setEditableText (false);
 	cbFilter->setJustificationType (Justification::centredLeft);
-	cbFilter->setTextWhenNothingSelected (String::empty);
+	cbFilter->setTextWhenNothingSelected (String());
 	cbFilter->setTextWhenNoChoicesAvailable (L"(no choices)");
 	cbFilter->addItem (L"Off", 1);
 	cbFilter->addItem (L"Lowpass", 2);
@@ -220,7 +220,7 @@ PitchedDelayTab::PitchedDelayTab (PitchedDelayAudioProcessor* processor, int del
 	cbPitch->setTooltip (L"Pitch shfiting algorithm. Off Disables pitching and saves resources.");
 	cbPitch->setEditableText (false);
 	cbPitch->setJustificationType (Justification::centredLeft);
-	cbPitch->setTextWhenNothingSelected (String::empty);
+	cbPitch->setTextWhenNothingSelected (String());
 	cbPitch->setTextWhenNoChoicesAvailable (L"(no choices)");
 	cbPitch->addListener (this);
 

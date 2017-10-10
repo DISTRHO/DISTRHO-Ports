@@ -49,52 +49,52 @@ DRowAudioFilter::DRowAudioFilter()
 {
 	// set up the parameters with the required limits and units
 
-	params[PREDELAY].init(parameterNames[PREDELAY], UnitMilliseconds, String::empty,
+	params[PREDELAY].init(parameterNames[PREDELAY], UnitMilliseconds, String(),
 						  50, 0.025, 200, 50);
 	params[PREDELAY].setStep(0.1);
 
-	params[ROOMSHAPE].init(parameterNames[ROOMSHAPE], UnitGeneric, String::empty,
+	params[ROOMSHAPE].init(parameterNames[ROOMSHAPE], UnitGeneric, String(),
 						   3, 3, 7, 3);
 	params[ROOMSHAPE].setStep(1);
 	prevRoomShape = 0;
 
-	params[EARLYDECAY].init(parameterNames[EARLYDECAY], UnitSeconds, String::empty,
+	params[EARLYDECAY].init(parameterNames[EARLYDECAY], UnitSeconds, String(),
 							5, 0, 20, 5);
 
-	params[EARLYLATEMIX].init(parameterNames[EARLYLATEMIX], UnitPercent, String::empty,
+	params[EARLYLATEMIX].init(parameterNames[EARLYLATEMIX], UnitPercent, String(),
 							  50, 0, 100, 50);
 	params[EARLYLATEMIX].setValue(50);
 
-	params[FBCOEFF].init(parameterNames[FBCOEFF], UnitSeconds, String::empty,
+	params[FBCOEFF].init(parameterNames[FBCOEFF], UnitSeconds, String(),
 						 5, 0, 20, 5);
 	params[FBCOEFF].setSkewFactor(0.4);
 
-	params[DELTIME].init(parameterNames[DELTIME], UnitGeneric, String::empty,
+	params[DELTIME].init(parameterNames[DELTIME], UnitGeneric, String(),
 						 80, 0.15, 100, 80);
 
-	params[FILTERCF].init(parameterNames[FILTERCF], UnitHertz, String::empty,
+	params[FILTERCF].init(parameterNames[FILTERCF], UnitHertz, String(),
 						  3500, 20, 20000, 3500);
 	params[FILTERCF].setSkewFactor(0.5);
 	params[FILTERCF].setStep(1);
 
-	params[DIFFUSION].init(parameterNames[DIFFUSION], UnitPercent, String::empty,
+	params[DIFFUSION].init(parameterNames[DIFFUSION], UnitPercent, String(),
 						  50, 0, 100, 50);
 	params[DIFFUSION].setValue(60);
 
-	params[SPREAD].init(parameterNames[SPREAD], UnitPercent, String::empty,
+	params[SPREAD].init(parameterNames[SPREAD], UnitPercent, String(),
 						0, 00, 100, 0);
 
-	params[LOWEQ].init(parameterNames[LOWEQ], UnitHertz, String::empty,
+	params[LOWEQ].init(parameterNames[LOWEQ], UnitHertz, String(),
 						0, -60, 24, 0);
 	params[LOWEQ].setSkewFactorFromMidPoint(0.0);
 	params[LOWEQ].setStep(0.1);
 
-	params[HIGHEQ].init(parameterNames[HIGHEQ], UnitHertz, String::empty,
+	params[HIGHEQ].init(parameterNames[HIGHEQ], UnitHertz, String(),
 						0, -60, 24, 0);
 	params[HIGHEQ].setSkewFactorFromMidPoint(0.0);
 	params[HIGHEQ].setStep(0.1);
 
-	params[WETDRYMIX].init(parameterNames[WETDRYMIX], UnitPercent, String::empty,
+	params[WETDRYMIX].init(parameterNames[WETDRYMIX], UnitPercent, String(),
 						   50, 0, 100, 50);
 
     // make sure to initialize everything
@@ -186,7 +186,7 @@ const String DRowAudioFilter::getParameterName (int index)
 		if (index == i)
 			return String(parameterNames[i]);
 
-    return String::empty;
+    return String();
 }
 
 const String DRowAudioFilter::getParameterText (int index)
@@ -195,7 +195,7 @@ const String DRowAudioFilter::getParameterText (int index)
 		if (index == i)
 			return String(params[i].getValue(), 2);
 
-    return String::empty;
+    return String();
 }
 
 PluginParameter* DRowAudioFilter::getParameterPointer(int index)

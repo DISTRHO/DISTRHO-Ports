@@ -311,7 +311,7 @@ public:
         AudioParameter* parameter = parameters [index];
 
         return parameter ? String (parameter->getName ())
-                         : String::empty;
+                         : String();
     }
 
     /**
@@ -326,7 +326,7 @@ public:
         AudioParameter* parameter = parameters [index];
 
         return parameter ? parameter->getValueMappedAsString ()
-                         : String::empty;
+                         : String();
     }
 
     //==============================================================================
@@ -599,7 +599,7 @@ public:
     {
         AudioProgram* thisProgram = programs[index];
 
-        return thisProgram ? thisProgram->getName () : String::empty;
+        return thisProgram ? thisProgram->getName () : String();
     }
 
     /**
@@ -658,7 +658,7 @@ public:
     */
     bool restoreProgramFromFile (const File& file, const bool addProgram = true)
     {
-        if (file == File::nonexistent)
+        if (! file.exists())
             return false;
 
         XmlDocument xmlDoc (file.loadFileAsString ());
@@ -730,7 +730,7 @@ public:
         {
             AudioProgram* programToSave = 0;
 
-            if (fileToSave == File::nonexistent)
+            if (! fileToSave.exists())
             {
                 programToSave = programs [currentProgram];
                 if (programToSave)
@@ -755,7 +755,7 @@ public:
             }
             xml.addChildElement (chunk);
 
-            if (fileToSave.replaceWithText (xml.createDocument (String::empty)))
+            if (fileToSave.replaceWithText (xml.createDocument (String())))
             {
                 if (addProgram && programToSave == 0)
                     programs.add (new AudioProgram (fileToSave.getFileNameWithoutExtension (),

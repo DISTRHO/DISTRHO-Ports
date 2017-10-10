@@ -34,7 +34,7 @@ class AudioProgram
 public:
 
     AudioProgram (const String& newName,
-                  const File& newFile = File::nonexistent)
+                  const File& newFile = File())
       : name (newName),
         file (newFile)
     {

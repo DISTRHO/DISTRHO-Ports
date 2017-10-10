@@ -106,7 +106,7 @@ Image Spectrograph::createImage() const
     if (fftMagnitudesBlocks.size() == 0 || numBins == 0)
     {
         jassertfalse;
-        return Image::null;
+        return Image();
     }
     
     const float bW = binSize.getWidth();

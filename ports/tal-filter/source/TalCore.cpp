@@ -170,7 +170,7 @@ const String TalCore::getParameterName (int index)
 		case UNUSED2:
 		    return "unused";
 	}
-    return String::empty;
+    return String();
 }
 
 const String TalCore::getParameterText (int index)
@@ -179,7 +179,7 @@ const String TalCore::getParameterText (int index)
 	{
 		return String(talPresets[curProgram]->programData[index], 2);
 	}
-    return String::empty;
+    return String();
 }
 
 const String TalCore::getInputChannelName (const int channelIndex) const
@@ -489,7 +489,7 @@ String TalCore::getStateInformationString ()
     }
     tal.addChildElement(programList);
 
-    return tal.createDocument (String::empty);
+    return tal.createDocument (String());
 }
 
 int TalCore::getNumPrograms ()

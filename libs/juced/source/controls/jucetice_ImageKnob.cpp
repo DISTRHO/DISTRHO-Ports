@@ -48,7 +48,7 @@ void ImageKnob::setStitchedImage (Image newImage,
                                   StitchOrientation newOrientation,
                                   const int newNumberOfSubImages)
 {
-    jassert (newImage != Image::null);
+    jassert (!newImage.isNull());
     jassert (newNumberOfSubImages > 0);
 
     stitchedImage = newImage;

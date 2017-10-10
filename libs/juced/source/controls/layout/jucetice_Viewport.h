@@ -68,7 +68,7 @@ public:
 
     //==============================================================================
 	/** Constructor */
-    JuceticeViewport (const String& componentName = String::empty);
+    JuceticeViewport (const String& componentName = String());
 	
     /** Destruct the Viewport */
     ~JuceticeViewport ();

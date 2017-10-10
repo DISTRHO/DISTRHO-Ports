@@ -61,7 +61,7 @@ const String ThePilgrimAudioProcessor::getParameterName (int index)
 		return "Filter Freq";
 	else if (index == mixParam)
 		return "Mix";
-    return String::empty;
+    return String();
 }
 
 const String ThePilgrimAudioProcessor::getParameterText (int index)
@@ -94,7 +94,7 @@ const String ThePilgrimAudioProcessor::getParameterText (int index)
 		output = String(percent)+"%";
 		return output;
 	}
-    return String::empty;
+    return String();
 }
 
 const String ThePilgrimAudioProcessor::getInputChannelName (int channelIndex) const

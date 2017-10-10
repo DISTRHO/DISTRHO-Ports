@@ -76,7 +76,7 @@ void RotatingToggleButton::paintButton (Graphics& g,
 
     g.setColour(Colour(255, 255, 255));
     AffineTransform transform;
-	transform= AffineTransform::identity.translated(-1.0, -(getHeight()-8.0)*.5).
+	transform= AffineTransform().translated(-1.0, -(getHeight()-8.0)*.5).
 							rotated(rotationState*M_PI*0.5).translated(6.5, (getHeight()-8.0));
     if(isMouseOverButton)
 		g.fillPath (path, transform);

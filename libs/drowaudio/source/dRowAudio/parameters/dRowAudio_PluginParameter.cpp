@@ -56,7 +56,7 @@ PluginParameter::PluginParameter()
 		 1.0,				// skew factor
 		 0.1,				// smooth coeff
 		 0.01,				// step
-		 String::empty);	// unit suffix
+		 String());	// unit suffix
 }
 
 PluginParameter::PluginParameter (const PluginParameter& other)

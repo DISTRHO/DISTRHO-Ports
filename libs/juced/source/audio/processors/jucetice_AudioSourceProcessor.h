@@ -56,15 +56,15 @@ public:
     bool producesMidi() const override                                     { return false; }
 
     int getNumParameters() override                                        { return 0; }
-    const String getParameterName (int parameterIndex) override            { return String::empty; }
+    const String getParameterName (int parameterIndex) override            { return String(); }
     float getParameter (int parameterIndex) override                       { return 0.0; }
-    const String getParameterText (int parameterIndex) override            { return String::empty; }
+    const String getParameterText (int parameterIndex) override            { return String(); }
     void setParameter (int parameterIndex, float newValue) override        { }
 
     int getNumPrograms() override                                          { return 0; }
     int getCurrentProgram() override                                       { return 0; }
     void setCurrentProgram (int index) override                            { }
-    const String getProgramName (int index) override                       { return String::empty; }
+    const String getProgramName (int index) override                       { return String(); }
     void changeProgramName (int index, const String& newName) override     { }
 
     void getStateInformation (MemoryBlock& destData) override              { }

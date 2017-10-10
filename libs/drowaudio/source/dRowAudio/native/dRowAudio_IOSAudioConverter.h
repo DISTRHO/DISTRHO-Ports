@@ -78,7 +78,7 @@ public:
                                     the extension .caf and if left blank will be
                                     called "convertedFile".
      */
-    void startConversion (const String& avAssetUrl, const String& convertedFileName = String::empty);
+    void startConversion (const String& avAssetUrl, const String& convertedFileName = String());
     
     /** Cancels the current conversion.
         A file may be partially converted and can be obtained using the

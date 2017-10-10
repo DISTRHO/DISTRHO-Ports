@@ -83,7 +83,7 @@ const String TheFunctionAudioProcessor::getParameterName (int index)
         case panRParam:   return "Pan R";
         case phaseLParam: return "Phase L";
         case phaseRParam: return "Phase R";
-        default:          return String::empty;
+        default:          return String();
     }
 }
 

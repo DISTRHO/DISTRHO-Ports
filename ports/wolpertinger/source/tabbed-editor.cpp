@@ -52,7 +52,7 @@ tabbed_editor::tabbed_editor (AudioProcessor *const ownerFilter)
     addAndMakeVisible (comboBox = new PresetComboBox (T("new combo box")));
     comboBox->setEditableText (false);
     comboBox->setJustificationType (Justification::centred);
-    comboBox->setTextWhenNothingSelected (String::empty);
+    comboBox->setTextWhenNothingSelected (String());
     comboBox->setTextWhenNoChoicesAvailable (T("(no choices)"));
     comboBox->addItem (T("Bass Drone 1"), 1);
     comboBox->addItem (T("Bass Drone 2"), 2);
@@ -64,7 +64,7 @@ tabbed_editor::tabbed_editor (AudioProcessor *const ownerFilter)
     comboBox->addListener (this);
 
     addAndMakeVisible (polytext = new Label (T("new label"),
-                                             String::empty));
+                                             String()));
     polytext->setFont (Font (15.0000f, Font::plain));
     polytext->setJustificationType (Justification::centredRight);
     polytext->setEditable (false, false, false);
@@ -92,7 +92,7 @@ tabbed_editor::tabbed_editor (AudioProcessor *const ownerFilter)
 	comboBox->setVisible(false);
 
 #ifdef CONFIG_STANDALONE
-    addAndMakeVisible (kbd_button = new KeyboardButton (String::empty));
+    addAndMakeVisible (kbd_button = new KeyboardButton (String()));
     kbd_button->setColour (ToggleButton::textColourId, Colours::white);
     kbd_button->setBounds (2, getHeight()-20, getWidth()-4, 16);
 #endif

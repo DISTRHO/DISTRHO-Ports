@@ -177,7 +177,7 @@ private:
         if (isPositiveAndBelow (pitchClass, 12))
             return asSharps ? sharpNoteNames[pitchClass] : flatNoteNames[pitchClass];
         else
-            return String::empty;
+            return String();
     }
         
     /*  Returns the pitch class number for a given string.

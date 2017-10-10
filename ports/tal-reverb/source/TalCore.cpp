@@ -107,7 +107,7 @@ const String TalCore::getParameterName (int index)
 		case STEREO: return T("Stereo");
 		case UNUSED: return "unused";
 	}
-    return String::empty;
+    return String();
 }
 
 const String TalCore::getParameterText (int index)
@@ -116,7 +116,7 @@ const String TalCore::getParameterText (int index)
 	{
 		return String (params[index], 2);
 	}
-    return String::empty;
+    return String();
 }
 
 const String TalCore::getInputChannelName (const int channelIndex) const
@@ -257,7 +257,7 @@ void TalCore::getStateInformation (MemoryBlock& destData)
 	// use this for new factory presets
 	//#ifdef _DEBUG && WIN32
 	//File *file = new File("d:/presets.txt");
-	//String myXmlDoc = tal.createDocument (String::empty);
+	//String myXmlDoc = tal.createDocument (String());
 	//file->replaceWithText(myXmlDoc);
 	//#endif
 }
@@ -360,7 +360,7 @@ String TalCore::getStateInformationString ()
 
     sendChangeMessage ();
 
-    return tal.createDocument (String::empty);
+    return tal.createDocument (String());
 }
 
 int TalCore::getNumPrograms ()

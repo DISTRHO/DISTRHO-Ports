@@ -157,7 +157,7 @@ bool AudioFilePlayerExt::setSourceWithReader (AudioFormatReader* reader)
 		return true;
 	}
 	
-    setLibraryEntry (ValueTree::invalid);
+    setLibraryEntry (ValueTree());
     listeners.call (&Listener::fileChanged, this);
 
     return false;    

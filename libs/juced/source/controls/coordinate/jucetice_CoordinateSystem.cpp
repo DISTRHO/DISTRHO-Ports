@@ -105,7 +105,7 @@ CoordinateSystem::CoordinateSystem(const String &name)
     // initialize the component-size and the image-size to 1x1 pixels, without
     // such initializations, a JUCE-breakpoint will be triggered or other screws
     // happen:
-    backgroundImage = Image::null;
+    backgroundImage = Image();
     setBounds(0, 0, 1, 1);
     backgroundImage = Image(Image::RGB, 1, 1, true);
     updateBackgroundImage();
@@ -637,11 +637,11 @@ void CoordinateSystem::updateBackgroundImage()
   return;
 
  // allocate memory for the first time:
- if( backgroundImage == Image::null )
+ if( backgroundImage.isNull() )
  {
   backgroundImage = Image(Image::RGB, getWidth(), getHeight(), true);
 
-  if( backgroundImage == Image::null )
+  if( backgroundImage.isNull() )
    return; // memory allocation failed
  }
 
@@ -651,13 +651,13 @@ void CoordinateSystem::updateBackgroundImage()
      backgroundImage.getHeight() != getHeight()    )
  {
   // delete the old and create a new Image-object:
-  if( backgroundImage != Image::null )
+  if( ! backgroundImage.isNull() )
   {
-   backgroundImage = Image::null;
+   backgroundImage = Image();
   }
   backgroundImage = Image(Image::RGB, getWidth(), getHeight(), true);
 
-  if( backgroundImage == Image::null )
+  if( backgroundImage.isNull() )
    return; // memory allocation failed
  }
 
