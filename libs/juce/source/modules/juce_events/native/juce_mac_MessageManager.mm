@@ -222,7 +222,7 @@ private:
 //==============================================================================
 void MessageManager::runDispatchLoop()
 {
-    if (! quitMessagePosted) // check that the quit message wasn't already posted..
+    if (quitMessagePosted.get() == 0) // check that the quit message wasn't already posted..
     {
         JUCE_AUTORELEASEPOOL
         {
@@ -292,7 +292,7 @@ bool MessageManager::runDispatchLoopUntil (int millisecondsToRunFor)
 
     uint32 endTime = Time::getMillisecondCounter() + (uint32) millisecondsToRunFor;
 
-    while (! quitMessagePosted)
+    while (quitMessagePosted.get() == 0)
     {
         JUCE_AUTORELEASEPOOL
         {
@@ -311,7 +311,7 @@ bool MessageManager::runDispatchLoopUntil (int millisecondsToRunFor)
         }
     }
 
-    return ! quitMessagePosted;
+    return quitMessagePosted.get() == 0;
 }
 #endif
 
