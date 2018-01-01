@@ -92,6 +92,7 @@ XmlElement* SaveState(const File& irDirectory, Processor& processor)
   convolutionElement->setAttribute("decayShape", processor.getDecayShape());
   convolutionElement->setAttribute("stereoWidth", processor.getParameter(Parameters::StereoWidth));
   convolutionElement->setAttribute("reverse", processor.getReverse());
+  convolutionElement->setAttribute("autoGainOn", processor.getParameter(Parameters::AutoGainOn));
   convolutionElement->setAttribute("autoGain", processor.getParameter(Parameters::AutoGainDecibels));
              
   // IRs
@@ -144,6 +145,7 @@ bool LoadState(const File& irDirectory, XmlElement& element, Processor& processo
   double attackShape = element.getDoubleAttribute("attackShape", 0.0);
   double decayShape = element.getDoubleAttribute("decayShape", 0.0);
   double stereoWidth = element.getDoubleAttribute("stereoWidth", Parameters::StereoWidth.getDefaultValue());
+  bool autoGainOn = element.getBoolAttribute("autoGainOn", Parameters::AutoGainOn.getDefaultValue());
   double autoGain = element.getDoubleAttribute("autoGain", Parameters::AutoGainDecibels.getDefaultValue());
   bool reverse = element.getBoolAttribute("reverse", false);
   
@@ -195,7 +197,8 @@ bool LoadState(const File& irDirectory, XmlElement& element, Processor& processo
   processor.setParameterNotifyingHost(Parameters::EqHighShelfFreq, static_cast<float>(eqHiShelfFreq));
   processor.setParameterNotifyingHost(Parameters::EqHighShelfDecibels, static_cast<float>(eqHiShelfDecibels));  
   processor.setParameterNotifyingHost(Parameters::StereoWidth, static_cast<float>(stereoWidth));
-  processor.setParameterNotifyingHost(Parameters::AutoGainDecibels, static_cast<float>(autoGain));
+  processor.setParameterNotifyingHost(Parameters::AutoGainOn, autoGainOn);
+  processor.setParameter(Parameters::AutoGainDecibels, static_cast<float>(autoGain));
   processor.setIRBegin(irBegin);
   processor.setIREnd(irEnd);
   processor.setPredelayMs(predelayMs);  
