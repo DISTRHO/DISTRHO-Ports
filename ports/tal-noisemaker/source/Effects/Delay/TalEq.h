@@ -26,7 +26,7 @@
 
 #include "Filter6dB.h"
 #include "HighPass.h"
-#include "../../engine/AudioUtils.h"
+#include "../../Engine/AudioUtils.h"
 
 class TalEq 
 {

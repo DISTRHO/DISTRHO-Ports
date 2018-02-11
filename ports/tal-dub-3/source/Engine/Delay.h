@@ -24,7 +24,7 @@
 #if !defined(__Delay_h)
 #define __Delay_h
 
-#include "Math.h"
+#include "math.h"
 #include "AudioUtils.h"
 #include "Filter6dB.h"
 #include "DCBlock.h"

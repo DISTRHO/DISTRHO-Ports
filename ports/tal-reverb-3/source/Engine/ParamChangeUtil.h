@@ -24,7 +24,7 @@
 #if !defined(__ParamChangeUtil_h)
 #define __ParamChangeUtil_h
 
-#include "Math.h"
+#include "math.h"
 
 // Low pass filter for gentle parameter changes
 class ParamChangeUtil

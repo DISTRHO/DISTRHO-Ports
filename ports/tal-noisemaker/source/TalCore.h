@@ -32,9 +32,9 @@
 #ifndef TALCORE_H
 #define TALCORE_H
 
-#include "./engine/AudioUtils.h"
-#include "./engine/SynthEngine.h"
-#include "./engine/Params.h"
+#include "./Engine/AudioUtils.h"
+#include "./Engine/SynthEngine.h"
+#include "./Engine/Params.h"
 #include "TalPreset.h"
 #include "./EnvelopeEditor/EnvelopePresetUtility.h"
 

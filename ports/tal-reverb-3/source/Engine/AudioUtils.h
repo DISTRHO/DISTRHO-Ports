@@ -24,7 +24,7 @@ or write to the Free Software Foundation, Inc.,
 #if !defined(__AudioUtils_h)
 #define __AudioUtils_h
 
-#include "Math.h"
+#include "math.h"
 
 class AudioUtils 
 {

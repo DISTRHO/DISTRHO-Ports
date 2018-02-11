@@ -26,7 +26,7 @@
 
 #include "LfoHandler.h"
 #include "Lfo.h"
-#include "Math.h"
+#include "math.h"
 #include "AudioUtils.h"
 
 class LfoHandler

@@ -26,7 +26,7 @@
 
 #include "AdsrHandler.h"
 #include "Adsr.h"
-#include "Math.h"
+#include "math.h"
 
 class AdsrHandler
 {

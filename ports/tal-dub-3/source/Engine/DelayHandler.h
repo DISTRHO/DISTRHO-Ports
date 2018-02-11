@@ -25,7 +25,7 @@
 #define __DelayHandler_h_
 
 #include "Decimator.h"
-#include "InterpolatorLinear.h"
+#include "interpolatorlinear.h"
 #include "Delay.h"
 #include "AudioUtils.h"
 #include "TapeSlider.h"

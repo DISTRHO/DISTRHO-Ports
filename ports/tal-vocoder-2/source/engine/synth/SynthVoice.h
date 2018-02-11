@@ -24,11 +24,11 @@
 #if !defined(__SynthVoice_h)
 #define __SynthVoice_h
 
-#include "Math.h"
-#include "Vco.h"
+#include "math.h"
+#include "vco.h"
 #include "Adsr.h"
 #include "Portamento.h"
-#include "AudioUtils.h"
+#include "audioutils.h"
 #include "OscNoise.h"
 
 class SynthVoice

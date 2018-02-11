@@ -24,7 +24,7 @@
 #if !defined(__Delay_h)
 #define __Delay_h
 
-#include "Math.h"
+#include "math.h"
 #include "TalEq.h"
 #include "AudioUtils.h"
 

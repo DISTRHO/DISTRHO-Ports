@@ -24,7 +24,7 @@
 #if !defined(__VocoderEngine_h)
 #define __VocoderEngine_h
 
-#include "AudioUtils.h"
+#include "audioutils.h"
 #include "Params.h"
 #include "HighPass.h"
 #include "./synth/OscNoise.h"

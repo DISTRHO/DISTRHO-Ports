@@ -25,7 +25,7 @@
 #if !defined(__TalEnvelope_h)
 #define __TalEnvelope_h
 
-#include "Math.h"
+#include "math.h"
 
 // Low pass filter for gentle parameter changes
 class Envelope

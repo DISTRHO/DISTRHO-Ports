@@ -24,7 +24,7 @@
 #if !defined(__AudioUtils_h)
 #define __AudioUtils_h
 
-#include "Math.h"
+#include "math.h"
 #include "Params.h"
 
 class AudioUtils

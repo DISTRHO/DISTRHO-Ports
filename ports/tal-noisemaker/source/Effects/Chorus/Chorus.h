@@ -26,7 +26,7 @@
 
 #include "Lfo.h"
 #include "OnePoleLP.h"
-#include "Math.h"
+#include "math.h"
 
 class Chorus 
 {

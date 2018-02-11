@@ -32,8 +32,8 @@
 #ifndef TALCORE_H
 #define TALCORE_H
 
-#include "./engine/ReverbEngine.h"
-#include "./engine/Params.h"
+#include "./Engine/ReverbEngine.h"
+#include "./Engine/Params.h"
 #include "TalPreset.h"
 
 //==============================================================================

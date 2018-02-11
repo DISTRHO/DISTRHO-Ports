@@ -24,7 +24,7 @@
 #if !defined(__HighShelf_h)
 #define __HighShelf_h
 
-#include "Math.h"
+#include "math.h"
 
 class HighShelf 
 {

@@ -24,7 +24,7 @@
 #if !defined(__SynthVoice_h)
 #define __SynthVoice_h
 
-#include "Math.h"
+#include "math.h"
 #include "Vco.h"
 #include "FilterHandler.h"
 #include "Adsr.h"

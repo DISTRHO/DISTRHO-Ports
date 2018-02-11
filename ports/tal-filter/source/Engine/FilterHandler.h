@@ -25,7 +25,7 @@
 #define __FilterHandler_h_
 
 #include "Decimator.h"
-#include "InterpolatorLinear.h"
+#include "interpolatorlinear.h"
 #include "FilterLp12dB.h"
 #include "FilterHp12dB.h"
 #include "FilterBp12dB.h"

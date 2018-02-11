@@ -28,7 +28,7 @@
 #include "CombFilter.h"
 #include "NoiseGenerator.h"
 #include "Filter.h"
-#include "Math.h"
+#include "math.h"
 #include "../../Engine/AudioUtils.h"
 
 class TalReverb

@@ -24,7 +24,7 @@
 #if !defined(__CombFilter_h)
 #define __CombFilter_h
 
-#include "Math.h"
+#include "math.h"
 #include "AudioUtils.h"
 
 class CombFilter

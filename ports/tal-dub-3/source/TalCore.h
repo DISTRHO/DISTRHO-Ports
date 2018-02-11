@@ -32,8 +32,8 @@
 #ifndef TALCORE_H
 #define TALCORE_H
 
-#include "./engine/Engine.h"
-#include "./engine/Params.h"
+#include "./Engine/Engine.h"
+#include "./Engine/Params.h"
 #include "TalPreset.h"
 
 //==============================================================================

@@ -24,7 +24,7 @@
 #ifndef TalComboBox_H
 #define TalComboBox_H
 
-#include "../engine/AudioUtils.h"
+#include "../Engine/AudioUtils.h"
 
 class TalComboBox : public ComboBox
 {

@@ -30,7 +30,7 @@ or write to the Free Software Foundation, Inc.,
 #include "OscSin.h"
 #include "OscNoise.h"
 
-#include "AudioUtils.h"
+#include "audioutils.h"
 
 class Osc
 {

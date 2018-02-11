@@ -24,7 +24,7 @@
 #ifndef NoiseOsc_H
 #define NoiseOsc_H
 
-#include "Math.h"
+#include "math.h"
 
 #include <cstdlib>
 

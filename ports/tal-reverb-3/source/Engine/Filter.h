@@ -24,7 +24,7 @@
 #if !defined(__Filter_h)
 #define __Filter_h
 
-#include "Math.h"
+#include "math.h"
 
 class Filter
 {

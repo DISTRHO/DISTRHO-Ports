@@ -2,7 +2,7 @@
 #define __PeakEq_h
 
 #include <stdio.h>
-#include "Math.h"
+#include "math.h"
 
 class PeakEq 
 {

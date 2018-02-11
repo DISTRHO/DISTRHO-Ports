@@ -1,7 +1,7 @@
 #ifndef OscNoise_H
 #define OscNoise_H
 
-#include "Math.h"
+#include "math.h"
 
 /*
 	==============================================================================

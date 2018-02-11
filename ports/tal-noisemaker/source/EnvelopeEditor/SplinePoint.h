@@ -25,7 +25,7 @@
 #ifndef SplinePoint_H
 #define SplinePoint_H
 
-#include "Math.h"
+#include "math.h"
 
 class SplinePoint
 {

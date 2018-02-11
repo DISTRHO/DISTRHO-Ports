@@ -33,7 +33,7 @@
 #include "TalComponent.h"
 #include "TalCore.h"
 #include "ProgramChunk.h"
-#include "Math.h"
+#include "math.h"
 
 /**
     This function must be implemented to create a new instance of your

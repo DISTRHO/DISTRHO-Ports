@@ -25,7 +25,7 @@
 #define __Chorus_h
 
 #include "OnePoleLP.h"
-#include "Math.h"
+#include "math.h"
 
 class Chorus 
 {

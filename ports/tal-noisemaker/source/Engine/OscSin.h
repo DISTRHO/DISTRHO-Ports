@@ -25,7 +25,7 @@
 #define OscSin_H
 
 #include "BlepData.h"
-#include "Math.h"
+#include "math.h"
 
 class OscSin
 {

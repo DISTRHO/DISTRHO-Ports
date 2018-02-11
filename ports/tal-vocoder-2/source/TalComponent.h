@@ -39,7 +39,7 @@
 #include "./components/TalSplashScreen.h"
 #include "./components/PeakLed.h"
 
-#include "./Engine/audioutils.h"
+#include "./engine/audioutils.h"
 
 
 //==============================================================================

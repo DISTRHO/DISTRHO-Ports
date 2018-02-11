@@ -25,7 +25,7 @@
 #define Vco_H
 
 #include "Osc.h"
-#include "AudioUtils.h"
+#include "audioutils.h"
 
 class Vco
 {
