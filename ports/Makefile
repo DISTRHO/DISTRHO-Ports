@@ -54,6 +54,7 @@ else
 	$(MAKE) -C HiReSam/LV2
 # 	$(MAKE) -C juce-demo-host/LV2
 	$(MAKE) -C juce-demo-plugin/LV2
+	$(MAKE) -C juce-opl/LV2
 	$(MAKE) -C klangfalter/LV2
 	$(MAKE) -C LUFSMeter/LV2
 	$(MAKE) -C LUFSMeter/LV2-Multi
@@ -93,6 +94,7 @@ vst: libs
 	$(MAKE) -C HiReSam/VST
 # 	$(MAKE) -C juce-demo-host/VST
 	$(MAKE) -C juce-demo-plugin/VST
+	$(MAKE) -C juce-opl/VST
 	$(MAKE) -C klangfalter/VST
 	$(MAKE) -C LUFSMeter/VST
 	$(MAKE) -C LUFSMeter/VST-Multi
@@ -131,6 +133,7 @@ clean:
 	$(MAKE) clean -C HiReSam/LV2
 	$(MAKE) clean -C juce-demo-host/LV2
 	$(MAKE) clean -C juce-demo-plugin/LV2
+	$(MAKE) clean -C juce-opl/LV2
 	$(MAKE) clean -C klangfalter/LV2
 	$(MAKE) clean -C LUFSMeter/LV2
 	$(MAKE) clean -C LUFSMeter/LV2-Multi
@@ -165,6 +168,7 @@ clean:
 	$(MAKE) clean -C HiReSam/LV2
 	$(MAKE) clean -C juce-demo-host/VST
 	$(MAKE) clean -C juce-demo-plugin/VST
+	$(MAKE) clean -C juce-opl/VST
 	$(MAKE) clean -C klangfalter/VST
 	$(MAKE) clean -C LUFSMeter/VST
 	$(MAKE) clean -C LUFSMeter/VST-Multi
