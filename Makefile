@@ -94,6 +94,12 @@ mingw:
 # -----------------------------------------
 # Custom build types
 
+libs:
+	$(MAKE) -C libs/drowaudio
+	$(MAKE) -C libs/juce
+	$(MAKE) -C libs/juced
+	$(MAKE) -C libs/lv2-ttl-generator
+
 lv2:
 	$(MAKE) -C libs/drowaudio
 	$(MAKE) -C libs/juce
@@ -114,3 +120,5 @@ vst:
 	$(MAKE) -C libs/juced
 	$(MAKE) -C ports vst
 	$(MAKE) gen_vst
+
+.PHONY: libs
