@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2013-2016 Pascal Gauthier.
+ * Copyright (c) 2013-2018 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ Image findImage(String path) {
 
 DXLookNFeel::DXLookNFeel() {
     Colour ctrlBackground;
-
+    
     DexedAudioProcessor::dexedAppDir.setAsCurrentWorkingDirectory();
     ctrlBackground = Colour(20,18,18);
 
@@ -72,9 +72,6 @@ DXLookNFeel::DXLookNFeel() {
     imageLFO = ImageCache::getFromMemory(BinaryData::LFO_36_26_png, BinaryData::LFO_36_26_pngSize);
     imageOperator =  ImageCache::getFromMemory(BinaryData::OperatorEditor_287x218_png, BinaryData::OperatorEditor_287x218_pngSize);
     imageGlobal = ImageCache::getFromMemory (BinaryData::GlobalEditor_864x144_png, BinaryData::GlobalEditor_864x144_pngSize);
-
-    defaultFont = Typeface::createSystemTypefaceFor(BinaryData::NotoSansRegular_ttf, BinaryData::NotoSansRegular_ttfSize);
-    defaultFontBold =  Typeface::createSystemTypefaceFor(BinaryData::NotoSansBold_ttf, BinaryData::NotoSansBold_ttfSize);
 
     File dexedTheme = DexedAudioProcessor::dexedAppDir.getChildFile("DexedTheme.xml");
 
@@ -158,7 +155,7 @@ DXLookNFeel::DXLookNFeel() {
 }
 
 Typeface::Ptr DXLookNFeel::getTypefaceForFont(const Font &) {
-    return defaultFont;
+    return Typeface::createSystemTypefaceFor(BinaryData::NotoSansRegular_ttf, BinaryData::NotoSansRegular_ttfSize);
 }
 
 void DXLookNFeel::drawRotarySlider( Graphics &g, int x, int y, int width, int height, float sliderPosProportional,
@@ -223,10 +220,6 @@ void DXLookNFeel::drawLinearSliderThumb (Graphics& g, int x, int y, int width, i
     g.drawImage(imageSlider, p, 0, 26, 26, 0, 0, 26, 26);
 }
 
-Font DXLookNFeel::getTextButtonFont(TextButton& button, int buttonHeight) {
-    return Font(defaultFontBold);
-}
-
 void DXLookNFeel::positionComboBoxText(ComboBox& box, Label& label) {
     ComboBox *src = &box;
 
@@ -239,17 +232,8 @@ void DXLookNFeel::positionComboBoxText(ComboBox& box, Label& label) {
     LookAndFeel_V3::positionComboBoxText(box, label);
 }
 
-CriticalSection DXLookNFeel::lock;
-DXLookNFeel * DXLookNFeel::ins = NULL;
 Colour DXLookNFeel::fillColour = Colour(77,159,151);
 Colour DXLookNFeel::lightBackground = Colour(78,72,63);
 Colour DXLookNFeel::background = Colour(60,50,47);
 Colour DXLookNFeel::roundBackground = Colour(58,52,48);
 
-DXLookNFeel *DXLookNFeel::getLookAndFeel() {
-    const ScopedLock locker(lock);
-    if ( ins != NULL )
-        return ins;
-    ins = new DXLookNFeel();
-    return ins;
-}

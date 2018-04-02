@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2013-2016 Pascal Gauthier.
+ * Copyright (c) 2013-2018 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,16 +31,17 @@
 //==============================================================================
 /**
 */
-class DexedAudioProcessorEditor  : public AudioProcessorEditor, public ComboBoxListener, public Timer {
+class DexedAudioProcessorEditor  : public AudioProcessorEditor, public ComboBox::Listener, public Timer {
     MidiKeyboardComponent midiKeyboard;
     OperatorEditor operators[6];
     Colour background;
     CartManager cartManager;
-            
+
+    SharedResourcePointer<DXLookNFeel> lookAndFeel;
 public:
     DexedAudioProcessor *processor;
     GlobalEditor global;
-            
+    
     DexedAudioProcessorEditor (DexedAudioProcessor* ownerFilter);
     ~DexedAudioProcessorEditor();
     void timerCallback();

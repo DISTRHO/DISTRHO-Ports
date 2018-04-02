@@ -38,7 +38,6 @@ typedef __int16 SInt16;
 #endif
 #endif
 
-#include "../Dexed.h"
 
 // #undef SynthMemoryBarrier()
 

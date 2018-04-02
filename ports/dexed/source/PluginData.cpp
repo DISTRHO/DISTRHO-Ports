@@ -159,7 +159,6 @@ void Cartridge::unpackProgram(uint8_t *unpackPgm, int idx) {
     unpackPgm[142] = (lpms_lfw_lks >> 1) & 7;
     unpackPgm[143] = lpms_lfw_lks >> 4;
     memcpy(unpackPgm + 144, bulk + 117, 11);  // transpose, name
-    unpackPgm[155] = 63;  // operator on/off (DEPRECATED)
 }
 
 void DexedAudioProcessor::loadCartridge(Cartridge &sysex) {
@@ -178,19 +177,22 @@ void DexedAudioProcessor::packOpSwitch() {
 }
 
 void DexedAudioProcessor::unpackOpSwitch(char packOpValue) {
-    controllers.opSwitch[5] = (packOpValue & 32) + 48;
-    controllers.opSwitch[4] = (packOpValue & 16) + 48;
-    controllers.opSwitch[3] = (packOpValue & 8) + 48;
-    controllers.opSwitch[2] = (packOpValue & 4) + 48;
-    controllers.opSwitch[1] = (packOpValue & 2) + 48;
-    controllers.opSwitch[0] = (packOpValue & 1) + 48;
+    controllers.opSwitch[5] = ((packOpValue >> 5) &1) + 48;
+    controllers.opSwitch[4] = ((packOpValue >> 4) &1) + 48;
+    controllers.opSwitch[3] = ((packOpValue >> 3) &1) + 48;
+    controllers.opSwitch[2] = ((packOpValue >> 2) &1) + 48;
+    controllers.opSwitch[1] = ((packOpValue >> 1) &1) + 48;
+    controllers.opSwitch[0] = (packOpValue &1) + 48;
 }
 
-void DexedAudioProcessor::updateProgramFromSysex(const uint8_t *rawdata) {
+int DexedAudioProcessor::updateProgramFromSysex(const uint8_t *rawdata) {
     memcpy(data, rawdata, 155);
-    unpackOpSwitch(rawdata[155]);
+    unpackOpSwitch(0x3F);
     lfo.reset(data + 137);
     triggerAsyncUpdate();
+    if (sysexChecksum(rawdata, 155) != rawdata[155]) // rawdata[155] is a checksum in a sysex dump
+        return 1; // just return 1 if the checksum doesn't match, might be normal if it is loaded from a cartridge
+    return 0;
 }
 
 void DexedAudioProcessor::setupStartupCart() {
@@ -250,6 +252,7 @@ void DexedAudioProcessor::sendCurrentSysexProgram() {
     
     packOpSwitch();
     exportSysexPgm(raw, data);
+    raw[2] = raw[2] | sysexComm.getChl();
     if ( sysexComm.isOutputActive() ) {
         sysexComm.send(MidiMessage(raw, 163));
     }
@@ -259,6 +262,7 @@ void DexedAudioProcessor::sendCurrentSysexCartridge() {
     uint8_t raw[4104];
     
     currentCart.saveVoice(raw);
+    raw[2] = raw[2] | sysexComm.getChl();
     if ( sysexComm.isOutputActive() ) {
         sysexComm.send(MidiMessage(raw, 4104));
     }
@@ -313,6 +317,7 @@ void DexedAudioProcessor::getStateInformation(MemoryBlock& destData) {
     dexedState.setAttribute("monoMode", monoMode);
     dexedState.setAttribute("engineType", (int) engineType);
     dexedState.setAttribute("masterTune", controllers.masterTune);
+    //TRACE("saving opswitch %s", controllers.opSwitch);
     dexedState.setAttribute("opSwitch", controllers.opSwitch);
     
     char mod_cfg[15];
@@ -333,6 +338,7 @@ void DexedAudioProcessor::getStateInformation(MemoryBlock& destData) {
     blobSet.set("program", var((void *) &data, 161));
     
     blobSet.copyToXmlAttributes(*dexedBlob);
+    
     copyXmlToBinary(dexedState, destData);
 }
 
@@ -354,6 +360,7 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
     currentProgram = root->getIntAttribute("currentProgram");
     
     String opSwitchValue = root->getStringAttribute("opSwitch");
+    //TRACE("opSwitch value %s", opSwitchValue.toRawUTF8());
     if ( opSwitchValue.length() != 6 ) {
         strcpy(controllers.opSwitch, "111111");
     } else {
@@ -396,8 +403,8 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
     cart.load((uint8 *)sysex_blob.getBinaryData()->getData(), 4104);
     loadCartridge(cart);
     memcpy(data, program.getBinaryData()->getData(), 161);
-    
-    lastStateSave = (long) time(NULL);
+
+    lastStateSave = (long) time(NULL);    
     TRACE("setting VST STATE");
     updateUI();
 }

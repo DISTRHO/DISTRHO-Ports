@@ -4,11 +4,13 @@
 
 */
 
-#ifndef BINARYDATA_H_22182922_INCLUDED
-#define BINARYDATA_H_22182922_INCLUDED
+#pragma once
 
 namespace BinaryData
 {
+    extern const char*   dexedIcon_png;
+    const int            dexedIcon_pngSize = 14239;
+
     extern const char*   Switch_32x32_png;
     const int            Switch_32x32_pngSize = 841;
 
@@ -49,7 +51,7 @@ namespace BinaryData
     const int            about_pngSize = 24863;
 
     extern const char*   GlobalEditor_864x144_png;
-    const int            GlobalEditor_864x144_pngSize = 17334;
+    const int            GlobalEditor_864x144_pngSize = 16209;
 
     extern const char*   OperatorEditor_287x218_png;
     const int            OperatorEditor_287x218_pngSize = 10927;
@@ -58,11 +60,9 @@ namespace BinaryData
     extern const char* namedResourceList[];
 
     // Number of elements in the namedResourceList array.
-    const int namedResourceListSize = 15;
+    const int namedResourceListSize = 16;
 
     // If you provide the name of one of the binary resource variables above, this function will
     // return the corresponding data and its size (or a null pointer if the name isn't found).
     const char* getNamedResource (const char* resourceNameUTF8, int& dataSizeInBytes) throw();
 }
-
-#endif

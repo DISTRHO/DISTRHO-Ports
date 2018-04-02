@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2013-2017 Pascal Gauthier.
+ * Copyright (c) 2013-2018 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,9 +34,39 @@
 #include "msfa/aligned_buf.h"
 #include "msfa/fm_op_kernel.h"
 
+#if JUCE_MSVC
+    #pragma comment (lib, "kernel32.lib")
+    #pragma comment (lib, "user32.lib")
+    #pragma comment (lib, "wininet.lib")
+    #pragma comment (lib, "advapi32.lib")
+    #pragma comment (lib, "ws2_32.lib")
+    #pragma comment (lib, "version.lib")
+    #pragma comment (lib, "shlwapi.lib")
+    #pragma comment (lib, "winmm.lib")
+	#pragma comment (lib, "DbgHelp.lib")
+	#pragma comment (lib, "Imm32.lib")
+
+	#ifdef _NATIVE_WCHAR_T_DEFINED
+		#ifdef _DEBUG
+			#pragma comment (lib, "comsuppwd.lib")
+		#else
+			#pragma comment (lib, "comsuppw.lib")
+		#endif
+	#else
+		#ifdef _DEBUG
+			#pragma comment (lib, "comsuppd.lib")
+		#else
+			#pragma comment (lib, "comsupp.lib")
+		#endif
+	#endif
+
+#endif
+
 //==============================================================================
 DexedAudioProcessor::DexedAudioProcessor() {
 #ifdef DEBUG
+    
+    // avoid creating the log file if it is in standalone mode
     Logger *tmp = Logger::getCurrentLogger();
     if ( tmp == NULL ) {
         Logger::setCurrentLogger(FileLogger::createDateStampedLogger("Dexed", "DebugSession-", "log", "DexedAudioProcessor Created"));
@@ -56,8 +86,6 @@ DexedAudioProcessor::DexedAudioProcessor() {
     monoMode = 0;
     
     resolvAppDir();
-
-    TRACE("controler %s", controllers.opSwitch);
     
     initCtrl();
     sendSysexChange = true;
@@ -71,7 +99,7 @@ DexedAudioProcessor::DexedAudioProcessor() {
     controllers.values_[kControllerPitchRange] = 3;
     controllers.values_[kControllerPitchStep] = 0;
     controllers.masterTune = 0;
-
+    
     loadPreference();
 
     for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
@@ -85,6 +113,11 @@ DexedAudioProcessor::DexedAudioProcessor() {
 }
 
 DexedAudioProcessor::~DexedAudioProcessor() {
+    Logger *tmp = Logger::getCurrentLogger();
+	if ( tmp != NULL ) {
+		Logger::setCurrentLogger(NULL);
+		delete tmp;
+	}
     TRACE("Bye");
 }
 
@@ -109,7 +142,8 @@ void DexedAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) 
     controllers.foot_cc = 0;
     controllers.breath_cc = 0;
     controllers.aftertouch_cc = 0;
-    
+	controllers.refresh(); 
+
     sustain = false;
     extra_buf_size = 0;
 
@@ -262,6 +296,11 @@ bool DexedAudioProcessor::getNextEvent(MidiBuffer::Iterator* iter,const int samp
 }
 
 void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
+    if ( msg->isSysEx() ) {
+        handleIncomingMidiMessage(NULL, *msg);
+        return;
+    }
+    
     const uint8 *buf  = msg->getRawData();
     uint8_t cmd = buf[0];
 
@@ -302,10 +341,18 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
                         }
                     }
                     break;
-                case 123:
+                case 120:
                     panic();
                     break;
-            }
+                case 123:
+                    for (int note = 0; note < MAX_ACTIVE_NOTES; note++) {
+                        if (voices[note].keydown)
+                            keyup(voices[note].midi_note);
+                    }
+                    break;
+                default:
+                    TRACE("handle CC %d %d", ctrl, value);
+                }
         }
         return;
 
@@ -321,12 +368,12 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
             
     }
 
-    switch (cmd) {
-        case 0xe0 :
-            controllers.values_[kControllerPitch] = buf[1] | (buf[2] << 7);
-        break;
+    if ( cmd & 0xe0 ) {
+       controllers.values_[kControllerPitch] = buf[1] | (buf[2] << 7);
     }
 }
+
+#define ACT(v) (v.keydown ? v.midi_note : -1)
 
 void DexedAudioProcessor::keydown(uint8_t pitch, uint8_t velo) {
     if ( velo == 0 ) {
@@ -377,6 +424,7 @@ void DexedAudioProcessor::keydown(uint8_t pitch, uint8_t velo) {
     }
  
     voices[note].live = true;
+	//TRACE("activate %d [ %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d ]", pitch, ACT(voices[0]), ACT(voices[1]), ACT(voices[2]), ACT(voices[3]), ACT(voices[4]), ACT(voices[5]), ACT(voices[6]), ACT(voices[7]), ACT(voices[8]), ACT(voices[9]), ACT(voices[10]), ACT(voices[11]), ACT(voices[12]), ACT(voices[13]), ACT(voices[14]), ACT(voices[15]));
 }
 
 void DexedAudioProcessor::keyup(uint8_t pitch) {
@@ -386,13 +434,14 @@ void DexedAudioProcessor::keyup(uint8_t pitch) {
     for (note=0; note<MAX_ACTIVE_NOTES; ++note) {
         if ( voices[note].midi_note == pitch && voices[note].keydown ) {
             voices[note].keydown = false;
+			//TRACE("deactivate %d [ %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d ]", pitch, ACT(voices[0]), ACT(voices[1]), ACT(voices[2]), ACT(voices[3]), ACT(voices[4]), ACT(voices[5]), ACT(voices[6]), ACT(voices[7]), ACT(voices[8]), ACT(voices[9]), ACT(voices[10]), ACT(voices[11]), ACT(voices[12]), ACT(voices[13]), ACT(voices[14]), ACT(voices[15]));
             break;
         }
     }
     
     // note not found ?
     if ( note >= MAX_ACTIVE_NOTES ) {
-        TRACE("note-off not found???");
+		TRACE("note found ??? %d [ %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d ]", pitch, ACT(voices[0]), ACT(voices[1]), ACT(voices[2]), ACT(voices[3]), ACT(voices[4]), ACT(voices[5]), ACT(voices[6]), ACT(voices[7]), ACT(voices[8]), ACT(voices[9]), ACT(voices[10]), ACT(voices[11]), ACT(voices[12]), ACT(voices[13]), ACT(voices[14]), ACT(voices[15]));
         return;
     }
     
@@ -406,7 +455,7 @@ void DexedAudioProcessor::keyup(uint8_t pitch) {
             }
         }
         
-        if ( highNote != -1 ) {
+        if ( highNote != -1 && voices[note].live ) {
             voices[note].live = false;
             voices[target].live = true;
             voices[target].dx7_note->transferState(*voices[note].dx7_note);
@@ -460,8 +509,8 @@ void DexedAudioProcessor::handleIncomingMidiMessage(MidiInput* source, const Mid
                 TRACE("wrong single voice datasize %d", sz);
                 return;
             }
-            
-            updateProgramFromSysex(buf+6);
+            if ( updateProgramFromSysex(buf+6) )
+                TRACE("bad checksum when updating program from sysex message");
         }
         
         // 32 voice dump
@@ -580,19 +629,11 @@ bool DexedAudioProcessor::isOutputChannelStereoPair (int index) const {
 }
 
 bool DexedAudioProcessor::acceptsMidi() const {
-#if JucePlugin_WantsMidiInput
     return true;
-#else
-    return false;
-#endif
 }
 
 bool DexedAudioProcessor::producesMidi() const {
-#if JucePlugin_ProducesMidiOutput
     return true;
-#else
-    return false;
-#endif
 }
 
 bool DexedAudioProcessor::silenceInProducesSilenceOut() const {
