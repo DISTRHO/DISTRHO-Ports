@@ -22,7 +22,7 @@
  #define JucePlugin_PluginCode             'LufM'
  #define JucePlugin_MaxNumInputChannels    24
  #define JucePlugin_MaxNumOutputChannels   24
- #define JucePlugin_PreferredChannelConfigurations  {24, 24}, {23, 23}, {22, 22}, {21, 21}, {20, 20}, {19, 19}, {18, 18}, {17, 17}, {16, 16}, {15, 15}, {14, 14}, {13, 13}, {12, 12}, {11, 11}, {10, 10}, {9, 9}, {8, 8},  {7, 7}, {6, 6}, {5, 5}, {4, 4}, {3, 3}, {2, 2}, {1, 1}
+ #define JucePlugin_PreferredChannelConfigurations  {24, 24}
  #define JucePlugin_AUExportPrefix         LUFSMeterMultichannelAU
  #define JucePlugin_AUExportPrefixQuoted   "LUFSMeterMultichannelAU"
  #define JucePlugin_CFBundleIdentifier     com.klangfreund.lufsmetermultichannel
@@ -33,7 +33,7 @@
  #define JucePlugin_PluginCode             'Lufs'
  #define JucePlugin_MaxNumInputChannels    2
  #define JucePlugin_MaxNumOutputChannels   2
- #define JucePlugin_PreferredChannelConfigurations  {2, 2}, {1, 1}
+ #define JucePlugin_PreferredChannelConfigurations  {2, 2}
  #define JucePlugin_AUExportPrefix         LUFSMeterAU
  #define JucePlugin_AUExportPrefixQuoted   "LUFSMeterAU"
  #define JucePlugin_CFBundleIdentifier     com.klangfreund.lufsmeter
