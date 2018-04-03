@@ -915,7 +915,7 @@ bool AdlibBlasterAudioProcessor::isChannelEnabled(const int idx) const {
 void AdlibBlasterAudioProcessor::disableChannel(const int idx)
 {
 	if (isChannelEnabled(idx)) {
-		std::deque<int>::const_iterator pos = std::find(available_channels.begin(), available_channels.end(), idx);
+		std::deque<int>::iterator pos = std::find(available_channels.begin(), available_channels.end(), idx);
 		if (pos != available_channels.end()) {
 			available_channels.erase(pos);
 			channel_enabled[idx] = false;
