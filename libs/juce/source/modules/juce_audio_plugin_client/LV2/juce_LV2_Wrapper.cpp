@@ -118,6 +118,42 @@ static const String& getPluginURI()
     return pluginURI;
 }
 
+/** Queries all available plugin audio ports */
+void findMaxTotalChannels (AudioProcessor* const filter, int& maxTotalIns, int& maxTotalOuts)
+{
+    filter->enableAllBuses();
+
+   #ifdef JucePlugin_PreferredChannelConfigurations
+    int configs[][2] = { JucePlugin_PreferredChannelConfigurations };
+    maxTotalIns = maxTotalOuts = 0;
+
+    for (auto& config : configs)
+    {
+        maxTotalIns =  jmax (maxTotalIns,  config[0]);
+        maxTotalOuts = jmax (maxTotalOuts, config[1]);
+    }
+   #else
+    auto numInputBuses  = filter->getBusCount (true);
+    auto numOutputBuses = filter->getBusCount (false);
+
+    if (numInputBuses > 1 || numOutputBuses > 1)
+    {
+        maxTotalIns = maxTotalOuts = 0;
+
+        for (int i = 0; i < numInputBuses; ++i)
+            maxTotalIns  += filter->getChannelCountOfBus (true, i);
+
+        for (int i = 0; i < numOutputBuses; ++i)
+            maxTotalOuts += filter->getChannelCountOfBus (false, i);
+    }
+    else
+    {
+        maxTotalIns  = numInputBuses  > 0 ? filter->getBus (true,  0)->getMaxSupportedChannels (64) : 0;
+        maxTotalOuts = numOutputBuses > 0 ? filter->getBus (false, 0)->getMaxSupportedChannels (64) : 0;
+    }
+   #endif
+}
+
 static Array<String> usedSymbols;
 
 /** Converts a parameter name to an LV2 compatible symbol. */
@@ -507,7 +543,10 @@ const String makePresetsFile (AudioProcessor* const filter)
 void createLv2Files(const char* basename)
 {
     const ScopedJuceInitialiser_GUI juceInitialiser;
-    ScopedPointer<AudioProcessor> filter (createPluginFilterOfType (AudioProcessor::wrapperType_LV2));
+    ScopedPointer<AudioProcessor> filter(createPluginFilterOfType (AudioProcessor::wrapperType_LV2));
+
+    int maxNumInputChannels, maxNumOutputChannels;
+    findMaxTotalChannels(filter, maxNumInputChannels, maxNumOutputChannels);
 
     String binary(basename);
     String binaryTTL(binary + ".ttl");
@@ -520,7 +559,7 @@ void createLv2Files(const char* basename)
 
     std::cout << "Writing " << binary << ".ttl..."; std::cout.flush();
     std::fstream plugin(binaryTTL.toUTF8(), std::ios::out);
-    plugin << makePluginFile(filter, filter->getTotalNumInputChannels(), filter->getTotalNumOutputChannels()) << std::endl;
+    plugin << makePluginFile(filter, maxNumInputChannels, maxNumOutputChannels) << std::endl;
     plugin.close();
     std::cout << " done!" << std::endl;
 
@@ -1153,10 +1192,7 @@ public:
         }
         jassert (filter != nullptr);
 
-        // LV2 does not support disabling buses: so always enable all of them
-        filter->enableAllBuses();
-
-        findMaxTotalChannels (numInChans, numOutChans);
+        findMaxTotalChannels (filter, numInChans, numOutChans);
 
         // You must at least have some channels
         jassert (filter->isMidiEffect() || (numInChans > 0 || numOutChans > 0));
@@ -1274,40 +1310,6 @@ public:
 
         portControls.clear();
         lastControlValues.clear();
-    }
-
-    //==============================================================================
-    void findMaxTotalChannels (int& maxTotalIns, int& maxTotalOuts)
-    {
-       #ifdef JucePlugin_PreferredChannelConfigurations
-        int configs[][2] = { JucePlugin_PreferredChannelConfigurations };
-        maxTotalIns = maxTotalOuts = 0;
-
-        for (auto& config : configs)
-        {
-            maxTotalIns =  jmax (maxTotalIns,  config[0]);
-            maxTotalOuts = jmax (maxTotalOuts, config[1]);
-        }
-       #else
-        auto numInputBuses  = filter->getBusCount (true);
-        auto numOutputBuses = filter->getBusCount (false);
-
-        if (numInputBuses > 1 || numOutputBuses > 1)
-        {
-            maxTotalIns = maxTotalOuts = 0;
-
-            for (int i = 0; i < numInputBuses; ++i)
-                maxTotalIns  += filter->getChannelCountOfBus (true, i);
-
-            for (int i = 0; i < numOutputBuses; ++i)
-                maxTotalOuts += filter->getChannelCountOfBus (false, i);
-        }
-        else
-        {
-            maxTotalIns  = numInputBuses  > 0 ? filter->getBus (true,  0)->getMaxSupportedChannels (64) : 0;
-            maxTotalOuts = numOutputBuses > 0 ? filter->getBus (false, 0)->getMaxSupportedChannels (64) : 0;
-        }
-       #endif
     }
 
     //==============================================================================
