@@ -1744,26 +1744,26 @@ public:
 
     uint32_t lv2SetOptions (const LV2_Options_Option* options)
     {
-        for (int j=0; options[j].key != 0; ++j)
+        for (int i=0; options[i].key != 0; ++i)
         {
-            if (options[j].key == uridMap->map(uridMap->handle, LV2_BUF_SIZE__nominalBlockLength))
+            if (options[i].key == uridMap->map(uridMap->handle, LV2_BUF_SIZE__nominalBlockLength))
             {
-                if (options[j].type == uridAtomInt)
-                    bufferSize = *(int*)options[j].value;
+                if (options[i].type == uridAtomInt)
+                    bufferSize = *(const int32_t*)options[i].value;
                 else
                     std::cerr << "Host changed nominalBlockLength but with wrong value type" << std::endl;
             }
-            else if (options[j].key == uridMap->map(uridMap->handle, LV2_BUF_SIZE__maxBlockLength) && ! usingNominalBlockLength)
+            else if (options[i].key == uridMap->map(uridMap->handle, LV2_BUF_SIZE__maxBlockLength) && ! usingNominalBlockLength)
             {
-                if (options[j].type == uridAtomInt)
-                    bufferSize = *(int*)options[j].value;
+                if (options[i].type == uridAtomInt)
+                    bufferSize = *(const int32_t*)options[i].value;
                 else
                     std::cerr << "Host changed maxBlockLength but with wrong value type" << std::endl;
             }
-            else if (options[j].key == uridMap->map(uridMap->handle, LV2_CORE__sampleRate))
+            else if (options[i].key == uridMap->map(uridMap->handle, LV2_PARAMETERS__sampleRate))
             {
-                if (options[j].type == uridAtomDouble)
-                    sampleRate = *(double*)options[j].value;
+                if (options[i].type == uridAtomFloat)
+                    sampleRate = *(const float*)options[i].value;
                 else
                     std::cerr << "Host changed sampleRate but with wrong value type" << std::endl;
             }
