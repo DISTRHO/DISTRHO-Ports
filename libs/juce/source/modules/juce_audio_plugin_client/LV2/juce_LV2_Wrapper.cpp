@@ -68,6 +68,7 @@
 #include "includes/instance-access.h"
 #include "includes/midi.h"
 #include "includes/options.h"
+#include "includes/parameters.h"
 #include "includes/port-props.h"
 #include "includes/presets.h"
 #include "includes/state.h"
