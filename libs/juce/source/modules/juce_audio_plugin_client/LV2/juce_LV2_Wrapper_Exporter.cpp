@@ -201,7 +201,8 @@ static const String makePluginFile (AudioProcessor* const filter, const int maxN
     text += "        a lv2:InputPort, atom:AtomPort ;\n";
     text += "        atom:bufferType atom:Sequence ;\n";
  #if JucePlugin_WantsMidiInput
-    text += "        atom:supports <" LV2_MIDI__MidiEvent "> ;\n";
+    if (filter->acceptsMidi())
+        text += "        atom:supports <" LV2_MIDI__MidiEvent "> ;\n";
  #endif
  #if JucePlugin_WantsLV2TimePos
     text += "        atom:supports <" LV2_TIME__Position "> ;\n";
@@ -218,16 +219,19 @@ static const String makePluginFile (AudioProcessor* const filter, const int maxN
 #endif
 
 #if JucePlugin_ProducesMidiOutput
-    // MIDI output
-    text += "    lv2:port [\n";
-    text += "        a lv2:OutputPort, atom:AtomPort ;\n";
-    text += "        atom:bufferType atom:Sequence ;\n";
-    text += "        atom:supports <" LV2_MIDI__MidiEvent "> ;\n";
-    text += "        lv2:index " + String(portIndex++) + " ;\n";
-    text += "        lv2:symbol \"lv2_midi_out\" ;\n";
-    text += "        lv2:name \"MIDI Output\" ;\n";
-    text += "    ] ;\n";
-    text += "\n";
+    if (filter->producesMidi())
+    {
+        // MIDI output
+        text += "    lv2:port [\n";
+        text += "        a lv2:OutputPort, atom:AtomPort ;\n";
+        text += "        atom:bufferType atom:Sequence ;\n";
+        text += "        atom:supports <" LV2_MIDI__MidiEvent "> ;\n";
+        text += "        lv2:index " + String(portIndex++) + " ;\n";
+        text += "        lv2:symbol \"lv2_midi_out\" ;\n";
+        text += "        lv2:name \"MIDI Output\" ;\n";
+        text += "    ] ;\n";
+        text += "\n";
+    }
 #endif
 
     // Freewheel port

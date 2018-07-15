@@ -467,7 +467,8 @@ public:
         controlPortOffset += 1;
 #endif
 #if JucePlugin_ProducesMidiOutput
-        controlPortOffset += 1;
+        if (filter->producesMidi())
+            controlPortOffset += 1;
 #endif
         controlPortOffset += 1; // freewheel
 #if JucePlugin_WantsLV2Latency
@@ -888,7 +889,7 @@ public:
 #endif
 
 #if JucePlugin_ProducesMidiOutput
-        if (portId == index++)
+        if (filter->producesMidi() && portId == index++)
         {
             portMidiOut = (LV2_Atom_Sequence*)dataLocation;
             return;
@@ -1040,6 +1041,9 @@ public:
  #if JucePlugin_WantsMidiInput
                         if (event->body.type == uridMidiEvent)
                         {
+                            if (! filter->acceptsMidi())
+                                continue;
+
                             const uint8* data = (const uint8*)(event + 1);
                             midiEvents.addEvent(data, event->body.size, event->time.frames);
                             continue;
@@ -1248,7 +1252,7 @@ public:
 #endif
 
 #if JucePlugin_ProducesMidiOutput
-        if (portMidiOut != nullptr)
+        if (filter->producesMidi() && portMidiOut != nullptr)
         {
             const uint32_t capacity = portMidiOut->atom.size;
 
