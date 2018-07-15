@@ -24,4 +24,7 @@
 #include "modules/juce_gui_basics/juce_gui_basics.h"
 #include "modules/juce_gui_extra/juce_gui_extra.h"
 
+// extra, needed for some plugins
+#include "modules/juce_audio_plugin_client/utility/juce_PluginHostType.h"
+
 #endif // JUCE_PLUGIN_MAIN_H_INCLUDED
