@@ -22,6 +22,7 @@ lv2: libs
 ifeq ($(LINUX_EMBED),true)
 	$(MAKE) -C arctican-function/LV2
 	$(MAKE) -C arctican-pilgrim/LV2
+	$(MAKE) -C camomile/LV2
 	$(MAKE) -C drowaudio-distortion/LV2
 	$(MAKE) -C drowaudio-distortionshaper/LV2
 	$(MAKE) -C drowaudio-flanger/LV2
@@ -121,6 +122,7 @@ clean:
 	# LV2
 	$(MAKE) clean -C arctican-function/LV2
 	$(MAKE) clean -C arctican-pilgrim/LV2
+	$(MAKE) clean -C camomile/LV2
 	$(MAKE) clean -C dexed/LV2
 	$(MAKE) clean -C drowaudio-distortion/LV2
 	$(MAKE) clean -C drowaudio-distortionshaper/LV2
@@ -156,6 +158,7 @@ clean:
 	# VST
 	$(MAKE) clean -C arctican-function/VST
 	$(MAKE) clean -C arctican-pilgrim/VST
+	$(MAKE) clean -C camomile/VST
 	$(MAKE) clean -C dexed/VST
 	$(MAKE) clean -C drowaudio-distortion/VST
 	$(MAKE) clean -C drowaudio-distortionshaper/VST
