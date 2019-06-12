@@ -129,7 +129,7 @@ bool AudioFilePlayerExt::setSourceWithReader (AudioFormatReader* reader)
     if (soundTouchAudioSource != nullptr)
         currentSoundtouchSettings = soundTouchAudioSource->getPlaybackSettings();
     
-	audioTransportSource.setSource (nullptr);
+    audioTransportSource.setSource (nullptr);
     loopingAudioSource = nullptr;
     soundTouchAudioSource = nullptr;
     bufferingAudioSource = nullptr;

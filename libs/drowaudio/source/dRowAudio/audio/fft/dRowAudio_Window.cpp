@@ -59,8 +59,8 @@ void Window::setWindowType (WindowType newType)
     if (windowType == newType)
         return;
 
-	windowType = newType;
-	setUpWindowBuffer();
+    windowType = newType;
+    setUpWindowBuffer();
 }
 
 void Window::setWindowSize (int newSize)
@@ -69,7 +69,7 @@ void Window::setWindowSize (int newSize)
         return;
     
     windowBuffer.setSize (1, newSize);
-	setUpWindowBuffer();
+    setUpWindowBuffer();
 }
 
 void Window::applyWindow (float* samples, const int numSamples) const noexcept
