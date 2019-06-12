@@ -637,7 +637,7 @@ void OPL3::Update(float *output, int numsamples) {
 					output[0] += float(channelOutput);
 				}
 			}
-			output[0] /= 2.0f;	// scale output down to avoid clipping
+		output[0] /= 2.0f;	// scale output down to avoid clipping
 
 		// Advances the OPL3-wide vibrato index, which is used by 
 		// PhaseGenerator.getPhase() in each Operator.

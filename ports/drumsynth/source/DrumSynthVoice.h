@@ -810,7 +810,7 @@ private:
         case 1:  w = (float) fabs (2.0f * (float) sin (fmod (0.5f * ph, TwoPi))) - 1.f; break; //sine^2
         case 2:  while (ph < TwoPi) ph += TwoPi;
                  w = 0.6366197f * (float) fmod (ph, TwoPi) - 1.f;
-                 if (w > 1.f) w = 2.f - w;                                              break; //tri
+                 if (w > 1.f) { w = 2.f - w; }                                          break; //tri
         case 3:  w = ph - TwoPi * (float)(int)(ph / TwoPi);
                  w = (0.3183098f * w) - 1.f;                                            break; //saw
         default: w = (sin (fmod (ph, TwoPi)) > 0.0) ? 1.f: -1.f;                        break; //square

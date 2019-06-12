@@ -94,34 +94,34 @@ void MusicLibraryTable::setFilterText (const String& filterString)
     if (currentLibrary != nullptr)
         currentLibrary->getParserLock().enter();
     
-	if (filterString.isEmpty())
-	{
-		filteredDataList = dataList;
-		filteredNumRows = filteredDataList.getNumChildren();
-	}
-	else
-	{
-		filteredDataList = ValueTree (dataList.getType());
+    if (filterString.isEmpty())
+    {
+    	filteredDataList = dataList;
+    	filteredNumRows = filteredDataList.getNumChildren();
+    }
+    else
+    {
+    	filteredDataList = ValueTree (dataList.getType());
+    	
+    	for (int e = 0; e < dataList.getNumChildren(); ++e)
+    	{
+    	    for (int i = 0; i < dataList.getChild (e).getNumProperties(); i++)
+	    {
+    		if (dataList.getChild (e)[MusicColumns::columnNames[i]].toString().containsIgnoreCase (filterString))
+    		{
+    		    filteredDataList.addChild (dataList.getChild(e).createCopy(), -1, 0);
+        	    break;
+    		}
+    	    }
+    	}
 		
-		for (int e = 0; e < dataList.getNumChildren(); ++e)
-		{
-			for (int i = 0; i < dataList.getChild (e).getNumProperties(); i++)
-			{
-				if (dataList.getChild (e)[MusicColumns::columnNames[i]].toString().containsIgnoreCase (filterString))
-				{
-					filteredDataList.addChild (dataList.getChild(e).createCopy(), -1, 0);
-					break;
-				}
-			}
-		}
-		
-		filteredNumRows = filteredDataList.getNumChildren();
-	}
+    	filteredNumRows = filteredDataList.getNumChildren();
+    }
 	
     if (currentLibrary != nullptr)
         currentLibrary->getParserLock().exit();
 
-	table.getHeader().reSortTable();
+    table.getHeader().reSortTable();
 }
 
 //==============================================================================
@@ -178,7 +178,7 @@ void MusicLibraryTable::paintCell (Graphics& g,
     else
         g.setColour (defaultColours.findColour (*this, rowIsSelected ? selectedUnfocusedTextColourId : unfocusedTextColourId));
 
-	g.setFont (font);
+    g.setFont (font);
 
     {
         const ScopedLock sl (currentLibrary->getParserLock());
@@ -205,8 +205,8 @@ void MusicLibraryTable::paintCell (Graphics& g,
     else
         g.setColour (defaultColours.findColour (*this, rowIsSelected ? selectedUnfocusedOutlineColourId : unfocusedOutlineColourId));
 
-	g.fillRect (width - 1, 0, 1, height);
-	g.fillRect (0, height - 1, width, 1);
+    g.fillRect (width - 1, 0, 1, height);
+    g.fillRect (0, height - 1, width, 1);
 }
 
 void MusicLibraryTable::sortOrderChanged (int newSortColumnId, bool isForwards)
