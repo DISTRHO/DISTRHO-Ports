@@ -59,11 +59,11 @@ void WriteConsole(DWORD conout,const char* strPtr,
 {
     std::string msgType = "NOTICE: ";
     
-    if (conout == -10)
+    if ((int)conout == -10)
         msgType = "INPUT: ";
-    else if (conout == -11)
+    else if ((int)conout == -11)
         msgType = "OUTPUT: ";
-    else if (conout == -12)
+    else if ((int)conout == -12)
         msgType = "ERROR: ";
     else
         msgType = "NOTICE: ";
