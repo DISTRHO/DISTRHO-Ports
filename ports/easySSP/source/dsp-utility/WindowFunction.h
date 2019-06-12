@@ -23,7 +23,7 @@ public:
 
 		if (periodicMode) ++length;
 
-		for (int i = 0; i < mLength; ++i)
+		for (int i = 0; i < (int)mLength; ++i)
 		{
 			mPrecalculated[i] = mFunction(i, length);
 			mScalingFactor += mPrecalculated[i];
@@ -40,7 +40,7 @@ public:
 
 		for (int i = start; i < end; ++i)
 		{
-			if (i >= 0 && i < mLength)
+			if (i >= 0 && i < (int)mLength)
 			{
 				signal[sample] *= mPrecalculated[i];
 

@@ -56,7 +56,7 @@ namespace tomatl { namespace dsp {
 		{
 			TOMATL_BRACE_DELETE(mData);
 
-			for (int i = 0; i < mChannelCount; ++i)
+			for (int i = 0; i < (int)mChannelCount; ++i)
 			{
 				TOMATL_DELETE(mBuffers[i]);
 			}
@@ -70,14 +70,14 @@ namespace tomatl { namespace dsp {
 			{
 				mChannelCount = channelCount;
 
-				for (int i = 0; i < mBuffers.size(); ++i)
+				for (int i = 0; i < (int)mBuffers.size(); ++i)
 				{
 					TOMATL_DELETE(mBuffers[i]);
 				}
 
 				mBuffers.clear();
 
-				for (int i = 0; i < mChannelCount; ++i)
+				for (int i = 0; i < (int)mChannelCount; ++i)
 				{
 					mBuffers.push_back(new OverlappingBufferSequence<T>(mFftSize * 2, mFftSize));
 				}
@@ -121,7 +121,7 @@ namespace tomatl { namespace dsp {
 		{
 			bool processed = false;
 
-			for (int i = 0; i < mChannelCount; ++i)
+			for (int i = 0; i < (int)mChannelCount; ++i)
 			{
 				// As our signal is built entirely from real numbers, imaginary part will always be zero
 				mBuffers[i]->putOne(channels[i]);
@@ -147,7 +147,7 @@ namespace tomatl { namespace dsp {
 			if (chData != NULL)
 			{
 				// Apply window function to buffer
-				for (int s = 0; s < mFftSize; ++s)
+				for (int s = 0; s < (int)mFftSize; ++s)
 				{
 					mWindowFunction->applyFunction(chData + s * 2, s, 1, true);
 				}

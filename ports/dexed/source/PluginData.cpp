@@ -225,7 +225,7 @@ void DexedAudioProcessor::resetToInitVoice() {
         99, 99, 99, 99, 50, 50, 50, 50, 0, 0, 1, 35, 0, 0, 0, 1, 0, 3, 24,
         73, 78, 73, 84, 32, 86, 79, 73, 67, 69 };
     
-    for(int i=0;i<sizeof(init_voice);i++) {
+    for(int i=0;i<(int)sizeof(init_voice);i++) {
         data[i] = init_voice[i];
     }
     panic();

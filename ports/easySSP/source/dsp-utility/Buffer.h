@@ -122,7 +122,7 @@ public:
 		size_t hopCount = segmentLength / hopSize;
 
 		// TODO: sanity checks? hopSize < segmentLength and maybe segmentLength % hopSize == 0
-		for (int i = 0; i < hopCount; ++i)
+		for (int i = 0; i < (int)hopCount; ++i)
 		{
 			mBuffers.push_back(new SimpleBuffer<T>(segmentLength));
 			mBuffers[i]->clear(hopSize * i);
@@ -131,7 +131,7 @@ public:
 
 	virtual ~OverlappingBufferSequence()
 	{
-		for (int i = 0; i < mBuffers.size(); ++i)
+		for (int i = 0; i < (int)mBuffers.size(); ++i)
 		{
 			TOMATL_DELETE(mBuffers[i]);
 		}
@@ -144,7 +144,7 @@ public:
 		SimpleBuffer<T>* result = NULL;
 		size_t index = 0;
 		
-		for (int i = 0; i < mBuffers.size(); ++i)
+		for (int i = 0; i < (int)mBuffers.size(); ++i)
 		{
 			mBuffers[i]->putOne(subject);
 
