@@ -354,7 +354,7 @@ namespace tomatl{ namespace dsp{
 		static std::wstring freqToExtendedString(const double& freq)
 		{
 			wchar_t buffer[50];
-			memset(&buffer, 0x0, 50);
+			memset(&buffer, 0x0, sizeof(buffer));
 
 			swprintf(buffer, 50, L"%.0fHz", freq);
 
@@ -364,7 +364,7 @@ namespace tomatl{ namespace dsp{
 		static std::wstring dbToExtendedString(const double & ampl)
 		{
 			wchar_t buffer[50];
-			memset(&buffer, 0x0, 50);
+			memset(&buffer, 0x0, sizeof(buffer));
 
 			swprintf(buffer, 50, L"%.2fdB", ampl);
 
@@ -374,7 +374,7 @@ namespace tomatl{ namespace dsp{
 		static std::wstring freqToString(const double& freq)
 		{
 			wchar_t buffer[50];
-			memset(&buffer, 0x0, 50);
+			memset(&buffer, 0x0, sizeof(buffer));
 
 			if (freq >= 1000)
 			{
@@ -391,7 +391,7 @@ namespace tomatl{ namespace dsp{
 		static std::wstring dbToString(const double& ampl)
 		{
 			wchar_t buffer[50];
-			memset(&buffer, 0x0, 50);
+			memset(&buffer, 0x0, sizeof(buffer));
 
 			swprintf(buffer, 50, L"%+d", (int)ampl);
 
