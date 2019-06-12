@@ -16,8 +16,8 @@ const Colour OPLLookAndFeel::DOS_GREEN_DARK = Colour(0xff003f00);
 
 OPLLookAndFeel::OPLLookAndFeel()
 {
-	toggleOff = ImageCache::getFromMemory(PluginGui::toggle_off_sq_png, PluginGui::toggle_off_sq_pngSize), 1.000f, Colour(0x00000000);
-	toggleOn = ImageCache::getFromMemory(PluginGui::toggle_on_sq_png, PluginGui::toggle_on_sq_pngSize), 1.000f, Colour(0x00000000);
+	toggleOff = ImageCache::getFromMemory(PluginGui::toggle_off_sq_png, PluginGui::toggle_off_sq_pngSize);
+	toggleOn = ImageCache::getFromMemory(PluginGui::toggle_on_sq_png, PluginGui::toggle_on_sq_pngSize);
 	toggleRect = Rectangle<float>((float)toggleOff.getWidth(), (float)toggleOn.getHeight());
 
 	// Prevents an ugly white border from being drawn around a component with keyboard focus.
