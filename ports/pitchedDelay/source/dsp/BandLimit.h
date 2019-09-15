@@ -92,7 +92,9 @@ public:
 
 	CAllPassFilterPair(double coeff_A, double coeff_B);
 
+#if defined(__x86_64__) || defined(__i386__)
 	void processBlock(double* data, int numSamples);
+#endif
 	void processBlock(float* data, int numSamples);
 
 	void clear();
@@ -111,7 +113,9 @@ class CAllPassFilterCascadePair
 public:
 	CAllPassFilterCascadePair(const double* coefficients_A, const double* coefficients_B, int N);
 
+#if defined(__x86_64__) || defined(__i386__)
 	void processBlock(double* data, int numSamples);
+#endif
 	void processBlock(float* data, int numSamples);
 
 	void clear();
@@ -141,7 +145,9 @@ private:
 	float oldOutR;
 
 	int blockSize;
+#if defined(__x86_64__) || defined(__i386__)
 	CAllPassFilterPair::AlignedDouble bufferDouble;
+#endif
 	CAllPassFilterPair::AlignedFloat bufferFloat;
 
 };

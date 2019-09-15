@@ -1,6 +1,16 @@
 #include "BandLimit.h"
+#if defined(__x86_64__) || defined(__i386__)
 #include <emmintrin.h>
 #include <mmintrin.h>
+#else
+#include <arm_neon.h>
+typedef float32x4_t __m128;
+#define _mm_load_ps  vld1q_f32
+#define _mm_store_ps vst1q_f32
+#define _mm_add_ps vaddq_f32
+#define _mm_sub_ps vsubq_f32
+#define _mm_mul_ps vmulq_f32
+#endif
 
 CAllPassFilterPair::CAllPassFilterPair(double coeff_A, double coeff_B)
 : a(coeff_A), b(coeff_B), md(5), mf(5)
@@ -10,10 +20,10 @@ CAllPassFilterPair::CAllPassFilterPair(double coeff_A, double coeff_B)
 
 
 
+#if defined(__x86_64__) || defined(__i386__)
 void CAllPassFilterPair::processBlock(double* data, int numSamples)
 {
 	jassert((((size_t) data) & 0xF) == 0);
-	jassert((_mm_getcsr() & 0x8040) == 0x8040);
 
 	__m128d coeff = _mm_load_pd(md.getPtr(0));
 	__m128d x1 = _mm_load_pd(md.getPtr(1));
@@ -43,11 +53,11 @@ void CAllPassFilterPair::processBlock(double* data, int numSamples)
 	_mm_store_pd(md.getPtr(4), y2);
 
 };
+#endif
 
 void CAllPassFilterPair::processBlock(float* data, int numSamples)
 {
 	jassert((((size_t) data) & 0xF) == 0);
-	jassert((_mm_getcsr() & 0x8040) == 0x8040);
 
 	__m128 coeff = _mm_load_ps(mf.getPtr(0));
 	__m128 x1 = _mm_load_ps(mf.getPtr(1));
@@ -96,11 +106,13 @@ CAllPassFilterCascadePair::CAllPassFilterCascadePair(const double* coefficients_
 
 };
 
+#if defined(__x86_64__) || defined(__i386__)
 void CAllPassFilterCascadePair::processBlock(double* data, int numSamples)
 {
 	for (int i=0; i<numfilters; ++i)
 		allpassfilter.getUnchecked(i)->processBlock(data, numSamples);
 }
+#endif
 
 void CAllPassFilterCascadePair::processBlock(float* data, int numSamples)
 {
@@ -372,7 +384,9 @@ void CHalfBandFilter::setBlockSize(int newBlockSize)
 	if (newBlockSize > blockSize)
 	{
 		blockSize = newBlockSize;
+#if defined(__x86_64__) || defined(__i386__)
 		bufferDouble.setSize(blockSize);
+#endif
 		bufferFloat.setSize(blockSize);
 	}
 }
@@ -381,6 +395,7 @@ void CHalfBandFilter::processBlock(float* data, int numSamples)
 {
 	setBlockSize(numSamples);
 
+#if defined(__x86_64__) || defined(__i386__)
 	double* proc = bufferDouble.getPtr(0);
 
 	{
@@ -405,6 +420,9 @@ void CHalfBandFilter::processBlock(float* data, int numSamples)
 			data[i] = output;
 		}
 	}
+#else
+	filter->processBlock(data, numSamples);
+#endif
 }
 
 void CHalfBandFilter::processBlock(float* dataL, float* dataR, int numSamples)
