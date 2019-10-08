@@ -6,7 +6,7 @@ build: ../lv2_ttl_generator
 mingw: ../lv2_ttl_generator.exe
 
 ../lv2_ttl_generator: lv2_ttl_generator.cpp
-	$(CXX) lv2_ttl_generator.cpp -o ../lv2_ttl_generator -ldl
+	$(CXX) lv2_ttl_generator.cpp $(CXXFLAGS) $(LDFLAGS) -o ../lv2_ttl_generator -ldl
 
 ../lv2_ttl_generator.exe: lv2_ttl_generator.cpp
 	$(CXX) lv2_ttl_generator.cpp -o ../lv2_ttl_generator.exe -static
