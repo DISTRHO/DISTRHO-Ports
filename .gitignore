@@ -12,9 +12,11 @@
 *.lv2
 *.make
 *.make-e
-Makefile
 object_script.*.Debug
 object_script.*.Release
+libs/*/*/Makefile
+ports/*/LV2*/Makefile
+ports/*/VST*/Makefile
 
 .directory
 .fuse*
@@ -57,8 +59,6 @@ libs/juce/source/modules/JUCE Module Format.txt
 libs/juce/source/modules/juce_blocks_basics/
 libs/juce/source/modules/juce_box2d/
 libs/juce/source/modules/juce_browser_plugin_client/
-libs/juce/source/modules/juce_dsp/
-libs/juce/source/modules/juce_opengl/
 libs/juce/source/modules/juce_osc/
 libs/juce/source/modules/juce_product_unlocking/
 libs/juce/source/modules/juce_video/
