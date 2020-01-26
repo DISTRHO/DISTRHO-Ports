@@ -25,9 +25,6 @@
 #include <new>
 
 
-namespace fftconvolver
-{
-
 #if defined(__SSE__) || (defined(_M_IX86_FP) && _M_IX86_FP >= 2)
   #if !defined(FFTCONVOLVER_USE_SSE) && !defined(FFTCONVOLVER_DONT_USE_SSE)
     #define FFTCONVOLVER_USE_SSE
@@ -45,6 +42,9 @@ namespace fftconvolver
 #else
   #define FFTCONVOLVER_RESTRICT
 #endif
+
+namespace fftconvolver
+{
 
 
 /**
