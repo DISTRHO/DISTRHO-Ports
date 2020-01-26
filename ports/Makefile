@@ -71,6 +71,7 @@ else
 	$(MAKE) -C tal-reverb-2/LV2
 	$(MAKE) -C tal-reverb-3/LV2
 	$(MAKE) -C tal-vocoder-2/LV2
+	$(MAKE) -C temper/LV2
 	$(MAKE) -C vex/LV2
 	$(MAKE) -C wolpertinger/LV2
 endif
@@ -111,6 +112,7 @@ vst: libs
 	$(MAKE) -C tal-reverb-2/VST
 	$(MAKE) -C tal-reverb-3/VST
 	$(MAKE) -C tal-vocoder-2/VST
+	$(MAKE) -C temper/VST
 	$(MAKE) -C vex/VST
 	$(MAKE) -C wolpertinger/VST
 
@@ -150,6 +152,7 @@ clean:
 	$(MAKE) clean -C tal-reverb-2/LV2
 	$(MAKE) clean -C tal-reverb-3/LV2
 	$(MAKE) clean -C tal-vocoder-2/LV2
+	$(MAKE) clean -C temper/LV2
 	$(MAKE) clean -C vex/LV2
 	$(MAKE) clean -C wolpertinger/LV2
 
@@ -185,6 +188,7 @@ clean:
 	$(MAKE) clean -C tal-reverb-2/VST
 	$(MAKE) clean -C tal-reverb-3/VST
 	$(MAKE) clean -C tal-vocoder-2/VST
+	$(MAKE) clean -C temper/VST
 	$(MAKE) clean -C vex/VST
 	$(MAKE) clean -C wolpertinger/VST
 
