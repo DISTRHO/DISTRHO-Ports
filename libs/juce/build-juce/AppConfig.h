@@ -10,21 +10,25 @@
 #define BUILD_JUCE_APPCONFIG_H_INCLUDED
 
 #define JUCE_MODULE_AVAILABLE_juce_audio_basics          1
-#define JUCE_MODULE_AVAILABLE_juce_audio_plugin_client   1
 #define JUCE_MODULE_AVAILABLE_juce_audio_devices         1
 #define JUCE_MODULE_AVAILABLE_juce_audio_formats         1
+#define JUCE_MODULE_AVAILABLE_juce_audio_plugin_client   1
 #define JUCE_MODULE_AVAILABLE_juce_audio_processors      1
 #define JUCE_MODULE_AVAILABLE_juce_audio_utils           1
+#define JUCE_MODULE_AVAILABLE_juce_blocks_basics         0
+#define JUCE_MODULE_AVAILABLE_juce_box2d                 0
 #define JUCE_MODULE_AVAILABLE_juce_core                  1
 #define JUCE_MODULE_AVAILABLE_juce_cryptography          1
 #define JUCE_MODULE_AVAILABLE_juce_data_structures       1
+#define JUCE_MODULE_AVAILABLE_juce_dsp                   1
 #define JUCE_MODULE_AVAILABLE_juce_events                1
 #define JUCE_MODULE_AVAILABLE_juce_graphics              1
 #define JUCE_MODULE_AVAILABLE_juce_gui_basics            1
 #define JUCE_MODULE_AVAILABLE_juce_gui_extra             1
-#define JUCE_MODULE_AVAILABLE_juce_opengl                0
+#define JUCE_MODULE_AVAILABLE_juce_opengl                1
+#define JUCE_MODULE_AVAILABLE_juce_osc                   0
+#define JUCE_MODULE_AVAILABLE_juce_product_unlocking     0
 #define JUCE_MODULE_AVAILABLE_juce_video                 0
-// TODO new modules
 
 //=============================================================================
 
@@ -39,7 +43,6 @@
 //=============================================================================
 // juce_audio_devices
 
-//=============================================================================
 /** Config: JUCE_ASIO
     Enables ASIO audio devices (MS Windows only).
     Turning this on means that you'll need to have the Steinberg ASIO SDK installed
@@ -80,7 +83,6 @@
 */
 #define JUCE_USE_ANDROID_OPENSLES 0
 
-//=============================================================================
 /** Config: JUCE_USE_CDREADER
     Enables the AudioCDReader class (on supported platforms).
 */
@@ -94,7 +96,6 @@
 //=============================================================================
 // juce_audio_formats
 
-//=============================================================================
 /** Config: JUCE_USE_FLAC
     Enables the FLAC audio codec classes (available on all platforms).
     If your app doesn't need to read FLAC files, you might want to disable this to
@@ -136,7 +137,6 @@
 //=============================================================================
 // juce_audio_processors
 
-//=============================================================================
 /** Config: JUCE_PLUGINHOST_VST
     Enables the VST audio plugin hosting classes. This requires the Steinberg VST SDK to be
     installed on your machine.
@@ -180,7 +180,6 @@
 //=============================================================================
 // juce_core
 
-//=============================================================================
 /** Config: JUCE_FORCE_DEBUG
 
     Normally, JUCE_DEBUG is set to 1 or 0 based on compiler and project settings,
@@ -188,7 +187,6 @@
 */
 #define JUCE_FORCE_DEBUG 0
 
-//=============================================================================
 /** Config: JUCE_LOG_ASSERTIONS
 
     If this flag is enabled, the the jassert and jassertfalse macros will always use Logger::writeToLog()
@@ -202,7 +200,6 @@
 */
 #define JUCE_LOG_ASSERTIONS 1
 
-//=============================================================================
 /** Config: JUCE_CHECK_MEMORY_LEAKS
 
     Enables a memory-leak check for certain objects when the app terminates. See the LeakedObjectDetector
@@ -214,7 +211,6 @@
  #define JUCE_CHECK_MEMORY_LEAKS 0
 #endif
 
-//=============================================================================
 /** Config: JUCE_DONT_AUTOLINK_TO_WIN32_LIBRARIES
 
     In a Visual C++  build, this can be used to stop the required system libs being
@@ -263,6 +259,73 @@
 // juce_data_structures
 
 //=============================================================================
+// juce_dsp
+
+/** Config: JUCE_ASSERTION_FIRFILTER
+
+    When this flag is enabled, an assertion will be generated during the
+    execution of DEBUG configurations if you use a FIRFilter class to process
+    FIRCoefficients with a size higher than 128, to tell you that's it would be
+    more efficient to use the Convolution class instead. It is enabled by
+    default, but you may want to disable it if you really want to process such
+    a filter in the time domain.
+*/
+#define JUCE_ASSERTION_FIRFILTER 0
+
+/** Config: JUCE_DSP_USE_INTEL_MKL
+
+    If this flag is set, then JUCE will use Intel's MKL for JUCE's FFT and
+    convolution classes.
+
+    The folder containing the mkl_dfti.h header must be in your header
+    search paths when using this flag. You also need to add all the necessary
+    intel mkl libraries to the "External Libraries to Link" field in the
+    Projucer.
+*/
+#define JUCE_DSP_USE_INTEL_MKL 0
+
+/** Config: JUCE_DSP_USE_SHARED_FFTW
+
+    If this flag is set, then JUCE will search for the fftw shared libraries
+    at runtime and use the library for JUCE's FFT and convolution classes.
+
+    If the library is not found, then JUCE's fallback FFT routines will be used.
+
+    This is especially useful on linux as fftw often comes pre-installed on
+    popular linux distros.
+
+    You must respect the FFTW license when enabling this option.
+*/
+#define JUCE_DSP_USE_SHARED_FFTW 0
+
+/** Config: JUCE_DSP_USE_STATIC_FFTW
+
+    If this flag is set, then JUCE will use the statically linked fftw libraries
+    for JUCE's FFT and convolution classes.
+
+    You must add the fftw header/library folder to the extra header/library search
+    paths of your JUCE project. You also need to add the fftw library itself
+    to the extra libraries supplied to your JUCE project during linking.
+
+    You must respect the FFTW license when enabling this option.
+*/
+#define JUCE_DSP_USE_STATIC_FFTW 0
+
+/** Config: JUCE_DSP_ENABLE_SNAP_TO_ZERO
+
+    Enables code in the dsp module to avoid floating point denormals during the
+    processing of some of the dsp module's filters.
+
+    Enabling this will add a slight performance overhead to the DSP module's
+    filters and algorithms. If your audio app already disables denormals altogether
+    (for exmaple, by using the ScopedNoDenormals class or the
+    FloatVectorOperations::disableDenormalisedNumberSupport method), then you
+    can safely disable this flag to shave off a few cpu cycles from the DSP module's
+    filters and algorithms.
+*/
+#define JUCE_DSP_ENABLE_SNAP_TO_ZERO 0
+
+//=============================================================================
 // juce_events
 
 //=============================================================================
@@ -300,7 +363,6 @@
 //=============================================================================
 // juce_gui_basics
 
-//=============================================================================
 /** Config: JUCE_ENABLE_REPAINT_DEBUGGING
     If this option is turned on, each area of the screen that gets repainted will
     flash in a random colour, so that you can see exactly which bits of your
@@ -348,7 +410,6 @@
 //=============================================================================
 // juce_gui_extra
 
-//=============================================================================
 /** Config: JUCE_WEB_BROWSER
     This lets you disable the WebBrowserComponent class (Mac and Windows).
     If you're not using any embedded web-pages, turning this off may reduce your code size.
@@ -362,9 +423,11 @@
 #define JUCE_ENABLE_LIVE_CONSTANT_EDITOR 0
 
 //=============================================================================
-// drowaudio
+// juce_opengl
 
 //=============================================================================
+// drowaudio
+
 /** Config: DROWAUDIO_USE_FFTREAL
     Enables the FFTReal library. By default this is enabled except on the Mac
     where the Accelerate framework is preferred. However, if you do explicity
@@ -391,7 +454,6 @@
 //=============================================================================
 // juced
 
-//=============================================================================
 /** Config: JUCE_LASH
         Enables LASH support on Linux.
         Not enabled by default.
@@ -439,9 +501,11 @@
  #undef JUCE_MODULE_AVAILABLE_juce_graphics
  #undef JUCE_MODULE_AVAILABLE_juce_gui_basics
  #undef JUCE_MODULE_AVAILABLE_juce_gui_extra
+ #undef JUCE_MODULE_AVAILABLE_juce_opengl
  #define JUCE_MODULE_AVAILABLE_juce_graphics   0
  #define JUCE_MODULE_AVAILABLE_juce_gui_basics 0
  #define JUCE_MODULE_AVAILABLE_juce_gui_extra  0
+ #define JUCE_MODULE_AVAILABLE_juce_opengl     0
 
  #undef JUCE_ALSA
  #undef JUCE_PLUGINHOST_LADSPA
