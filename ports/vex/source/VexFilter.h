@@ -96,7 +96,11 @@ public:
     void editorWaveChanged(const int part, const String& wave) override;
 
 private:
+#ifdef __MOD_DEVICES__
+    static const unsigned int kParamCount = 95;
+#else
     static const unsigned int kParamCount = 92;
+#endif
 
     float fParameters[kParamCount];
     bool  fParamsChanged[92];

@@ -114,6 +114,12 @@ VexFilter::VexFilter()
     fParameters[90] = 0.0f; // wave2 on/off
     fParameters[91] = 0.0f; // wave3 on/off
 
+#ifdef __MOD_DEVICES__
+    fParameters[92] = 0.0f; // wave1
+    fParameters[93] = 0.0f; // wave2
+    fParameters[94] = 0.0f; // wave3
+#endif
+
     for (unsigned int i = 0; i < kParamCount; ++i)
         fSynth.update(i);
 }
@@ -156,6 +162,28 @@ void VexFilter::setParameter (int index, float newValue)
         return;
 
     fParameters[index] = newValue;
+
+#ifdef __MOD_DEVICES__
+    if (index >= 92)
+    {
+        const int newValueInt = (int)(newValue + 0.5f);
+
+        switch (index)
+        {
+        case 92:
+            fSynth.setWaveLater(1, WaveRenderer::getWaveTableName(newValueInt));
+            break;
+        case 93:
+            fSynth.setWaveLater(2, WaveRenderer::getWaveTableName(newValueInt));
+            break;
+        case 94:
+            fSynth.setWaveLater(3, WaveRenderer::getWaveTableName(newValueInt));
+            break;
+        }
+        return;
+    }
+#endif
+
     fParamsChanged[index] = true;
     fSynth.update(index);
 }
@@ -328,6 +356,17 @@ const String VexFilter::getParameterName (int index)
     case 91:
         retName = "Part3 on/off";
         break;
+#ifdef __MOD_DEVICES__
+    case 92:
+        retName = "Part1 Wave";
+        break;
+    case 93:
+        retName = "Part2 Wave";
+        break;
+    case 94:
+        retName = "Part3 Wave";
+        break;
+#endif
     default:
         retName = "unknown";
     }
@@ -385,6 +424,8 @@ void VexFilter::processBlock(AudioSampleBuffer& output, MidiBuffer& midiInBuffer
     const MidiBuffer& part3Midi(fArpSet3.on ? fArp3.processMidi(midiInBuffer, pos.isPlaying, pos.ppqPosition, pos.ppqPositionOfLastBarStart, pos.bpm, frames) : midiInBuffer);
 #else
     const MidiBuffer& part1Midi(midiInBuffer);
+    const MidiBuffer& part2Midi(midiInBuffer);
+    const MidiBuffer& part3Midi(midiInBuffer);
 #endif
 
     int snum;
@@ -402,7 +443,6 @@ void VexFilter::processBlock(AudioSampleBuffer& output, MidiBuffer& midiInBuffer
             fSynth.releaseAll(snum);
     }
 
-#if ! JUCE_AUDIOPROCESSOR_NO_GUI
     for (MidiBuffer::Iterator Iterator2(part2Midi); Iterator2.getNextEvent(midiMessage, snum);)
     {
         if (midiMessage.isNoteOn())
@@ -418,7 +458,6 @@ void VexFilter::processBlock(AudioSampleBuffer& output, MidiBuffer& midiInBuffer
         else if (midiMessage.isNoteOff())
             fSynth.releaseNote(midiMessage.getNoteNumber(), snum, 3);
     }
-#endif
 
     midiInBuffer.clear();
 
@@ -464,6 +503,10 @@ void VexFilter::processBlock(AudioSampleBuffer& output, MidiBuffer& midiInBuffer
 
 void VexFilter::setStateInformation (const void* data_, int dataSize)
 {
+#ifdef __MOD_DEVICES__
+    return;
+#endif
+
 #if JucePlugin_Build_LV2
     static const int kParamDataSize = 0;
 #else
@@ -511,6 +554,10 @@ void VexFilter::setStateInformation (const void* data_, int dataSize)
 
 void VexFilter::getStateInformation (MemoryBlock& destData)
 {
+#ifdef __MOD_DEVICES__
+    return;
+#endif
+
 #if ! JucePlugin_Build_LV2
     destData.append(fParameters, sizeof(float) * kParamCount);
 #endif
