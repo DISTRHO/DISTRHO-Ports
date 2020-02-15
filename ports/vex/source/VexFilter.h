@@ -106,8 +106,10 @@ private:
     AudioSampleBuffer dbf2; // chorus
     AudioSampleBuffer dbf3; // reverb
 
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
     VexArpSettings fArpSet1, fArpSet2, fArpSet3;
     VexArp fArp1, fArp2, fArp3;
+#endif
 
     VexChorus fChorus;
     VexDelay fDelay;

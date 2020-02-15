@@ -42,9 +42,11 @@ AudioProcessor* JUCE_CALLTYPE createPluginFilter ()
 
 VexFilter::VexFilter()
         : AudioProcessor(),
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
           fArp1(&fArpSet1),
           fArp2(&fArpSet2),
           fArp3(&fArpSet3),
+#endif
           fChorus(fParameters),
           fDelay(fParameters),
           fReverb(fParameters),
@@ -345,9 +347,11 @@ void VexFilter::prepareToPlay (double sampleRate, int bufferSize)
     dbf2.setSize(2, bufferSize);
     dbf3.setSize(2, bufferSize);
 
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
     fArp1.setSampleRate(sampleRate);
     fArp2.setSampleRate(sampleRate);
     fArp3.setSampleRate(sampleRate);
+#endif
     fChorus.setSampleRate(sampleRate);
     fDelay.setSampleRate(sampleRate);
 
@@ -374,10 +378,14 @@ void VexFilter::processBlock(AudioSampleBuffer& output, MidiBuffer& midiInBuffer
 
     const int frames = output.getNumSamples();
 
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
     // process MIDI (arppeggiator)
     const MidiBuffer& part1Midi(fArpSet1.on ? fArp1.processMidi(midiInBuffer, pos.isPlaying, pos.ppqPosition, pos.ppqPositionOfLastBarStart, pos.bpm, frames) : midiInBuffer);
     const MidiBuffer& part2Midi(fArpSet2.on ? fArp2.processMidi(midiInBuffer, pos.isPlaying, pos.ppqPosition, pos.ppqPositionOfLastBarStart, pos.bpm, frames) : midiInBuffer);
     const MidiBuffer& part3Midi(fArpSet3.on ? fArp3.processMidi(midiInBuffer, pos.isPlaying, pos.ppqPosition, pos.ppqPositionOfLastBarStart, pos.bpm, frames) : midiInBuffer);
+#else
+    const MidiBuffer& part1Midi(midiInBuffer);
+#endif
 
     int snum;
     MidiMessage midiMessage(0xf4);
@@ -394,6 +402,7 @@ void VexFilter::processBlock(AudioSampleBuffer& output, MidiBuffer& midiInBuffer
             fSynth.releaseAll(snum);
     }
 
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
     for (MidiBuffer::Iterator Iterator2(part2Midi); Iterator2.getNextEvent(midiMessage, snum);)
     {
         if (midiMessage.isNoteOn())
@@ -409,6 +418,7 @@ void VexFilter::processBlock(AudioSampleBuffer& output, MidiBuffer& midiInBuffer
         else if (midiMessage.isNoteOff())
             fSynth.releaseNote(midiMessage.getNoteNumber(), snum, 3);
     }
+#endif
 
     midiInBuffer.clear();
 
@@ -476,9 +486,11 @@ void VexFilter::setStateInformation (const void* data_, int dataSize)
 #if ! JucePlugin_Build_LV2
             std::memcpy(fParameters, data, sizeof(float) * kParamCount);
 #endif
-            std::memcpy(&fArpSet1,   data + (kParamDataSize + sizeof(VexArpSettings)*0), sizeof(VexArpSettings));
-            std::memcpy(&fArpSet2,   data + (kParamDataSize + sizeof(VexArpSettings)*1), sizeof(VexArpSettings));
-            std::memcpy(&fArpSet3,   data + (kParamDataSize + sizeof(VexArpSettings)*2), sizeof(VexArpSettings));
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
+            std::memcpy(&fArpSet1, data + (kParamDataSize + sizeof(VexArpSettings)*0), sizeof(VexArpSettings));
+            std::memcpy(&fArpSet2, data + (kParamDataSize + sizeof(VexArpSettings)*1), sizeof(VexArpSettings));
+            std::memcpy(&fArpSet3, data + (kParamDataSize + sizeof(VexArpSettings)*2), sizeof(VexArpSettings));
+#endif
 
 #if ! JucePlugin_Build_LV2
             for (unsigned int i = 0; i < kParamCount; ++i)
@@ -502,9 +514,11 @@ void VexFilter::getStateInformation (MemoryBlock& destData)
 #if ! JucePlugin_Build_LV2
     destData.append(fParameters, sizeof(float) * kParamCount);
 #endif
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
     destData.append(&fArpSet1, sizeof(VexArpSettings));
     destData.append(&fArpSet2, sizeof(VexArpSettings));
     destData.append(&fArpSet3, sizeof(VexArpSettings));
+#endif
 
     XmlElement xmlState("VEX");
 
