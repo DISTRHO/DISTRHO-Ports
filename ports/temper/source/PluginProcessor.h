@@ -38,9 +38,11 @@ public:
 
     void processBlock (AudioSampleBuffer&, MidiBuffer&) override;
 
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
     //==============================================================================
     AudioProcessorEditor* createEditor() override;
     bool hasEditor() const override;
+#endif
 
     //==============================================================================
     const String getName() const override;

@@ -37,6 +37,7 @@ ifeq ($(LINUX_EMBED),true)
 	$(MAKE) -C tal-reverb-2/LV2
 	$(MAKE) -C tal-reverb-3/LV2
 	$(MAKE) -C tal-vocoder-2/LV2
+	$(MAKE) -C temper/LV2
 	$(MAKE) -C vex/LV2
 	$(MAKE) -C wolpertinger/LV2
 else

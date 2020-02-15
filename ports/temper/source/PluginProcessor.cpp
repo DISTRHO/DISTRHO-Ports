@@ -9,7 +9,9 @@
 */
 
 #include "PluginProcessor.h"
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
 #include "PluginEditor.h"
+#endif
 #include "TemperDsp.hpp"
 
 const int kOversampleFactor = 3;
@@ -30,7 +32,6 @@ m_params (*this, nullptr)
 : m_params (*this, nullptr)
 #endif
 {
-    m_restriction = new RestrictionProcessor();
     m_bridge = new FaustUIBridge(m_params);
     m_lastKnownSampleRate = 0.0;
     m_currentProgram = -1;
@@ -160,7 +161,6 @@ void TemperAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock
             m_dsps.getUnchecked(i)->instanceConstants(sampleRate * pow(2, kOversampleFactor));
 
     m_oversampler->initProcessing(static_cast<size_t> (samplesPerBlock));
-    m_restriction->prepareToPlay(samplesPerBlock, sampleRate);
     m_lastKnownSampleRate = sampleRate;
 
     setLatencySamples(static_cast<int>(m_oversampler->getLatencyInSamples()));
@@ -201,7 +201,9 @@ void TemperAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& 
     const int totalNumInputChannels  = getTotalNumInputChannels();
     const int totalNumOutputChannels = getTotalNumOutputChannels();
 
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
     TemperAudioProcessorEditor* editor = static_cast<TemperAudioProcessorEditor*>(getActiveEditor());
+#endif
 
     // In case we have more outputs than inputs, this code clears any output
     // channels that didn't contain input data, (because these aren't
@@ -212,9 +214,11 @@ void TemperAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& 
     for (int i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
     // Push input buffer into the Pre spectroscope component.
     if (editor)
         editor->m_vizPre->pushBuffer(buffer);
+#endif
 
     // Now the guts of the processing; oversampling and applying the Faust dsp module.
     const int numInputChannels = buffer.getNumChannels();
@@ -239,16 +243,14 @@ void TemperAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& 
 
     m_oversampler->processSamplesDown(block);
 
-#ifdef TEMPER_DEMO_BUILD
-    // After the Faust processing, add the demo restriction to the output stream
-    m_restriction->processBlock(buffer);
-#endif
-
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
     // Push resulting buffer into the Post spectroscope component.
     if (editor)
         editor->m_vizPost->pushBuffer(buffer);
+#endif
 }
 
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
 //==============================================================================
 bool TemperAudioProcessor::hasEditor() const
 {
@@ -259,6 +261,7 @@ AudioProcessorEditor* TemperAudioProcessor::createEditor()
 {
     return new TemperAudioProcessorEditor (*this, m_params);
 }
+#endif
 
 //==============================================================================
 void TemperAudioProcessor::getStateInformation (MemoryBlock& destData)
