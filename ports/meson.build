@@ -17,6 +17,7 @@
 plugins = [
   'arctican-function',
   'arctican-pilgrim',
+  'dexed',
   ]
 
 foreach plugin : plugins
@@ -33,6 +34,7 @@ foreach plugin : plugins
       plugin_include_dirs,
       ],
     cpp_args: lv2_cflags,
+    link_args: plugin_ldflags,
     link_with: juce_lib,
     install: true,
     install_dir: lv2dir / plugin + '.lv2',
@@ -45,6 +47,8 @@ foreach plugin : plugins
       ],
     input: plugin_lv2_lib,
     command: [
+      'rm', '-rf',
+      meson.current_build_dir () / plugin + '.lv2', '&&',
       'mkdir', meson.current_build_dir () / plugin + '.lv2',
       '&&',
       'cd', meson.current_build_dir () / plugin + '.lv2',
@@ -65,6 +69,7 @@ foreach plugin : plugins
       plugin_include_dirs,
       ],
     cpp_args: vst_cflags,
+    link_args: plugin_ldflags,
     link_with: juce_lib,
     install: true,
     install_dir: vstdir,
