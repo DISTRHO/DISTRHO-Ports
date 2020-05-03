@@ -8,6 +8,7 @@
 *.o
 *.so
 *.so.*
+build
 
 *.lv2
 *.make
