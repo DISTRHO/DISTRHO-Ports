@@ -240,26 +240,36 @@ lv2_defines = plugin_defines
 lv2_deps = []
 
 if release
+  # FIXME use dependencies
   lv2_ldflags += [ '-ljuce' ]
 else
+  # FIXME use dependencies
   lv2_ldflags += [ '-ljuce_debug' ]
 endif
 
 if os_windows
+  # FIXME use dependencies
   lv2_ldflags += [
     'comdlg32', 'gdi32', 'imm32', 'ole32', 'oleaut32', 'shlwapi', 'uuid', 'version', 'winmm', 'wininet', 'ws2_32' ]
 elif os_darwin
+  # FIXME use dependencies
   lv2_ldflags += [
     '-framework Accelerate', '-framework AudioToolbox', '-framework AudioUnit', '-framework Carbon', '-framework Cocoa',
     '-framework CoreAudio', '-framework CoreAudioKit', '-framework CoreMIDI', '-framework IOKit', '-framework QuartzCore', '-framework WebKit' ]
 elif get_option ('linux-embed')
-  lv2_ldflags += ['-ldl', '-lrt']
-else
-  lv2_ldflags += ['-ldl', '-lrt']
   lv2_deps += [
+    cxx.find_library('dl'),
+    cxx.find_library('rt'),
+    ]
+else
+  lv2_deps += [
+    cxx.find_library('dl'),
+    cxx.find_library('rt'),
     dependency ('freetype2'),
     dependency ('x11'),
-    dependency ('xext') ]
+    dependency ('xext'),
+    dependency ('threads'),
+    ]
 endif
 
 lv2_defines += [

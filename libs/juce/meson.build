@@ -28,7 +28,7 @@ juce_srcs = [
   ]
 
 if not get_option ('linux-embed')
-  juce_srcs = [
+  juce_srcs += [
     'source/modules/juce_graphics/juce_graphics.cpp',
     'source/modules/juce_gui_basics/juce_gui_basics.cpp',
     'source/modules/juce_gui_extra/juce_gui_extra.cpp',
@@ -40,6 +40,7 @@ juce_inc = [
   include_directories ('build-juce'),
   include_directories ('source'),
   include_directories ('source' / 'modules'),
+  include_directories ('../juced/source/dependancies/ladspa_sdk/src'),
   ]
 
 juce_lib = static_library (
