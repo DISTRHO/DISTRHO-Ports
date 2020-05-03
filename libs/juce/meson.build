@@ -39,7 +39,7 @@ endif
 juce_inc = [
   include_directories ('build-juce'),
   include_directories ('source'),
-  include_directories ('source' / 'modules'),
+  include_directories ('source/modules'),
   include_directories ('../juced/source/dependancies/ladspa_sdk/src'),
   ]
 

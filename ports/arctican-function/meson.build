@@ -15,13 +15,13 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 arctican_function_src_lv2 = [
-  'source' / 'PluginProcessor.cpp',
-  '..' / '..' / 'libs' / 'juce-plugin' / 'JucePluginMain.cpp',
+  'source/PluginProcessor.cpp',
+  '../../libs/juce-plugin/JucePluginMain.cpp',
   ]
 
 if not get_option ('linux-embed')
   arctican_function_src_lv2 += [
-    'source' / 'PluginEditor.cpp',
+    'source/PluginEditor.cpp',
     'source/Headers/UI/Knob.cpp',
     'source/Headers/UI/FancyButton.cpp',
     'source/Headers/Binary Data/Backgrounds/thefunctionbackground.cpp',
@@ -30,7 +30,7 @@ if not get_option ('linux-embed')
     ]
 endif
 
-arctican_function_lv2 = shared_library (
+arctican_function_lv2_lib = shared_library (
   'arctican-function',
   sources: arctican_function_src_lv2,
   dependencies: lv2_deps,
@@ -41,5 +41,31 @@ arctican_function_lv2 = shared_library (
   cpp_args: lv2_cflags,
   link_with: juce_lib,
   install: true,
+  install_dir: lv2dir,
+  )
+
+arctican_function_ttl = custom_target (
+  'arctican-function-ttl',
+  output: 'manifest.ttl',
+  input: arctican_function_lv2_lib,
+  command: [
+    'cd', meson.current_build_dir (), '&&',
+    lv2_ttl_generator,
+    arctican_function_lv2_lib.full_path () ],
+  install: true,
+  install_dir: lv2dir,
+  )
+
+arctican_function_vst_lib = shared_library (
+  'arctican-function-vst',
+  sources: arctican_function_src_lv2,
+  dependencies: vst_deps,
+  include_directories: [
+    include_directories ('source'),
+    plugin_include_dirs,
+    ],
+  cpp_args: vst_cflags,
+  link_with: juce_lib,
+  install: false,
   install_dir: lv2dir,
   )

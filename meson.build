@@ -152,11 +152,7 @@ plugin_ldflags = []
 
 plugin_cflags += [
   '-Wall', '-Werror=deprecated-declarations',
-  '-pthread',
   '-DJUCE_APP_CONFIG_HEADER="AppConfig.h"',
-  ]
-plugin_ldflags += [
-  '-pthread',
   ]
 
 if release
@@ -239,14 +235,6 @@ lv2_ldflags = plugin_ldflags
 lv2_defines = plugin_defines
 lv2_deps = []
 
-if release
-  # FIXME use dependencies
-  lv2_ldflags += [ '-ljuce' ]
-else
-  # FIXME use dependencies
-  lv2_ldflags += [ '-ljuce_debug' ]
-endif
-
 if os_windows
   # FIXME use dependencies
   lv2_ldflags += [
@@ -299,30 +287,29 @@ vst_ldflags = plugin_ldflags
 vst_defines = plugin_defines
 vst_deps = []
 
-if release
-  vst_ldflags += [ '-ljuce' ]
-else
-  vst_ldflags += [ '-ljuce_debug' ]
-endif
-
 vst_cflags += [
   '-Wno-multichar',
   '-Wno-write-strings',
   ]
 
 if os_windows
+  # FIXME deps
   vst_ldflags += [
     'comdlg32', 'gdi32', 'imm32', 'ole32', 'oleaut32', 'shlwapi', 'uuid', 'version', 'winmm', 'wininet', 'ws2_32' ]
 elif os_darwin
+  # FIXME deps
   vst_ldflags += [
     '-framework Accelerate', '-framework AudioToolbox', '-framework AudioUnit', '-framework Carbon', '-framework Cocoa',
     '-framework CoreAudio', '-framework CoreAudioKit', '-framework CoreMIDI', '-framework IOKit', '-framework QuartzCore', '-framework WebKit' ]
 else
-  vst_ldflags += ['-ldl', '-lrt']
   vst_deps += [
+    cxx.find_library('dl'),
+    cxx.find_library('rt'),
     dependency ('freetype2'),
     dependency ('x11'),
-    dependency ('xext') ]
+    dependency ('xext'),
+    dependency ('threads'),
+    ]
 endif
 
 vst_defines += [
