@@ -15,17 +15,17 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 plugin_src = files([
+  'source/PluginParameter.cpp',
   'source/PluginProcessor.cpp',
   '../../libs/juce-plugin/JucePluginMain.cpp',
   ])
 
 if not get_option ('linux-embed')
   plugin_src += files([
+    'source/BackgroundImage.cpp',
+    'source/Knob.cpp',
+    'source/KnobsBI.cpp',
     'source/PluginEditor.cpp',
-    'source/Headers/UI/Knob.cpp',
-    'source/Headers/UI/FancyButton.cpp',
-    'source/Headers/Binary Data/Backgrounds/thefunctionbackground.cpp',
-    'source/Headers/Binary Data/UI/button.cpp',
-    'source/Headers/Binary Data/UI/knobs.cpp',
+    'source/PluginEditor.cpp',
     ])
 endif
