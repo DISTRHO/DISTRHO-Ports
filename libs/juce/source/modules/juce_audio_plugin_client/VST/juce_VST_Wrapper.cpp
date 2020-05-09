@@ -61,7 +61,6 @@
 
 #include <juce_core/juce_core.h>
 #include "../../juce_audio_processors/format_types/juce_VSTInterface.h"
-#include "../../juce_audio_processors/format_types/juce_VSTMidiEventList.h"
 
 #ifdef _MSC_VER
  #pragma warning (pop)
