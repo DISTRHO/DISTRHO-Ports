@@ -57,6 +57,40 @@ public:
 	{
 	}
 
+#ifdef __MOD_DEVICES__
+	void setLowShelfGain(float lowShelfGain)
+	{
+        lowShelfGain = (lowShelfGain + 18.0 ) / 36.0;
+		this->lowShelfGain = lowShelfGain;
+	}
+
+	void setHighShelfGain(float highShelfGain)
+	{
+        highShelfGain = (highShelfGain + 18.0 ) / 36.0;
+		this->highShelfGain = highShelfGain;
+	}
+
+	void setPeakGain(float peakGain)
+	{
+        peakGain = (peakGain + 18.0 ) / 36.0;
+		this->peakGain = peakGain;
+	}
+
+	void setLowShelfFrequency(float lowShelfFrequency)
+	{
+		this->lowShelfFrequency = lowShelfFrequency;
+	}
+
+	void setHighShelfFrequency(float highShelfFrequency)
+	{
+		this->highShelfFrequency = highShelfFrequency;
+	}
+
+	void setPeakFrequency(float peakFrequency)
+	{
+		this->peakFrequency = peakFrequency;
+	}
+#else
 	void setLowShelfGain(float lowShelfGain)
 	{
 		this->lowShelfGain = lowShelfGain * 0.5f;
@@ -86,6 +120,7 @@ public:
 	{
 		this->peakFrequency = audioUtils.getLogScaledFrequency(peakFrequency);
 	}
+#endif
 
 	void initialize(float sampleRate)
 	{

@@ -61,9 +61,22 @@ public:
 
 		delete noiseGenerator;
 	}
-
+#ifdef __MOD_DEVICES__
 	void setDry(float dry)
 	{
+        dry = (dry + 122.4 ) / 122.4;
+		this->dry = audioUtils.getLogScaledVolume(dry, 2.0f);
+	}
+
+	void setWet(float wet)
+	{
+        wet = (wet + 122.4 ) / 122.4;
+		this->wet = audioUtils.getLogScaledVolume(wet, 2.0f);
+	}
+#else
+	void setDry(float dry)
+	{
+        lowShelfGain = (lowShelfGain + 18.0 ) / 36.0;
 		this->dry = audioUtils.getLogScaledVolume(dry, 2.0f);
 	}
 
@@ -71,7 +84,7 @@ public:
 	{
 		this->wet = audioUtils.getLogScaledVolume(wet, 2.0f);
 	}
-
+#endif
 	void setDecayTime(float decayTime)
 	{
 		reverb->setDecayTime(decayTime);
@@ -119,7 +132,7 @@ public:
 
 	void setStereoMode(float stereoMode)
 	{
-		reverb->setStereoMode(stereoMode > 0.0f ? true : false);
+		reverb->setStereoMode(stereoMode);
 	}
 
 	void setSampleRate(float sampleRate)

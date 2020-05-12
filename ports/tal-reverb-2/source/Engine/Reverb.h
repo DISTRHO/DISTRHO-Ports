@@ -186,7 +186,17 @@ public:
 		delete talEqR;
 	}
 
+#ifdef __MOD_DEVICES__
+	void setDecayTime(float decayTime)
+	{
+		this->decayTime = decayTime * 0.00099;
+	}
 
+	void setPreDelay(float preDelayTime)
+	{
+		this->preDelayTime = preDelayTime;
+	}
+#else 
 	void setDecayTime(float decayTime)
 	{
 		this->decayTime = audioUtils.getLogScaledValueInverted(decayTime) * 0.99f;
@@ -196,7 +206,7 @@ public:
 	{
 		this->preDelayTime = audioUtils.getLogScaledValue(preDelayTime);
 	}
-
+#endif
 	void setStereoMode(bool stereoMode)
 	{
 		this->stereoMode = stereoMode;
