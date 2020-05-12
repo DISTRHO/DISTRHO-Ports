@@ -1,0 +1,1219 @@
+@prefix atom:  <http://lv2plug.in/ns/ext/atom#> .
+@prefix lv2:   <http://lv2plug.in/ns/lv2core#> .
+@prefix pset:  <http://lv2plug.in/ns/ext/presets#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix state: <http://lv2plug.in/ns/ext/state#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+
+<urn:juce:TalReverb2#preset001> a pset:Preset ;
+    state:state [
+        <urn:juce:stateString>
+"""
+<?xml version="1.0" encoding="UTF-8"?>
+
+<tal curprogram="0" version="1">
+  <programs>
+    <program programname="Gentle Drum Ambience" dry="0.5" wet="0.13000001013278961182"
+             roomsize="0.66000002622604370117" predelay="0.18000000715255737305"
+             lowshelffrequency="0.088000006973743438721" highshelffrequency="0.63200002908706665039"
+             peakfrequency="0.54400002956390380859" lowshelfgain="0.93600004911422729492"
+             highshelfgain="0.82800006866455078125" peakgain="0.76400005817413330078"
+             stereowidth="1" realstereomode="1"/>
+    <program programname="80's Plate" dry="0.5" wet="0.20900000631809234619"
+             roomsize="0.66000002622604370117" predelay="0.060000002384185791016"
+             lowshelffrequency="0.5" highshelffrequency="0.42400002479553222656"
+             peakfrequency="0.368000030517578125" lowshelfgain="1" highshelfgain="0.78800004720687866211"
+             peakgain="0.368000030517578125" stereowidth="1" realstereomode="0"/>
+    <program programname="Big Wet Plate (no EQ)" dry="0.5" wet="0.16100001335144042969"
+             roomsize="0.75200003385543823242" predelay="0.1319999992847442627"
+             lowshelffrequency="0.024000000208616256714" highshelffrequency="1"
+             peakfrequency="0.49200001358985900879" lowshelfgain="1" highshelfgain="1"
+             peakgain="1" stereowidth="1" realstereomode="0"/>
+    <program programname="Small Drum Plate" dry="0.5" wet="0.33500000834465026855"
+             roomsize="0.30800002813339233398" predelay="0.12000000476837158203"
+             lowshelffrequency="0.17600001394748687744" highshelffrequency="0.44400003552436828613"
+             peakfrequency="0.30000001192092895508" lowshelfgain="0.72400003671646118164"
+             highshelfgain="0.48800003528594970703" peakgain="0" stereowidth="1"
+             realstereomode="1"/>
+    <program programname="Dull Plate" dry="0.5" wet="0.24200001358985900879"
+             roomsize="0.63200002908706665039" predelay="0.16000001132488250732"
+             lowshelffrequency="0.32800000905990600586" highshelffrequency="0.72000002861022949219"
+             peakfrequency="0.56800001859664916992" lowshelfgain="1" highshelfgain="0.21600000560283660889"
+             peakgain="0.36000001430511474609" stereowidth="1" realstereomode="1"/>
+    <program programname="Need some Air" dry="0.5" wet="0.14900000393390655518"
+             roomsize="0.68800002336502075195" predelay="0.12000000476837158203"
+             lowshelffrequency="0.21200001239776611328" highshelffrequency="0.5"
+             peakfrequency="0.53600001335144042969" lowshelfgain="0.24800001084804534912"
+             highshelfgain="1" peakgain="0.64400005340576171875" stereowidth="1"
+             realstereomode="0"/>
+    <program programname="Mid Plate" dry="0.5" wet="0.37100002169609069824"
+             roomsize="0.60400003194808959961" predelay="0.20800000429153442383"
+             lowshelffrequency="0.32400000095367431641" highshelffrequency="0.2720000147819519043"
+             peakfrequency="0.57600003480911254883" lowshelfgain="0.76400005817413330078"
+             highshelfgain="0" peakgain="0.11200000345706939697" stereowidth="1"
+             realstereomode="1"/>
+    <program programname="Airy Mono Plate" dry="0.5" wet="0.4410000145435333252"
+             roomsize="0.73200005292892456055" predelay="0.072000004351139068604"
+             lowshelffrequency="0.18000000715255737305" highshelffrequency="0.42800003290176391602"
+             peakfrequency="0.32000002264976501465" lowshelfgain="0.35600000619888305664"
+             highshelfgain="0.38000002503395080566" peakgain="0" stereowidth="0"
+             realstereomode="0"/>
+    <program programname="1100Hz Plate" dry="0.5" wet="0.40400001406669616699"
+             roomsize="0.60000002384185791016" predelay="0.21200001239776611328"
+             lowshelffrequency="0.35200002789497375488" highshelffrequency="0.36000001430511474609"
+             peakfrequency="1" lowshelfgain="0" highshelfgain="0" peakgain="0.26399999856948852539"
+             stereowidth="1" realstereomode="0"/>
+    <program programname="Short Plate" dry="0.5" wet="0.4780000150203704834"
+             roomsize="0.10400000214576721191" predelay="0.13600000739097595215"
+             lowshelffrequency="0.5" highshelffrequency="0.5" peakfrequency="0.53600001335144042969"
+             lowshelfgain="0.49200001358985900879" highshelfgain="0.35600000619888305664"
+             peakgain="0.17200000584125518799" stereowidth="1" realstereomode="1"/>
+  </programs>
+</tal>
+"""
+    ] ;
+
+    lv2:port [
+        lv2:symbol "unused" ;
+        pset:value 0.000000 ;
+    ] ,
+    [
+        lv2:symbol "dry" ;
+        pset:value 0.500000 ;
+    ] ,
+    [
+        lv2:symbol "wet" ;
+        pset:value 0.130000 ;
+    ] ,
+    [
+        lv2:symbol "room_size" ;
+        pset:value 0.660000 ;
+    ] ,
+    [
+        lv2:symbol "pre_delay" ;
+        pset:value 0.180000 ;
+    ] ,
+    [
+        lv2:symbol "low_shelf_frequency" ;
+        pset:value 0.088000 ;
+    ] ,
+    [
+        lv2:symbol "high_shelf_frequency" ;
+        pset:value 0.632000 ;
+    ] ,
+    [
+        lv2:symbol "peak_frequency" ;
+        pset:value 0.544000 ;
+    ] ,
+    [
+        lv2:symbol "low_shelf_gain" ;
+        pset:value 0.936000 ;
+    ] ,
+    [
+        lv2:symbol "high_shelf_gain" ;
+        pset:value 0.828000 ;
+    ] ,
+    [
+        lv2:symbol "peak_gain" ;
+        pset:value 0.764000 ;
+    ] ,
+    [
+        lv2:symbol "stereo" ;
+        pset:value 1.000000 ;
+    ] ,
+    [
+        lv2:symbol "stereo_input" ;
+        pset:value 1.000000 ;
+    ] .
+
+<urn:juce:TalReverb2#preset002> a pset:Preset ;
+    state:state [
+        <urn:juce:stateString>
+"""
+<?xml version="1.0" encoding="UTF-8"?>
+
+<tal curprogram="1" version="1">
+  <programs>
+    <program programname="Gentle Drum Ambience" dry="0.5" wet="0.13000001013278961182"
+             roomsize="0.66000002622604370117" predelay="0.18000000715255737305"
+             lowshelffrequency="0.088000006973743438721" highshelffrequency="0.63200002908706665039"
+             peakfrequency="0.54400002956390380859" lowshelfgain="0.93600004911422729492"
+             highshelfgain="0.82800006866455078125" peakgain="0.76400005817413330078"
+             stereowidth="1" realstereomode="1"/>
+    <program programname="80's Plate" dry="0.5" wet="0.20900000631809234619"
+             roomsize="0.66000002622604370117" predelay="0.060000002384185791016"
+             lowshelffrequency="0.5" highshelffrequency="0.42400002479553222656"
+             peakfrequency="0.368000030517578125" lowshelfgain="1" highshelfgain="0.78800004720687866211"
+             peakgain="0.368000030517578125" stereowidth="1" realstereomode="0"/>
+    <program programname="Big Wet Plate (no EQ)" dry="0.5" wet="0.16100001335144042969"
+             roomsize="0.75200003385543823242" predelay="0.1319999992847442627"
+             lowshelffrequency="0.024000000208616256714" highshelffrequency="1"
+             peakfrequency="0.49200001358985900879" lowshelfgain="1" highshelfgain="1"
+             peakgain="1" stereowidth="1" realstereomode="0"/>
+    <program programname="Small Drum Plate" dry="0.5" wet="0.33500000834465026855"
+             roomsize="0.30800002813339233398" predelay="0.12000000476837158203"
+             lowshelffrequency="0.17600001394748687744" highshelffrequency="0.44400003552436828613"
+             peakfrequency="0.30000001192092895508" lowshelfgain="0.72400003671646118164"
+             highshelfgain="0.48800003528594970703" peakgain="0" stereowidth="1"
+             realstereomode="1"/>
+    <program programname="Dull Plate" dry="0.5" wet="0.24200001358985900879"
+             roomsize="0.63200002908706665039" predelay="0.16000001132488250732"
+             lowshelffrequency="0.32800000905990600586" highshelffrequency="0.72000002861022949219"
+             peakfrequency="0.56800001859664916992" lowshelfgain="1" highshelfgain="0.21600000560283660889"
+             peakgain="0.36000001430511474609" stereowidth="1" realstereomode="1"/>
+    <program programname="Need some Air" dry="0.5" wet="0.14900000393390655518"
+             roomsize="0.68800002336502075195" predelay="0.12000000476837158203"
+             lowshelffrequency="0.21200001239776611328" highshelffrequency="0.5"
+             peakfrequency="0.53600001335144042969" lowshelfgain="0.24800001084804534912"
+             highshelfgain="1" peakgain="0.64400005340576171875" stereowidth="1"
+             realstereomode="0"/>
+    <program programname="Mid Plate" dry="0.5" wet="0.37100002169609069824"
+             roomsize="0.60400003194808959961" predelay="0.20800000429153442383"
+             lowshelffrequency="0.32400000095367431641" highshelffrequency="0.2720000147819519043"
+             peakfrequency="0.57600003480911254883" lowshelfgain="0.76400005817413330078"
+             highshelfgain="0" peakgain="0.11200000345706939697" stereowidth="1"
+             realstereomode="1"/>
+    <program programname="Airy Mono Plate" dry="0.5" wet="0.4410000145435333252"
+             roomsize="0.73200005292892456055" predelay="0.072000004351139068604"
+             lowshelffrequency="0.18000000715255737305" highshelffrequency="0.42800003290176391602"
+             peakfrequency="0.32000002264976501465" lowshelfgain="0.35600000619888305664"
+             highshelfgain="0.38000002503395080566" peakgain="0" stereowidth="0"
+             realstereomode="0"/>
+    <program programname="1100Hz Plate" dry="0.5" wet="0.40400001406669616699"
+             roomsize="0.60000002384185791016" predelay="0.21200001239776611328"
+             lowshelffrequency="0.35200002789497375488" highshelffrequency="0.36000001430511474609"
+             peakfrequency="1" lowshelfgain="0" highshelfgain="0" peakgain="0.26399999856948852539"
+             stereowidth="1" realstereomode="0"/>
+    <program programname="Short Plate" dry="0.5" wet="0.4780000150203704834"
+             roomsize="0.10400000214576721191" predelay="0.13600000739097595215"
+             lowshelffrequency="0.5" highshelffrequency="0.5" peakfrequency="0.53600001335144042969"
+             lowshelfgain="0.49200001358985900879" highshelfgain="0.35600000619888305664"
+             peakgain="0.17200000584125518799" stereowidth="1" realstereomode="1"/>
+  </programs>
+</tal>
+"""
+    ] ;
+
+    lv2:port [
+        lv2:symbol "unused" ;
+        pset:value 0.000000 ;
+    ] ,
+    [
+        lv2:symbol "dry" ;
+        pset:value 0.500000 ;
+    ] ,
+    [
+        lv2:symbol "wet" ;
+        pset:value 0.209000 ;
+    ] ,
+    [
+        lv2:symbol "room_size" ;
+        pset:value 0.660000 ;
+    ] ,
+    [
+        lv2:symbol "pre_delay" ;
+        pset:value 0.060000 ;
+    ] ,
+    [
+        lv2:symbol "low_shelf_frequency" ;
+        pset:value 0.500000 ;
+    ] ,
+    [
+        lv2:symbol "high_shelf_frequency" ;
+        pset:value 0.424000 ;
+    ] ,
+    [
+        lv2:symbol "peak_frequency" ;
+        pset:value 0.368000 ;
+    ] ,
+    [
+        lv2:symbol "low_shelf_gain" ;
+        pset:value 1.000000 ;
+    ] ,
+    [
+        lv2:symbol "high_shelf_gain" ;
+        pset:value 0.788000 ;
+    ] ,
+    [
+        lv2:symbol "peak_gain" ;
+        pset:value 0.368000 ;
+    ] ,
+    [
+        lv2:symbol "stereo" ;
+        pset:value 1.000000 ;
+    ] ,
+    [
+        lv2:symbol "stereo_input" ;
+        pset:value 0.000000 ;
+    ] .
+
+<urn:juce:TalReverb2#preset003> a pset:Preset ;
+    state:state [
+        <urn:juce:stateString>
+"""
+<?xml version="1.0" encoding="UTF-8"?>
+
+<tal curprogram="2" version="1">
+  <programs>
+    <program programname="Gentle Drum Ambience" dry="0.5" wet="0.13000001013278961182"
+             roomsize="0.66000002622604370117" predelay="0.18000000715255737305"
+             lowshelffrequency="0.088000006973743438721" highshelffrequency="0.63200002908706665039"
+             peakfrequency="0.54400002956390380859" lowshelfgain="0.93600004911422729492"
+             highshelfgain="0.82800006866455078125" peakgain="0.76400005817413330078"
+             stereowidth="1" realstereomode="1"/>
+    <program programname="80's Plate" dry="0.5" wet="0.20900000631809234619"
+             roomsize="0.66000002622604370117" predelay="0.060000002384185791016"
+             lowshelffrequency="0.5" highshelffrequency="0.42400002479553222656"
+             peakfrequency="0.368000030517578125" lowshelfgain="1" highshelfgain="0.78800004720687866211"
+             peakgain="0.368000030517578125" stereowidth="1" realstereomode="0"/>
+    <program programname="Big Wet Plate (no EQ)" dry="0.5" wet="0.16100001335144042969"
+             roomsize="0.75200003385543823242" predelay="0.1319999992847442627"
+             lowshelffrequency="0.024000000208616256714" highshelffrequency="1"
+             peakfrequency="0.49200001358985900879" lowshelfgain="1" highshelfgain="1"
+             peakgain="1" stereowidth="1" realstereomode="0"/>
+    <program programname="Small Drum Plate" dry="0.5" wet="0.33500000834465026855"
+             roomsize="0.30800002813339233398" predelay="0.12000000476837158203"
+             lowshelffrequency="0.17600001394748687744" highshelffrequency="0.44400003552436828613"
+             peakfrequency="0.30000001192092895508" lowshelfgain="0.72400003671646118164"
+             highshelfgain="0.48800003528594970703" peakgain="0" stereowidth="1"
+             realstereomode="1"/>
+    <program programname="Dull Plate" dry="0.5" wet="0.24200001358985900879"
+             roomsize="0.63200002908706665039" predelay="0.16000001132488250732"
+             lowshelffrequency="0.32800000905990600586" highshelffrequency="0.72000002861022949219"
+             peakfrequency="0.56800001859664916992" lowshelfgain="1" highshelfgain="0.21600000560283660889"
+             peakgain="0.36000001430511474609" stereowidth="1" realstereomode="1"/>
+    <program programname="Need some Air" dry="0.5" wet="0.14900000393390655518"
+             roomsize="0.68800002336502075195" predelay="0.12000000476837158203"
+             lowshelffrequency="0.21200001239776611328" highshelffrequency="0.5"
+             peakfrequency="0.53600001335144042969" lowshelfgain="0.24800001084804534912"
+             highshelfgain="1" peakgain="0.64400005340576171875" stereowidth="1"
+             realstereomode="0"/>
+    <program programname="Mid Plate" dry="0.5" wet="0.37100002169609069824"
+             roomsize="0.60400003194808959961" predelay="0.20800000429153442383"
+             lowshelffrequency="0.32400000095367431641" highshelffrequency="0.2720000147819519043"
+             peakfrequency="0.57600003480911254883" lowshelfgain="0.76400005817413330078"
+             highshelfgain="0" peakgain="0.11200000345706939697" stereowidth="1"
+             realstereomode="1"/>
+    <program programname="Airy Mono Plate" dry="0.5" wet="0.4410000145435333252"
+             roomsize="0.73200005292892456055" predelay="0.072000004351139068604"
+             lowshelffrequency="0.18000000715255737305" highshelffrequency="0.42800003290176391602"
+             peakfrequency="0.32000002264976501465" lowshelfgain="0.35600000619888305664"
+             highshelfgain="0.38000002503395080566" peakgain="0" stereowidth="0"
+             realstereomode="0"/>
+    <program programname="1100Hz Plate" dry="0.5" wet="0.40400001406669616699"
+             roomsize="0.60000002384185791016" predelay="0.21200001239776611328"
+             lowshelffrequency="0.35200002789497375488" highshelffrequency="0.36000001430511474609"
+             peakfrequency="1" lowshelfgain="0" highshelfgain="0" peakgain="0.26399999856948852539"
+             stereowidth="1" realstereomode="0"/>
+    <program programname="Short Plate" dry="0.5" wet="0.4780000150203704834"
+             roomsize="0.10400000214576721191" predelay="0.13600000739097595215"
+             lowshelffrequency="0.5" highshelffrequency="0.5" peakfrequency="0.53600001335144042969"
+             lowshelfgain="0.49200001358985900879" highshelfgain="0.35600000619888305664"
+             peakgain="0.17200000584125518799" stereowidth="1" realstereomode="1"/>
+  </programs>
+</tal>
+"""
+    ] ;
+
+    lv2:port [
+        lv2:symbol "unused" ;
+        pset:value 0.000000 ;
+    ] ,
+    [
+        lv2:symbol "dry" ;
+        pset:value 0.500000 ;
+    ] ,
+    [
+        lv2:symbol "wet" ;
+        pset:value 0.161000 ;
+    ] ,
+    [
+        lv2:symbol "room_size" ;
+        pset:value 0.752000 ;
+    ] ,
+    [
+        lv2:symbol "pre_delay" ;
+        pset:value 0.132000 ;
+    ] ,
+    [
+        lv2:symbol "low_shelf_frequency" ;
+        pset:value 0.024000 ;
+    ] ,
+    [
+        lv2:symbol "high_shelf_frequency" ;
+        pset:value 1.000000 ;
+    ] ,
+    [
+        lv2:symbol "peak_frequency" ;
+        pset:value 0.492000 ;
+    ] ,
+    [
+        lv2:symbol "low_shelf_gain" ;
+        pset:value 1.000000 ;
+    ] ,
+    [
+        lv2:symbol "high_shelf_gain" ;
+        pset:value 1.000000 ;
+    ] ,
+    [
+        lv2:symbol "peak_gain" ;
+        pset:value 1.000000 ;
+    ] ,
+    [
+        lv2:symbol "stereo" ;
+        pset:value 1.000000 ;
+    ] ,
+    [
+        lv2:symbol "stereo_input" ;
+        pset:value 0.000000 ;
+    ] .
+
+<urn:juce:TalReverb2#preset004> a pset:Preset ;
+    state:state [
+        <urn:juce:stateString>
+"""
+<?xml version="1.0" encoding="UTF-8"?>
+
+<tal curprogram="3" version="1">
+  <programs>
+    <program programname="Gentle Drum Ambience" dry="0.5" wet="0.13000001013278961182"
+             roomsize="0.66000002622604370117" predelay="0.18000000715255737305"
+             lowshelffrequency="0.088000006973743438721" highshelffrequency="0.63200002908706665039"
+             peakfrequency="0.54400002956390380859" lowshelfgain="0.93600004911422729492"
+             highshelfgain="0.82800006866455078125" peakgain="0.76400005817413330078"
+             stereowidth="1" realstereomode="1"/>
+    <program programname="80's Plate" dry="0.5" wet="0.20900000631809234619"
+             roomsize="0.66000002622604370117" predelay="0.060000002384185791016"
+             lowshelffrequency="0.5" highshelffrequency="0.42400002479553222656"
+             peakfrequency="0.368000030517578125" lowshelfgain="1" highshelfgain="0.78800004720687866211"
+             peakgain="0.368000030517578125" stereowidth="1" realstereomode="0"/>
+    <program programname="Big Wet Plate (no EQ)" dry="0.5" wet="0.16100001335144042969"
+             roomsize="0.75200003385543823242" predelay="0.1319999992847442627"
+             lowshelffrequency="0.024000000208616256714" highshelffrequency="1"
+             peakfrequency="0.49200001358985900879" lowshelfgain="1" highshelfgain="1"
+             peakgain="1" stereowidth="1" realstereomode="0"/>
+    <program programname="Small Drum Plate" dry="0.5" wet="0.33500000834465026855"
+             roomsize="0.30800002813339233398" predelay="0.12000000476837158203"
+             lowshelffrequency="0.17600001394748687744" highshelffrequency="0.44400003552436828613"
+             peakfrequency="0.30000001192092895508" lowshelfgain="0.72400003671646118164"
+             highshelfgain="0.48800003528594970703" peakgain="0" stereowidth="1"
+             realstereomode="1"/>
+    <program programname="Dull Plate" dry="0.5" wet="0.24200001358985900879"
+             roomsize="0.63200002908706665039" predelay="0.16000001132488250732"
+             lowshelffrequency="0.32800000905990600586" highshelffrequency="0.72000002861022949219"
+             peakfrequency="0.56800001859664916992" lowshelfgain="1" highshelfgain="0.21600000560283660889"
+             peakgain="0.36000001430511474609" stereowidth="1" realstereomode="1"/>
+    <program programname="Need some Air" dry="0.5" wet="0.14900000393390655518"
+             roomsize="0.68800002336502075195" predelay="0.12000000476837158203"
+             lowshelffrequency="0.21200001239776611328" highshelffrequency="0.5"
+             peakfrequency="0.53600001335144042969" lowshelfgain="0.24800001084804534912"
+             highshelfgain="1" peakgain="0.64400005340576171875" stereowidth="1"
+             realstereomode="0"/>
+    <program programname="Mid Plate" dry="0.5" wet="0.37100002169609069824"
+             roomsize="0.60400003194808959961" predelay="0.20800000429153442383"
+             lowshelffrequency="0.32400000095367431641" highshelffrequency="0.2720000147819519043"
+             peakfrequency="0.57600003480911254883" lowshelfgain="0.76400005817413330078"
+             highshelfgain="0" peakgain="0.11200000345706939697" stereowidth="1"
+             realstereomode="1"/>
+    <program programname="Airy Mono Plate" dry="0.5" wet="0.4410000145435333252"
+             roomsize="0.73200005292892456055" predelay="0.072000004351139068604"
+             lowshelffrequency="0.18000000715255737305" highshelffrequency="0.42800003290176391602"
+             peakfrequency="0.32000002264976501465" lowshelfgain="0.35600000619888305664"
+             highshelfgain="0.38000002503395080566" peakgain="0" stereowidth="0"
+             realstereomode="0"/>
+    <program programname="1100Hz Plate" dry="0.5" wet="0.40400001406669616699"
+             roomsize="0.60000002384185791016" predelay="0.21200001239776611328"
+             lowshelffrequency="0.35200002789497375488" highshelffrequency="0.36000001430511474609"
+             peakfrequency="1" lowshelfgain="0" highshelfgain="0" peakgain="0.26399999856948852539"
+             stereowidth="1" realstereomode="0"/>
+    <program programname="Short Plate" dry="0.5" wet="0.4780000150203704834"
+             roomsize="0.10400000214576721191" predelay="0.13600000739097595215"
+             lowshelffrequency="0.5" highshelffrequency="0.5" peakfrequency="0.53600001335144042969"
+             lowshelfgain="0.49200001358985900879" highshelfgain="0.35600000619888305664"
+             peakgain="0.17200000584125518799" stereowidth="1" realstereomode="1"/>
+  </programs>
+</tal>
+"""
+    ] ;
+
+    lv2:port [
+        lv2:symbol "unused" ;
+        pset:value 0.000000 ;
+    ] ,
+    [
+        lv2:symbol "dry" ;
+        pset:value 0.500000 ;
+    ] ,
+    [
+        lv2:symbol "wet" ;
+        pset:value 0.335000 ;
+    ] ,
+    [
+        lv2:symbol "room_size" ;
+        pset:value 0.308000 ;
+    ] ,
+    [
+        lv2:symbol "pre_delay" ;
+        pset:value 0.120000 ;
+    ] ,
+    [
+        lv2:symbol "low_shelf_frequency" ;
+        pset:value 0.176000 ;
+    ] ,
+    [
+        lv2:symbol "high_shelf_frequency" ;
+        pset:value 0.444000 ;
+    ] ,
+    [
+        lv2:symbol "peak_frequency" ;
+        pset:value 0.300000 ;
+    ] ,
+    [
+        lv2:symbol "low_shelf_gain" ;
+        pset:value 0.724000 ;
+    ] ,
+    [
+        lv2:symbol "high_shelf_gain" ;
+        pset:value 0.488000 ;
+    ] ,
+    [
+        lv2:symbol "peak_gain" ;
+        pset:value 0.000000 ;
+    ] ,
+    [
+        lv2:symbol "stereo" ;
+        pset:value 1.000000 ;
+    ] ,
+    [
+        lv2:symbol "stereo_input" ;
+        pset:value 1.000000 ;
+    ] .
+
+<urn:juce:TalReverb2#preset005> a pset:Preset ;
+    state:state [
+        <urn:juce:stateString>
+"""
+<?xml version="1.0" encoding="UTF-8"?>
+
+<tal curprogram="4" version="1">
+  <programs>
+    <program programname="Gentle Drum Ambience" dry="0.5" wet="0.13000001013278961182"
+             roomsize="0.66000002622604370117" predelay="0.18000000715255737305"
+             lowshelffrequency="0.088000006973743438721" highshelffrequency="0.63200002908706665039"
+             peakfrequency="0.54400002956390380859" lowshelfgain="0.93600004911422729492"
+             highshelfgain="0.82800006866455078125" peakgain="0.76400005817413330078"
+             stereowidth="1" realstereomode="1"/>
+    <program programname="80's Plate" dry="0.5" wet="0.20900000631809234619"
+             roomsize="0.66000002622604370117" predelay="0.060000002384185791016"
+             lowshelffrequency="0.5" highshelffrequency="0.42400002479553222656"
+             peakfrequency="0.368000030517578125" lowshelfgain="1" highshelfgain="0.78800004720687866211"
+             peakgain="0.368000030517578125" stereowidth="1" realstereomode="0"/>
+    <program programname="Big Wet Plate (no EQ)" dry="0.5" wet="0.16100001335144042969"
+             roomsize="0.75200003385543823242" predelay="0.1319999992847442627"
+             lowshelffrequency="0.024000000208616256714" highshelffrequency="1"
+             peakfrequency="0.49200001358985900879" lowshelfgain="1" highshelfgain="1"
+             peakgain="1" stereowidth="1" realstereomode="0"/>
+    <program programname="Small Drum Plate" dry="0.5" wet="0.33500000834465026855"
+             roomsize="0.30800002813339233398" predelay="0.12000000476837158203"
+             lowshelffrequency="0.17600001394748687744" highshelffrequency="0.44400003552436828613"
+             peakfrequency="0.30000001192092895508" lowshelfgain="0.72400003671646118164"
+             highshelfgain="0.48800003528594970703" peakgain="0" stereowidth="1"
+             realstereomode="1"/>
+    <program programname="Dull Plate" dry="0.5" wet="0.24200001358985900879"
+             roomsize="0.63200002908706665039" predelay="0.16000001132488250732"
+             lowshelffrequency="0.32800000905990600586" highshelffrequency="0.72000002861022949219"
+             peakfrequency="0.56800001859664916992" lowshelfgain="1" highshelfgain="0.21600000560283660889"
+             peakgain="0.36000001430511474609" stereowidth="1" realstereomode="1"/>
+    <program programname="Need some Air" dry="0.5" wet="0.14900000393390655518"
+             roomsize="0.68800002336502075195" predelay="0.12000000476837158203"
+             lowshelffrequency="0.21200001239776611328" highshelffrequency="0.5"
+             peakfrequency="0.53600001335144042969" lowshelfgain="0.24800001084804534912"
+             highshelfgain="1" peakgain="0.64400005340576171875" stereowidth="1"
+             realstereomode="0"/>
+    <program programname="Mid Plate" dry="0.5" wet="0.37100002169609069824"
+             roomsize="0.60400003194808959961" predelay="0.20800000429153442383"
+             lowshelffrequency="0.32400000095367431641" highshelffrequency="0.2720000147819519043"
+             peakfrequency="0.57600003480911254883" lowshelfgain="0.76400005817413330078"
+             highshelfgain="0" peakgain="0.11200000345706939697" stereowidth="1"
+             realstereomode="1"/>
+    <program programname="Airy Mono Plate" dry="0.5" wet="0.4410000145435333252"
+             roomsize="0.73200005292892456055" predelay="0.072000004351139068604"
+             lowshelffrequency="0.18000000715255737305" highshelffrequency="0.42800003290176391602"
+             peakfrequency="0.32000002264976501465" lowshelfgain="0.35600000619888305664"
+             highshelfgain="0.38000002503395080566" peakgain="0" stereowidth="0"
+             realstereomode="0"/>
+    <program programname="1100Hz Plate" dry="0.5" wet="0.40400001406669616699"
+             roomsize="0.60000002384185791016" predelay="0.21200001239776611328"
+             lowshelffrequency="0.35200002789497375488" highshelffrequency="0.36000001430511474609"
+             peakfrequency="1" lowshelfgain="0" highshelfgain="0" peakgain="0.26399999856948852539"
+             stereowidth="1" realstereomode="0"/>
+    <program programname="Short Plate" dry="0.5" wet="0.4780000150203704834"
+             roomsize="0.10400000214576721191" predelay="0.13600000739097595215"
+             lowshelffrequency="0.5" highshelffrequency="0.5" peakfrequency="0.53600001335144042969"
+             lowshelfgain="0.49200001358985900879" highshelfgain="0.35600000619888305664"
+             peakgain="0.17200000584125518799" stereowidth="1" realstereomode="1"/>
+  </programs>
+</tal>
+"""
+    ] ;
+
+    lv2:port [
+        lv2:symbol "unused" ;
+        pset:value 0.000000 ;
+    ] ,
+    [
+        lv2:symbol "dry" ;
+        pset:value 0.500000 ;
+    ] ,
+    [
+        lv2:symbol "wet" ;
+        pset:value 0.242000 ;
+    ] ,
+    [
+        lv2:symbol "room_size" ;
+        pset:value 0.632000 ;
+    ] ,
+    [
+        lv2:symbol "pre_delay" ;
+        pset:value 0.160000 ;
+    ] ,
+    [
+        lv2:symbol "low_shelf_frequency" ;
+        pset:value 0.328000 ;
+    ] ,
+    [
+        lv2:symbol "high_shelf_frequency" ;
+        pset:value 0.720000 ;
+    ] ,
+    [
+        lv2:symbol "peak_frequency" ;
+        pset:value 0.568000 ;
+    ] ,
+    [
+        lv2:symbol "low_shelf_gain" ;
+        pset:value 1.000000 ;
+    ] ,
+    [
+        lv2:symbol "high_shelf_gain" ;
+        pset:value 0.216000 ;
+    ] ,
+    [
+        lv2:symbol "peak_gain" ;
+        pset:value 0.360000 ;
+    ] ,
+    [
+        lv2:symbol "stereo" ;
+        pset:value 1.000000 ;
+    ] ,
+    [
+        lv2:symbol "stereo_input" ;
+        pset:value 1.000000 ;
+    ] .
+
+<urn:juce:TalReverb2#preset006> a pset:Preset ;
+    state:state [
+        <urn:juce:stateString>
+"""
+<?xml version="1.0" encoding="UTF-8"?>
+
+<tal curprogram="5" version="1">
+  <programs>
+    <program programname="Gentle Drum Ambience" dry="0.5" wet="0.13000001013278961182"
+             roomsize="0.66000002622604370117" predelay="0.18000000715255737305"
+             lowshelffrequency="0.088000006973743438721" highshelffrequency="0.63200002908706665039"
+             peakfrequency="0.54400002956390380859" lowshelfgain="0.93600004911422729492"
+             highshelfgain="0.82800006866455078125" peakgain="0.76400005817413330078"
+             stereowidth="1" realstereomode="1"/>
+    <program programname="80's Plate" dry="0.5" wet="0.20900000631809234619"
+             roomsize="0.66000002622604370117" predelay="0.060000002384185791016"
+             lowshelffrequency="0.5" highshelffrequency="0.42400002479553222656"
+             peakfrequency="0.368000030517578125" lowshelfgain="1" highshelfgain="0.78800004720687866211"
+             peakgain="0.368000030517578125" stereowidth="1" realstereomode="0"/>
+    <program programname="Big Wet Plate (no EQ)" dry="0.5" wet="0.16100001335144042969"
+             roomsize="0.75200003385543823242" predelay="0.1319999992847442627"
+             lowshelffrequency="0.024000000208616256714" highshelffrequency="1"
+             peakfrequency="0.49200001358985900879" lowshelfgain="1" highshelfgain="1"
+             peakgain="1" stereowidth="1" realstereomode="0"/>
+    <program programname="Small Drum Plate" dry="0.5" wet="0.33500000834465026855"
+             roomsize="0.30800002813339233398" predelay="0.12000000476837158203"
+             lowshelffrequency="0.17600001394748687744" highshelffrequency="0.44400003552436828613"
+             peakfrequency="0.30000001192092895508" lowshelfgain="0.72400003671646118164"
+             highshelfgain="0.48800003528594970703" peakgain="0" stereowidth="1"
+             realstereomode="1"/>
+    <program programname="Dull Plate" dry="0.5" wet="0.24200001358985900879"
+             roomsize="0.63200002908706665039" predelay="0.16000001132488250732"
+             lowshelffrequency="0.32800000905990600586" highshelffrequency="0.72000002861022949219"
+             peakfrequency="0.56800001859664916992" lowshelfgain="1" highshelfgain="0.21600000560283660889"
+             peakgain="0.36000001430511474609" stereowidth="1" realstereomode="1"/>
+    <program programname="Need some Air" dry="0.5" wet="0.14900000393390655518"
+             roomsize="0.68800002336502075195" predelay="0.12000000476837158203"
+             lowshelffrequency="0.21200001239776611328" highshelffrequency="0.5"
+             peakfrequency="0.53600001335144042969" lowshelfgain="0.24800001084804534912"
+             highshelfgain="1" peakgain="0.64400005340576171875" stereowidth="1"
+             realstereomode="0"/>
+    <program programname="Mid Plate" dry="0.5" wet="0.37100002169609069824"
+             roomsize="0.60400003194808959961" predelay="0.20800000429153442383"
+             lowshelffrequency="0.32400000095367431641" highshelffrequency="0.2720000147819519043"
+             peakfrequency="0.57600003480911254883" lowshelfgain="0.76400005817413330078"
+             highshelfgain="0" peakgain="0.11200000345706939697" stereowidth="1"
+             realstereomode="1"/>
+    <program programname="Airy Mono Plate" dry="0.5" wet="0.4410000145435333252"
+             roomsize="0.73200005292892456055" predelay="0.072000004351139068604"
+             lowshelffrequency="0.18000000715255737305" highshelffrequency="0.42800003290176391602"
+             peakfrequency="0.32000002264976501465" lowshelfgain="0.35600000619888305664"
+             highshelfgain="0.38000002503395080566" peakgain="0" stereowidth="0"
+             realstereomode="0"/>
+    <program programname="1100Hz Plate" dry="0.5" wet="0.40400001406669616699"
+             roomsize="0.60000002384185791016" predelay="0.21200001239776611328"
+             lowshelffrequency="0.35200002789497375488" highshelffrequency="0.36000001430511474609"
+             peakfrequency="1" lowshelfgain="0" highshelfgain="0" peakgain="0.26399999856948852539"
+             stereowidth="1" realstereomode="0"/>
+    <program programname="Short Plate" dry="0.5" wet="0.4780000150203704834"
+             roomsize="0.10400000214576721191" predelay="0.13600000739097595215"
+             lowshelffrequency="0.5" highshelffrequency="0.5" peakfrequency="0.53600001335144042969"
+             lowshelfgain="0.49200001358985900879" highshelfgain="0.35600000619888305664"
+             peakgain="0.17200000584125518799" stereowidth="1" realstereomode="1"/>
+  </programs>
+</tal>
+"""
+    ] ;
+
+    lv2:port [
+        lv2:symbol "unused" ;
+        pset:value 0.000000 ;
+    ] ,
+    [
+        lv2:symbol "dry" ;
+        pset:value 0.500000 ;
+    ] ,
+    [
+        lv2:symbol "wet" ;
+        pset:value 0.149000 ;
+    ] ,
+    [
+        lv2:symbol "room_size" ;
+        pset:value 0.688000 ;
+    ] ,
+    [
+        lv2:symbol "pre_delay" ;
+        pset:value 0.120000 ;
+    ] ,
+    [
+        lv2:symbol "low_shelf_frequency" ;
+        pset:value 0.212000 ;
+    ] ,
+    [
+        lv2:symbol "high_shelf_frequency" ;
+        pset:value 0.500000 ;
+    ] ,
+    [
+        lv2:symbol "peak_frequency" ;
+        pset:value 0.536000 ;
+    ] ,
+    [
+        lv2:symbol "low_shelf_gain" ;
+        pset:value 0.248000 ;
+    ] ,
+    [
+        lv2:symbol "high_shelf_gain" ;
+        pset:value 1.000000 ;
+    ] ,
+    [
+        lv2:symbol "peak_gain" ;
+        pset:value 0.644000 ;
+    ] ,
+    [
+        lv2:symbol "stereo" ;
+        pset:value 1.000000 ;
+    ] ,
+    [
+        lv2:symbol "stereo_input" ;
+        pset:value 0.000000 ;
+    ] .
+
+<urn:juce:TalReverb2#preset007> a pset:Preset ;
+    state:state [
+        <urn:juce:stateString>
+"""
+<?xml version="1.0" encoding="UTF-8"?>
+
+<tal curprogram="6" version="1">
+  <programs>
+    <program programname="Gentle Drum Ambience" dry="0.5" wet="0.13000001013278961182"
+             roomsize="0.66000002622604370117" predelay="0.18000000715255737305"
+             lowshelffrequency="0.088000006973743438721" highshelffrequency="0.63200002908706665039"
+             peakfrequency="0.54400002956390380859" lowshelfgain="0.93600004911422729492"
+             highshelfgain="0.82800006866455078125" peakgain="0.76400005817413330078"
+             stereowidth="1" realstereomode="1"/>
+    <program programname="80's Plate" dry="0.5" wet="0.20900000631809234619"
+             roomsize="0.66000002622604370117" predelay="0.060000002384185791016"
+             lowshelffrequency="0.5" highshelffrequency="0.42400002479553222656"
+             peakfrequency="0.368000030517578125" lowshelfgain="1" highshelfgain="0.78800004720687866211"
+             peakgain="0.368000030517578125" stereowidth="1" realstereomode="0"/>
+    <program programname="Big Wet Plate (no EQ)" dry="0.5" wet="0.16100001335144042969"
+             roomsize="0.75200003385543823242" predelay="0.1319999992847442627"
+             lowshelffrequency="0.024000000208616256714" highshelffrequency="1"
+             peakfrequency="0.49200001358985900879" lowshelfgain="1" highshelfgain="1"
+             peakgain="1" stereowidth="1" realstereomode="0"/>
+    <program programname="Small Drum Plate" dry="0.5" wet="0.33500000834465026855"
+             roomsize="0.30800002813339233398" predelay="0.12000000476837158203"
+             lowshelffrequency="0.17600001394748687744" highshelffrequency="0.44400003552436828613"
+             peakfrequency="0.30000001192092895508" lowshelfgain="0.72400003671646118164"
+             highshelfgain="0.48800003528594970703" peakgain="0" stereowidth="1"
+             realstereomode="1"/>
+    <program programname="Dull Plate" dry="0.5" wet="0.24200001358985900879"
+             roomsize="0.63200002908706665039" predelay="0.16000001132488250732"
+             lowshelffrequency="0.32800000905990600586" highshelffrequency="0.72000002861022949219"
+             peakfrequency="0.56800001859664916992" lowshelfgain="1" highshelfgain="0.21600000560283660889"
+             peakgain="0.36000001430511474609" stereowidth="1" realstereomode="1"/>
+    <program programname="Need some Air" dry="0.5" wet="0.14900000393390655518"
+             roomsize="0.68800002336502075195" predelay="0.12000000476837158203"
+             lowshelffrequency="0.21200001239776611328" highshelffrequency="0.5"
+             peakfrequency="0.53600001335144042969" lowshelfgain="0.24800001084804534912"
+             highshelfgain="1" peakgain="0.64400005340576171875" stereowidth="1"
+             realstereomode="0"/>
+    <program programname="Mid Plate" dry="0.5" wet="0.37100002169609069824"
+             roomsize="0.60400003194808959961" predelay="0.20800000429153442383"
+             lowshelffrequency="0.32400000095367431641" highshelffrequency="0.2720000147819519043"
+             peakfrequency="0.57600003480911254883" lowshelfgain="0.76400005817413330078"
+             highshelfgain="0" peakgain="0.11200000345706939697" stereowidth="1"
+             realstereomode="1"/>
+    <program programname="Airy Mono Plate" dry="0.5" wet="0.4410000145435333252"
+             roomsize="0.73200005292892456055" predelay="0.072000004351139068604"
+             lowshelffrequency="0.18000000715255737305" highshelffrequency="0.42800003290176391602"
+             peakfrequency="0.32000002264976501465" lowshelfgain="0.35600000619888305664"
+             highshelfgain="0.38000002503395080566" peakgain="0" stereowidth="0"
+             realstereomode="0"/>
+    <program programname="1100Hz Plate" dry="0.5" wet="0.40400001406669616699"
+             roomsize="0.60000002384185791016" predelay="0.21200001239776611328"
+             lowshelffrequency="0.35200002789497375488" highshelffrequency="0.36000001430511474609"
+             peakfrequency="1" lowshelfgain="0" highshelfgain="0" peakgain="0.26399999856948852539"
+             stereowidth="1" realstereomode="0"/>
+    <program programname="Short Plate" dry="0.5" wet="0.4780000150203704834"
+             roomsize="0.10400000214576721191" predelay="0.13600000739097595215"
+             lowshelffrequency="0.5" highshelffrequency="0.5" peakfrequency="0.53600001335144042969"
+             lowshelfgain="0.49200001358985900879" highshelfgain="0.35600000619888305664"
+             peakgain="0.17200000584125518799" stereowidth="1" realstereomode="1"/>
+  </programs>
+</tal>
+"""
+    ] ;
+
+    lv2:port [
+        lv2:symbol "unused" ;
+        pset:value 0.000000 ;
+    ] ,
+    [
+        lv2:symbol "dry" ;
+        pset:value 0.500000 ;
+    ] ,
+    [
+        lv2:symbol "wet" ;
+        pset:value 0.371000 ;
+    ] ,
+    [
+        lv2:symbol "room_size" ;
+        pset:value 0.604000 ;
+    ] ,
+    [
+        lv2:symbol "pre_delay" ;
+        pset:value 0.208000 ;
+    ] ,
+    [
+        lv2:symbol "low_shelf_frequency" ;
+        pset:value 0.324000 ;
+    ] ,
+    [
+        lv2:symbol "high_shelf_frequency" ;
+        pset:value 0.272000 ;
+    ] ,
+    [
+        lv2:symbol "peak_frequency" ;
+        pset:value 0.576000 ;
+    ] ,
+    [
+        lv2:symbol "low_shelf_gain" ;
+        pset:value 0.764000 ;
+    ] ,
+    [
+        lv2:symbol "high_shelf_gain" ;
+        pset:value 0.000000 ;
+    ] ,
+    [
+        lv2:symbol "peak_gain" ;
+        pset:value 0.112000 ;
+    ] ,
+    [
+        lv2:symbol "stereo" ;
+        pset:value 1.000000 ;
+    ] ,
+    [
+        lv2:symbol "stereo_input" ;
+        pset:value 1.000000 ;
+    ] .
+
+<urn:juce:TalReverb2#preset008> a pset:Preset ;
+    state:state [
+        <urn:juce:stateString>
+"""
+<?xml version="1.0" encoding="UTF-8"?>
+
+<tal curprogram="7" version="1">
+  <programs>
+    <program programname="Gentle Drum Ambience" dry="0.5" wet="0.13000001013278961182"
+             roomsize="0.66000002622604370117" predelay="0.18000000715255737305"
+             lowshelffrequency="0.088000006973743438721" highshelffrequency="0.63200002908706665039"
+             peakfrequency="0.54400002956390380859" lowshelfgain="0.93600004911422729492"
+             highshelfgain="0.82800006866455078125" peakgain="0.76400005817413330078"
+             stereowidth="1" realstereomode="1"/>
+    <program programname="80's Plate" dry="0.5" wet="0.20900000631809234619"
+             roomsize="0.66000002622604370117" predelay="0.060000002384185791016"
+             lowshelffrequency="0.5" highshelffrequency="0.42400002479553222656"
+             peakfrequency="0.368000030517578125" lowshelfgain="1" highshelfgain="0.78800004720687866211"
+             peakgain="0.368000030517578125" stereowidth="1" realstereomode="0"/>
+    <program programname="Big Wet Plate (no EQ)" dry="0.5" wet="0.16100001335144042969"
+             roomsize="0.75200003385543823242" predelay="0.1319999992847442627"
+             lowshelffrequency="0.024000000208616256714" highshelffrequency="1"
+             peakfrequency="0.49200001358985900879" lowshelfgain="1" highshelfgain="1"
+             peakgain="1" stereowidth="1" realstereomode="0"/>
+    <program programname="Small Drum Plate" dry="0.5" wet="0.33500000834465026855"
+             roomsize="0.30800002813339233398" predelay="0.12000000476837158203"
+             lowshelffrequency="0.17600001394748687744" highshelffrequency="0.44400003552436828613"
+             peakfrequency="0.30000001192092895508" lowshelfgain="0.72400003671646118164"
+             highshelfgain="0.48800003528594970703" peakgain="0" stereowidth="1"
+             realstereomode="1"/>
+    <program programname="Dull Plate" dry="0.5" wet="0.24200001358985900879"
+             roomsize="0.63200002908706665039" predelay="0.16000001132488250732"
+             lowshelffrequency="0.32800000905990600586" highshelffrequency="0.72000002861022949219"
+             peakfrequency="0.56800001859664916992" lowshelfgain="1" highshelfgain="0.21600000560283660889"
+             peakgain="0.36000001430511474609" stereowidth="1" realstereomode="1"/>
+    <program programname="Need some Air" dry="0.5" wet="0.14900000393390655518"
+             roomsize="0.68800002336502075195" predelay="0.12000000476837158203"
+             lowshelffrequency="0.21200001239776611328" highshelffrequency="0.5"
+             peakfrequency="0.53600001335144042969" lowshelfgain="0.24800001084804534912"
+             highshelfgain="1" peakgain="0.64400005340576171875" stereowidth="1"
+             realstereomode="0"/>
+    <program programname="Mid Plate" dry="0.5" wet="0.37100002169609069824"
+             roomsize="0.60400003194808959961" predelay="0.20800000429153442383"
+             lowshelffrequency="0.32400000095367431641" highshelffrequency="0.2720000147819519043"
+             peakfrequency="0.57600003480911254883" lowshelfgain="0.76400005817413330078"
+             highshelfgain="0" peakgain="0.11200000345706939697" stereowidth="1"
+             realstereomode="1"/>
+    <program programname="Airy Mono Plate" dry="0.5" wet="0.4410000145435333252"
+             roomsize="0.73200005292892456055" predelay="0.072000004351139068604"
+             lowshelffrequency="0.18000000715255737305" highshelffrequency="0.42800003290176391602"
+             peakfrequency="0.32000002264976501465" lowshelfgain="0.35600000619888305664"
+             highshelfgain="0.38000002503395080566" peakgain="0" stereowidth="0"
+             realstereomode="0"/>
+    <program programname="1100Hz Plate" dry="0.5" wet="0.40400001406669616699"
+             roomsize="0.60000002384185791016" predelay="0.21200001239776611328"
+             lowshelffrequency="0.35200002789497375488" highshelffrequency="0.36000001430511474609"
+             peakfrequency="1" lowshelfgain="0" highshelfgain="0" peakgain="0.26399999856948852539"
+             stereowidth="1" realstereomode="0"/>
+    <program programname="Short Plate" dry="0.5" wet="0.4780000150203704834"
+             roomsize="0.10400000214576721191" predelay="0.13600000739097595215"
+             lowshelffrequency="0.5" highshelffrequency="0.5" peakfrequency="0.53600001335144042969"
+             lowshelfgain="0.49200001358985900879" highshelfgain="0.35600000619888305664"
+             peakgain="0.17200000584125518799" stereowidth="1" realstereomode="1"/>
+  </programs>
+</tal>
+"""
+    ] ;
+
+    lv2:port [
+        lv2:symbol "unused" ;
+        pset:value 0.000000 ;
+    ] ,
+    [
+        lv2:symbol "dry" ;
+        pset:value 0.500000 ;
+    ] ,
+    [
+        lv2:symbol "wet" ;
+        pset:value 0.441000 ;
+    ] ,
+    [
+        lv2:symbol "room_size" ;
+        pset:value 0.732000 ;
+    ] ,
+    [
+        lv2:symbol "pre_delay" ;
+        pset:value 0.072000 ;
+    ] ,
+    [
+        lv2:symbol "low_shelf_frequency" ;
+        pset:value 0.180000 ;
+    ] ,
+    [
+        lv2:symbol "high_shelf_frequency" ;
+        pset:value 0.428000 ;
+    ] ,
+    [
+        lv2:symbol "peak_frequency" ;
+        pset:value 0.320000 ;
+    ] ,
+    [
+        lv2:symbol "low_shelf_gain" ;
+        pset:value 0.356000 ;
+    ] ,
+    [
+        lv2:symbol "high_shelf_gain" ;
+        pset:value 0.380000 ;
+    ] ,
+    [
+        lv2:symbol "peak_gain" ;
+        pset:value 0.000000 ;
+    ] ,
+    [
+        lv2:symbol "stereo" ;
+        pset:value 0.000000 ;
+    ] ,
+    [
+        lv2:symbol "stereo_input" ;
+        pset:value 0.000000 ;
+    ] .
+
+<urn:juce:TalReverb2#preset009> a pset:Preset ;
+    state:state [
+        <urn:juce:stateString>
+"""
+<?xml version="1.0" encoding="UTF-8"?>
+
+<tal curprogram="8" version="1">
+  <programs>
+    <program programname="Gentle Drum Ambience" dry="0.5" wet="0.13000001013278961182"
+             roomsize="0.66000002622604370117" predelay="0.18000000715255737305"
+             lowshelffrequency="0.088000006973743438721" highshelffrequency="0.63200002908706665039"
+             peakfrequency="0.54400002956390380859" lowshelfgain="0.93600004911422729492"
+             highshelfgain="0.82800006866455078125" peakgain="0.76400005817413330078"
+             stereowidth="1" realstereomode="1"/>
+    <program programname="80's Plate" dry="0.5" wet="0.20900000631809234619"
+             roomsize="0.66000002622604370117" predelay="0.060000002384185791016"
+             lowshelffrequency="0.5" highshelffrequency="0.42400002479553222656"
+             peakfrequency="0.368000030517578125" lowshelfgain="1" highshelfgain="0.78800004720687866211"
+             peakgain="0.368000030517578125" stereowidth="1" realstereomode="0"/>
+    <program programname="Big Wet Plate (no EQ)" dry="0.5" wet="0.16100001335144042969"
+             roomsize="0.75200003385543823242" predelay="0.1319999992847442627"
+             lowshelffrequency="0.024000000208616256714" highshelffrequency="1"
+             peakfrequency="0.49200001358985900879" lowshelfgain="1" highshelfgain="1"
+             peakgain="1" stereowidth="1" realstereomode="0"/>
+    <program programname="Small Drum Plate" dry="0.5" wet="0.33500000834465026855"
+             roomsize="0.30800002813339233398" predelay="0.12000000476837158203"
+             lowshelffrequency="0.17600001394748687744" highshelffrequency="0.44400003552436828613"
+             peakfrequency="0.30000001192092895508" lowshelfgain="0.72400003671646118164"
+             highshelfgain="0.48800003528594970703" peakgain="0" stereowidth="1"
+             realstereomode="1"/>
+    <program programname="Dull Plate" dry="0.5" wet="0.24200001358985900879"
+             roomsize="0.63200002908706665039" predelay="0.16000001132488250732"
+             lowshelffrequency="0.32800000905990600586" highshelffrequency="0.72000002861022949219"
+             peakfrequency="0.56800001859664916992" lowshelfgain="1" highshelfgain="0.21600000560283660889"
+             peakgain="0.36000001430511474609" stereowidth="1" realstereomode="1"/>
+    <program programname="Need some Air" dry="0.5" wet="0.14900000393390655518"
+             roomsize="0.68800002336502075195" predelay="0.12000000476837158203"
+             lowshelffrequency="0.21200001239776611328" highshelffrequency="0.5"
+             peakfrequency="0.53600001335144042969" lowshelfgain="0.24800001084804534912"
+             highshelfgain="1" peakgain="0.64400005340576171875" stereowidth="1"
+             realstereomode="0"/>
+    <program programname="Mid Plate" dry="0.5" wet="0.37100002169609069824"
+             roomsize="0.60400003194808959961" predelay="0.20800000429153442383"
+             lowshelffrequency="0.32400000095367431641" highshelffrequency="0.2720000147819519043"
+             peakfrequency="0.57600003480911254883" lowshelfgain="0.76400005817413330078"
+             highshelfgain="0" peakgain="0.11200000345706939697" stereowidth="1"
+             realstereomode="1"/>
+    <program programname="Airy Mono Plate" dry="0.5" wet="0.4410000145435333252"
+             roomsize="0.73200005292892456055" predelay="0.072000004351139068604"
+             lowshelffrequency="0.18000000715255737305" highshelffrequency="0.42800003290176391602"
+             peakfrequency="0.32000002264976501465" lowshelfgain="0.35600000619888305664"
+             highshelfgain="0.38000002503395080566" peakgain="0" stereowidth="0"
+             realstereomode="0"/>
+    <program programname="1100Hz Plate" dry="0.5" wet="0.40400001406669616699"
+             roomsize="0.60000002384185791016" predelay="0.21200001239776611328"
+             lowshelffrequency="0.35200002789497375488" highshelffrequency="0.36000001430511474609"
+             peakfrequency="1" lowshelfgain="0" highshelfgain="0" peakgain="0.26399999856948852539"
+             stereowidth="1" realstereomode="0"/>
+    <program programname="Short Plate" dry="0.5" wet="0.4780000150203704834"
+             roomsize="0.10400000214576721191" predelay="0.13600000739097595215"
+             lowshelffrequency="0.5" highshelffrequency="0.5" peakfrequency="0.53600001335144042969"
+             lowshelfgain="0.49200001358985900879" highshelfgain="0.35600000619888305664"
+             peakgain="0.17200000584125518799" stereowidth="1" realstereomode="1"/>
+  </programs>
+</tal>
+"""
+    ] ;
+
+    lv2:port [
+        lv2:symbol "unused" ;
+        pset:value 0.000000 ;
+    ] ,
+    [
+        lv2:symbol "dry" ;
+        pset:value 0.500000 ;
+    ] ,
+    [
+        lv2:symbol "wet" ;
+        pset:value 0.404000 ;
+    ] ,
+    [
+        lv2:symbol "room_size" ;
+        pset:value 0.600000 ;
+    ] ,
+    [
+        lv2:symbol "pre_delay" ;
+        pset:value 0.212000 ;
+    ] ,
+    [
+        lv2:symbol "low_shelf_frequency" ;
+        pset:value 0.352000 ;
+    ] ,
+    [
+        lv2:symbol "high_shelf_frequency" ;
+        pset:value 0.360000 ;
+    ] ,
+    [
+        lv2:symbol "peak_frequency" ;
+        pset:value 1.000000 ;
+    ] ,
+    [
+        lv2:symbol "low_shelf_gain" ;
+        pset:value 0.000000 ;
+    ] ,
+    [
+        lv2:symbol "high_shelf_gain" ;
+        pset:value 0.000000 ;
+    ] ,
+    [
+        lv2:symbol "peak_gain" ;
+        pset:value 0.264000 ;
+    ] ,
+    [
+        lv2:symbol "stereo" ;
+        pset:value 1.000000 ;
+    ] ,
+    [
+        lv2:symbol "stereo_input" ;
+        pset:value 0.000000 ;
+    ] .
+
+<urn:juce:TalReverb2#preset010> a pset:Preset ;
+    state:state [
+        <urn:juce:stateString>
+"""
+<?xml version="1.0" encoding="UTF-8"?>
+
+<tal curprogram="9" version="1">
+  <programs>
+    <program programname="Gentle Drum Ambience" dry="0.5" wet="0.13000001013278961182"
+             roomsize="0.66000002622604370117" predelay="0.18000000715255737305"
+             lowshelffrequency="0.088000006973743438721" highshelffrequency="0.63200002908706665039"
+             peakfrequency="0.54400002956390380859" lowshelfgain="0.93600004911422729492"
+             highshelfgain="0.82800006866455078125" peakgain="0.76400005817413330078"
+             stereowidth="1" realstereomode="1"/>
+    <program programname="80's Plate" dry="0.5" wet="0.20900000631809234619"
+             roomsize="0.66000002622604370117" predelay="0.060000002384185791016"
+             lowshelffrequency="0.5" highshelffrequency="0.42400002479553222656"
+             peakfrequency="0.368000030517578125" lowshelfgain="1" highshelfgain="0.78800004720687866211"
+             peakgain="0.368000030517578125" stereowidth="1" realstereomode="0"/>
+    <program programname="Big Wet Plate (no EQ)" dry="0.5" wet="0.16100001335144042969"
+             roomsize="0.75200003385543823242" predelay="0.1319999992847442627"
+             lowshelffrequency="0.024000000208616256714" highshelffrequency="1"
+             peakfrequency="0.49200001358985900879" lowshelfgain="1" highshelfgain="1"
+             peakgain="1" stereowidth="1" realstereomode="0"/>
+    <program programname="Small Drum Plate" dry="0.5" wet="0.33500000834465026855"
+             roomsize="0.30800002813339233398" predelay="0.12000000476837158203"
+             lowshelffrequency="0.17600001394748687744" highshelffrequency="0.44400003552436828613"
+             peakfrequency="0.30000001192092895508" lowshelfgain="0.72400003671646118164"
+             highshelfgain="0.48800003528594970703" peakgain="0" stereowidth="1"
+             realstereomode="1"/>
+    <program programname="Dull Plate" dry="0.5" wet="0.24200001358985900879"
+             roomsize="0.63200002908706665039" predelay="0.16000001132488250732"
+             lowshelffrequency="0.32800000905990600586" highshelffrequency="0.72000002861022949219"
+             peakfrequency="0.56800001859664916992" lowshelfgain="1" highshelfgain="0.21600000560283660889"
+             peakgain="0.36000001430511474609" stereowidth="1" realstereomode="1"/>
+    <program programname="Need some Air" dry="0.5" wet="0.14900000393390655518"
+             roomsize="0.68800002336502075195" predelay="0.12000000476837158203"
+             lowshelffrequency="0.21200001239776611328" highshelffrequency="0.5"
+             peakfrequency="0.53600001335144042969" lowshelfgain="0.24800001084804534912"
+             highshelfgain="1" peakgain="0.64400005340576171875" stereowidth="1"
+             realstereomode="0"/>
+    <program programname="Mid Plate" dry="0.5" wet="0.37100002169609069824"
+             roomsize="0.60400003194808959961" predelay="0.20800000429153442383"
+             lowshelffrequency="0.32400000095367431641" highshelffrequency="0.2720000147819519043"
+             peakfrequency="0.57600003480911254883" lowshelfgain="0.76400005817413330078"
+             highshelfgain="0" peakgain="0.11200000345706939697" stereowidth="1"
+             realstereomode="1"/>
+    <program programname="Airy Mono Plate" dry="0.5" wet="0.4410000145435333252"
+             roomsize="0.73200005292892456055" predelay="0.072000004351139068604"
+             lowshelffrequency="0.18000000715255737305" highshelffrequency="0.42800003290176391602"
+             peakfrequency="0.32000002264976501465" lowshelfgain="0.35600000619888305664"
+             highshelfgain="0.38000002503395080566" peakgain="0" stereowidth="0"
+             realstereomode="0"/>
+    <program programname="1100Hz Plate" dry="0.5" wet="0.40400001406669616699"
+             roomsize="0.60000002384185791016" predelay="0.21200001239776611328"
+             lowshelffrequency="0.35200002789497375488" highshelffrequency="0.36000001430511474609"
+             peakfrequency="1" lowshelfgain="0" highshelfgain="0" peakgain="0.26399999856948852539"
+             stereowidth="1" realstereomode="0"/>
+    <program programname="Short Plate" dry="0.5" wet="0.4780000150203704834"
+             roomsize="0.10400000214576721191" predelay="0.13600000739097595215"
+             lowshelffrequency="0.5" highshelffrequency="0.5" peakfrequency="0.53600001335144042969"
+             lowshelfgain="0.49200001358985900879" highshelfgain="0.35600000619888305664"
+             peakgain="0.17200000584125518799" stereowidth="1" realstereomode="1"/>
+  </programs>
+</tal>
+"""
+    ] ;
+
+    lv2:port [
+        lv2:symbol "unused" ;
+        pset:value 0.000000 ;
+    ] ,
+    [
+        lv2:symbol "dry" ;
+        pset:value 0.500000 ;
+    ] ,
+    [
+        lv2:symbol "wet" ;
+        pset:value 0.478000 ;
+    ] ,
+    [
+        lv2:symbol "room_size" ;
+        pset:value 0.104000 ;
+    ] ,
+    [
+        lv2:symbol "pre_delay" ;
+        pset:value 0.136000 ;
+    ] ,
+    [
+        lv2:symbol "low_shelf_frequency" ;
+        pset:value 0.500000 ;
+    ] ,
+    [
+        lv2:symbol "high_shelf_frequency" ;
+        pset:value 0.500000 ;
+    ] ,
+    [
+        lv2:symbol "peak_frequency" ;
+        pset:value 0.536000 ;
+    ] ,
+    [
+        lv2:symbol "low_shelf_gain" ;
+        pset:value 0.492000 ;
+    ] ,
+    [
+        lv2:symbol "high_shelf_gain" ;
+        pset:value 0.356000 ;
+    ] ,
+    [
+        lv2:symbol "peak_gain" ;
+        pset:value 0.172000 ;
+    ] ,
+    [
+        lv2:symbol "stereo" ;
+        pset:value 1.000000 ;
+    ] ,
+    [
+        lv2:symbol "stereo_input" ;
+        pset:value 1.000000 ;
+    ] .
+
+

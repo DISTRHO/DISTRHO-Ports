@@ -1,0 +1,84 @@
+@prefix lv2:  <http://lv2plug.in/ns/lv2core#> .
+@prefix pset: <http://lv2plug.in/ns/ext/presets#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ui:   <http://lv2plug.in/ns/extensions/ui#> .
+
+<urn:juce:TalReverb2>
+    a lv2:Plugin ;
+    lv2:binary <TAL-Reverb-2.so> ;
+    rdfs:seeAlso <TAL-Reverb-2.ttl> .
+
+<urn:juce:TalReverb2#ExternalUI>
+    a <http://kxstudio.sf.net/ns/lv2ext/external-ui#Widget> ;
+    ui:binary <TAL-Reverb-2.so> ;
+    lv2:requiredFeature <http://lv2plug.in/ns/ext/instance-access> ;
+    lv2:extensionData <http://kxstudio.sf.net/ns/lv2ext/programs#UIInterface> .
+
+<urn:juce:TalReverb2#ParentUI>
+    a ui:X11UI ;
+    ui:binary <TAL-Reverb-2.so> ;
+    lv2:requiredFeature <http://lv2plug.in/ns/ext/instance-access> ;
+    lv2:optionalFeature ui:noUserResize ;
+    lv2:extensionData <http://kxstudio.sf.net/ns/lv2ext/programs#UIInterface> .
+
+<urn:juce:TalReverb2#preset001>
+    a pset:Preset ;
+    lv2:appliesTo <urn:juce:TalReverb2> ;
+    rdfs:label "Gentle Drum Ambience" ;
+    rdfs:seeAlso <presets.ttl> .
+
+<urn:juce:TalReverb2#preset002>
+    a pset:Preset ;
+    lv2:appliesTo <urn:juce:TalReverb2> ;
+    rdfs:label "80's Plate" ;
+    rdfs:seeAlso <presets.ttl> .
+
+<urn:juce:TalReverb2#preset003>
+    a pset:Preset ;
+    lv2:appliesTo <urn:juce:TalReverb2> ;
+    rdfs:label "Big Wet Plate (no EQ)" ;
+    rdfs:seeAlso <presets.ttl> .
+
+<urn:juce:TalReverb2#preset004>
+    a pset:Preset ;
+    lv2:appliesTo <urn:juce:TalReverb2> ;
+    rdfs:label "Small Drum Plate" ;
+    rdfs:seeAlso <presets.ttl> .
+
+<urn:juce:TalReverb2#preset005>
+    a pset:Preset ;
+    lv2:appliesTo <urn:juce:TalReverb2> ;
+    rdfs:label "Dull Plate" ;
+    rdfs:seeAlso <presets.ttl> .
+
+<urn:juce:TalReverb2#preset006>
+    a pset:Preset ;
+    lv2:appliesTo <urn:juce:TalReverb2> ;
+    rdfs:label "Need some Air" ;
+    rdfs:seeAlso <presets.ttl> .
+
+<urn:juce:TalReverb2#preset007>
+    a pset:Preset ;
+    lv2:appliesTo <urn:juce:TalReverb2> ;
+    rdfs:label "Mid Plate" ;
+    rdfs:seeAlso <presets.ttl> .
+
+<urn:juce:TalReverb2#preset008>
+    a pset:Preset ;
+    lv2:appliesTo <urn:juce:TalReverb2> ;
+    rdfs:label "Airy Mono Plate" ;
+    rdfs:seeAlso <presets.ttl> .
+
+<urn:juce:TalReverb2#preset009>
+    a pset:Preset ;
+    lv2:appliesTo <urn:juce:TalReverb2> ;
+    rdfs:label "1100Hz Plate" ;
+    rdfs:seeAlso <presets.ttl> .
+
+<urn:juce:TalReverb2#preset010>
+    a pset:Preset ;
+    lv2:appliesTo <urn:juce:TalReverb2> ;
+    rdfs:label "Short Plate" ;
+    rdfs:seeAlso <presets.ttl> .
+
+
