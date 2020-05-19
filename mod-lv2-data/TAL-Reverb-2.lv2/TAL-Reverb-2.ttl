@@ -4,7 +4,7 @@
 @prefix lv2:  <http://lv2plug.in/ns/lv2core#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix ui:   <http://lv2plug.in/ns/extensions/ui#> .
-@prefix units: <http://lv2plug.in/ns/extensions/units#> .
+@prefix unit: <http://lv2plug.in/ns/extensions/units#> .
 
 <urn:juce:TalReverb2>
     a lv2:ReverbPlugin, lv2:Plugin ;
@@ -13,9 +13,6 @@
     lv2:extensionData <http://lv2plug.in/ns/ext/options#interface> ,
                       <http://lv2plug.in/ns/ext/state#interface> ,
                       <http://kxstudio.sf.net/ns/lv2ext/programs#Interface> ;
-
-    ui:ui <urn:juce:TalReverb2#ExternalUI> ,
-          <urn:juce:TalReverb2#ParentUI> ;
 
     lv2:port [
         a lv2:InputPort, lv2:ControlPort ;
@@ -58,35 +55,26 @@
     lv2:port [
         a lv2:InputPort, lv2:ControlPort ;
         lv2:index 5 ;
-        lv2:symbol "unused" ;
-        lv2:name "unused" ;
-        lv2:default 0.000000 ;
-        lv2:minimum 0.0 ;
-        lv2:maximum 1.0 ;
-    ] ,
-    [
-        a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 6 ;
         lv2:symbol "dry" ;
         lv2:name "dry" ;
         lv2:default 0.0 ;
         lv2:minimum -96.0 ;
         lv2:maximum 26.4 ;
-        units:unit units:db ;
+        unit:unit unit:db ;
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 7 ;
+        lv2:index 6 ;
         lv2:symbol "wet" ;
         lv2:name "wet" ;
         lv2:default -24.1 ;
         lv2:minimum -96.0 ;
         lv2:maximum 26.4 ;
-        units:unit units:db ;
+        unit:unit unit:db ;
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 8 ;
+        lv2:index 7 ;
         lv2:symbol "room_size" ;
         lv2:name "room size" ;
         lv2:default 0.752000 ;
@@ -95,91 +83,92 @@
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 9 ;
+        lv2:index 8 ;
         lv2:symbol "pre_delay" ;
         lv2:name "pre delay" ;
         lv2:default 37.0 ;
         lv2:minimum 0.0 ;
         lv2:maximum 1000.0 ;
-        units:unit units:ms ;
+        unit:unit unit:ms ;
+    ] ,
+    [
+        a lv2:InputPort, lv2:ControlPort ;
+        lv2:index 9 ;
+        lv2:symbol "low_shelf_frequency" ;
+        lv2:name "low frequency" ;
+        lv2:default 257.0 ;
+        lv2:minimum 100.0 ;
+        lv2:maximum 10000.0 ;
+        unit:unit unit:hz ;
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
         lv2:index 10 ;
-        lv2:symbol "low_shelf_frequency" ;
-        lv2:name "low shelf frequency" ;
-        lv2:default 257.0 ;
-        lv2:minimum 0.0 ;
+        lv2:symbol "high_shelf_frequency" ;
+        lv2:name "high frequency" ;
+        lv2:default 3039.0 ;
+        lv2:minimum 100.0 ;
         lv2:maximum 10000.0 ;
-        units:unit units:hz ;
+        unit:unit unit:hz ;
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
         lv2:index 11 ;
-        lv2:symbol "high_shelf_frequency" ;
-        lv2:name "high shelf frequency" ;
-        lv2:default 3039.0 ;
-        lv2:minimum 0.0 ;
+        lv2:symbol "peak_frequency" ;
+        lv2:name "mid frequency" ;
+        lv2:default 2237.0 ;
+        lv2:minimum 100.0 ;
         lv2:maximum 10000.0 ;
-        units:unit units:hz ;
+        unit:unit unit:hz ;
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
         lv2:index 12 ;
-        lv2:symbol "peak_frequency" ;
-        lv2:name "mid frequency" ;
-        lv2:default 2237.0 ;
-        lv2:minimum 0.0 ;
-        lv2:maximum 10000.0 ;
-        units:unit units:hz ;
+        lv2:symbol "low_shelf_gain" ;
+        lv2:name "low gain" ;
+        lv2:default -0.4 ;
+        lv2:minimum -18.0 ;
+        lv2:maximum 0.0 ;
+        unit:unit unit:db ;
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
         lv2:index 13 ;
-        lv2:symbol "low_shelf_gain" ;
-        lv2:name "low shelf gain" ;
-        lv2:default -0.4 ;
+        lv2:symbol "high_shelf_gain" ;
+        lv2:name "high gain" ;
+        lv2:default -1.2 ;
         lv2:minimum -18.0 ;
         lv2:maximum 0.0 ;
-        units:unit units:db ;
+        unit:unit unit:db ;
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
         lv2:index 14 ;
-        lv2:symbol "high_shelf_gain" ;
-        lv2:name "high shelf gain" ;
-        lv2:default -1.2 ;
-        lv2:minimum -18.0 ;
-        lv2:maximum 0.0 ;
-        units:unit units:db ;
-    ] ,
-    [
-        a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 15 ;
         lv2:symbol "peak_gain" ;
         lv2:name "mid gain" ;
         lv2:default -1.7 ;
         lv2:minimum -18.0 ;
         lv2:maximum 0.0 ;
-        units:unit units:db ;
+        unit:unit unit:db ;
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 16 ;
-        lv2:symbol "stereo" ;
-        lv2:name "stereo" ;
+        lv2:index 15 ;
+        lv2:symbol "stereoWidth" ;
+        lv2:name "stereo width" ;
         lv2:default 1.000000 ;
         lv2:minimum 0.0 ;
         lv2:maximum 1.0 ;
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 17 ;
+        lv2:index 16 ;
         lv2:symbol "stereo_input" ;
         lv2:name "stereo input" ;
         lv2:default 0.000000 ;
         lv2:minimum 0.0 ;
         lv2:maximum 1.0 ;
+        lv2:portProperty lv2:toggled ;
     ] ;
 
     doap:name "Tal-Reverb-II" ;
