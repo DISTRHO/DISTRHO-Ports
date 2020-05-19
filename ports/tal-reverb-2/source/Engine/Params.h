@@ -16,7 +16,7 @@
 
 	You should have received a copy of the GPL along with this
 	program. If not, go to http://www.gnu.org/licenses/gpl.html
-	or write to the Free Software Foundation, Inc.,  
+	or write to the Free Software Foundation, Inc.,
 	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 	==============================================================================
  */
@@ -36,8 +36,7 @@ Parameter table
 enum SYNTHPARAMETERS
 {
   // Controllable values [0.0..1.0
-  UNUSED= 0,
-  DRY,
+  DRY = 0,
   WET,
 
   DECAYTIME,

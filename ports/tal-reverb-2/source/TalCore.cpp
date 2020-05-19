@@ -146,19 +146,14 @@ const String TalCore::getParameterName (int index)
 		case DRY: return T("dry");
 		case DECAYTIME: return T("room size");
 		case PREDELAY: return T("pre delay");
-
 		case LOWSHELFFREQUENCY: return T("low shelf frequency");
 		case HIGHSHELFFREQUENCY: return T("high shelf frequency");
 		case PEAKFREQUENCY: return T("peak frequency");
-
 		case LOWSHELFGAIN: return T("low shelf gain");
 		case HIGHSHELFGAIN: return T("high shelf gain");
 		case PEAKGAIN: return T("peak gain");
-
 		case STEREO: return T("stereo");
 		case REALSTEREOMODE: return T("stereo input");
-
-		case UNUSED: return "unused";
 	}
     return String();
 }
