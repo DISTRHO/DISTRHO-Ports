@@ -16,7 +16,7 @@
 
 	You should have received a copy of the GPL along with this
 	program. If not, go to http://www.gnu.org/licenses/gpl.html
-	or write to the Free Software Foundation, Inc.,  
+	or write to the Free Software Foundation, Inc.,
 	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 	==============================================================================
  */
@@ -25,13 +25,15 @@
 #if !defined(__ReverbEngine_h)
 #define __ReverbEngine_h
 
+#define __MOD_DEVICES__ 1
+
 #include "Reverb.h"
 #include "AudioUtils.h"
 #include "Params.h"
 #include "ParamChangeUtil.h"
 #include "NoiseGenerator.h"
 
-class ReverbEngine 
+class ReverbEngine
 {
 public:
 	float *param;
@@ -48,7 +50,7 @@ public:
 
 	AudioUtils audioUtils;
 
-	ReverbEngine(float sampleRate) 
+	ReverbEngine(float sampleRate)
 	{
 		Params *params= new Params();
 		this->param= params->parameters;
@@ -64,19 +66,18 @@ public:
 #ifdef __MOD_DEVICES__
 	void setDry(float dry)
 	{
-        dry = (dry + 122.4 ) / 122.4;
+        dry = (dry + 96.0) / (26.4 + 96.0);
 		this->dry = audioUtils.getLogScaledVolume(dry, 2.0f);
 	}
 
 	void setWet(float wet)
 	{
-        wet = (wet + 122.4 ) / 122.4;
+        wet = (wet + 96.0) / (26.4 + 96.0);
 		this->wet = audioUtils.getLogScaledVolume(wet, 2.0f);
 	}
 #else
 	void setDry(float dry)
 	{
-        lowShelfGain = (lowShelfGain + 18.0 ) / 36.0;
 		this->dry = audioUtils.getLogScaledVolume(dry, 2.0f);
 	}
 
