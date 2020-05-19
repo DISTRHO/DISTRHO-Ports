@@ -25,9 +25,6 @@
 #if !defined(__TalReverb_h)
 #define __TalReverb_h
 
-
-#define __MOD_DEVICES__ 1
-
 #include "AllPassFilter.h"
 #include "CombFilter.h"
 #include "NoiseGenerator.h"

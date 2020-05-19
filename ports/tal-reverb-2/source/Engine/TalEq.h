@@ -25,8 +25,6 @@
 #if !defined(__TalEq_h)
 #define __TalEq_h
 
-#define __MOD_DEVICES__ 1
-
 #include "HighShelf.h"
 #include "LowShelf.h"
 #include "PeakEq.h"

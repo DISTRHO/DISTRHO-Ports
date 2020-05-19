@@ -57,10 +57,12 @@ TalCore::TalCore()
 	for (int i = 0; i < NUMPROGRAMS; i++) talPresets[i] = new TalPreset();
 	curProgram = 0;
 
+#ifndef __MOD_DEVICES__
 	// load factory presets
 	ProgramChunk chunk;
 	setStateInformationString(chunk.getXmlChunk());
 	setCurrentProgram(curProgram);
+#endif
 }
 
 TalCore::~TalCore()
@@ -443,12 +445,15 @@ int TalCore::getCurrentProgram ()
 
 void TalCore::setCurrentProgram (int index)
 {
+
 	if (index < NUMPROGRAMS)
 	{
 		curProgram = index;
 		for (int i = 0; i < NUMPARAM; i++)
 		{
+#ifndef __MOD_DEVICES__
 			setParameter(i, talPresets[index]->programData[i]);
+#endif
 		}
 		sendChangeMessage ();
 	}

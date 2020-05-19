@@ -25,8 +25,6 @@
 #if !defined(__ReverbEngine_h)
 #define __ReverbEngine_h
 
-#define __MOD_DEVICES__ 1
-
 #include "Reverb.h"
 #include "AudioUtils.h"
 #include "Params.h"
