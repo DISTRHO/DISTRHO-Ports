@@ -36,7 +36,10 @@ Parameter table
 enum SYNTHPARAMETERS
 {
   // Controllable values [0.0..1.0
-  DRY = 0,
+#ifndef __MOD_DEVICES__
+  UNUSED= 0,
+#endif
+  DRY,
   WET,
 
   DECAYTIME,

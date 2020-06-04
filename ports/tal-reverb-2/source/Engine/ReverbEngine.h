@@ -131,7 +131,7 @@ public:
 
 	void setStereoMode(float stereoMode)
 	{
-		reverb->setStereoMode(stereoMode);
+		reverb->setStereoMode(stereoMode > 0.0f ? true : false);
 	}
 
 	void setSampleRate(float sampleRate)

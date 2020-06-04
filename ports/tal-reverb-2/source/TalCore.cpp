@@ -114,7 +114,7 @@ void TalCore::setParameter (int index, float newValue)
 				engine->setStereoWidth(newValue);
 				break;
 			case REALSTEREOMODE:
-				engine->setStereoMode((bool)newValue);
+				engine->setStereoMode(newValue);
 				break;
 			case LOWSHELFFREQUENCY:
 				engine->setLowShelfFrequency(newValue);
@@ -156,6 +156,9 @@ const String TalCore::getParameterName (int index)
 		case PEAKGAIN: return T("peak gain");
 		case STEREO: return T("stereo");
 		case REALSTEREOMODE: return T("stereo input");
+#ifndef __MOD_DEVICES__
+		case UNUSED: return "unused";
+#endif
 	}
     return String();
 }
