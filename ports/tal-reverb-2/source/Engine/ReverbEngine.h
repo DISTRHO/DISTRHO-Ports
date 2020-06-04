@@ -64,13 +64,13 @@ public:
 #ifdef __MOD_DEVICES__
 	void setDry(float dry)
 	{
-        dry = (dry + 96.0) / (26.4 + 96.0);
+		dry = (dry + 96.0) / (26.4 + 96.0);
 		this->dry = audioUtils.getLogScaledVolume(dry, 2.0f);
 	}
 
 	void setWet(float wet)
 	{
-        wet = (wet + 96.0) / (26.4 + 96.0);
+		wet = (wet + 96.0) / (26.4 + 96.0);
 		this->wet = audioUtils.getLogScaledVolume(wet, 2.0f);
 	}
 #else
