@@ -48,138 +48,138 @@ public:
 
 	AudioUtils audioUtils;
 
-	ReverbEngine(float sampleRate)
-	{
-		Params *params= new Params();
-		this->param= params->parameters;
-		initialize(sampleRate);
-	}
+    ReverbEngine(float sampleRate)
+    {
+        Params *params= new Params();
+        this->param= params->parameters;
+        initialize(sampleRate);
+    }
 
-	~ReverbEngine()
-	{
-		delete reverb;
+    ~ReverbEngine()
+    {
+        delete reverb;
 
-		delete noiseGenerator;
-	}
+        delete noiseGenerator;
+    }
 #ifdef __MOD_DEVICES__
-	void setDry(float dry)
-	{
+    void setDry(float dry)
+    {
         dry = (dry + 96.0) / (26.4 + 96.0);
-		this->dry = audioUtils.getLogScaledVolume(dry, 2.0f);
-	}
+        this->dry = audioUtils.getLogScaledVolume(dry, 2.0f);
+    }
 
 	void setWet(float wet)
-	{
+    {
         wet = (wet + 96.0) / (26.4 + 96.0);
-		this->wet = audioUtils.getLogScaledVolume(wet, 2.0f);
-	}
+        this->wet = audioUtils.getLogScaledVolume(wet, 2.0f);
+    }
 #else
-	void setDry(float dry)
-	{
-		this->dry = audioUtils.getLogScaledVolume(dry, 2.0f);
-	}
+    void setDry(float dry)
+    {
+        this->dry = audioUtils.getLogScaledVolume(dry, 2.0f);
+    }
 
-	void setWet(float wet)
-	{
-		this->wet = audioUtils.getLogScaledVolume(wet, 2.0f);
-	}
+    void setWet(float wet)
+    {
+        this->wet = audioUtils.getLogScaledVolume(wet, 2.0f);
+    }
 #endif
-	void setDecayTime(float decayTime)
-	{
-		reverb->setDecayTime(decayTime);
-	}
+    void setDecayTime(float decayTime)
+    {
+        reverb->setDecayTime(decayTime);
+    }
 
-	void setPreDelay(float preDelay)
-	{
-		reverb->setPreDelay(preDelay);
-	}
+    void setPreDelay(float preDelay)
+    {
+        reverb->setPreDelay(preDelay);
+    }
 
-	void setLowShelfGain(float lowShelfGain)
-	{
-		reverb->setLowShelfGain(lowShelfGain);
-	}
+    void setLowShelfGain(float lowShelfGain)
+    {
+        reverb->setLowShelfGain(lowShelfGain);
+    }
 
-	void setHighShelfGain(float highShelfGain)
-	{
-		reverb->setHighShelfGain(highShelfGain);
-	}
+    void setHighShelfGain(float highShelfGain)
+    {
+        reverb->setHighShelfGain(highShelfGain);
+    }
 
-	void setLowShelfFrequency(float lowShelfFrequency)
-	{
-		reverb->setLowShelfFrequency(lowShelfFrequency);
-	}
+    void setLowShelfFrequency(float lowShelfFrequency)
+    {
+        reverb->setLowShelfFrequency(lowShelfFrequency);
+    }
 
-	void setHighShelfFrequency(float highShelfFrequency)
-	{
-		reverb->setHighShelfFrequency(highShelfFrequency);
-	}
+    void setHighShelfFrequency(float highShelfFrequency)
+    {
+        reverb->setHighShelfFrequency(highShelfFrequency);
+    }
 
-	void setPeakFrequency(float peakFrequency)
-	{
-		reverb->setPeakFrequency(peakFrequency);
-	}
+    void setPeakFrequency(float peakFrequency)
+    {
+        reverb->setPeakFrequency(peakFrequency);
+    }
 
-	void setPeakGain(float peakGain)
-	{
-		reverb->setPeakGain(peakGain);
-	}
+    void setPeakGain(float peakGain)
+    {
+        reverb->setPeakGain(peakGain);
+    }
 
-	void setStereoWidth(float stereoWidth)
-	{
-		this->stereoWidth = stereoWidth;
-	}
+    void setStereoWidth(float stereoWidth)
+    {
+        this->stereoWidth = stereoWidth;
+    }
 
-	void setStereoMode(float stereoMode)
-	{
-		reverb->setStereoMode(stereoMode > 0.0f ? true : false);
-	}
+    void setStereoMode(float stereoMode)
+    {
+        reverb->setStereoMode(stereoMode > 0.0f ? true : false);
+    }
 
-	void setSampleRate(float sampleRate)
-	{
-		initialize(sampleRate);
-	}
+    void setSampleRate(float sampleRate)
+    {
+        initialize(sampleRate);
+    }
 
-	void initialize(float sampleRate)
-	{
+    void initialize(float sampleRate)
+    {
         if (sampleRate <= 0)
         {
             sampleRate = 44100.0f;
         }
 
-		reverb = new TalReverb((int)sampleRate);
+        reverb = new TalReverb((int)sampleRate);
 
-		dryParamChange = new ParamChangeUtil(sampleRate, 300.0f);
-		wetParamChange = new ParamChangeUtil(sampleRate, 300.0f);
+        dryParamChange = new ParamChangeUtil(sampleRate, 300.0f);
+        wetParamChange = new ParamChangeUtil(sampleRate, 300.0f);
 
-		noiseGenerator = new NoiseGenerator(sampleRate);
+        noiseGenerator = new NoiseGenerator(sampleRate);
 
-		dry = 1.0f;
-		wet = 0.5f;
-		stereoWidth = 1.0f;
-	}
+        dry = 1.0f;
+        wet = 0.5f;
+        stereoWidth = 1.0f;
+    }
 
-	void process(float *sampleL, float *sampleR) 
-	{
-		// avoid cpu spikes
-		float noise = noiseGenerator->tickNoise() * 0.000000001f;
+    void process(float *sampleL, float *sampleR) 
+    {
+        // avoid cpu spikes
+        float noise = noiseGenerator->tickNoise() * 0.000000001f;
 
-		*sampleL += noise;
-		*sampleR += noise;
+        *sampleL += noise;
+        *sampleR += noise;
 
-		float drysampleL = *sampleL;
-		float drysampleR = *sampleR;
+        float drysampleL = *sampleL;
+        float drysampleR = *sampleR;
 
-		reverb->process(sampleL, sampleR);
+        reverb->process(sampleL, sampleR);
 
-		// Process Stereo
-		float actualDryValue = dryParamChange->tick(dry);
-		float wet1 = wet * (stereoWidth * 0.5f + 0.5f);
-		float wet2 = wet * ((1.0f - stereoWidth) * 0.5f);
-		float resultL = *sampleL * wet1 + *sampleR * wet2 + drysampleL * actualDryValue;
-		float resultR = *sampleR * wet1 + *sampleL * wet2 + drysampleR * actualDryValue;
-		*sampleL = resultL;
-		*sampleR = resultR;
-	}
+        // Process Stereo
+        float actualDryValue = dryParamChange->tick(dry);
+        float wet1 = wet * (stereoWidth * 0.5f + 0.5f);
+        float wet2 = wet * ((1.0f - stereoWidth) * 0.5f);
+        float resultL = *sampleL * wet1 + *sampleR * wet2 + drysampleL * actualDryValue;
+        float resultR = *sampleR * wet1 + *sampleL * wet2 + drysampleR * actualDryValue;
+        *sampleL = resultL;
+        *sampleR = resultR;
+    }
 };
 #endif
 
