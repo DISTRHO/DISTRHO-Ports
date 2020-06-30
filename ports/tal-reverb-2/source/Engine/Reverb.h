@@ -186,22 +186,17 @@ public:
 		delete talEqR;
 	}
 
-#ifdef __MOD_DEVICES__
-	void setDecayTime(float decayTime)
-	{
-		this->decayTime = decayTime * 0.00099;
-	}
-
-	void setPreDelay(float preDelayTime)
-	{
-		this->preDelayTime = preDelayTime * 0.001;
-	}
-#else 
 	void setDecayTime(float decayTime)
 	{
 		this->decayTime = audioUtils.getLogScaledValueInverted(decayTime) * 0.99f;
 	}
 
+#ifdef __MOD_DEVICES__
+	void setPreDelay(float preDelayTime)
+	{
+		this->preDelayTime = preDelayTime * 0.001;
+	}
+#else
 	void setPreDelay(float preDelayTime)
 	{
 		this->preDelayTime = audioUtils.getLogScaledValue(preDelayTime);

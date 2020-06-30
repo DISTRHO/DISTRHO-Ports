@@ -1,4 +1,5 @@
 @prefix atom: <http://lv2plug.in/ns/ext/atom#> .
+@prefix epp:  <http://lv2plug.in/ns/ext/port-props#> .
 @prefix doap: <http://usefulinc.com/ns/doap#> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix lv2:  <http://lv2plug.in/ns/lv2core#> .
@@ -99,6 +100,7 @@
         lv2:default 257.0 ;
         lv2:minimum 100.0 ;
         lv2:maximum 10000.0 ;
+		lv2:portProperty epp:logarithmic;
         unit:unit unit:hz ;
     ] ,
     [
@@ -109,6 +111,7 @@
         lv2:default 3039.0 ;
         lv2:minimum 100.0 ;
         lv2:maximum 10000.0 ;
+		lv2:portProperty epp:logarithmic;
         unit:unit unit:hz ;
     ] ,
     [
@@ -119,6 +122,7 @@
         lv2:default 2237.0 ;
         lv2:minimum 100.0 ;
         lv2:maximum 10000.0 ;
+		lv2:portProperty epp:logarithmic;
         unit:unit unit:hz ;
     ] ,
     [
@@ -156,7 +160,7 @@
         lv2:index 15 ;
         lv2:symbol "stereoWidth" ;
         lv2:name "stereo width" ;
-        lv2:default 1.000000 ;
+        lv2:default 1.0 ;
         lv2:minimum 0.0 ;
         lv2:maximum 1.0 ;
     ] ,
@@ -165,7 +169,7 @@
         lv2:index 16 ;
         lv2:symbol "stereo_input" ;
         lv2:name "stereo input" ;
-        lv2:default 0.000000 ;
+        lv2:default 0.0 ;
         lv2:minimum 0.0 ;
         lv2:maximum 1.0 ;
         lv2:portProperty lv2:toggled ;
