@@ -7,7 +7,7 @@
 @prefix ui:   <http://lv2plug.in/ns/extensions/ui#> .
 @prefix unit: <http://lv2plug.in/ns/extensions/units#> .
 
-<urn:juce:TalReverb2>
+<http://moddevices.com/plugins/tal-reverb-2>
     a lv2:ReverbPlugin, lv2:Plugin ;
     lv2:requiredFeature <http://lv2plug.in/ns/ext/buf-size#boundedBlockLength> ,
                         <http://lv2plug.in/ns/ext/urid#map> ;

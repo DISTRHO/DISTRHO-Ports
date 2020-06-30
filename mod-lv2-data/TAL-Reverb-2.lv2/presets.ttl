@@ -6,7 +6,7 @@
 @prefix state: <http://lv2plug.in/ns/ext/state#> .
 @prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
 
-<urn:juce:TalReverb2#preset001> a pset:Preset ;
+<http://moddevices.com/plugins/tal-reverb-2#preset001> a pset:Preset ;
     lv2:port [
         lv2:symbol "dry" ;
         pset:value 0.0 ;
@@ -56,7 +56,7 @@
         pset:value 1.000000 ;
     ] .
 
-<urn:juce:TalReverb2#preset002> a pset:Preset ;
+<http://moddevices.com/plugins/tal-reverb-2#preset002> a pset:Preset ;
     lv2:port [
         lv2:symbol "dry" ;
         pset:value 0.0 ;
@@ -106,7 +106,7 @@
         pset:value 0.0 ;
     ] .
 
-<urn:juce:TalReverb2#preset003> a pset:Preset ;
+<http://moddevices.com/plugins/tal-reverb-2#preset003> a pset:Preset ;
     lv2:port [
         lv2:symbol "dry" ;
         pset:value 0.0 ;
@@ -156,7 +156,7 @@
         pset:value 0.000000 ;
     ] .
 
-<urn:juce:TalReverb2#preset004> a pset:Preset ;
+<http://moddevices.com/plugins/tal-reverb-2#preset004> a pset:Preset ;
     lv2:port [
         lv2:symbol "dry" ;
         pset:value 0.0 ;
@@ -206,7 +206,7 @@
         pset:value 1.000000 ;
     ] .
 
-<urn:juce:TalReverb2#preset005> a pset:Preset ;
+<http://moddevices.com/plugins/tal-reverb-2#preset005> a pset:Preset ;
     lv2:port [
         lv2:symbol "dry" ;
         pset:value 0.000000 ;
@@ -256,7 +256,7 @@
         pset:value 1.000000 ;
     ] .
 
-<urn:juce:TalReverb2#preset006> a pset:Preset ;
+<http://moddevices.com/plugins/tal-reverb-2#preset006> a pset:Preset ;
     lv2:port [
         lv2:symbol "dry" ;
         pset:value 0.0 ;
@@ -306,7 +306,7 @@
         pset:value 0.000000 ;
     ] .
 
-<urn:juce:TalReverb2#preset007> a pset:Preset ;
+<http://moddevices.com/plugins/tal-reverb-2#preset007> a pset:Preset ;
     lv2:port [
         lv2:symbol "dry" ;
         pset:value 0.0 ;
@@ -356,7 +356,7 @@
         pset:value 1.000000 ;
     ] .
 
-<urn:juce:TalReverb2#preset008> a pset:Preset ;
+<http://moddevices.com/plugins/tal-reverb-2#preset008> a pset:Preset ;
 
     lv2:port [
         lv2:symbol "dry" ;
@@ -407,7 +407,7 @@
         pset:value 0.000000 ;
     ] .
 
-<urn:juce:TalReverb2#preset009> a pset:Preset ;
+<http://moddevices.com/plugins/tal-reverb-2#preset009> a pset:Preset ;
     lv2:port [
         lv2:symbol "dry" ;
         pset:value 0.0 ;
@@ -457,7 +457,7 @@
         pset:value 0.000000 ;
     ] .
 
-<urn:juce:TalReverb2#preset010> a pset:Preset ;
+<http://moddevices.com/plugins/tal-reverb-2#preset010> a pset:Preset ;
     lv2:port [
         lv2:symbol "dry" ;
         pset:value 0.0 ;

@@ -7,18 +7,18 @@
 @prefix ui:   <http://lv2plug.in/ns/extensions/ui#> .
 
 
-<urn:juce:TalReverb2>
+<http://moddevices.com/plugins/tal-reverb-2>
     a lv2:Plugin ;
     lv2:binary <TAL-Reverb-2.so> ;
     rdfs:seeAlso <TAL-Reverb-2.ttl> .
 
 
 
-<urn:juce:TalReverb2#preset001>
+<http://moddevices.com/plugins/tal-reverb-2#preset001>
 
     a pset:Preset ;
 
-    lv2:appliesTo <urn:juce:TalReverb2> ;
+    lv2:appliesTo <http://moddevices.com/plugins/tal-reverb-2> ;
 
     rdfs:label "Gentle Drum Ambience" ;
 
@@ -26,11 +26,11 @@
 
 
 
-<urn:juce:TalReverb2#preset002>
+<http://moddevices.com/plugins/tal-reverb-2#preset002>
 
     a pset:Preset ;
 
-    lv2:appliesTo <urn:juce:TalReverb2> ;
+    lv2:appliesTo <http://moddevices.com/plugins/tal-reverb-2> ;
 
     rdfs:label "80's Plate" ;
 
@@ -38,11 +38,11 @@
 
 
 
-<urn:juce:TalReverb2#preset003>
+<http://moddevices.com/plugins/tal-reverb-2#preset003>
 
     a pset:Preset ;
 
-    lv2:appliesTo <urn:juce:TalReverb2> ;
+    lv2:appliesTo <http://moddevices.com/plugins/tal-reverb-2> ;
 
     rdfs:label "Big Wet Plate (no EQ)" ;
 
@@ -50,11 +50,11 @@
 
 
 
-<urn:juce:TalReverb2#preset004>
+<http://moddevices.com/plugins/tal-reverb-2#preset004>
 
     a pset:Preset ;
 
-    lv2:appliesTo <urn:juce:TalReverb2> ;
+    lv2:appliesTo <http://moddevices.com/plugins/tal-reverb-2> ;
 
     rdfs:label "Small Drum Plate" ;
 
@@ -62,11 +62,11 @@
 
 
 
-<urn:juce:TalReverb2#preset005>
+<http://moddevices.com/plugins/tal-reverb-2#preset005>
 
     a pset:Preset ;
 
-    lv2:appliesTo <urn:juce:TalReverb2> ;
+    lv2:appliesTo <http://moddevices.com/plugins/tal-reverb-2> ;
 
     rdfs:label "Dull Plate" ;
 
@@ -74,11 +74,11 @@
 
 
 
-<urn:juce:TalReverb2#preset006>
+<http://moddevices.com/plugins/tal-reverb-2#preset006>
 
     a pset:Preset ;
 
-    lv2:appliesTo <urn:juce:TalReverb2> ;
+    lv2:appliesTo <http://moddevices.com/plugins/tal-reverb-2> ;
 
     rdfs:label "Need some Air" ;
 
@@ -86,11 +86,11 @@
 
 
 
-<urn:juce:TalReverb2#preset007>
+<http://moddevices.com/plugins/tal-reverb-2#preset007>
 
     a pset:Preset ;
 
-    lv2:appliesTo <urn:juce:TalReverb2> ;
+    lv2:appliesTo <http://moddevices.com/plugins/tal-reverb-2> ;
 
     rdfs:label "Mid Plate" ;
 
@@ -98,11 +98,11 @@
 
 
 
-<urn:juce:TalReverb2#preset008>
+<http://moddevices.com/plugins/tal-reverb-2#preset008>
 
     a pset:Preset ;
 
-    lv2:appliesTo <urn:juce:TalReverb2> ;
+    lv2:appliesTo <http://moddevices.com/plugins/tal-reverb-2> ;
 
     rdfs:label "Airy Mono Plate" ;
 
@@ -110,11 +110,11 @@
 
 
 
-<urn:juce:TalReverb2#preset009>
+<http://moddevices.com/plugins/tal-reverb-2#preset009>
 
     a pset:Preset ;
 
-    lv2:appliesTo <urn:juce:TalReverb2> ;
+    lv2:appliesTo <http://moddevices.com/plugins/tal-reverb-2> ;
 
     rdfs:label "1100Hz Plate" ;
 
@@ -122,11 +122,11 @@
 
 
 
-<urn:juce:TalReverb2#preset010>
+<http://moddevices.com/plugins/tal-reverb-2#preset010>
 
     a pset:Preset ;
 
-    lv2:appliesTo <urn:juce:TalReverb2> ;
+    lv2:appliesTo <http://moddevices.com/plugins/tal-reverb-2> ;
 
     rdfs:label "Short Plate" ;
 
