@@ -167,7 +167,7 @@
     ] ,
     [
         lv2:symbol "room_size" ;
-        pset:value 0.308000 ;
+        pset:value 0.308 ;
     ] ,
     [
         lv2:symbol "pre_delay" ;
@@ -221,7 +221,7 @@
     ] ,
     [
         lv2:symbol "pre_delay" ;
-        pset:value -32.0 ;
+        pset:value 32.0 ;
     ] ,
     [
         lv2:symbol "low_shelf_frequency" ;
