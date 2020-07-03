@@ -1,6 +1,6 @@
 # DISTRHO Ports
 
-DISTRHO is an open source project that has the goal of making cross-platform plugins and Linux ports.
+DISTRHO is an open source project that has the goal of making cross-platform plugins and GNU/Linux ports.
 
 <b>This repository contains the GNU/Linux and LV2 ports</b>
 
@@ -27,7 +27,7 @@ In order to build the plugins, first run:
 ./scripts/premake-update.sh _OS_
 ```
 
-where *_OS_* can be `linux`, `mac` or `mingw`.  
+where `_OS_` can be `linux`, `mac` or `mingw`.  
 This operation requires 'premake' (version 3) to be installed on your system.
 
 
