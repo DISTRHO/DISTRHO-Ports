@@ -57,10 +57,12 @@ TalCore::TalCore()
 	for (int i = 0; i < NUMPROGRAMS; i++) talPresets[i] = new TalPreset();
 	curProgram = 0;
 
+#ifndef __MOD_DEVICES__
 	// load factory presets
 	ProgramChunk chunk;
 	setStateInformationString(chunk.getXmlChunk());
 	setCurrentProgram(curProgram);
+#endif
 }
 
 TalCore::~TalCore()
@@ -114,7 +116,6 @@ void TalCore::setParameter (int index, float newValue)
 			case REALSTEREOMODE:
 				engine->setStereoMode(newValue);
 				break;
-
 			case LOWSHELFFREQUENCY:
 				engine->setLowShelfFrequency(newValue);
 				break;
@@ -124,7 +125,6 @@ void TalCore::setParameter (int index, float newValue)
 			case PEAKFREQUENCY:
 				engine->setPeakFrequency(newValue);
 				break;
-
 			case LOWSHELFGAIN:
 				engine->setLowShelfGain(newValue);
 				break;
@@ -148,19 +148,17 @@ const String TalCore::getParameterName (int index)
 		case DRY: return T("dry");
 		case DECAYTIME: return T("room size");
 		case PREDELAY: return T("pre delay");
-
 		case LOWSHELFFREQUENCY: return T("low shelf frequency");
 		case HIGHSHELFFREQUENCY: return T("high shelf frequency");
 		case PEAKFREQUENCY: return T("peak frequency");
-
 		case LOWSHELFGAIN: return T("low shelf gain");
 		case HIGHSHELFGAIN: return T("high shelf gain");
 		case PEAKGAIN: return T("peak gain");
-
 		case STEREO: return T("stereo");
 		case REALSTEREOMODE: return T("stereo input");
-
+#ifndef __MOD_DEVICES__
 		case UNUSED: return "unused";
+#endif
 	}
     return String();
 }
@@ -450,12 +448,15 @@ int TalCore::getCurrentProgram ()
 
 void TalCore::setCurrentProgram (int index)
 {
+
 	if (index < NUMPROGRAMS)
 	{
 		curProgram = index;
 		for (int i = 0; i < NUMPARAM; i++)
 		{
+#ifndef __MOD_DEVICES__
 			setParameter(i, talPresets[index]->programData[i]);
+#endif
 		}
 		sendChangeMessage ();
 	}

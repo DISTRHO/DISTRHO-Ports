@@ -16,7 +16,7 @@
 
 	You should have received a copy of the GPL along with this
 	program. If not, go to http://www.gnu.org/licenses/gpl.html
-	or write to the Free Software Foundation, Inc.,  
+	or write to the Free Software Foundation, Inc.,
 	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 	==============================================================================
  */
@@ -31,7 +31,7 @@
 #include "ParamChangeUtil.h"
 #include "NoiseGenerator.h"
 
-class ReverbEngine 
+class ReverbEngine
 {
 public:
 	float *param;
@@ -48,7 +48,7 @@ public:
 
 	AudioUtils audioUtils;
 
-	ReverbEngine(float sampleRate) 
+	ReverbEngine(float sampleRate)
 	{
 		Params *params= new Params();
 		this->param= params->parameters;
@@ -61,7 +61,19 @@ public:
 
 		delete noiseGenerator;
 	}
+#ifdef __MOD_DEVICES__
+	void setDry(float dry)
+	{
+		dry = (dry + 96.0) / (26.4 + 96.0);
+		this->dry = audioUtils.getLogScaledVolume(dry, 2.0f);
+	}
 
+	void setWet(float wet)
+	{
+		wet = (wet + 96.0) / (26.4 + 96.0);
+		this->wet = audioUtils.getLogScaledVolume(wet, 2.0f);
+	}
+#else
 	void setDry(float dry)
 	{
 		this->dry = audioUtils.getLogScaledVolume(dry, 2.0f);
@@ -71,7 +83,7 @@ public:
 	{
 		this->wet = audioUtils.getLogScaledVolume(wet, 2.0f);
 	}
-
+#endif
 	void setDecayTime(float decayTime)
 	{
 		reverb->setDecayTime(decayTime);

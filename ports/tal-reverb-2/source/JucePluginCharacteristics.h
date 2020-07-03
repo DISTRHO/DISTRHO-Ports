@@ -286,7 +286,13 @@
 
 #define JucePlugin_IsMidiEffect             0
 
-#define JucePlugin_LV2URI                   "urn:juce:TalReverb2"
+
+#if __MOD_DEVICES__
+  #define JucePlugin_LV2URI                 "http://moddevices.com/plugins/tal-reverb-2"
+#else
+  #define JucePlugin_LV2URI                 "urn:juce:TalReverb2"
+#endif
+
 #define JucePlugin_LV2Category              "ReverbPlugin"
 
 #define JucePlugin_WantsLV2Latency          0
