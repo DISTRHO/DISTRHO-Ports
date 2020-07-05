@@ -15,8 +15,8 @@
 object_script.*.Debug
 object_script.*.Release
 libs/*/*/Makefile
-ports/*/LV2*/Makefile
-ports/*/VST*/Makefile
+ports-legacy/*/LV2*/Makefile
+ports-legacy/*/VST*/Makefile
 
 .directory
 .fuse*

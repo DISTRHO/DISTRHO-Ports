@@ -48,6 +48,9 @@ fi
 if [ -d ports ]; then
   FOLDERS="$FOLDERS ports"
 fi
+if [ -d ports-legacy ]; then
+  FOLDERS="$FOLDERS ports-legacy"
+fi
 
 FILES=`find $FOLDERS -name premake.lua`
 
@@ -74,30 +77,5 @@ for i in $FILES; do
     cd ../../../..
   fi
 done
-
-# ------------------------------------------------------------------------------------------------------------
-
-if [ ! -d sdks/vstsdk2.4 ]; then
-  exit 0
-fi
-
-if [ -L sdks/vstsdk2.4/pluginterfaces ]; then
-  exit 0
-fi
-
-if [ -d /usr/include/pluginterfaces ]; then
-  cp -r /usr/include/pluginterfaces sdks/vstsdk2.4/
-fi
-
-if [ -d /usr/include/public.sdk ]; then
-  cp -r /usr/include/public.sdk sdks/vstsdk2.4/
-  cd sdks/vstsdk2.4; patch -p0 < fix-c++11.patch; cd ../..
-fi
-
-if [ -d sdks/vstsdk2.4/pluginterfaces ]; then
-  sed -i -e "s/#define JUCE_PLUGINHOST_VST 0/#define JUCE_PLUGINHOST_VST 1/" libs/juce/build-juce/AppConfig.h || true
-else
-  sed -i -e "s/#define JUCE_PLUGINHOST_VST 1/#define JUCE_PLUGINHOST_VST 0/" libs/juce/build-juce/AppConfig.h || true
-fi
 
 # ------------------------------------------------------------------------------------------------------------
