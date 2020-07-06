@@ -239,20 +239,21 @@ foreach plugin : plugins
             link_args: link_flags + link_flags_plugin,
             link_with: link_with_plugin,
             dependencies: dependencies_plugin + plugin_extra_dependencies,
-            install: true,
-            install_dir: lv2dir / plugin + '.lv2',
         )
+
+        plugin_lv2_dir = meson.current_build_dir() / plugin_name + '.lv2'
 
         plugin_lv2_ttl = custom_target(plugin_name + '_lv2-ttl',
             output: plugin_name + '.lv2',
             input: plugin_lv2_lib,
             command: [
-                'mkdir', '-p', meson.current_build_dir() / plugin_name + '.lv2', '&&',
-                'cd', meson.current_build_dir() / plugin_name + '.lv2', '&&',
-                lv2_ttl_generator, plugin_lv2_lib.full_path(),
+                'mkdir', '-p', plugin_lv2_dir, '&&',
+                'cd', plugin_lv2_dir, '&&',
+                'cp', plugin_lv2_lib.full_path(), plugin_lv2_dir / plugin_name + lib_suffix, '&&',
+                lv2_ttl_generator, '.' / plugin_name + lib_suffix,
             ],
             install: true,
-            install_dir: lv2dir / plugin + '.lv2',
+            install_dir: lv2dir,
         )
     endif
 

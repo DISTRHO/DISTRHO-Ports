@@ -13,6 +13,10 @@ prefix = get_option('prefix')
 bindir = get_option('bindir')
 libdir = get_option('libdir')
 
+if libdir.contains('/')
+    libdir = 'lib'
+endif
+
 build_lv2 = get_option('build-lv2')
 build_vst2 = get_option('build-vst2')
 build_vst3 = get_option('build-vst3')
