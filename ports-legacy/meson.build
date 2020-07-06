@@ -118,7 +118,11 @@ endif
 link_flags_plugin = [
 ]
 
-if not os_darwin
+if os_darwin
+    link_flags_plugin += [
+        '-Wl,-export-symbols=../scripts/plugin-symbols.txt',
+    ]
+else
     link_flags_plugin += [
         '-Wl,--version-script=../scripts/plugin-symbols.version',
     ]
@@ -219,6 +223,37 @@ foreach plugin : plugins
                 dependency('gl')
             ]
         endif
+    endif
+
+    if build_lv2
+        plugin_lv2_lib = shared_library(plugin_name + '_lv2',
+            name_prefix: '',
+            sources: plugin_srcs,
+            include_directories: [
+                include_directories(plugin / 'source'),
+                plugin_include_dirs,
+                plugin_extra_include_dirs,
+            ],
+            c_args: build_flags + build_flags_plugin + build_flags_plugin_lv2 + plugin_extra_build_flags,
+            cpp_args: build_flags_cpp + build_flags_plugin + build_flags_plugin_lv2 + plugin_extra_build_flags,
+            link_args: link_flags + link_flags_plugin,
+            link_with: link_with_plugin,
+            dependencies: dependencies_plugin + plugin_extra_dependencies,
+            install: true,
+            install_dir: lv2dir / plugin + '.lv2',
+        )
+
+        plugin_lv2_ttl = custom_target(plugin_name + '_lv2-ttl',
+            output: plugin_name + '.lv2',
+            input: plugin_lv2_lib,
+            command: [
+                'mkdir', '-p', meson.current_build_dir() / plugin_name + '.lv2', '&&',
+                'cd', meson.current_build_dir() / plugin_name + '.lv2', '&&',
+                lv2_ttl_generator, plugin_lv2_lib.full_path(),
+            ],
+            install: true,
+            install_dir: lv2dir / plugin + '.lv2',
+        )
     endif
 
     if build_vst2
