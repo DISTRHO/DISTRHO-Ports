@@ -10,7 +10,7 @@ plugins: lv2 vst
 
 libs:
 	$(MAKE) -C ../libs/drowaudio
-	$(MAKE) -C ../libs/juce
+	$(MAKE) -C ../libs/juce-legacy
 	$(MAKE) -C ../libs/juced
 	$(MAKE) -C ../libs/lv2-ttl-generator
 

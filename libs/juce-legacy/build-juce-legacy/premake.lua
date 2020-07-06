@@ -1,7 +1,7 @@
 
 dofile("../../../scripts/make-project.lua")
 
-package = make_library_project("juce")
+package = make_library_project("juce-legacy")
 
 package.includepaths = {
   ".",

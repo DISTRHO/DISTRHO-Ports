@@ -14,7 +14,7 @@ all:
 	$(MAKE) -C libs/juce-legacy
 	$(MAKE) -C libs/juced
 	$(MAKE) -C libs/lv2-ttl-generator
-	$(MAKE) -C ports plugins
+	$(MAKE) -C ports-legacy plugins
 	$(MAKE) gen
 
 # -----------------------------------------

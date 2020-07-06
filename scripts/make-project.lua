@@ -119,11 +119,12 @@ function make_plugin_project(name, spec)
 
   package.includepaths = {
     "../source",
-    "../../../libs/juce/source",
-    "../../../libs/juce/source/modules",
     "../../../libs/drowaudio/source",
     "../../../libs/juced/source",
-    "../../../libs/juce-plugin"
+    "../../../libs/juce-legacy/source",
+    "../../../libs/juce-legacy/source/modules",
+    "../../../libs/juce-plugin",
+    "../../../libs/juce-plugin/juce-legacy"
   }
 
   package.libpaths = {
@@ -155,8 +156,8 @@ end
 function make_juce_lv2_project(name)
   package = make_plugin_project(name, "LV2")
 
-  package.config["Release"].links = { "juce" }
-  package.config["Debug"].links   = { "juce_debug" }
+  package.config["Release"].links = { "juce-legacy" }
+  package.config["Debug"].links   = { "juce-legacy_debug" }
 
   if (windows) then
     package.links       = { "comdlg32", "gdi32", "imm32", "ole32", "oleaut32", "shlwapi", "uuid", "version", "winmm", "wininet", "ws2_32" }
@@ -183,8 +184,8 @@ end
 function make_juce_vst_project(name)
   package = make_plugin_project(name, "VST")
 
-  package.config["Release"].links = { "juce" }
-  package.config["Debug"].links   = { "juce_debug" }
+  package.config["Release"].links = { "juce-legacy" }
+  package.config["Debug"].links   = { "juce-legacy_debug" }
 
   package.buildoptions = {
     package.buildoptions,

@@ -1,1 +1,1 @@
-../../juce/build-juce/AppConfig.h
+../../juce-legacy/build-juce-legacy/AppConfig.h

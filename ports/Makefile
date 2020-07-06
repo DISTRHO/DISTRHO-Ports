@@ -9,7 +9,7 @@ plugins: lv2 vst
 # libs
 
 libs:
-	$(MAKE) -C ../libs/juce
+# 	$(MAKE) -C ../libs/juce
 	$(MAKE) -C ../libs/lv2-ttl-generator
 
 # -----------------------------------------

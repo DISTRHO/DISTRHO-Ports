@@ -1,10 +1,10 @@
 # Compile the juce shared lib
 
 all:
-	$(MAKE) -C build-juce
+	$(MAKE) -C build-juce-legacy
 
 clean:
-	$(MAKE) clean -C build-juce
+	$(MAKE) clean -C build-juce-legacy
 	rm -rf build-*/intermediate
 
 distclean: clean
