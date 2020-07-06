@@ -1,0 +1,23 @@
+###############################################################################
+
+plugin_srcs = files([
+    'source/ChannelButtonLookAndFeel.cpp',
+    'source/DROMultiplexer.cpp',
+    'source/EnumFloatParameter.cpp',
+    'source/FloatParameter.cpp',
+    'source/IntFloatParameter.cpp',
+    'source/OPLLookAndFeel.cpp',
+    'source/PluginGui.cpp',
+    'source/PluginProcessor.cpp',
+    'source/SbiLoader.cpp',
+    'source/dbopl.cpp',
+    'source/hiopl.cpp',
+    'source/nkopl3.cpp',
+    'source/tests.cpp',
+    'source/zdopl.cpp',
+    '../../libs/juce-plugin/JucePluginMain.cpp',
+])
+
+plugin_name = 'JuceOPL'
+
+###############################################################################

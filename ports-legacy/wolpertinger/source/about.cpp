@@ -71,7 +71,6 @@ about::about ()
 #define tostring(x) #x
 //#define stringify(x) tostring(x)
 	String buildinfo= String(T("v")) + T(stringify(WOLPVERSIONSTRING)) + T("\n") +
-					  T("Build Date ") + T(stringify(BUILDDATE)) + T("\n") +
 					  T(stringify(BINTYPE)) + T(", ") + T(stringify(CONFIGURATION));
     label2->setText(buildinfo, dontSendNotification);
     //[/Constructor]

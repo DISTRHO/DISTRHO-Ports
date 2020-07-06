@@ -40,6 +40,7 @@ lib_juce_legacy = static_library('juce-legacy',
         include_directories('source' / 'modules'),
     ],
     cpp_args: build_flags_cpp,
+    dependencies: dependencies,
     pic: true,
     install: false,
 )

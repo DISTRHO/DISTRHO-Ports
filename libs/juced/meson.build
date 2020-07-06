@@ -11,6 +11,7 @@ lib_juced = static_library('juced',
         include_directories('..' / 'juce-legacy' / 'source' / 'modules'),
     ],
     cpp_args: build_flags_cpp,
+    dependencies: dependencies,
     pic: true,
     install: false,
 )

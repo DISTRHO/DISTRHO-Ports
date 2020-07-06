@@ -13,8 +13,18 @@ prefix = get_option('prefix')
 bindir = get_option('bindir')
 libdir = get_option('libdir')
 
+build_lv2 = get_option('build-lv2')
+build_vst2 = get_option('build-vst2')
+build_vst3 = get_option('build-vst3')
 linux_embed = get_option('linux-embed')
 optimizations = get_option('optimizations')
+
+###############################################################################
+# set paths
+
+lv2dir = prefix / libdir / 'lv2'
+vst2dir = prefix / libdir / 'vst'
+vst3dir = prefix / libdir / 'vst3'
 
 ###############################################################################
 # set target OS
@@ -37,12 +47,15 @@ endif
 if os_darwin
     bin_suffix = ''
     lib_suffix = '.dylib'
+    bintype_prefix = 'Mac-'
 elif os_windows
     bin_suffix = '.exe'
     lib_suffix = '.dll'
+    bintype_prefix = 'Windows-'
 else
     bin_suffix = ''
     lib_suffix = '.so'
+    bintype_prefix = 'Linux-'
 endif
 
 ###############################################################################
@@ -51,32 +64,64 @@ endif
 cc = meson.get_compiler('c')
 cpp = meson.get_compiler('cpp')
 
+###############################################################################
+# dependencies
+
+dependencies = [
+]
+
+if os_linux
+    dependencies += [
+        cc.find_library('dl'),
+        cc.find_library('rt'),
+    ]
+endif
+
+if os_linux and not linux_embed
+    dependencies += [
+        dependency('alsa'),
+        dependency('freetype2'),
+        dependency('x11'),
+        dependency('xext'),
+    ]
+endif
+
+###############################################################################
+# build flags
+
 build_flags = [
     '-DJUCE_APP_CONFIG_HEADER="AppConfig.h"',
     '-pthread',
-    '-Wall', '-Wno-multichar', '-Wno-unused-but-set-variable', '-Wno-unused-function', '-Wno-strict-overflow',
+    '-Wall',
+    '-Wno-multichar',
+    '-Wno-strict-overflow',
+    '-Wno-unused-but-set-variable',
+    '-Wno-unused-function',
 ]
 
 build_flags_cpp = [
+    '-Wno-class-memaccess',
+]
+
+build_flags_debug = [
+    '-O0', '-ggdb',
+    '-DDEBUG=1', '-D_DEBUG=1',
+]
+
+build_flags_debug_cpp = [
 ]
 
 build_flags_release = [
-    '-O3', '-fvisibility=hidden', '-DNDEBUG=1',
+    '-O3', '-fvisibility=hidden',
+    '-DNDEBUG=1',
 ]
 
 build_flags_release_cpp = [
     '-fvisibility-inlines-hidden',
 ]
 
-build_flags_debug = [
-    '-O0', '-ggdb', '-DDEBUG=1', '-D_DEBUG=1',
-]
-
-build_flags_debug_cpp = [
-]
-
 if optimizations and not linux_embed
-    build_flags_release += [ 
+    build_flags_release += [
         '-mtune=generic', '-msse', '-msse2',
     ]
 endif
@@ -115,25 +160,49 @@ else
     build_flags += [
         '-DLINUX=1',
     ]
-    build_flags_cpp += [
-        '`pkg-config --cflags alsa freetype2 x11 xext`',
+endif
+
+###############################################################################
+# link flags
+
+link_flags = [
+    '-pthread',
+]
+
+link_flags_debug = [
+]
+
+link_flags_release = [
+]
+
+if not os_darwin
+    link_flags += [
+        '-Wl,--no-undefined',
+    ]
+    link_flags_release += [
+        '-fdata-sections', '-ffunction-sections', '-Wl,--gc-sections',
+        '-Wl,--as-needed',
+        '-Wl,--strip-all',
     ]
 endif
 
 ###############################################################################
+# combine flags depending on build type
 
 if buildtype == 'debug'
-    build_flags = build_flags + build_flags_debug
-    build_flags_cpp = build_flags + build_flags_cpp + build_flags_debug_cpp
+    build_flags     += build_flags_debug
+    build_flags_cpp += build_flags_debug_cpp + build_flags
+    link_flags      += link_flags_debug
 else
-    build_flags = build_flags + build_flags_release
-    build_flags_cpp = build_flags + build_flags_cpp + build_flags_release_cpp
+    build_flags     += build_flags_release
+    build_flags_cpp += build_flags_release_cpp + build_flags
+    link_flags      += link_flags_release
 endif
 
 ###############################################################################
 # go into subdir to build libraries and plugins
 
 subdir('libs')
-# subdir('ports')
+subdir('ports-legacy')
 
 ###############################################################################

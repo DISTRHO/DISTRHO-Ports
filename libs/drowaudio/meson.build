@@ -11,6 +11,7 @@ lib_drowaudio = static_library('drowaudio',
         include_directories('..' / 'juce-legacy' / 'source' / 'modules'),
     ],
     cpp_args: build_flags_cpp,
+    dependencies: dependencies,
     pic: true,
     install: false,
 )

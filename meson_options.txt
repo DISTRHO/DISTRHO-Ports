@@ -1,29 +1,29 @@
 option('optimizations',
-    type: 'boolean', 
-    value: true, 
-    description: 'Enable SSE2 optimizations'
+    type: 'boolean',
+    value: true,
+    description: 'Enable SSE2 optimizations',
 )
 
 option('linux-embed',
-    type: 'boolean', 
+    type: 'boolean',
+    value: false,
+    description: 'DSP-only plugin builds, without editor/GUI',
+)
+
+option('build-lv2',
+    type: 'boolean',
     value: true,
-    description: 'DSP-only plugin builds, without editor/GUI'
+    description: 'Build LV2 plugin variants',
 )
 
-option('build-lv2', 
-    type: 'boolean', 
-    value: true, 
-    description: 'Build LV2 plugin variants'
+option('build-vst2',
+    type: 'boolean',
+    value: true,
+    description: 'Build VST2 plugin variants',
 )
 
-option('build-vst2', 
-    type: 'boolean', 
-    value: true, 
-    description: 'Build VST2 plugin variants'
-)
-
-option('build-vst3', 
-    type: 'boolean', 
-    value: true, 
-    description: 'Build VST3 plugin variants'
+option('build-vst3',
+    type: 'boolean',
+    value: true,
+    description: 'Build VST3 plugin variants',
 )
