@@ -216,3 +216,19 @@ subdir('libs')
 subdir('ports-legacy')
 
 ###############################################################################
+# extra files to install
+
+extra_lv2_preset_bundles = [
+    'TAL-NoiseMaker-Noise4U.lv2',
+]
+
+foreach bundle : extra_lv2_preset_bundles
+    install_data([
+            'static-lv2-ttl/@0@/manifest.ttl'.format(bundle),
+            'static-lv2-ttl/@0@/presets.ttl'.format(bundle),
+        ],
+        install_dir: lv2dir / bundle,
+    )
+endforeach
+
+###############################################################################
