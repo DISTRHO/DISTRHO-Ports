@@ -7,7 +7,6 @@ plugin_srcs = files([
     'source/SpectrumAnalyserAudioProcessorEditor.cpp',
     'source/SpectrumProcessor.cpp',
     'source/SpectrumViewer.cpp',
-    '../../libs/juce-plugin/JucePluginMain.cpp',
 ])
 
 plugin_name = 'HiReSam'

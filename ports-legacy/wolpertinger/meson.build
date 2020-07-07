@@ -4,7 +4,6 @@ if linux_embed
     plugin_srcs = files([
         'source/ADSRenv.cpp',
         'source/synth.cpp',
-        '../../libs/juce-plugin/JucePluginMain.cpp',
     ])
 else
     plugin_srcs = files([
@@ -16,7 +15,6 @@ else
         'source/editor.cpp',
         'source/synth.cpp',
         'source/tabbed-editor.cpp',
-        '../../libs/juce-plugin/JucePluginMain.cpp',
     ])
 endif
 

@@ -19,7 +19,6 @@ plugin_srcs = files([
     'source/gui/LoudnessRangeHistory.cpp',
     'source/gui/MultiChannelLoudnessBar.cpp',
     'source/gui/PreferencesPane.cpp',
-    '../../libs/juce-plugin/JucePluginMain.cpp',
 ])
 
 plugin_name = 'LUFSMeterMulti'

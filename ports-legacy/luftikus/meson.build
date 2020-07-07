@@ -4,7 +4,6 @@ if linux_embed
     plugin_srcs = files([
         'source/PluginProcessor.cpp',
         'source/dsp/eqdsp.cpp',
-        '../../libs/juce-plugin/JucePluginMain.cpp',
     ])
 else
     plugin_srcs = files([
@@ -13,7 +12,6 @@ else
         'source/PluginProcessor.cpp',
         'source/dsp/eqdsp.cpp',
         'source/gui2/BinaryData.cpp',
-        '../../libs/juce-plugin/JucePluginMain.cpp',
     ])
 endif
 

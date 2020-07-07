@@ -5,7 +5,6 @@ if linux_embed
         'source/FaustUIBridge.cpp',
         'source/BinaryData.cpp',
         'source/PluginProcessor.cpp',
-        '../../libs/juce-plugin/JucePluginMain.cpp',
     ])
 else
     plugin_srcs = files([
@@ -17,7 +16,6 @@ else
         'source/RestrictionProcessor.cpp',
         'source/SpectroscopeComponent.cpp',
         'source/TemperLookAndFeel.cpp',
-        '../../libs/juce-plugin/JucePluginMain.cpp',
     ])
 endif
 

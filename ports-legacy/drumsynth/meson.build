@@ -10,7 +10,6 @@ plugin_srcs = files([
     'source/IniParser/dictionary.cpp',
     'source/IniParser/iniparser.cpp',
     'source/Resources/DrumSynthResources.cpp',
-    '../../libs/juce-plugin/JucePluginMain.cpp',
 ])
 
 plugin_name = 'drumsynth'

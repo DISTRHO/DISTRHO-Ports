@@ -3,14 +3,12 @@
 if linux_embed
     plugin_srcs = files([
         'source/DRowAudioFilter.cpp',
-        '../../libs/juce-plugin/JucePluginMain.cpp',
     ])
 else
     plugin_srcs = files([
         'source/DRowAudioEditorComponent.cpp',
         'source/DRowAudioFilter.cpp',
         '../drowaudio-common/dRowAudio_PluginLookAndFeel.cpp',
-        '../../libs/juce-plugin/JucePluginMain.cpp',
     ])
 endif
 

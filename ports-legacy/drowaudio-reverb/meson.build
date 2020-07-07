@@ -7,7 +7,6 @@ if linux_embed
         '../drowaudio-common/dRowAudio_DelayRegister.cpp',
         '../drowaudio-common/dRowAudio_LBCF.cpp',
         '../drowaudio-common/dRowAudio_TappedDelayLine.cpp',
-        '../../libs/juce-plugin/JucePluginMain.cpp',
     ])
 else
     plugin_srcs = files([
@@ -18,7 +17,6 @@ else
         '../drowaudio-common/dRowAudio_LBCF.cpp',
         '../drowaudio-common/dRowAudio_PluginLookAndFeel.cpp',
         '../drowaudio-common/dRowAudio_TappedDelayLine.cpp',
-        '../../libs/juce-plugin/JucePluginMain.cpp',
     ])
 endif
 

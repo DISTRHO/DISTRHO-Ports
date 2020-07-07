@@ -6,7 +6,6 @@ plugin_srcs = files([
     'source/MainLayout.cpp',
     'source/PluginProcessor.cpp',
     'source/PreferencesLayout.cpp',
-    '../../libs/juce-plugin/JucePluginMain.cpp',
 ])
 
 plugin_name = 'EasySSP'

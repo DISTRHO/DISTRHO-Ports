@@ -10,7 +10,6 @@ plugin_srcs = files([
     'source/dsp/simpledetune.cpp',
     'source/gui/DelayGraph.cpp',
     'source/gui/pitcheddelaytab.cpp',
-    '../../libs/juce-plugin/JucePluginMain.cpp',
 ])
 
 plugin_name = 'PitchedDelay'

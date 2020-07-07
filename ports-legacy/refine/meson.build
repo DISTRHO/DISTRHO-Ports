@@ -10,7 +10,6 @@ plugin_srcs = files([
     'source/ReFineLookAndFeel.cpp',
     'source/RefineDsp.cpp',
     'source/Visualisation.cpp',
-    '../../libs/juce-plugin/JucePluginMain.cpp',
 ])
 
 plugin_name = 'ReFine'

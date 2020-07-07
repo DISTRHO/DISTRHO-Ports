@@ -3,13 +3,11 @@
 if linux_embed
     plugin_srcs = files([
         'source/TalCore.cpp',
-        '../../libs/juce-plugin/JucePluginMain.cpp',
     ])
 else
     plugin_srcs = files([
         'source/TalCore.cpp',
         'source/ReverbComponent.cpp',
-        '../../libs/juce-plugin/JucePluginMain.cpp',
     ])
 endif
 

@@ -15,7 +15,6 @@ plugin_srcs = files([
     'source/nkopl3.cpp',
     'source/tests.cpp',
     'source/zdopl.cpp',
-    '../../libs/juce-plugin/JucePluginMain.cpp',
 ])
 
 plugin_name = 'JuceOPL'

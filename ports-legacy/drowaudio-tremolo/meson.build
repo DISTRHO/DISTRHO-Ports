@@ -3,7 +3,6 @@
 if linux_embed
     plugin_srcs = files([
         'source/PluginProcessor.cpp',
-        '../../libs/juce-plugin/JucePluginMain.cpp',
     ])
 else
     plugin_srcs = files([
@@ -11,7 +10,6 @@ else
         'source/PluginLookAndFeel.cpp',
         'source/PluginProcessor.cpp',
         'source/TremoloBufferView.cpp',
-        '../../libs/juce-plugin/JucePluginMain.cpp',
     ])
 endif
 

@@ -10,7 +10,6 @@ plugin_srcs = files([
     'source/Filters/jucetice_AnalogFilter.cpp',
     'source/Filters/jucetice_EQ.cpp',
     'source/Filters/jucetice_Limiter.cpp',
-    '../../libs/juce-plugin/JucePluginMain.cpp',
 ])
 
 plugin_name = 'eqinox'

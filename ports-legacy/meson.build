@@ -195,7 +195,13 @@ foreach plugin : plugins
     plugin_extra_include_dirs = []
     plugin_extra_build_flags = []
     plugin_extra_link_flags = []
+    plugin_extra_format_specific_srcs = []
+
     subdir(plugin)
+
+    plugin_extra_format_specific_srcs += files([
+        '../libs/juce-plugin/JucePluginMain.cpp',
+    ])
 
     link_with_plugin = [
         lib_juce_legacy
@@ -225,10 +231,27 @@ foreach plugin : plugins
         endif
     endif
 
+    plugin_lib = static_library(plugin_name + '_lib',
+        name_prefix: '',
+        sources: plugin_srcs,
+        include_directories: [
+            include_directories(plugin / 'source'),
+            plugin_include_dirs,
+            plugin_extra_include_dirs,
+        ],
+        c_args: build_flags + build_flags_plugin + plugin_extra_build_flags,
+        cpp_args: build_flags_cpp + build_flags_plugin + plugin_extra_build_flags,
+        dependencies: dependencies_plugin + plugin_extra_dependencies,
+        pic: true,
+        install: false,
+    )
+
+    link_with_plugin += plugin_lib
+
     if build_lv2
         plugin_lv2_lib = shared_library(plugin_name + '_lv2',
             name_prefix: '',
-            sources: plugin_srcs,
+            sources: plugin_extra_format_specific_srcs,
             include_directories: [
                 include_directories(plugin / 'source'),
                 plugin_include_dirs,
@@ -238,7 +261,6 @@ foreach plugin : plugins
             cpp_args: build_flags_cpp + build_flags_plugin + build_flags_plugin_lv2 + plugin_extra_build_flags,
             link_args: link_flags + link_flags_plugin,
             link_with: link_with_plugin,
-            dependencies: dependencies_plugin + plugin_extra_dependencies,
         )
 
         plugin_lv2_dir = meson.current_build_dir() / plugin_name + '.lv2'
@@ -260,7 +282,7 @@ foreach plugin : plugins
     if build_vst2
         plugin_vst2_lib = shared_library(plugin_name,
             name_prefix: '',
-            sources: plugin_srcs,
+            sources: plugin_extra_format_specific_srcs,
             include_directories: [
                 include_directories(plugin / 'source'),
                 plugin_include_dirs,
@@ -270,7 +292,6 @@ foreach plugin : plugins
             cpp_args: build_flags_cpp + build_flags_plugin + build_flags_plugin_vst2 + plugin_extra_build_flags,
             link_args: link_flags + link_flags_plugin,
             link_with: link_with_plugin,
-            dependencies: dependencies_plugin + plugin_extra_dependencies,
             install: true,
             install_dir: vst2dir,
         )

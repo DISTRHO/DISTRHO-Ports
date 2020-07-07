@@ -26,7 +26,6 @@ plugin_srcs = files([
     'source/UI/LevelMeter.cpp',
     'source/UI/SettingsDialogComponent.cpp',
     'source/UI/WaveformComponent.cpp',
-    '../../libs/juce-plugin/JucePluginMain.cpp',
 ])
 
 plugin_name = 'KlangFalter'

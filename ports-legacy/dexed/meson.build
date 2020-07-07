@@ -27,7 +27,6 @@ plugin_srcs = files([
     'source/msfa/lfo.cc',
     'source/msfa/pitchenv.cc',
     'source/msfa/sin.cc',
-    '../../libs/juce-plugin/JucePluginMain.cpp',
 ])
 
 plugin_name = 'Dexed'

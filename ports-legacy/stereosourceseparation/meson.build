@@ -6,7 +6,6 @@ plugin_srcs = files([
     'source/PluginProcessor.cpp',
     'source/kiss_fft/kiss_fft.c',
     'source/kiss_fft/kiss_fftr.c',
-    '../../libs/juce-plugin/JucePluginMain.cpp',
 ])
 
 plugin_name = 'StereoSourceSeparation'
