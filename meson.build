@@ -21,7 +21,7 @@ build_lv2 = get_option('build-lv2')
 build_vst2 = get_option('build-vst2')
 build_vst3 = get_option('build-vst3')
 linux_embed = get_option('linux-embed')
-optimizations = get_option('optimizations')
+optimizations = get_option('optimizations') and host_machine.cpu_family().contains('x86')
 
 ###############################################################################
 # set paths
