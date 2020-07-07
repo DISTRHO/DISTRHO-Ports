@@ -1642,14 +1642,18 @@ static const void* juceLV2_ExtensionData (const char* uri)
 {
     static const LV2_Options_Interface options = { juceLV2_getOptions, juceLV2_setOptions };
     static const LV2_Programs_Interface programs = { juceLV2_getProgram, juceLV2_selectProgram };
+#if JucePlugin_WantsLV2State
     static const LV2_State_Interface state = { juceLV2_SaveState, juceLV2_RestoreState };
+#endif
 
     if (strcmp(uri, LV2_OPTIONS__interface) == 0)
         return &options;
     if (strcmp(uri, LV2_PROGRAMS__Interface) == 0)
         return &programs;
+#if JucePlugin_WantsLV2State
     if (strcmp(uri, LV2_STATE__interface) == 0)
         return &state;
+#endif
 
     return nullptr;
 }
