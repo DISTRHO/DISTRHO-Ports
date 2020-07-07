@@ -33,10 +33,6 @@
 
 #include "XEQComponent.h"
 
-#if !JucePlugin_Build_Standalone
-AudioDeviceManager deviceManager;
-#endif
-
 //==============================================================================
 XEQComponent::XEQComponent (XEQPlugin* const ownerFilter_)
     : AudioProcessorEditor (ownerFilter_),

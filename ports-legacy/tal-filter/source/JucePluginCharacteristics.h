@@ -38,9 +38,8 @@
 //==============================================================================
 /*                          Plugin Formats to build                           */
 
-#ifndef JucePlugin_Build_Standalone
- #define JUCE_ObjCExtraSuffix           tal_filter
-#endif
+#define JUCE_ObjCExtraSuffix           tal_filter
+
 //==============================================================================
 /*                              Generic settings                              */
 

@@ -38,9 +38,7 @@
 //==============================================================================
 /*                          Plugin Formats to build                           */
 
-#ifndef JucePlugin_Build_Standalone
- #define JUCE_ObjCExtraSuffix           tal_reverb2
-#endif
+#define JUCE_ObjCExtraSuffix           tal_reverb2
 
 //==============================================================================
 /*                              Generic settings                              */
