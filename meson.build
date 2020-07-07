@@ -179,6 +179,12 @@ link_flags_debug = [
 link_flags_release = [
 ]
 
+if os_windows
+    link_flags += [
+        '-static',
+    ]
+endif
+
 if not os_darwin
     link_flags += [
         '-Wl,--no-undefined',

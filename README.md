@@ -1,6 +1,8 @@
 # DISTRHO Ports
 
-DISTRHO is an open source project that has the goal of making cross-platform audio plugins and GNU/Linux ports.
+[![Build Status](https://travis-ci.org/DISTRHO/PawPaw.png)](https://travis-ci.org/DISTRHO/PawPaw)
+
+DISTRHO is an open source project with the goal of making cross-platform audio plugins and GNU/Linux ports.
 
 <b>This repository contains the GNU/Linux and LV2 ports</b>
 
@@ -10,7 +12,7 @@ To build plugins, you first need to install the following dependencies:
 
 All OSes:
 
-- premake (version 3)
+- meson
 
 GNU/Linux: (development versions of these)
 
@@ -21,27 +23,10 @@ GNU/Linux: (development versions of these)
 
 ## BUILD and INSTALL
 
-In order to build the plugins, first run:
+In order to build and install the plugins, just run the usual steps for a meson project:
 
 ```
-./scripts/premake-update.sh _OS_
-```
-
-where `_OS_` can be `linux`, `mac` or `mingw`.  
-This operation requires 'premake' (version 3) to be installed on your system.
-
-
-You are now ready to start building. Run this on the source root folder:
-
-```
-make
-```
-
-If you just want to build specific plugin versions, you can use 'make lv2' or 'make vst'.
-
-
-To build in debug mode, use this:
-
-```
-make CONFIG=Debug
+meson build --buildtype release
+ninja -C build
+ninja -C build install
 ```

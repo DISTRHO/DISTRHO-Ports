@@ -20,4 +20,10 @@ plugin_srcs = files([
 
 plugin_name = 'JuceOPL'
 
+if not os_windows
+    plugin_extra_include_dirs = include_directories([
+        'source/compat',
+    ])
+endif
+
 ###############################################################################

@@ -2,7 +2,7 @@
 #define TOMATL_WINDOWS_BITMAP_IMAGE
 
 #ifdef JUCE_WINDOWS
-#include <Windows.h>
+#include <windows.h>
 #endif
 
 // The idea of this hack is to be able use the same pixelStride used internally in windows.

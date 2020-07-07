@@ -3,9 +3,9 @@
 
 /// Jeff-Russ added guard against windows.h include if not windows:
 #ifdef _WIN32 // covers both 32 and 64-bit
-    #include <Windows.h>
+    #include <windows.h>
 #else
-    #include "windows.h"
+    #include "compat/windows.h"
 #endif
 
 /// Jeff-Russ added to replace mising itoa for xcode:

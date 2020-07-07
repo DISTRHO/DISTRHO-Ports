@@ -250,7 +250,7 @@ foreach plugin : plugins
                 'mkdir', '-p', plugin_lv2_dir, '&&',
                 'cd', plugin_lv2_dir, '&&',
                 'cp', plugin_lv2_lib.full_path(), plugin_lv2_dir / plugin_name + lib_suffix, '&&',
-                lv2_ttl_generator, '.' / plugin_name + lib_suffix,
+                meson.has_exe_wrapper() ? 'wine' : '', lv2_ttl_generator, '.' / plugin_name + lib_suffix,
             ],
             install: true,
             install_dir: lv2dir,
