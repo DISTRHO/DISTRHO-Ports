@@ -183,6 +183,25 @@ static const String makePluginFile (AudioProcessor* const filter, const int maxN
     text += "                      <" LV2_PROGRAMS__Interface "> ;\n";
     text += "\n";
 
+#ifdef JucePlugin_VersionCode
+    // Version
+    {
+        const uint32_t version = JucePlugin_VersionCode;
+
+        const uint32_t majorVersion = (version & 0xFF0000) >> 16;
+        const uint32_t microVersion = (version & 0x00FF00) >> 8;
+        /* */ uint32_t minorVersion = (version & 0x0000FF) >> 0;
+
+        // NOTE: LV2 ignores 'major' version and says 0 for minor is pre-release/unstable.
+        if (majorVersion > 0)
+            minorVersion += 2;
+
+        text += "    lv2:microVersion " + String(microVersion) + " ;\n";
+        text += "    lv2:minorVersion " + String(minorVersion) + " ;\n";
+        text += "\n";
+    }
+#endif
+
 #if ! JUCE_AUDIOPROCESSOR_NO_GUI
     // UIs
     if (filter->hasEditor())
