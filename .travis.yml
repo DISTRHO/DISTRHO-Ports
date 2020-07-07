@@ -31,8 +31,7 @@ install:
   - bash ${TRAVIS_BUILD_DIR}/.travis/install.sh
 
 script:
-  - bash ${TRAVIS_BUILD_DIR}/bootstrap.sh ${TARGET}
-  - bash ${TRAVIS_BUILD_DIR}/build.sh ${TARGET} ${PLUGINS}
+  - bash ${TRAVIS_BUILD_DIR}/.travis/script.sh
 
 #notifications:
   #email: true
