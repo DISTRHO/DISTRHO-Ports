@@ -61,13 +61,13 @@ else
 endif
 
 plugin_include_dirs = [
-    '../../libs/drowaudio/source',
-    '../../libs/juced/source',
-    '../../libs/juce-legacy',
-    '../../libs/juce-legacy/source',
-    '../../libs/juce-legacy/source/modules',
-    '../../libs/juce-plugin',
-    '../../libs/juce-plugin/juce-legacy',
+    include_directories('../libs/drowaudio/source'),
+    include_directories('../libs/juced/source'),
+    include_directories('../libs/juce-legacy'),
+    include_directories('../libs/juce-legacy/source'),
+    include_directories('../libs/juce-legacy/source/modules'),
+    include_directories('../libs/juce-plugin'),
+    include_directories('../libs/juce-plugin/juce-legacy'),
 ]
 
 ###############################################################################
@@ -120,11 +120,11 @@ link_flags_plugin = [
 
 if os_darwin
     link_flags_plugin += [
-        '-Wl,-export-symbols=../scripts/plugin-symbols.txt',
+        '-Wl,-export-symbols=' + meson.source_root() + '/scripts/plugin-symbols.txt',
     ]
 else
     link_flags_plugin += [
-        '-Wl,--version-script=../scripts/plugin-symbols.version',
+        '-Wl,--version-script=' + meson.source_root() + '/scripts/plugin-symbols.version',
     ]
 endif
 
