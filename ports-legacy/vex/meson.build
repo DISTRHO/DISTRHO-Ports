@@ -15,6 +15,6 @@ plugin_extra_format_specific_srcs = files([
     'source/VexFilter.cpp',
 ])
 
-plugin_name = 'Vex'
+plugin_name = 'vex'
 
 ###############################################################################
