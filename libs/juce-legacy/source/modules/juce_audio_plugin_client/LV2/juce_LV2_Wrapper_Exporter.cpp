@@ -116,7 +116,7 @@ static const String makeManifestFile (AudioProcessor* const filter, const String
         text += "    a <" LV2_EXTERNAL_UI__Widget "> ;\n";
         text += "    ui:binary <" + binary + PLUGIN_EXT "> ;\n";
         text += "    lv2:requiredFeature <" LV2_INSTANCE_ACCESS_URI "> ;\n";
-        text += "    lv2:extensionData <" LV2_PROGRAMS__UIInterface "> .\n";
+        text += "    lv2:optionalFeature ui:touch .\n";
         text += "\n";
 
         text += "<" + pluginURI + "#ParentUI>\n";
@@ -129,8 +129,8 @@ static const String makeManifestFile (AudioProcessor* const filter, const String
  #endif
         text += "    ui:binary <" + binary + PLUGIN_EXT "> ;\n";
         text += "    lv2:requiredFeature <" LV2_INSTANCE_ACCESS_URI "> ;\n";
-        text += "    lv2:optionalFeature ui:noUserResize ;\n";
-        text += "    lv2:extensionData <" LV2_PROGRAMS__UIInterface "> .\n";
+        text += "    lv2:optionalFeature ui:idleInterface, ui:noUserResize, ui:touch ;\n";
+        text += "    lv2:extensionData ui:idleInterface .\n";
         text += "\n";
     }
 #endif

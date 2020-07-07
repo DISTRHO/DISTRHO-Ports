@@ -395,6 +395,10 @@ class JuceLv2UIWrapper : public AudioProcessorListener,
                          public Timer
 {
 public:
+   #if JUCE_LINUX
+    static bool hostHasIdleInterface;
+   #endif
+
     JuceLv2UIWrapper (AudioProcessor* filter_, LV2UI_Write_Function writeFunction_, LV2UI_Controller controller_,
                       LV2UI_Widget* widget, const LV2_Feature* const* features, bool isExternal_)
         : filter (filter_),
@@ -527,13 +531,56 @@ public:
         }
     }
 
+    int lv2Idle()
+    {
+       #if JUCE_LINUX
+        Array<IdleMessage> idleMessagesCopy;
+
+        {
+            const ScopedLock sl(idleMessagesLock);
+            idleMessages.swapWith(idleMessagesCopy);
+        }
+
+        for (auto& msg : idleMessagesCopy)
+        {
+            switch (msg.type)
+            {
+            case IdleMessage::kMessageParameterChanged:
+                writeFunction (controller, msg.index + controlPortOffset, sizeof (float), 0, &msg.value);
+                break;
+            case IdleMessage::kMessageGestureBegin:
+                uiTouch->touch (uiTouch->handle, msg.index + controlPortOffset, true);
+                break;
+            case IdleMessage::kMessageGestureEnd:
+                uiTouch->touch (uiTouch->handle, msg.index + controlPortOffset, false);
+                break;
+            }
+        }
+       #endif
+
+        return 0;
+    }
+
     //==============================================================================
     // Juce calls
 
     void audioProcessorParameterChanged (AudioProcessor*, int index, float newValue)
     {
-        if (writeFunction != nullptr && controller != nullptr)
+        if (writeFunction == nullptr || controller == nullptr)
+            return;
+
+       #if JUCE_LINUX
+        if (hostHasIdleInterface && ! isExternal)
+        {
+            const IdleMessage msg = { IdleMessage::kMessageParameterChanged, index, newValue };
+            const ScopedLock sl(idleMessagesLock);
+            idleMessages.add(msg);
+        }
+        else
+       #endif
+        {
             writeFunction (controller, index + controlPortOffset, sizeof (float), 0, &newValue);
+        }
     }
 
     void audioProcessorChanged (AudioProcessor*)
@@ -552,14 +599,40 @@ public:
 
     void audioProcessorParameterChangeGestureBegin (AudioProcessor*, int parameterIndex)
     {
-        if (uiTouch != nullptr)
+        if (uiTouch == nullptr)
+            return;
+
+       #if JUCE_LINUX
+        if (hostHasIdleInterface && ! isExternal)
+        {
+            const IdleMessage msg = { IdleMessage::kMessageGestureBegin, parameterIndex, 0.0f };
+            const ScopedLock sl(idleMessagesLock);
+            idleMessages.add(msg);
+        }
+        else
+       #endif
+        {
             uiTouch->touch (uiTouch->handle, parameterIndex + controlPortOffset, true);
+        }
     }
 
     void audioProcessorParameterChangeGestureEnd (AudioProcessor*, int parameterIndex)
     {
-        if (uiTouch != nullptr)
+        if (uiTouch == nullptr)
+            return;
+
+       #if JUCE_LINUX
+        if (hostHasIdleInterface && ! isExternal)
+        {
+            const IdleMessage msg = { IdleMessage::kMessageGestureEnd, parameterIndex, 0.0f };
+            const ScopedLock sl(idleMessagesLock);
+            idleMessages.add(msg);
+        }
+        else
+       #endif
+        {
             uiTouch->touch (uiTouch->handle, parameterIndex + controlPortOffset, false);
+        }
     }
 
     void timerCallback()
@@ -639,9 +712,21 @@ private:
     ScopedPointer<JuceLv2ParentContainer> parentContainer;
     const LV2UI_Resize* uiResize;
 
-#if JUCE_LINUX
+   #if JUCE_LINUX
+    struct IdleMessage {
+        enum {
+            kMessageParameterChanged,
+            kMessageGestureBegin,
+            kMessageGestureEnd,
+        } type;
+        int index;
+        float value;
+    };
+    Array<IdleMessage> idleMessages;
+    CriticalSection idleMessagesLock;
+
     ScopedXDisplay display;
-#endif
+   #endif
 
     //==============================================================================
     void resetExternalUI (const LV2_Feature* const* features)
@@ -712,6 +797,9 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (JuceLv2UIWrapper)
 };
 
+#if JUCE_LINUX
+bool JuceLv2UIWrapper::hostHasIdleInterface = false;
+#endif
 #endif /* JUCE_AUDIOPROCESSOR_NO_GUI */
 
 //==============================================================================
@@ -1694,6 +1782,29 @@ static void juceLV2UI_Cleanup (LV2UI_Handle handle)
 {
     ((JuceLv2UIWrapper*)handle)->lv2Cleanup();
 }
+
+//==============================================================================
+// LV2 UI extended functions
+
+static int juceLV2UI_idle (LV2UI_Handle handle)
+{
+    return ((JuceLv2UIWrapper*)handle)->lv2Idle();
+}
+
+static const void* juceLV2UI_ExtensionData (const char* uri)
+{
+    static const LV2UI_Idle_Interface idle = { juceLV2UI_idle };
+
+    if (strcmp(uri, LV2_UI__idleInterface) == 0)
+    {
+       #if JUCE_LINUX
+        JuceLv2UIWrapper::hostHasIdleInterface = true;
+       #endif
+        return &idle;
+    }
+
+    return nullptr;
+}
 #endif
 
 //==============================================================================
@@ -1724,7 +1835,7 @@ static const LV2UI_Descriptor JuceLv2UI_Parent = {
     juceLV2UI_InstantiateParent,
     juceLV2UI_Cleanup,
     nullptr,
-    nullptr
+    juceLV2UI_ExtensionData
 };
 #endif
 
