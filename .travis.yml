@@ -1,0 +1,39 @@
+language: cpp
+
+os: linux
+
+dist: bionic
+
+jobs:
+  include:
+    # linux native build
+    - os: linux
+      compiler: gcc
+      env:
+        - TARGET="linux"
+
+    # linux with win32 cross-compilation
+    - os: linux
+      compiler: gcc
+      env:
+        - TARGET="win32"
+
+    # linux with win64 cross-compilation
+    - os: linux
+      compiler: gcc
+      env:
+        - TARGET="win64"
+
+before_install:
+  - bash ${TRAVIS_BUILD_DIR}/.travis/before_install.sh
+
+install:
+  - bash ${TRAVIS_BUILD_DIR}/.travis/install.sh
+
+script:
+  - bash ${TRAVIS_BUILD_DIR}/bootstrap.sh ${TARGET}
+  - bash ${TRAVIS_BUILD_DIR}/build.sh ${TARGET} ${PLUGINS}
+
+#notifications:
+  #email: true
+  #irc: "ircs://chat.freenode.net:7070/#kxstudio"
