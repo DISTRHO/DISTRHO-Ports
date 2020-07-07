@@ -1,6 +1,6 @@
 # DISTRHO Ports
 
-[![Build Status](https://travis-ci.org/DISTRHO/PawPaw.png)](https://travis-ci.org/DISTRHO/PawPaw)
+[![Build Status](https://travis-ci.org/DISTRHO/DISTRHO-Ports.png)](https://travis-ci.org/DISTRHO/DISTRHO-Ports)
 
 DISTRHO is an open source project with the goal of making cross-platform audio plugins and GNU/Linux ports.
 
