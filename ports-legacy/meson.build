@@ -120,11 +120,11 @@ link_flags_plugin = [
 
 if os_darwin
     link_flags_plugin += [
-        '-Wl,-export-symbols=../scripts/plugin-symbols.txt',
+        '-Wl,-export-symbols=' + meson.source_root() + '/scripts/plugin-symbols.txt',
     ]
 else
     link_flags_plugin += [
-        '-Wl,--version-script=../scripts/plugin-symbols.version',
+        '-Wl,--version-script=' + meson.source_root() + '/scripts/plugin-symbols.version',
     ]
 endif
 
