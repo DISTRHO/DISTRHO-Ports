@@ -61,7 +61,7 @@ JUCE_BEGIN_IGNORE_WARNINGS_MSVC (4996 4100)
  #define PRAGMA_ALIGN_SUPPORTED 1
 #endif
 
-#ifndef _MSC_VER
+#if ! JUCE_WINDOWS
  #define __cdecl
 #endif
 

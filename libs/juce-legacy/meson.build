@@ -32,6 +32,16 @@ else
     ]
 endif
 
+juce_legacy_extra_cpp_args = [
+    '-Wno-non-virtual-dtor',
+]
+
+if os_windows
+    juce_legacy_extra_cpp_args += [
+        '-Wno-unknown-pragmas',
+    ]
+endif
+
 lib_juce_legacy = static_library('juce-legacy',
     sources: juce_legacy_srcs,
     include_directories: [
@@ -40,7 +50,7 @@ lib_juce_legacy = static_library('juce-legacy',
         include_directories('source' / 'modules'),
         include_directories('..' / 'juced' / 'source' / 'dependancies' / 'ladspa_sdk' / 'src'),
     ],
-    cpp_args: build_flags_cpp,
+    cpp_args: build_flags_cpp + juce_legacy_extra_cpp_args,
     dependencies: dependencies,
     pic: true,
     install: false,

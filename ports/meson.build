@@ -141,6 +141,13 @@ build_flags_plugin_vst3 = [
     '-Wno-non-virtual-dtor',
 ]
 
+if os_windows
+    build_flags_plugin_vst3 += [
+        '-D_NATIVE_WCHAR_T_DEFINED',
+        '-D__wchar_t=wchar_t',
+    ]
+endif
+
 ###############################################################################
 
 foreach plugin : plugins

@@ -37,18 +37,18 @@ juce_current_extra_cpp_args = [
     '-Wno-non-virtual-dtor',
 ]
 
-# if os_windows
-juce_current_extra_cpp_args += [
-    '-D_NATIVE_WCHAR_T_DEFINED',
-    '-D__wchar_t=wchar_t',
-    '-Wno-unknown-pragmas',
-]
-if host_machine.cpu() == 'x86'
+if os_windows
     juce_current_extra_cpp_args += [
-        '-mpreferred-stack-boundary=2',
+        '-D_NATIVE_WCHAR_T_DEFINED',
+        '-D__wchar_t=wchar_t',
+        '-Wno-unknown-pragmas',
     ]
+    if host_machine.cpu() == 'x86'
+        juce_current_extra_cpp_args += [
+            '-mpreferred-stack-boundary=2',
+        ]
+    endif
 endif
-# endif
 
 lib_juce_current = static_library('juce-current',
     sources: juce_current_srcs,
