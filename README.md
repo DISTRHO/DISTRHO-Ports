@@ -4,7 +4,7 @@
 
 DISTRHO is an open source project with the goal of making cross-platform audio plugins and GNU/Linux ports.
 
-<b>This repository contains the GNU/Linux and LV2 ports</b>
+<b>This repository contains the GNU/Linux plugins and LV2 ports</b>
 
 ## BUILD DEPENDENCIES
 
