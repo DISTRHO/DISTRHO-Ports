@@ -34,6 +34,7 @@ endif
 
 juce_current_extra_cpp_args = [
     '-std=gnu++14',
+    '-Wno-non-virtual-dtor',
 ]
 
 if os_windows
@@ -42,7 +43,7 @@ if os_windows
         '-D__wchar_t=wchar_t',
         '-Wno-unknown-pragmas',
     ]
-    if host_machine.cpu() == ''
+    if host_machine.cpu() == 'x86'
         juce_current_extra_cpp_args += [
             '-mpreferred-stack-boundary=2',
         ]
