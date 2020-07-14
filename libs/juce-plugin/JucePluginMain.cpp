@@ -6,6 +6,12 @@
   ==============================================================================
 */
 
+#include "AppConfig.h"
+
+#define JUCE_GUI_BASICS_INCLUDE_XHEADERS 1
+#include "modules/juce_gui_basics/juce_gui_basics.h"
+#undef None
+
 #include "JucePluginMain.h"
 
 #if JucePlugin_Build_AU
@@ -24,12 +30,14 @@
  #else
   #include "modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp"
  #endif
+#elif JucePlugin_Build_VST3
+ #include "modules/juce_audio_plugin_client/VST3/juce_VST3_Wrapper.cpp"
 #elif JucePlugin_Build_Standalone
  #include "juce_StandaloneFilterApplication.cpp"
 #else
  #error Invalid configuration
 #endif
 
-#if ! JucePlugin_Build_Standalone
+#if ! JucePlugin_Build_Standalone && JUCE_MAJOR_VERSION < 6
  #include "modules/juce_audio_plugin_client/utility/juce_PluginUtilities.cpp"
 #endif

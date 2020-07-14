@@ -213,6 +213,7 @@ endif
 # go into subdir to build libraries and plugins
 
 subdir('libs')
+subdir('ports')
 subdir('ports-legacy')
 
 ###############################################################################
