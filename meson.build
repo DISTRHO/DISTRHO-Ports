@@ -149,6 +149,7 @@ if os_darwin
 elif os_windows
     build_flags += [
         '-DWINDOWS=1',
+        '-mstackrealign',
     ]
     build_flags_cpp += [
         '-fpermissive',
