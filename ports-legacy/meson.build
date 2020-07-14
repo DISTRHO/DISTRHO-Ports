@@ -67,7 +67,6 @@ plugin_include_dirs = [
     include_directories('../libs/juce-legacy/source'),
     include_directories('../libs/juce-legacy/source/modules'),
     include_directories('../libs/juce-plugin'),
-    include_directories('../libs/juce-plugin/juce-legacy'),
 ]
 
 ###############################################################################

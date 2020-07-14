@@ -24,7 +24,13 @@
 #elif JucePlugin_Build_VST
  // we need to include 'juce_VSTMidiEventList' before 'juce_VST_Wrapper'
  #include "modules/juce_audio_plugin_client/utility/juce_IncludeSystemHeaders.h"
+ #if JUCE_MAJOR_VERSION >= 6
+ namespace Vst2 {
+ #endif
  #include "modules/juce_audio_processors/format_types/juce_VSTInterface.h"
+ #if JUCE_MAJOR_VERSION >= 6
+ }
+ #endif
  #include "modules/juce_audio_processors/format_types/juce_VSTMidiEventList.h"
  #ifdef JUCE_MAC
   #include "modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.mm"
