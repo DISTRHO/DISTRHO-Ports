@@ -163,6 +163,7 @@ build_flags_plugin_lv2 = [
     '-DJucePlugin_Build_VST=0',
     '-DJucePlugin_Build_Standalone=0',
     '-DBINTYPE=@0@LV2'.format(bintype_prefix),
+    '-Wno-parentheses',
 ]
 
 build_flags_plugin_vst2 = [
@@ -201,6 +202,7 @@ foreach plugin : plugins
 
     plugin_extra_format_specific_srcs += files([
         '../libs/juce-plugin/JucePluginMain.cpp',
+        '../libs/juce-plugin/JucePluginUtils.cpp',
     ])
 
     link_with_plugin = [

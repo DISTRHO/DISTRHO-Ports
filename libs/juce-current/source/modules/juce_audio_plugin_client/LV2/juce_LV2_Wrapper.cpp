@@ -10,15 +10,6 @@
 #include <juce_core/system/juce_TargetPlatform.h>
 #include "../utility/juce_CheckSettingMacros.h"
 
-// #define JUCE_GUI_BASICS_INCLUDE_XHEADERS 1
-// #include "../utility/juce_IncludeModuleHeaders.h"
-
-// #include <juce_audio_processors/format_types/juce_LegacyAudioParameter.cpp>
-
-// #include "../utility/juce_CheckSettingMacros.h"
-// #include "../../juce_core/system/juce_TargetPlatform.h" // for JUCE_LINUX
-// #include "../../juce_gui_basics/juce_gui_basics.h"
-
 #if JucePlugin_Build_LV2
 
 #include "../utility/juce_IncludeSystemHeaders.h"
