@@ -188,6 +188,7 @@ build_flags_juced = [
 ###############################################################################
 
 foreach plugin : plugins
+if plugin in get_option('plugins')
     plugin_uses_drowaudio = false
     plugin_uses_juced = false
     plugin_uses_opengl = false
@@ -297,6 +298,7 @@ foreach plugin : plugins
             install_dir: vst2dir,
         )
     endif
+endif
 endforeach
 
 ###############################################################################
