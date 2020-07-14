@@ -506,7 +506,7 @@ enum PresonusExtensionConstants
 
     @tags{Audio}
 */
-struct vst2FxBank
+struct fxBank
 {
     int32 magic1;
     int32 size;
