@@ -219,7 +219,7 @@ foreach plugin : plugins
             command: [
                 'mkdir', '-p', plugin_lv2_dir, '&&',
                 'cd', plugin_lv2_dir, '&&',
-                'cp', plugin_lv2_lib.full_path(), plugin_lv2_dir / plugin_name + lib_suffix, '&&',
+                'mv', plugin_lv2_lib.full_path(), plugin_lv2_dir / plugin_name + lib_suffix, '&&',
                 (meson.is_cross_build() ? 'wine' : 'env'), lv2_ttl_generator, '.' / plugin_name + lib_suffix,
             ],
             install: true,
@@ -260,11 +260,15 @@ foreach plugin : plugins
             link_with: [ lib_juce_current, plugin_lib ],
         )
 
-        plugin_vst3 = custom_target(plugin_name + '.vst3',
+        plugin_vst3_dir = meson.current_build_dir() / plugin_name + '.vst3' / 'Contents' / host_machine.cpu_family() + '-' + host_machine.system()
+
+        plugin_vst3 = custom_target(plugin_name + '_vst3-bundle',
             output: plugin_name + '.vst3',
             input: plugin_vst3_lib,
             command: [
-                'mv', plugin_vst3_lib.full_path(), meson.current_build_dir() / plugin_name + '.vst3'
+                'mkdir', '-p', plugin_vst3_dir, '&&',
+                'cd', plugin_vst3_dir, '&&',
+                'mv', plugin_vst3_lib.full_path(), plugin_vst3_dir / plugin_name + lib_suffix,
             ],
             install: true,
             install_dir: vst3dir,
