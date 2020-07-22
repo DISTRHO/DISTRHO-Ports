@@ -41,8 +41,10 @@ if host_machine.system() == 'darwin'
     os_darwin = true
 elif host_machine.system() == 'windows'
     os_windows = true
-else
+elif host_machine.system() == 'linux'
     os_linux = true
+else
+    error('unsupported system')
 endif
 
 ###############################################################################
