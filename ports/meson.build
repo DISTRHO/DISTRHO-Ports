@@ -228,7 +228,7 @@ foreach plugin : plugins
     endif
 
     if build_vst2
-        plugin_vst2_lib = shared_library(plugin_name,
+        plugin_vst2 = shared_library(plugin_name,
             name_prefix: '',
             sources: plugin_extra_format_specific_srcs,
             include_directories: [
@@ -248,7 +248,6 @@ foreach plugin : plugins
     if build_vst3
         plugin_vst3_lib = shared_library(plugin_name + '-vst3',
             name_prefix: '',
-            name_suffix: 'vst3',
             sources: plugin_extra_format_specific_srcs,
             include_directories: [
                 include_directories(plugin),
@@ -259,6 +258,14 @@ foreach plugin : plugins
             cpp_args: build_flags_cpp + build_flags_plugin + build_flags_plugin_vst3 + build_flag_plugin_cpp + plugin_extra_build_flags,
             link_args: link_flags + link_flags_plugin,
             link_with: [ lib_juce_current, plugin_lib ],
+        )
+
+        plugin_vst3 = custom_target(plugin_name + '.vst3',
+            output: plugin_name + '.vst3',
+            input: plugin_vst3_lib,
+            command: [
+                'mv', plugin_vst3_lib.full_path(), meson.current_build_dir() / plugin_name + '.vst3'
+            ],
             install: true,
             install_dir: vst3dir,
         )
