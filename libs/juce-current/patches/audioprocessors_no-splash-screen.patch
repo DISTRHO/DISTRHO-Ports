@@ -1,0 +1,73 @@
+diff --git a/modules/juce_audio_processors/processors/juce_AudioProcessorEditor.cpp b/modules/juce_audio_processors/processors/juce_AudioProcessorEditor.cpp
+index b9df89ed9..1f40e3eaa 100644
+--- a/modules/juce_audio_processors/processors/juce_AudioProcessorEditor.cpp
++++ b/modules/juce_audio_processors/processors/juce_AudioProcessorEditor.cpp
+@@ -33,8 +33,6 @@ AudioProcessorEditor::AudioProcessorEditor (AudioProcessor* p) noexcept  : proce
+ 
+ AudioProcessorEditor::~AudioProcessorEditor()
+ {
+-    splashScreen.deleteAndZero();
+-
+     // if this fails, then the wrapper hasn't called editorBeingDeleted() on the
+     // filter for some reason..
+     jassert (processor.getActiveEditor() != this);
+@@ -49,23 +47,6 @@ void AudioProcessorEditor::hostMIDIControllerIsAvailable (bool)                {
+ 
+ void AudioProcessorEditor::initialise()
+ {
+-    /*
+-      ==========================================================================
+-       In accordance with the terms of the JUCE 5 End-Use License Agreement, the
+-       JUCE Code in SECTION A cannot be removed, changed or otherwise rendered
+-       ineffective unless you have a JUCE Indie or Pro license, or are using
+-       JUCE under the GPL v3 license.
+-
+-       End User License Agreement: www.juce.com/juce-5-licence
+-      ==========================================================================
+-    */
+-
+-    // BEGIN SECTION A
+-
+-    splashScreen = new JUCESplashScreen (*this);
+-
+-    // END SECTION A
+-
+     resizable = false;
+ 
+     attachConstrainer (&defaultConstrainer);
+diff --git a/modules/juce_audio_processors/processors/juce_AudioProcessorEditor.h b/modules/juce_audio_processors/processors/juce_AudioProcessorEditor.h
+index 847707ea8..c33cbe73d 100644
+--- a/modules/juce_audio_processors/processors/juce_AudioProcessorEditor.h
++++ b/modules/juce_audio_processors/processors/juce_AudioProcessorEditor.h
+@@ -199,7 +199,6 @@ private:
+     bool resizable;
+     ComponentBoundsConstrainer defaultConstrainer;
+     ComponentBoundsConstrainer* constrainer = {};
+-    Component::SafePointer<Component> splashScreen;
+     AffineTransform hostScaleTransform;
+ 
+     JUCE_DECLARE_NON_COPYABLE (AudioProcessorEditor)
+diff --git a/modules/juce_gui_basics/juce_gui_basics.cpp b/modules/juce_gui_basics/juce_gui_basics.cpp
+index 7c6273a54..ca0c5e227 100644
+--- a/modules/juce_gui_basics/juce_gui_basics.cpp
++++ b/modules/juce_gui_basics/juce_gui_basics.cpp
+@@ -211,7 +211,6 @@ namespace juce
+ #include "application/juce_Application.cpp"
+ #include "misc/juce_BubbleComponent.cpp"
+ #include "misc/juce_DropShadower.cpp"
+-#include "misc/juce_JUCESplashScreen.cpp"
+ 
+ #include "layout/juce_FlexBox.cpp"
+ #include "layout/juce_GridItem.cpp"
+diff --git a/modules/juce_gui_basics/juce_gui_basics.h b/modules/juce_gui_basics/juce_gui_basics.h
+index 8085c6eae..038f679fd 100644
+--- a/modules/juce_gui_basics/juce_gui_basics.h
++++ b/modules/juce_gui_basics/juce_gui_basics.h
+@@ -243,7 +243,6 @@ namespace juce
+ #include "menus/juce_BurgerMenuComponent.h"
+ #include "buttons/juce_ToolbarButton.h"
+ #include "misc/juce_DropShadower.h"
+-#include "misc/juce_JUCESplashScreen.h"
+ #include "widgets/juce_TreeView.h"
+ #include "windows/juce_TopLevelWindow.h"
+ #include "windows/juce_AlertWindow.h"

@@ -1,0 +1,54 @@
+diff --git a/modules/juce_gui_basics/windows/juce_ResizableWindow.cpp b/modules/juce_gui_basics/windows/juce_ResizableWindow.cpp
+index 712e93f43..d4d8b7c14 100644
+--- a/modules/juce_gui_basics/windows/juce_ResizableWindow.cpp
++++ b/modules/juce_gui_basics/windows/juce_ResizableWindow.cpp
+@@ -34,8 +34,6 @@ ResizableWindow::ResizableWindow (const String& name, Colour bkgnd, bool shouldA
+ 
+ ResizableWindow::~ResizableWindow()
+ {
+-    splashScreen.deleteAndZero();
+-
+     // Don't delete or remove the resizer components yourself! They're managed by the
+     // ResizableWindow, and you should leave them alone! You may have deleted them
+     // accidentally by careless use of deleteAllChildren()..?
+@@ -53,27 +51,6 @@ ResizableWindow::~ResizableWindow()
+ 
+ void ResizableWindow::initialise (const bool shouldAddToDesktop)
+ {
+-    /*
+-      ==========================================================================
+-
+-       In accordance with the terms of the JUCE 5 End-Use License Agreement, the
+-       JUCE Code in SECTION A cannot be removed, changed or otherwise rendered
+-       ineffective unless you have a JUCE Indie or Pro license, or are using
+-       JUCE under the GPL v3 license.
+-
+-       End User License Agreement: www.juce.com/juce-5-licence
+-
+-      ==========================================================================
+-    */
+-
+-    // BEGIN SECTION A
+-
+-   #if ! JucePlugin_Build_Standalone
+-    splashScreen = new JUCESplashScreen (*this);
+-   #endif
+-
+-    // END SECTION A
+-
+     defaultConstrainer.setMinimumOnscreenAmounts (0x10000, 16, 24, 16);
+ 
+     lastNonFullScreenPos.setBounds (50, 50, 256, 256);
+diff --git a/modules/juce_gui_basics/windows/juce_ResizableWindow.h b/modules/juce_gui_basics/windows/juce_ResizableWindow.h
+index 27c709cc6..01aeee19f 100644
+--- a/modules/juce_gui_basics/windows/juce_ResizableWindow.h
++++ b/modules/juce_gui_basics/windows/juce_ResizableWindow.h
+@@ -376,7 +376,7 @@ protected:
+ 
+ private:
+     //==============================================================================
+-    Component::SafePointer<Component> contentComponent, splashScreen;
++    Component::SafePointer<Component> contentComponent;
+     bool ownsContentComponent = false, resizeToFitContent = false, fullscreen = false, canDrag = true, dragStarted = false;
+     ComponentDragger dragger;
+     Rectangle<int> lastNonFullScreenPos;

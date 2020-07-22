@@ -1,0 +1,47 @@
+diff --git a/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp b/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
+index 159ab0c7c..e3d277de2 100644
+--- a/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
++++ b/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
+@@ -1058,7 +1058,7 @@ public:
+ 
+         void paint (Graphics&) override {}
+ 
+-        void getEditorBounds (Vst2::ERect& bounds)
++        void getEditorBounds (Vst2::VstEditorBounds& bounds)
+         {
+             auto b = getSizeToContainChild();
+             bounds = convertToHostBounds ({ 0, 0, (int16) b.getHeight(), (int16) b.getWidth() });
+@@ -1199,8 +1199,8 @@ public:
+         void resizeHostWindow (int newWidth, int newHeight)
+         {
+             auto rect = convertToHostBounds ({ 0, 0, (int16) newHeight, (int16) newWidth });
+-            newWidth = rect.right - rect.left;
+-            newHeight = rect.bottom - rect.top;
++            newWidth = rect.rightmost - rect.leftmost;
++            newHeight = rect.lower - rect.upper;
+ 
+             bool sizeWasSuccessful = false;
+ 
+@@ -1329,17 +1329,17 @@ public:
+        #endif
+ 
+         //==============================================================================
+-        static Vst2::ERect convertToHostBounds (const Vst2::ERect& rect)
++        static Vst2::VstEditorBounds convertToHostBounds (const Vst2::VstEditorBounds& rect)
+         {
+             auto desktopScale = Desktop::getInstance().getGlobalScaleFactor();
+ 
+             if (approximatelyEqual (desktopScale, 1.0f))
+                 return rect;
+ 
+-            return { (int16) roundToInt (rect.top    * desktopScale),
+-                     (int16) roundToInt (rect.left   * desktopScale),
+-                     (int16) roundToInt (rect.bottom * desktopScale),
+-                     (int16) roundToInt (rect.right  * desktopScale)};
++            return { (int16) roundToInt (rect.upper      * desktopScale),
++                     (int16) roundToInt (rect.leftmost   * desktopScale),
++                     (int16) roundToInt (rect.lower      * desktopScale),
++                     (int16) roundToInt (rect.rightmost  * desktopScale)};
+         }
+ 
+         //==============================================================================

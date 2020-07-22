@@ -1,0 +1,15 @@
+diff --git a/modules/juce_core/threads/juce_WaitableEvent.h b/modules/juce_core/threads/juce_WaitableEvent.h
+index 3e31a9772..766d45f75 100644
+--- a/modules/juce_core/threads/juce_WaitableEvent.h
++++ b/modules/juce_core/threads/juce_WaitableEvent.h
+@@ -20,6 +20,10 @@
+   ==============================================================================
+ */
+ 
++#if JUCE_MINGW
++#include "mingw-std-threads/mingw.condition_variable.h"
++#endif
++
+ namespace juce
+ {
+ 

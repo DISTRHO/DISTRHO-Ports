@@ -1,0 +1,34 @@
+diff --git a/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp b/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
+index d0c1884db..c87b97d49 100644
+--- a/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
++++ b/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
+@@ -210,9 +210,9 @@ struct SharedMessageThread  : public Thread
+     void run() override
+     {
+         initialiseJuce_GUI();
+-        initialised = true;
+ 
+         MessageManager::getInstance()->setCurrentThreadAsMessageThread();
++        initialised = true;
+ 
+         while ((! threadShouldExit()) && MessageManager::getInstance()->runDispatchLoopUntil (250))
+         {}
+@@ -300,9 +300,6 @@ public:
+         // You must at least have some channels
+         jassert (processor->isMidiEffect() || (maxNumInChannels > 0 || maxNumOutChannels > 0));
+ 
+-        if (processor->isMidiEffect())
+-            maxNumInChannels = maxNumOutChannels = 2;
+-
+        #ifdef JucePlugin_PreferredChannelConfigurations
+         processor->setPlayConfigDetails (maxNumInChannels, maxNumOutChannels, 44100.0, 1024);
+        #endif
+@@ -1827,7 +1824,7 @@ private:
+ 
+     pointer_sized_int handleGetPlugInName (VstOpCodeArguments args)
+     {
+-        String (JucePlugin_Name).copyToUTF8 ((char*) args.ptr, 64 + 1);
++        String (processor->getName()).copyToUTF8 ((char*) args.ptr, 64 + 1);
+         return 1;
+     }
+ 

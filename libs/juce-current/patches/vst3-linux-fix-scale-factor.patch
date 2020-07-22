@@ -1,0 +1,53 @@
+diff --git a/modules/juce_audio_plugin_client/VST3/juce_VST3_Wrapper.cpp b/modules/juce_audio_plugin_client/VST3/juce_VST3_Wrapper.cpp
+index 4a62a262b..e00d02fbe 100644
+--- a/modules/juce_audio_plugin_client/VST3/juce_VST3_Wrapper.cpp
++++ b/modules/juce_audio_plugin_client/VST3/juce_VST3_Wrapper.cpp
+@@ -1177,8 +1177,26 @@ private:
+             if (size != nullptr && component != nullptr)
+             {
+                 auto editorBounds = component->getSizeToContainChild();
++                auto width = editorBounds.getWidth();
++                auto height = editorBounds.getHeight();
+ 
+-                *size = convertToHostBounds ({ 0, 0, editorBounds.getWidth(), editorBounds.getHeight() });
++               #if JUCE_LINUX
++                if (component != nullptr)
++                {
++                    if (auto* peer = component->getPeer())
++                    {
++                        auto scale = (float) peer->getPlatformScaleFactor();
++
++                        if (! approximatelyEqual (scale, 1.0f))
++                        {
++                            width  *= scale;
++                            height *= scale;
++                        }
++                    }
++                }
++               #endif
++
++                *size = convertToHostBounds ({ 0, 0, width, height });
+                 return kResultTrue;
+             }
+ 
+@@ -1464,7 +1482,19 @@ private:
+ 
+                     if (owner.plugFrame != nullptr)
+                     {
+-                        auto newSize = convertToHostBounds ({ 0, 0, b.getWidth(), b.getHeight() });
++                       #if JUCE_LINUX
++                        if (auto* peer = getPeer())
++                        {
++                            auto scale = (float) peer->getPlatformScaleFactor();
++
++                            if (! approximatelyEqual (scale, 1.0f))
++                            {
++                                w *= scale;
++                                h *= scale;
++                            }
++                        }
++                       #endif
++                        auto newSize = convertToHostBounds ({ 0, 0, w, h });
+ 
+                         {
+                             const ScopedValueSetter<bool> resizingParentSetter (resizingParent, true);
