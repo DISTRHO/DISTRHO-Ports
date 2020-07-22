@@ -1,4 +1,17 @@
+# LV2
 lv2_generate_ttl
 lv2_descriptor
 lv2ui_descriptor
+
+# VST2
 VSTPluginMain
+
+# VST3
+DllMain
+InitDll
+ExitDll
+ModuleEntry
+ModuleExit
+bundleEntry
+bundleExit
+GetPluginFactory
