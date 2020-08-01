@@ -14,4 +14,10 @@ plugin_srcs = files([
 
 plugin_name = 'PitchedDelay'
 
+if host_machine.cpu_family() == 'arm'
+    plugin_extra_build_flags = [
+        '-mfpu=neon',
+    ]
+endif
+
 ###############################################################################
