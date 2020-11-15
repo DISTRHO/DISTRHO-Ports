@@ -58,6 +58,10 @@
 namespace juce
 {
 
+#if MAC_OS_X_VERSION_MIN_REQUIRED <= MAC_OS_X_VERSION_10_8
+static const uint32 kAudioUnitType_MIDIProcessor = 'aumi';
+#endif
+
 // Change this to disable logging of various activities
 #ifndef AU_LOGGING
  #define AU_LOGGING 1
@@ -274,7 +278,7 @@ namespace AudioUnitFormatHelpers
                     NSBundle* bundle = [[NSBundle alloc] initWithPath: (NSString*) fileOrIdentifier.toCFString()];
 
                     NSArray* audioComponents = [bundle objectForInfoDictionaryKey: @"AudioComponents"];
-                    NSDictionary* dict = audioComponents[0];
+                    NSDictionary* dict = [audioComponents objectAtIndex: 0];
 
                     desc.componentManufacturer = stringToOSType (nsStringToJuce ((NSString*) [dict valueForKey: @"manufacturer"]));
                     desc.componentType         = stringToOSType (nsStringToJuce ((NSString*) [dict valueForKey: @"type"]));

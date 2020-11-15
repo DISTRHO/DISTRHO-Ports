@@ -71,7 +71,7 @@ inline NSArray* varArrayToNSArray (const var& varToParse);
 
 inline NSDictionary* varObjectToNSDictionary (const var& varToParse)
 {
-    auto dictionary = [NSMutableDictionary dictionary];
+    NSDictionary* dictionary = [NSMutableDictionary dictionary];
 
     if (varToParse.isObject())
     {
@@ -118,7 +118,7 @@ inline NSArray* varArrayToNSArray (const var& varToParse)
 
     const auto* varArray = varToParse.getArray();
 
-    auto array = [NSMutableArray arrayWithCapacity: (NSUInteger) varArray->size()];
+    NSArray* array = [NSMutableArray arrayWithCapacity: (NSUInteger) varArray->size()];
 
     for (const auto& aVar : *varArray)
     {
@@ -152,7 +152,8 @@ inline var nsDictionaryToVar (NSDictionary* dictionary)
     DynamicObject::Ptr dynamicObject (new DynamicObject());
 
     for (NSString* key in dictionary)
-        dynamicObject->setProperty (nsStringToJuce (key), nsObjectToVar (dictionary[key]));
+        dynamicObject->setProperty (nsStringToJuce (key),
+                                    nsObjectToVar ([dictionary objectForKey: key]));
 
     return var (dynamicObject.get());
 }
