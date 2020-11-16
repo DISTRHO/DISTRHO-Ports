@@ -1,8 +1,8 @@
 diff --git a/modules/juce_audio_processors/processors/juce_AudioProcessor.h b/modules/juce_audio_processors/processors/juce_AudioProcessor.h
-index 5e538d5e1..626c5d182 100644
+index ae60fde15..dbad562ef 100644
 --- a/modules/juce_audio_processors/processors/juce_AudioProcessor.h
 +++ b/modules/juce_audio_processors/processors/juce_AudioProcessor.h
-@@ -1109,6 +1109,11 @@ public:
+@@ -1116,6 +1116,11 @@ public:
      /** This method is called when the layout of the audio processor changes. */
      virtual void processorLayoutsChanged();
  
@@ -14,3 +14,11 @@ index 5e538d5e1..626c5d182 100644
      //==============================================================================
      /** Adds a listener that will be called when an aspect of this processor changes. */
      virtual void addListener (AudioProcessorListener* newListener);
+@@ -1200,6 +1205,7 @@ public:
+         wrapperType_AudioUnitv3,
+         wrapperType_RTAS,
+         wrapperType_AAX,
++        wrapperType_LV2,
+         wrapperType_Standalone,
+         wrapperType_Unity
+     };

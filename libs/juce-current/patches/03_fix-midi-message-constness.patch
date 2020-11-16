@@ -1,5 +1,5 @@
 diff --git a/modules/juce_audio_basics/midi/juce_MidiMessage.h b/modules/juce_audio_basics/midi/juce_MidiMessage.h
-index 5628c3ae9..207bb9a0b 100644
+index 2d9e5adf0..30a609cec 100644
 --- a/modules/juce_audio_basics/midi/juce_MidiMessage.h
 +++ b/modules/juce_audio_basics/midi/juce_MidiMessage.h
 @@ -945,7 +945,7 @@ private:

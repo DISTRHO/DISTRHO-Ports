@@ -1,8 +1,8 @@
 diff --git a/modules/juce_audio_processors/processors/juce_AudioProcessorEditor.cpp b/modules/juce_audio_processors/processors/juce_AudioProcessorEditor.cpp
-index b9df89ed9..1f40e3eaa 100644
+index 6a84b4eaf..670cb3969 100644
 --- a/modules/juce_audio_processors/processors/juce_AudioProcessorEditor.cpp
 +++ b/modules/juce_audio_processors/processors/juce_AudioProcessorEditor.cpp
-@@ -33,8 +33,6 @@ AudioProcessorEditor::AudioProcessorEditor (AudioProcessor* p) noexcept  : proce
+@@ -40,8 +40,6 @@ AudioProcessorEditor::AudioProcessorEditor (AudioProcessor* p) noexcept  : proce
  
  AudioProcessorEditor::~AudioProcessorEditor()
  {
@@ -11,7 +11,7 @@ index b9df89ed9..1f40e3eaa 100644
      // if this fails, then the wrapper hasn't called editorBeingDeleted() on the
      // filter for some reason..
      jassert (processor.getActiveEditor() != this);
-@@ -49,23 +47,6 @@ void AudioProcessorEditor::hostMIDIControllerIsAvailable (bool)                {
+@@ -56,23 +54,6 @@ void AudioProcessorEditor::hostMIDIControllerIsAvailable (bool)                {
  
  void AudioProcessorEditor::initialise()
  {
@@ -36,10 +36,10 @@ index b9df89ed9..1f40e3eaa 100644
  
      attachConstrainer (&defaultConstrainer);
 diff --git a/modules/juce_audio_processors/processors/juce_AudioProcessorEditor.h b/modules/juce_audio_processors/processors/juce_AudioProcessorEditor.h
-index 847707ea8..c33cbe73d 100644
+index ff694b78f..07d3765f4 100644
 --- a/modules/juce_audio_processors/processors/juce_AudioProcessorEditor.h
 +++ b/modules/juce_audio_processors/processors/juce_AudioProcessorEditor.h
-@@ -199,7 +199,6 @@ private:
+@@ -206,7 +206,6 @@ private:
      bool resizable;
      ComponentBoundsConstrainer defaultConstrainer;
      ComponentBoundsConstrainer* constrainer = {};
@@ -48,10 +48,10 @@ index 847707ea8..c33cbe73d 100644
  
      JUCE_DECLARE_NON_COPYABLE (AudioProcessorEditor)
 diff --git a/modules/juce_gui_basics/juce_gui_basics.cpp b/modules/juce_gui_basics/juce_gui_basics.cpp
-index 7c6273a54..ca0c5e227 100644
+index 056ff591b..a4d798606 100644
 --- a/modules/juce_gui_basics/juce_gui_basics.cpp
 +++ b/modules/juce_gui_basics/juce_gui_basics.cpp
-@@ -211,7 +211,6 @@ namespace juce
+@@ -218,7 +218,6 @@ namespace juce
  #include "application/juce_Application.cpp"
  #include "misc/juce_BubbleComponent.cpp"
  #include "misc/juce_DropShadower.cpp"
@@ -60,10 +60,10 @@ index 7c6273a54..ca0c5e227 100644
  #include "layout/juce_FlexBox.cpp"
  #include "layout/juce_GridItem.cpp"
 diff --git a/modules/juce_gui_basics/juce_gui_basics.h b/modules/juce_gui_basics/juce_gui_basics.h
-index 8085c6eae..038f679fd 100644
+index fc4acbd6b..d20a707a3 100644
 --- a/modules/juce_gui_basics/juce_gui_basics.h
 +++ b/modules/juce_gui_basics/juce_gui_basics.h
-@@ -243,7 +243,6 @@ namespace juce
+@@ -250,7 +250,6 @@ namespace juce
  #include "menus/juce_BurgerMenuComponent.h"
  #include "buttons/juce_ToolbarButton.h"
  #include "misc/juce_DropShadower.h"
@@ -71,3 +71,57 @@ index 8085c6eae..038f679fd 100644
  #include "widgets/juce_TreeView.h"
  #include "windows/juce_TopLevelWindow.h"
  #include "windows/juce_AlertWindow.h"
+diff --git a/modules/juce_gui_basics/windows/juce_ResizableWindow.cpp b/modules/juce_gui_basics/windows/juce_ResizableWindow.cpp
+index e78d4d330..d1d20d6c7 100644
+--- a/modules/juce_gui_basics/windows/juce_ResizableWindow.cpp
++++ b/modules/juce_gui_basics/windows/juce_ResizableWindow.cpp
+@@ -41,8 +41,6 @@ ResizableWindow::ResizableWindow (const String& name, Colour bkgnd, bool shouldA
+ 
+ ResizableWindow::~ResizableWindow()
+ {
+-    splashScreen.deleteAndZero();
+-
+     // Don't delete or remove the resizer components yourself! They're managed by the
+     // ResizableWindow, and you should leave them alone! You may have deleted them
+     // accidentally by careless use of deleteAllChildren()..?
+@@ -60,27 +58,6 @@ ResizableWindow::~ResizableWindow()
+ 
+ void ResizableWindow::initialise (const bool shouldAddToDesktop)
+ {
+-    /*
+-      ==========================================================================
+-
+-       In accordance with the terms of the JUCE 5 End-Use License Agreement, the
+-       JUCE Code in SECTION A cannot be removed, changed or otherwise rendered
+-       ineffective unless you have a JUCE Indie or Pro license, or are using
+-       JUCE under the GPL v3 license.
+-
+-       End User License Agreement: www.juce.com/juce-5-licence
+-
+-      ==========================================================================
+-    */
+-
+-    // BEGIN SECTION A
+-
+-   #if ! JucePlugin_Build_Standalone
+-    splashScreen = new JUCESplashScreen (*this);
+-   #endif
+-
+-    // END SECTION A
+-
+     defaultConstrainer.setMinimumOnscreenAmounts (0x10000, 16, 24, 16);
+ 
+     lastNonFullScreenPos.setBounds (50, 50, 256, 256);
+diff --git a/modules/juce_gui_basics/windows/juce_ResizableWindow.h b/modules/juce_gui_basics/windows/juce_ResizableWindow.h
+index d67303595..e59f620c1 100644
+--- a/modules/juce_gui_basics/windows/juce_ResizableWindow.h
++++ b/modules/juce_gui_basics/windows/juce_ResizableWindow.h
+@@ -383,7 +383,7 @@ protected:
+ 
+ private:
+     //==============================================================================
+-    Component::SafePointer<Component> contentComponent, splashScreen;
++    Component::SafePointer<Component> contentComponent;
+     bool ownsContentComponent = false, resizeToFitContent = false, fullscreen = false, canDrag = true, dragStarted = false;
+     ComponentDragger dragger;
+     Rectangle<int> lastNonFullScreenPos;

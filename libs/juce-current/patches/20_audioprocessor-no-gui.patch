@@ -1,8 +1,8 @@
 diff --git a/modules/juce_audio_processors/juce_audio_processors.cpp b/modules/juce_audio_processors/juce_audio_processors.cpp
-index c468c944c..133d1ad45 100644
+index ac194a19d..f494ec3a2 100644
 --- a/modules/juce_audio_processors/juce_audio_processors.cpp
 +++ b/modules/juce_audio_processors/juce_audio_processors.cpp
-@@ -40,7 +40,7 @@
+@@ -47,7 +47,7 @@
   #endif
  #endif
  
@@ -11,7 +11,7 @@ index c468c944c..133d1ad45 100644
   #include <X11/Xlib.h>
   #include <X11/Xutil.h>
   #include <sys/utsname.h>
-@@ -130,9 +130,11 @@ JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE ("-Wdeprecated-declarations", "-Wcast-align"
+@@ -141,9 +141,11 @@ JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE ("-Wdeprecated-declarations", "-Wcast-align"
  #include "format_types/juce_LegacyAudioParameter.cpp"
  #include "processors/juce_AudioProcessor.cpp"
  #include "processors/juce_AudioPluginInstance.cpp"
@@ -26,10 +26,10 @@ index c468c944c..133d1ad45 100644
  #include "format_types/juce_LADSPAPluginFormat.cpp"
  #include "format_types/juce_VSTPluginFormat.cpp"
 diff --git a/modules/juce_audio_processors/processors/juce_AudioProcessor.cpp b/modules/juce_audio_processors/processors/juce_AudioProcessor.cpp
-index d8efe0707..7c83196e9 100644
+index caa55b618..41c547b0c 100644
 --- a/modules/juce_audio_processors/processors/juce_AudioProcessor.cpp
 +++ b/modules/juce_audio_processors/processors/juce_AudioProcessor.cpp
-@@ -44,12 +44,14 @@ AudioProcessor::AudioProcessor (const BusesProperties& ioConfig)
+@@ -51,12 +51,14 @@ AudioProcessor::AudioProcessor (const BusesProperties& ioConfig)
  
  AudioProcessor::~AudioProcessor()
  {
@@ -44,7 +44,7 @@ index d8efe0707..7c83196e9 100644
  
     #if JUCE_DEBUG && ! JUCE_DISABLE_AUDIOPROCESSOR_BEGIN_END_GESTURE_CHECKING
      // This will fail if you've called beginParameterChangeGesture() for one
-@@ -797,6 +799,7 @@ void AudioProcessor::audioIOChanged (bool busNumberChanged, bool channelNumChang
+@@ -804,6 +806,7 @@ void AudioProcessor::audioIOChanged (bool busNumberChanged, bool channelNumChang
      processorLayoutsChanged();
  }
  
@@ -52,7 +52,7 @@ index d8efe0707..7c83196e9 100644
  //==============================================================================
  void AudioProcessor::editorBeingDeleted (AudioProcessorEditor* const editor) noexcept
  {
-@@ -833,6 +836,7 @@ AudioProcessorEditor* AudioProcessor::createEditorIfNeeded()
+@@ -840,6 +843,7 @@ AudioProcessorEditor* AudioProcessor::createEditorIfNeeded()
  
      return ed;
  }
@@ -61,10 +61,10 @@ index d8efe0707..7c83196e9 100644
  //==============================================================================
  void AudioProcessor::getCurrentProgramStateInformation (juce::MemoryBlock& destData)
 diff --git a/modules/juce_audio_processors/processors/juce_AudioProcessor.h b/modules/juce_audio_processors/processors/juce_AudioProcessor.h
-index 8d3cd062e..34a192dc5 100644
+index dbad562ef..ab9e8a7d6 100644
 --- a/modules/juce_audio_processors/processors/juce_AudioProcessor.h
 +++ b/modules/juce_audio_processors/processors/juce_AudioProcessor.h
-@@ -919,6 +919,7 @@ public:
+@@ -926,6 +926,7 @@ public:
      */
      virtual void setNonRealtime (bool isNonRealtime) noexcept;
  
@@ -72,7 +72,7 @@ index 8d3cd062e..34a192dc5 100644
      //==============================================================================
      /** Creates the processor's GUI.
  
-@@ -968,6 +969,7 @@ public:
+@@ -975,6 +976,7 @@ public:
          This may call createEditor() internally to create the component.
      */
      AudioProcessorEditor* createEditorIfNeeded();
@@ -80,9 +80,9 @@ index 8d3cd062e..34a192dc5 100644
  
      //==============================================================================
      /** Returns the default number of steps for a parameter.
-@@ -1184,9 +1186,11 @@ public:
+@@ -1191,9 +1193,11 @@ public:
  
-     virtual CurveData getResponseCurve (CurveData::Type /*curveType*/) const      { return {}; }
+     virtual CurveData getResponseCurve (CurveData::Type /*curveType*/) const      { return CurveData(); }
  
 +   #if ! JUCE_AUDIOPROCESSOR_NO_GUI
      //==============================================================================
@@ -92,7 +92,7 @@ index 8d3cd062e..34a192dc5 100644
  
      /** Flags to indicate the type of plugin context in which a processor is being used. */
      enum WrapperType
-@@ -1461,7 +1465,9 @@ private:
+@@ -1468,7 +1472,9 @@ private:
  
      //==============================================================================
      Array<AudioProcessorListener*> listeners;
@@ -103,10 +103,10 @@ index 8d3cd062e..34a192dc5 100644
      int blockSize = 0, latencySamples = 0;
      bool suspended = false;
 diff --git a/modules/juce_audio_processors/processors/juce_AudioProcessorGraph.cpp b/modules/juce_audio_processors/processors/juce_AudioProcessorGraph.cpp
-index 7d2ac0047..dcdaea84d 100644
+index fd8c35879..070f82554 100644
 --- a/modules/juce_audio_processors/processors/juce_AudioProcessorGraph.cpp
 +++ b/modules/juce_audio_processors/processors/juce_AudioProcessorGraph.cpp
-@@ -1490,8 +1490,10 @@ bool AudioProcessorGraph::AudioGraphIOProcessor::producesMidi() const
+@@ -1496,8 +1496,10 @@ bool AudioProcessorGraph::AudioGraphIOProcessor::producesMidi() const
  bool AudioProcessorGraph::AudioGraphIOProcessor::isInput() const noexcept           { return type == audioInputNode  || type == midiInputNode; }
  bool AudioProcessorGraph::AudioGraphIOProcessor::isOutput() const noexcept          { return type == audioOutputNode || type == midiOutputNode; }
  
@@ -118,10 +118,10 @@ index 7d2ac0047..dcdaea84d 100644
  int AudioProcessorGraph::AudioGraphIOProcessor::getNumPrograms()                    { return 0; }
  int AudioProcessorGraph::AudioGraphIOProcessor::getCurrentProgram()                 { return 0; }
 diff --git a/modules/juce_audio_processors/processors/juce_AudioProcessorGraph.h b/modules/juce_audio_processors/processors/juce_AudioProcessorGraph.h
-index 93b2d75a4..23d1670d4 100644
+index a16e35df0..8d2221f1e 100644
 --- a/modules/juce_audio_processors/processors/juce_AudioProcessorGraph.h
 +++ b/modules/juce_audio_processors/processors/juce_AudioProcessorGraph.h
-@@ -348,8 +348,10 @@ public:
+@@ -355,8 +355,10 @@ public:
          bool acceptsMidi() const override;
          bool producesMidi() const override;
  
@@ -132,7 +132,7 @@ index 93b2d75a4..23d1670d4 100644
  
          int getNumPrograms() override;
          int getCurrentProgram() override;
-@@ -385,8 +387,10 @@ public:
+@@ -392,8 +394,10 @@ public:
      bool acceptsMidi() const override;
      bool producesMidi() const override;
  

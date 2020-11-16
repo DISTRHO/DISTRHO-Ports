@@ -1,5 +1,5 @@
 diff --git a/modules/juce_core/native/juce_posix_SharedCode.h b/modules/juce_core/native/juce_posix_SharedCode.h
-index 1fc1f00b7..2b0e16844 100644
+index 982db865b..cfdd2d1cd 100644
 --- a/modules/juce_core/native/juce_posix_SharedCode.h
 +++ b/modules/juce_core/native/juce_posix_SharedCode.h
 @@ -590,12 +590,39 @@ File juce_getExecutableFile()

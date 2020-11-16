@@ -1,5 +1,5 @@
 diff --git a/modules/juce_core/native/juce_linux_Files.cpp b/modules/juce_core/native/juce_linux_Files.cpp
-index e794447c3..4f8918375 100644
+index d2a302e3e..3dc4602ce 100644
 --- a/modules/juce_core/native/juce_linux_Files.cpp
 +++ b/modules/juce_core/native/juce_linux_Files.cpp
 @@ -211,15 +211,21 @@ bool Process::openDocument (const String& fileName, const String& parameters)
@@ -28,7 +28,7 @@ index e794447c3..4f8918375 100644
  
      return cpid >= 0;
 diff --git a/modules/juce_core/native/juce_mac_Files.mm b/modules/juce_core/native/juce_mac_Files.mm
-index 73ed29f4e..d6c4fcf3e 100644
+index d26443079..616677e1f 100644
 --- a/modules/juce_core/native/juce_mac_Files.mm
 +++ b/modules/juce_core/native/juce_mac_Files.mm
 @@ -92,23 +92,22 @@ namespace MacFileHelpers
@@ -65,10 +65,10 @@ index 73ed29f4e..d6c4fcf3e 100644
     #endif
  }
 diff --git a/modules/juce_core/native/juce_posix_SharedCode.h b/modules/juce_core/native/juce_posix_SharedCode.h
-index 2b0e16844..fc04da66a 100644
+index cfdd2d1cd..332a64959 100644
 --- a/modules/juce_core/native/juce_posix_SharedCode.h
 +++ b/modules/juce_core/native/juce_posix_SharedCode.h
-@@ -1090,7 +1090,18 @@ public:
+@@ -1092,7 +1092,18 @@ public:
  
          if (pipe (pipeHandles) == 0)
          {
@@ -88,7 +88,7 @@ index 2b0e16844..fc04da66a 100644
  
              if (result < 0)
              {
-@@ -1099,6 +1110,7 @@ public:
+@@ -1101,6 +1112,7 @@ public:
              }
              else if (result == 0)
              {
@@ -96,7 +96,7 @@ index 2b0e16844..fc04da66a 100644
                  // we're the child process..
                  close (pipeHandles[0]);   // close the read handle
  
-@@ -1113,17 +1125,10 @@ public:
+@@ -1115,17 +1127,10 @@ public:
                      dup2 (open ("/dev/null", O_WRONLY), STDERR_FILENO);
  
                  close (pipeHandles[1]);
