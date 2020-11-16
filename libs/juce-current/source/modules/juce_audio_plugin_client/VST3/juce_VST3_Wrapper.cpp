@@ -27,9 +27,9 @@
 #include <juce_core/system/juce_TargetPlatform.h>
 
 //==============================================================================
-#if JucePlugin_Build_VST3 && (__APPLE_CPP__ || __APPLE_CC__ || _WIN32 || _WIN64 || LINUX || __linux__)
+#if JucePlugin_Build_VST3 && (JUCE_MAC || JUCE_WINDOWS || JUCE_LINUX)
 
-#if JUCE_PLUGINHOST_VST3 && (JUCE_MAC || JUCE_WINDOWS || JUCE_LINUX)
+#if JUCE_PLUGINHOST_VST3
  #if JUCE_MAC
   #include <CoreFoundation/CoreFoundation.h>
  #endif
@@ -44,8 +44,8 @@
 #define JUCE_GUI_BASICS_INCLUDE_XHEADERS 1
 
 #include "../utility/juce_CheckSettingMacros.h"
-#include "../utility/juce_IncludeModuleHeaders.h"
 #include "../utility/juce_IncludeSystemHeaders.h"
+#include "../utility/juce_IncludeModuleHeaders.h"
 #include "../utility/juce_WindowsHooks.h"
 #include "../utility/juce_FakeMouseMoveGenerator.h"
 #include <juce_audio_processors/format_types/juce_LegacyAudioParameter.cpp>
@@ -56,10 +56,16 @@
 #endif
 
 #if JUCE_VST3_CAN_REPLACE_VST2
-namespace Vst2
-{
-#include "pluginterfaces/vst2.x/vstfxstore.h"
-}
+
+ #if ! JUCE_MSVC
+  #define __cdecl
+ #endif
+
+ namespace Vst2
+ {
+ #include "pluginterfaces/vst2.x/vstfxstore.h"
+ }
+
 #endif
 
 #ifndef JUCE_VST3_EMULATE_MIDI_CC_WITH_PARAMETERS
@@ -69,6 +75,8 @@ namespace Vst2
 #endif
 
 #if JUCE_LINUX
+ #include <unordered_map>
+
  std::vector<std::pair<int, std::function<void (int)>>> getFdReadCallbacks();
 #endif
 
@@ -1950,10 +1958,10 @@ public:
    #if JUCE_VST3_CAN_REPLACE_VST2
     bool loadVST2VstWBlock (const char* data, int size)
     {
-        jassert ('VstW' == htonl (readUnaligned<juce::int32> (data)));
-        jassert (1 == htonl (readUnaligned<juce::int32> (data + 8))); // version should be 1 according to Steinberg's docs
+        jassert (ByteOrder::bigEndianInt ("VstW") == htonl ((uint32) readUnaligned<int32> (data)));
+        jassert (1 == htonl ((uint32) readUnaligned<int32> (data + 8))); // version should be 1 according to Steinberg's docs
 
-        auto headerLen = (int) htonl (readUnaligned<juce::int32> (data + 4)) + 8;
+        auto headerLen = (int) htonl ((uint32) readUnaligned<int32> (data + 4)) + 8;
         return loadVST2CcnKBlock (data + headerLen, size - headerLen);
     }
 
@@ -1961,14 +1969,14 @@ public:
     {
         auto* bank = reinterpret_cast<const Vst2::fxBank*> (data);
 
-        jassert ('CcnK' == htonl (bank->chunkMagic));
-        jassert ('FBCh' == htonl (bank->fxMagic));
-        jassert (htonl (bank->version) == 1 || htonl (bank->version) == 2);
-        jassert (JucePlugin_VSTUniqueID == htonl (bank->fxID));
+        jassert (ByteOrder::bigEndianInt ("CcnK") == htonl ((uint32) bank->chunkMagic));
+        jassert (ByteOrder::bigEndianInt ("FBCh") == htonl ((uint32) bank->fxMagic));
+        jassert (htonl ((uint32) bank->version) == 1 || htonl ((uint32) bank->version) == 2);
+        jassert (JucePlugin_VSTUniqueID == htonl ((uint32) bank->fxID));
 
         setStateInformation (bank->content.data.chunk,
                              jmin ((int) (size - (bank->content.data.chunk - data)),
-                                   (int) htonl (bank->content.data.size)));
+                                   (int) htonl ((uint32) bank->content.data.size)));
         return true;
     }
 
@@ -1997,7 +2005,7 @@ public:
                 auto chunkOffset = ByteOrder::littleEndianInt64 (data + entryOffset + 4);
                 auto chunkSize   = ByteOrder::littleEndianInt64 (data + entryOffset + 12);
 
-                if (chunkOffset + chunkSize > static_cast<juce::uint64> (size))
+                if (static_cast<uint64> (chunkOffset + chunkSize) > static_cast<uint64> (size))
                 {
                     jassertfalse;
                     return false;
@@ -2015,12 +2023,12 @@ public:
         if (size < 4)
             return false;
 
-        auto header = htonl (readUnaligned<juce::int32> (data));
+        auto header = htonl ((uint32) readUnaligned<int32> (data));
 
-        if (header == 'VstW')
+        if (header == ByteOrder::bigEndianInt ("VstW"))
             return loadVST2VstWBlock (data, size);
 
-        if (header == 'CcnK')
+        if (header == ByteOrder::bigEndianInt ("CcnK"))
             return loadVST2CcnKBlock (data, size);
 
         if (memcmp (data, "VST3", 4) == 0)
@@ -2131,19 +2139,19 @@ public:
     }
 
    #if JUCE_VST3_CAN_REPLACE_VST2
-    static tresult writeVST2Int (IBStream* state, int n)
-    {
-        juce::int32 t = (juce::int32) htonl (n);
-        return state->write (&t, 4);
-    }
-
     static tresult writeVST2Header (IBStream* state, bool bypassed)
     {
-        tresult status = writeVST2Int (state, 'VstW');
+        auto writeVST2IntToState = [state] (uint32 n)
+        {
+            auto t = (int32) htonl (n);
+            return state->write (&t, 4);
+        };
 
-        if (status == kResultOk) status = writeVST2Int (state, 8); // header size
-        if (status == kResultOk) status = writeVST2Int (state, 1); // version
-        if (status == kResultOk) status = writeVST2Int (state, bypassed ? 1 : 0); // bypass
+        auto status = writeVST2IntToState (ByteOrder::bigEndianInt ("VstW"));
+
+        if (status == kResultOk) status = writeVST2IntToState (8); // header size
+        if (status == kResultOk) status = writeVST2IntToState (1); // version
+        if (status == kResultOk) status = writeVST2IntToState (bypassed ? 1 : 0); // bypass
 
         return status;
     }
@@ -2154,7 +2162,7 @@ public:
        if (state == nullptr)
            return kInvalidArgument;
 
-        juce::MemoryBlock mem;
+        MemoryBlock mem;
         getStateInformation (mem);
 
       #if JUCE_VST3_CAN_REPLACE_VST2
@@ -2167,9 +2175,9 @@ public:
         Vst2::fxBank bank;
 
         zerostruct (bank);
-        bank.chunkMagic         = (int32) htonl ('CcnK');
+        bank.chunkMagic         = (int32) htonl (ByteOrder::bigEndianInt ("CcnK"));
         bank.byteSize           = (int32) htonl (bankBlockSize - 8 + (unsigned int) mem.getSize());
-        bank.fxMagic            = (int32) htonl ('FBCh');
+        bank.fxMagic            = (int32) htonl (ByteOrder::bigEndianInt ("FBCh"));
         bank.version            = (int32) htonl (2);
         bank.fxID               = (int32) htonl (JucePlugin_VSTUniqueID);
         bank.fxVersion          = (int32) htonl (JucePlugin_VersionCode);
@@ -2649,7 +2657,7 @@ public:
 
        #if JucePlugin_ProducesMidiOutput
         if (isMidiOutputBusEnabled && data.outputEvents != nullptr)
-            MidiEventList::toEventList (*data.outputEvents, midiBuffer);
+            MidiEventList::pluginToHostEventList (*data.outputEvents, midiBuffer);
        #endif
 
         return kResultTrue;
@@ -2967,6 +2975,7 @@ JUCE_END_IGNORE_WARNINGS_MSVC
 JUCE_END_IGNORE_WARNINGS_GCC_LIKE
 
 //==============================================================================
+bool initModule();
 bool initModule()
 {
    #if JUCE_MAC
@@ -2976,6 +2985,7 @@ bool initModule()
     return true;
 }
 
+bool shutdownModule();
 bool shutdownModule()
 {
     return true;
@@ -2984,17 +2994,19 @@ bool shutdownModule()
 #undef JUCE_EXPORTED_FUNCTION
 
 #if JUCE_WINDOWS
- extern "C" __declspec (dllexport) bool InitDll()   { return initModule(); }
- extern "C" __declspec (dllexport) bool ExitDll()   { return shutdownModule(); }
  #define JUCE_EXPORTED_FUNCTION
 #else
- #define JUCE_EXPORTED_FUNCTION extern "C" __attribute__ ((visibility ("default")))
+ #define JUCE_EXPORTED_FUNCTION extern "C" __attribute__ ((visibility("default")))
 #endif
 
-#if JUCE_LINUX
+#if JUCE_WINDOWS
+ extern "C" __declspec (dllexport) bool InitDll()   { return initModule(); }
+ extern "C" __declspec (dllexport) bool ExitDll()   { return shutdownModule(); }
+#elif JUCE_LINUX
  void* moduleHandle = nullptr;
  int moduleEntryCounter = 0;
 
+ JUCE_EXPORTED_FUNCTION bool ModuleEntry (void* sharedLibraryHandle);
  JUCE_EXPORTED_FUNCTION bool ModuleEntry (void* sharedLibraryHandle)
  {
      if (++moduleEntryCounter == 1)
@@ -3006,6 +3018,7 @@ bool shutdownModule()
      return true;
  }
 
+ JUCE_EXPORTED_FUNCTION bool ModuleExit();
  JUCE_EXPORTED_FUNCTION bool ModuleExit()
  {
      if (--moduleEntryCounter == 0)
@@ -3025,6 +3038,7 @@ bool shutdownModule()
  char modulePath[MaxPathLength] = { 0 };
  void* moduleHandle = nullptr;
 
+ JUCE_EXPORTED_FUNCTION bool bundleEntry (CFBundleRef ref);
  JUCE_EXPORTED_FUNCTION bool bundleEntry (CFBundleRef ref)
  {
      if (ref != nullptr)
@@ -3048,6 +3062,7 @@ bool shutdownModule()
      return initModule();
  }
 
+ JUCE_EXPORTED_FUNCTION bool bundleExit();
  JUCE_EXPORTED_FUNCTION bool bundleExit()
  {
      if (shutdownModule())
@@ -3310,10 +3325,14 @@ JUCE_EXPORTED_FUNCTION IPluginFactory* PLUGIN_API GetPluginFactory()
 {
     PluginHostType::jucePlugInClientCurrentWrapperType = AudioProcessor::wrapperType_VST3;
 
-   #if JUCE_MSVC
+   #if JUCE_MSVC || (JUCE_WINDOWS && JUCE_CLANG)
     // Cunning trick to force this function to be exported. Life's too short to
     // faff around creating .def files for this kind of thing.
-    #pragma comment(linker, "/EXPORT:" __FUNCTION__ "=" __FUNCDNAME__)
+    #if JUCE_32BIT
+     #pragma comment(linker, "/EXPORT:GetPluginFactory=_GetPluginFactory@0")
+    #else
+     #pragma comment(linker, "/EXPORT:GetPluginFactory=GetPluginFactory")
+    #endif
    #endif
 
     if (globalFactory == nullptr)
