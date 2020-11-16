@@ -1,5 +1,5 @@
 diff --git a/modules/juce_audio_processors/processors/juce_AudioProcessorEditor.cpp b/modules/juce_audio_processors/processors/juce_AudioProcessorEditor.cpp
-index 6a84b4eaf..670cb3969 100644
+index b980441c9..670cb3969 100644
 --- a/modules/juce_audio_processors/processors/juce_AudioProcessorEditor.cpp
 +++ b/modules/juce_audio_processors/processors/juce_AudioProcessorEditor.cpp
 @@ -40,8 +40,6 @@ AudioProcessorEditor::AudioProcessorEditor (AudioProcessor* p) noexcept  : proce
@@ -17,12 +17,12 @@ index 6a84b4eaf..670cb3969 100644
  {
 -    /*
 -      ==========================================================================
--       In accordance with the terms of the JUCE 5 End-Use License Agreement, the
+-       In accordance with the terms of the JUCE 6 End-Use License Agreement, the
 -       JUCE Code in SECTION A cannot be removed, changed or otherwise rendered
 -       ineffective unless you have a JUCE Indie or Pro license, or are using
 -       JUCE under the GPL v3 license.
 -
--       End User License Agreement: www.juce.com/juce-5-licence
+-       End User License Agreement: www.juce.com/juce-6-licence
 -      ==========================================================================
 -    */
 -
@@ -60,7 +60,7 @@ index 056ff591b..a4d798606 100644
  #include "layout/juce_FlexBox.cpp"
  #include "layout/juce_GridItem.cpp"
 diff --git a/modules/juce_gui_basics/juce_gui_basics.h b/modules/juce_gui_basics/juce_gui_basics.h
-index fc4acbd6b..d20a707a3 100644
+index 729461282..a4873d04b 100644
 --- a/modules/juce_gui_basics/juce_gui_basics.h
 +++ b/modules/juce_gui_basics/juce_gui_basics.h
 @@ -250,7 +250,6 @@ namespace juce
@@ -72,7 +72,7 @@ index fc4acbd6b..d20a707a3 100644
  #include "windows/juce_TopLevelWindow.h"
  #include "windows/juce_AlertWindow.h"
 diff --git a/modules/juce_gui_basics/windows/juce_ResizableWindow.cpp b/modules/juce_gui_basics/windows/juce_ResizableWindow.cpp
-index e78d4d330..d1d20d6c7 100644
+index dc3c7279a..d1d20d6c7 100644
 --- a/modules/juce_gui_basics/windows/juce_ResizableWindow.cpp
 +++ b/modules/juce_gui_basics/windows/juce_ResizableWindow.cpp
 @@ -41,8 +41,6 @@ ResizableWindow::ResizableWindow (const String& name, Colour bkgnd, bool shouldA
@@ -91,12 +91,12 @@ index e78d4d330..d1d20d6c7 100644
 -    /*
 -      ==========================================================================
 -
--       In accordance with the terms of the JUCE 5 End-Use License Agreement, the
+-       In accordance with the terms of the JUCE 6 End-Use License Agreement, the
 -       JUCE Code in SECTION A cannot be removed, changed or otherwise rendered
 -       ineffective unless you have a JUCE Indie or Pro license, or are using
 -       JUCE under the GPL v3 license.
 -
--       End User License Agreement: www.juce.com/juce-5-licence
+-       End User License Agreement: www.juce.com/juce-6-licence
 -
 -      ==========================================================================
 -    */

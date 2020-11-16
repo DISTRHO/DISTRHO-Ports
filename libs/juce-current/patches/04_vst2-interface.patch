@@ -1,5 +1,5 @@
 diff --git a/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp b/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
-index 0ab14cbc3..1543af1ba 100644
+index f9b8bed8a..23484732b 100644
 --- a/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
 +++ b/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
 @@ -78,14 +78,7 @@ JUCE_BEGIN_IGNORE_WARNINGS_MSVC (4458)
@@ -26,7 +26,7 @@ index 0ab14cbc3..1543af1ba 100644
  #define JUCE_GUI_BASICS_INCLUDE_XHEADERS 1
  
  #include "../utility/juce_IncludeModuleHeaders.h"
-@@ -295,7 +287,7 @@ private:
+@@ -289,7 +281,7 @@ private:
  
  public:
      //==============================================================================
@@ -35,7 +35,7 @@ index 0ab14cbc3..1543af1ba 100644
         : hostCallback (cb),
           processor (af)
      {
-@@ -326,41 +318,41 @@ public:
+@@ -320,41 +312,41 @@ public:
          juceParameters.update (*processor, false);
  
          memset (&vstEffect, 0, sizeof (vstEffect));
@@ -98,7 +98,7 @@ index 0ab14cbc3..1543af1ba 100644
         #endif
  
          activePlugins.add (this);
-@@ -404,7 +396,7 @@ public:
+@@ -398,7 +390,7 @@ public:
          }
      }
  
@@ -107,7 +107,7 @@ index 0ab14cbc3..1543af1ba 100644
  
      template <typename FloatType>
      void internalProcessReplacing (FloatType** inputs, FloatType** outputs,
-@@ -539,7 +531,7 @@ public:
+@@ -533,7 +525,7 @@ public:
  
              // Send VST events to the host.
              if (hostCallback != nullptr)
@@ -116,7 +116,7 @@ index 0ab14cbc3..1543af1ba 100644
             #elif JUCE_DEBUG
              /*  This assertion is caused when you've added some events to the
                  midiMessages array in your processBlock() method, which usually means
-@@ -568,7 +560,7 @@ public:
+@@ -562,7 +554,7 @@ public:
          internalProcessReplacing (inputs, outputs, sampleFrames, floatTempBuffers);
      }
  
@@ -125,7 +125,7 @@ index 0ab14cbc3..1543af1ba 100644
      {
          getWrapper (vstInterface)->processReplacing (inputs, outputs, sampleFrames);
      }
-@@ -579,7 +571,7 @@ public:
+@@ -573,7 +565,7 @@ public:
          internalProcessReplacing (inputs, outputs, sampleFrames, doubleTempBuffers);
      }
  
@@ -134,7 +134,7 @@ index 0ab14cbc3..1543af1ba 100644
      {
          getWrapper (vstInterface)->processDoubleReplacing (inputs, outputs, sampleFrames);
      }
-@@ -591,7 +583,7 @@ public:
+@@ -585,7 +577,7 @@ public:
          {
              isProcessing = true;
  
@@ -143,7 +143,7 @@ index 0ab14cbc3..1543af1ba 100644
              floatTempBuffers .channels.calloc (numInAndOutChannels);
              doubleTempBuffers.channels.calloc (numInAndOutChannels);
  
-@@ -610,16 +602,16 @@ public:
+@@ -604,16 +596,16 @@ public:
              midiEvents.ensureSize (2048);
              midiEvents.clear();
  
@@ -163,7 +163,7 @@ index 0ab14cbc3..1543af1ba 100644
              }
  
              if (getHostType().isAbletonLive()
-@@ -633,7 +625,7 @@ public:
+@@ -627,7 +619,7 @@ public:
                  hostCmd.commandSize = sizeof (int);
                  hostCmd.flags = AbletonLiveHostSpecific::KCantBeSuspended;
  
@@ -172,7 +172,7 @@ index 0ab14cbc3..1543af1ba 100644
              }
  
             #if JucePlugin_ProducesMidiOutput || JucePlugin_IsMidiEffect
-@@ -660,28 +652,28 @@ public:
+@@ -654,28 +646,28 @@ public:
      //==============================================================================
      bool getCurrentPosition (AudioPlayHead::CurrentPositionInfo& info) override
      {
@@ -212,7 +212,7 @@ index 0ab14cbc3..1543af1ba 100644
          }
          else
          {
-@@ -689,34 +681,34 @@ public:
+@@ -683,34 +675,34 @@ public:
              info.timeSigDenominator = 4;
          }
  
@@ -269,7 +269,7 @@ index 0ab14cbc3..1543af1ba 100644
              }
  
              info.frameRate = rate;
-@@ -728,14 +720,14 @@ public:
+@@ -722,14 +714,14 @@ public:
              info.editOriginTime = 0;
          }
  
@@ -290,7 +290,7 @@ index 0ab14cbc3..1543af1ba 100644
          }
          else
          {
-@@ -755,7 +747,7 @@ public:
+@@ -749,7 +741,7 @@ public:
          return 0.0f;
      }
  
@@ -299,7 +299,7 @@ index 0ab14cbc3..1543af1ba 100644
      {
          return getWrapper (vstInterface)->getParameter (index);
      }
-@@ -771,7 +763,7 @@ public:
+@@ -765,7 +757,7 @@ public:
          }
      }
  
@@ -308,7 +308,7 @@ index 0ab14cbc3..1543af1ba 100644
      {
          getWrapper (vstInterface)->setParameter (index, value);
      }
-@@ -785,19 +777,19 @@ public:
+@@ -779,19 +771,19 @@ public:
          }
  
          if (hostCallback != nullptr)
@@ -331,7 +331,7 @@ index 0ab14cbc3..1543af1ba 100644
      }
  
      void parameterValueChanged (int, float newValue) override
-@@ -810,7 +802,7 @@ public:
+@@ -804,7 +796,7 @@ public:
  
      void audioProcessorChanged (AudioProcessor*) override
      {
@@ -340,7 +340,7 @@ index 0ab14cbc3..1543af1ba 100644
          triggerAsyncUpdate();
      }
  
-@@ -818,12 +810,12 @@ public:
+@@ -812,12 +804,12 @@ public:
      {
          if (hostCallback != nullptr)
          {
@@ -356,7 +356,7 @@ index 0ab14cbc3..1543af1ba 100644
      {
          if (processor->isMidiEffect())
              return false;
-@@ -832,9 +824,9 @@ public:
+@@ -826,9 +818,9 @@ public:
  
          // fill with default
          properties.flags = 0;
@@ -369,7 +369,7 @@ index 0ab14cbc3..1543af1ba 100644
  
          if ((channelIdx = processor->getOffsetInBusBufferForAbsoluteChannelIndex (direction, index, busIdx)) >= 0)
          {
-@@ -842,8 +834,8 @@ public:
+@@ -836,8 +828,8 @@ public:
              auto& channelSet = bus.getCurrentLayout();
              auto channelType = channelSet.getTypeOfChannel (channelIdx);
  
@@ -380,7 +380,7 @@ index 0ab14cbc3..1543af1ba 100644
              String label = bus.getName();
  
             #ifdef JucePlugin_PreferredChannelConfigurations
-@@ -853,8 +845,8 @@ public:
+@@ -847,8 +839,8 @@ public:
                  label += " " + AudioChannelSet::getAbbreviatedChannelTypeName (channelType);
             #endif
  
@@ -391,7 +391,7 @@ index 0ab14cbc3..1543af1ba 100644
  
              if (channelType == AudioChannelSet::left
                  || channelType == AudioChannelSet::leftSurround
-@@ -864,7 +856,7 @@ public:
+@@ -858,7 +850,7 @@ public:
                  || channelType == AudioChannelSet::topRearLeft
                  || channelType == AudioChannelSet::leftSurroundRear
                  || channelType == AudioChannelSet::wideLeft)
@@ -400,7 +400,7 @@ index 0ab14cbc3..1543af1ba 100644
  
              return true;
          }
-@@ -899,15 +891,15 @@ public:
+@@ -893,15 +885,15 @@ public:
  
      void setHasEditorFlag (bool shouldSetHasEditor)
      {
@@ -419,7 +419,7 @@ index 0ab14cbc3..1543af1ba 100644
      }
  
      void createEditorComp()
-@@ -974,59 +966,59 @@ public:
+@@ -968,59 +960,59 @@ public:
  
          switch (opCode)
          {
@@ -527,7 +527,7 @@ index 0ab14cbc3..1543af1ba 100644
          {
              wrapper->dispatcher (opCode, args);
              delete wrapper;
-@@ -1074,7 +1066,7 @@ public:
+@@ -1068,7 +1060,7 @@ public:
  
          void paint (Graphics&) override {}
  
@@ -536,7 +536,7 @@ index 0ab14cbc3..1543af1ba 100644
          {
              auto b = getSizeToContainChild();
              bounds = convertToHostBounds ({ 0, 0, (int16) b.getHeight(), (int16) b.getWidth() });
-@@ -1230,20 +1222,20 @@ public:
+@@ -1224,20 +1216,20 @@ public:
          void resizeHostWindow (int newWidth, int newHeight)
          {
              auto rect = convertToHostBounds ({ 0, 0, (int16) newHeight, (int16) newWidth });
@@ -561,7 +561,7 @@ index 0ab14cbc3..1543af1ba 100644
                                                 newWidth, newHeight, nullptr, 0) != 0);
                  }
              }
-@@ -1365,17 +1357,17 @@ public:
+@@ -1359,17 +1351,17 @@ public:
         #endif
  
          //==============================================================================
@@ -584,7 +584,7 @@ index 0ab14cbc3..1543af1ba 100644
          }
  
          //==============================================================================
-@@ -1404,12 +1396,12 @@ public:
+@@ -1398,12 +1390,12 @@ public:
  
      //==============================================================================
  private:
@@ -599,7 +599,7 @@ index 0ab14cbc3..1543af1ba 100644
      }
  
      static int32 convertHexVersionToDecimal (const unsigned int hexVersion)
-@@ -1477,8 +1469,8 @@ private:
+@@ -1471,8 +1463,8 @@ private:
          tmpBuffers.release();
  
          if (processor != nullptr)
@@ -610,7 +610,7 @@ index 0ab14cbc3..1543af1ba 100644
      }
  
      void deleteTempChannels()
-@@ -1638,7 +1630,7 @@ private:
+@@ -1632,7 +1624,7 @@ private:
          if (editorComp != nullptr)
          {
              editorComp->getEditorBounds (editorBounds);
@@ -619,7 +619,7 @@ index 0ab14cbc3..1543af1ba 100644
              return (pointer_sized_int) &editorBounds;
          }
  
-@@ -1728,7 +1720,7 @@ private:
+@@ -1722,7 +1714,7 @@ private:
      pointer_sized_int handlePreAudioProcessingEvents (VstOpCodeArguments args)
      {
         #if JucePlugin_WantsMidiInput || JucePlugin_IsMidiEffect
@@ -628,7 +628,7 @@ index 0ab14cbc3..1543af1ba 100644
          return 1;
         #else
          ignoreUnused (args);
-@@ -1779,12 +1771,12 @@ private:
+@@ -1773,12 +1765,12 @@ private:
  
      pointer_sized_int handleGetInputPinProperties (VstOpCodeArguments args)
      {
@@ -643,7 +643,7 @@ index 0ab14cbc3..1543af1ba 100644
      }
  
      pointer_sized_int handleGetPlugInCategory (VstOpCodeArguments)
-@@ -1794,8 +1786,8 @@ private:
+@@ -1788,8 +1780,8 @@ private:
  
      pointer_sized_int handleSetSpeakerConfiguration (VstOpCodeArguments args)
      {
@@ -654,7 +654,7 @@ index 0ab14cbc3..1543af1ba 100644
  
          if (processor->isMidiEffect())
              return 0;
-@@ -1806,29 +1798,29 @@ private:
+@@ -1800,29 +1792,29 @@ private:
          if (pluginInput != nullptr && pluginInput->type >= 0)
          {
              // inconsistent request?
@@ -690,8 +690,8 @@ index 0ab14cbc3..1543af1ba 100644
              layouts.getChannelSet (false, 0) = SpeakerMappings::vstArrangementTypeToChannelSet (*pluginOutput);
  
         #ifdef JucePlugin_PreferredChannelConfigurations
-@@ -1876,7 +1868,7 @@ private:
-              && args.value == (int32) JUCE_MULTICHAR_CONSTANT ('A', 'e', 'C', 's'))
+@@ -1870,7 +1862,7 @@ private:
+              && args.value == (int32) ByteOrder::bigEndianInt ("AeCs"))
              return handleSetContentScaleFactor (args.opt);
  
 -        if (args.index == Vst2::effGetParamDisplay)
@@ -699,7 +699,7 @@ index 0ab14cbc3..1543af1ba 100644
              return handleCockosGetParameterText (args.value, args.ptr, args.opt);
  
          if (auto callbackHandler = dynamic_cast<VSTCallbackHandler*> (processor))
-@@ -1971,7 +1963,7 @@ private:
+@@ -1965,7 +1957,7 @@ private:
  
      pointer_sized_int handleGetVstInterfaceVersion (VstOpCodeArguments)
      {
@@ -708,7 +708,7 @@ index 0ab14cbc3..1543af1ba 100644
      }
  
      pointer_sized_int handleGetCurrentMidiProgram (VstOpCodeArguments)
-@@ -1981,8 +1973,8 @@ private:
+@@ -1975,8 +1967,8 @@ private:
  
      pointer_sized_int handleGetSpeakerConfiguration (VstOpCodeArguments args)
      {
@@ -719,7 +719,7 @@ index 0ab14cbc3..1543af1ba 100644
  
          if (pluginHasSidechainsOrAuxs() || processor->isMidiEffect())
              return false;
-@@ -1990,10 +1982,10 @@ private:
+@@ -1984,10 +1976,10 @@ private:
          auto inputLayout  = processor->getChannelLayoutOfBus (true,  0);
          auto outputLayout = processor->getChannelLayoutOfBus (false,  0);
  
@@ -733,7 +733,7 @@ index 0ab14cbc3..1543af1ba 100644
  
          *pluginInput  = cachedInArrangement. getData();
          *pluginOutput = cachedOutArrangement.getData();
-@@ -2015,7 +2007,7 @@ private:
+@@ -2009,7 +2001,7 @@ private:
          {
              if (processor != nullptr)
              {
@@ -742,7 +742,7 @@ index 0ab14cbc3..1543af1ba 100644
                                                       && processor->supportsDoublePrecisionProcessing())
                                                           ? AudioProcessor::doublePrecision
                                                           : AudioProcessor::singlePrecision);
-@@ -2089,16 +2081,16 @@ private:
+@@ -2083,16 +2075,16 @@ private:
      }
  
      //==============================================================================
@@ -762,7 +762,7 @@ index 0ab14cbc3..1543af1ba 100644
      MidiBuffer midiEvents;
      VSTMidiEventList outgoingEvents;
  
-@@ -2123,7 +2115,7 @@ private:
+@@ -2117,7 +2109,7 @@ private:
      VstTempBuffers<double> doubleTempBuffers;
      int maxNumInChannels = 0, maxNumOutChannels = 0;
  
@@ -771,7 +771,7 @@ index 0ab14cbc3..1543af1ba 100644
  
      ThreadLocalValue<bool> inParameterChangedCallback;
  
-@@ -2135,7 +2127,7 @@ private:
+@@ -2129,7 +2121,7 @@ private:
  //==============================================================================
  namespace
  {
@@ -780,7 +780,7 @@ index 0ab14cbc3..1543af1ba 100644
      {
          JUCE_AUTORELEASEPOOL
          {
-@@ -2143,7 +2135,7 @@ namespace
+@@ -2137,7 +2129,7 @@ namespace
  
              try
              {
@@ -789,7 +789,7 @@ index 0ab14cbc3..1543af1ba 100644
                  {
                     #if JUCE_LINUX
                      MessageManagerLock mmLock;
-@@ -2180,8 +2172,8 @@ namespace
+@@ -2174,8 +2166,8 @@ namespace
  // Mac startup code..
  #if JUCE_MAC
  
@@ -800,7 +800,7 @@ index 0ab14cbc3..1543af1ba 100644
      {
          PluginHostType::jucePlugInClientCurrentWrapperType = AudioProcessor::wrapperType_VST;
  
-@@ -2189,8 +2181,8 @@ namespace
+@@ -2183,8 +2175,8 @@ namespace
          return pluginEntryPoint (audioMaster);
      }
  
@@ -811,7 +811,7 @@ index 0ab14cbc3..1543af1ba 100644
      {
          PluginHostType::jucePlugInClientCurrentWrapperType = AudioProcessor::wrapperType_VST;
  
-@@ -2202,8 +2194,8 @@ namespace
+@@ -2196,8 +2188,8 @@ namespace
  // Linux startup code..
  #elif JUCE_LINUX
  
@@ -822,7 +822,7 @@ index 0ab14cbc3..1543af1ba 100644
      {
          PluginHostType::jucePlugInClientCurrentWrapperType = AudioProcessor::wrapperType_VST;
  
-@@ -2211,8 +2203,8 @@ namespace
+@@ -2205,8 +2197,8 @@ namespace
          return pluginEntryPoint (audioMaster);
      }
  
@@ -833,7 +833,7 @@ index 0ab14cbc3..1543af1ba 100644
      {
          PluginHostType::jucePlugInClientCurrentWrapperType = AudioProcessor::wrapperType_VST;
  
-@@ -2227,7 +2219,7 @@ namespace
+@@ -2221,7 +2213,7 @@ namespace
  // Win32 startup code..
  #else
  
@@ -842,20 +842,20 @@ index 0ab14cbc3..1543af1ba 100644
      {
          PluginHostType::jucePlugInClientCurrentWrapperType = AudioProcessor::wrapperType_VST;
  
-@@ -2235,7 +2227,7 @@ namespace
+@@ -2229,7 +2221,7 @@ namespace
      }
  
-    #ifndef JUCE_64BIT // (can't compile this on win64, but it's not needed anyway with VST2.4)
+    #if ! defined (JUCE_64BIT) && JUCE_MSVC // (can't compile this on win64, but it's not needed anyway with VST2.4)
 -    extern "C" __declspec (dllexport) int main (Vst2::audioMasterCallback audioMaster)
 +    extern "C" __declspec (dllexport) int main (Vst2::VstHostCallback audioMaster)
      {
          PluginHostType::jucePlugInClientCurrentWrapperType = AudioProcessor::wrapperType_VST;
  
 diff --git a/modules/juce_audio_processors/format_types/juce_VSTCommon.h b/modules/juce_audio_processors/format_types/juce_VSTCommon.h
-index 150256989..6d9454c62 100644
+index e3bd4edc4..b948abe2b 100644
 --- a/modules/juce_audio_processors/format_types/juce_VSTCommon.h
 +++ b/modules/juce_audio_processors/format_types/juce_VSTCommon.h
-@@ -65,25 +65,25 @@ struct SpeakerMappings  : private AudioChannelSet // (inheritance only to give e
+@@ -58,25 +58,25 @@ struct SpeakerMappings  : private AudioChannelSet // (inheritance only to give e
  
      static AudioChannelSet vstArrangementTypeToChannelSet (int32 arr, int fallbackNumChannels)
      {
@@ -900,7 +900,7 @@ index 150256989..6d9454c62 100644
          {
              if (m->vst2 == arr)
              {
-@@ -99,53 +99,53 @@ struct SpeakerMappings  : private AudioChannelSet // (inheritance only to give e
+@@ -92,53 +92,53 @@ struct SpeakerMappings  : private AudioChannelSet // (inheritance only to give e
          return AudioChannelSet::discreteChannels (fallbackNumChannels);
      }
  
@@ -980,7 +980,7 @@ index 150256989..6d9454c62 100644
              speaker.type = getSpeakerType (channels.getTypeOfChannel (i));
          }
      }
-@@ -159,7 +159,7 @@ struct SpeakerMappings  : private AudioChannelSet // (inheritance only to give e
+@@ -152,7 +152,7 @@ struct SpeakerMappings  : private AudioChannelSet // (inheritance only to give e
              clear();
          }
  
@@ -989,7 +989,7 @@ index 150256989..6d9454c62 100644
          {
              operator= (vstConfig);
          }
-@@ -178,29 +178,29 @@ struct SpeakerMappings  : private AudioChannelSet // (inheritance only to give e
+@@ -171,29 +171,29 @@ struct SpeakerMappings  : private AudioChannelSet // (inheritance only to give e
          VstSpeakerConfigurationHolder (const AudioChannelSet& channels)
          {
              auto numberOfChannels = channels.size();
@@ -1028,7 +1028,7 @@ index 150256989..6d9454c62 100644
                  dst.speakers[i] = vstConfig.speakers[i];
  
              return *this;
-@@ -214,17 +214,17 @@ struct SpeakerMappings  : private AudioChannelSet // (inheritance only to give e
+@@ -207,17 +207,17 @@ struct SpeakerMappings  : private AudioChannelSet // (inheritance only to give e
              return *this;
          }
  
@@ -1051,7 +1051,7 @@ index 150256989..6d9454c62 100644
  
              storage.malloc (1, arrangementSize);
              return storage.get();
-@@ -232,10 +232,10 @@ struct SpeakerMappings  : private AudioChannelSet // (inheritance only to give e
+@@ -225,10 +225,10 @@ struct SpeakerMappings  : private AudioChannelSet // (inheritance only to give e
  
          void clear()
          {
@@ -1065,7 +1065,7 @@ index 150256989..6d9454c62 100644
          }
      };
  
-@@ -243,36 +243,36 @@ struct SpeakerMappings  : private AudioChannelSet // (inheritance only to give e
+@@ -236,36 +236,36 @@ struct SpeakerMappings  : private AudioChannelSet // (inheritance only to give e
      {
          static const Mapping mappings[] =
          {
@@ -1132,7 +1132,7 @@ index 150256989..6d9454c62 100644
          };
  
          return mappings;
-@@ -282,25 +282,25 @@ struct SpeakerMappings  : private AudioChannelSet // (inheritance only to give e
+@@ -275,25 +275,25 @@ struct SpeakerMappings  : private AudioChannelSet // (inheritance only to give e
      {
          static const std::map<AudioChannelSet::ChannelType, int32> speakerTypeMap =
          {
@@ -1177,7 +1177,7 @@ index 150256989..6d9454c62 100644
          };
  
          if (speakerTypeMap.find (type) == speakerTypeMap.end())
-@@ -313,25 +313,25 @@ struct SpeakerMappings  : private AudioChannelSet // (inheritance only to give e
+@@ -306,25 +306,25 @@ struct SpeakerMappings  : private AudioChannelSet // (inheritance only to give e
      {
          switch (type)
          {
@@ -1906,7 +1906,7 @@ index 49f0d3b3b..6e99d63d0 100644
  
          std::free (e);
 diff --git a/modules/juce_audio_processors/format_types/juce_VSTPluginFormat.cpp b/modules/juce_audio_processors/format_types/juce_VSTPluginFormat.cpp
-index 2135d329d..e32d01ed0 100644
+index 871a69bb1..adf058959 100644
 --- a/modules/juce_audio_processors/format_types/juce_VSTPluginFormat.cpp
 +++ b/modules/juce_audio_processors/format_types/juce_VSTPluginFormat.cpp
 @@ -37,7 +37,6 @@ JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE ("-Wzero-as-null-pointer-constant")
@@ -3036,8 +3036,8 @@ index 2135d329d..e32d01ed0 100644
          if (pluginRespondsToDPIChanges)
 -            dispatch (Vst2::effVendorSpecific,
 +            dispatch (Vst2::plugInOpcodeManufacturerSpecific,
-                       JUCE_MULTICHAR_CONSTANT ('P', 'r', 'e', 'S'),
-                       JUCE_MULTICHAR_CONSTANT ('A', 'e', 'C', 's'),
+                       (int) ByteOrder::bigEndianInt ("PreS"),
+                       (int) ByteOrder::bigEndianInt ("AeCs"),
                        nullptr, nativeScaleFactor);
 @@ -2973,7 +2970,7 @@ public:
              if (! reentrantGuard)
@@ -3242,7 +3242,7 @@ index 2135d329d..e32d01ed0 100644
  
              if (uid == 0)
                  break;
-@@ -3725,8 +3722,8 @@ void VSTPluginFormat::setExtraFunctions (AudioPluginInstance* plugin, ExtraFunct
+@@ -3724,8 +3721,8 @@ void VSTPluginFormat::setExtraFunctions (AudioPluginInstance* plugin, ExtraFunct
  
  AudioPluginInstance* VSTPluginFormat::getPluginInstanceFromVstEffectInterface (void* aEffect)
  {

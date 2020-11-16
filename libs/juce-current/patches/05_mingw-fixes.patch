@@ -1,12 +1,12 @@
 diff --git a/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp b/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
-index 1543af1ba..c5e96d204 100644
+index 23484732b..d2106179c 100644
 --- a/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
 +++ b/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
 @@ -61,7 +61,7 @@ JUCE_BEGIN_IGNORE_WARNINGS_MSVC (4996 4100)
   #define PRAGMA_ALIGN_SUPPORTED 1
  #endif
  
--#ifndef _MSC_VER
+-#if ! JUCE_MSVC
 +#if ! JUCE_WINDOWS
   #define __cdecl
  #endif
@@ -28,7 +28,7 @@ index 6bea84307..baaa59f06 100644
  #if JucePlugin_Build_LV2 && ! defined (JucePlugin_LV2URI)
   #error "You need to define the JucePlugin_LV2URI value!"
 diff --git a/modules/juce_audio_processors/format_types/juce_VSTPluginFormat.cpp b/modules/juce_audio_processors/format_types/juce_VSTPluginFormat.cpp
-index e32d01ed0..c473fb85d 100644
+index adf058959..c39d6f796 100644
 --- a/modules/juce_audio_processors/format_types/juce_VSTPluginFormat.cpp
 +++ b/modules/juce_audio_processors/format_types/juce_VSTPluginFormat.cpp
 @@ -61,9 +61,6 @@ JUCE_BEGIN_IGNORE_WARNINGS_MSVC (4355)
