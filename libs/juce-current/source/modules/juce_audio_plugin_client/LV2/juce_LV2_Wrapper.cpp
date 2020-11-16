@@ -353,11 +353,11 @@ public:
         const int cw = child->getWidth();
         const int ch = child->getHeight();
 
-#if JUCE_LINUX
+       #if JUCE_LINUX
         X11Symbols::getInstance()->xResizeWindow (display, (Window) getWindowHandle(), cw, ch);
-#else
+       #else
         setSize (cw, ch);
-#endif
+       #endif
 
         if (uiResize != nullptr)
             uiResize->ui_resize (uiResize->handle, cw, ch);
@@ -374,9 +374,9 @@ public:
 private:
     //==============================================================================
     const LV2UI_Resize* uiResize;
-#if JUCE_LINUX
+   #if JUCE_LINUX
     ::Display* const display = XWindowSystem::getInstance()->getDisplay();
-#endif
+   #endif
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (JuceLv2ParentContainer);
 };
@@ -777,11 +777,11 @@ private:
 
             parentContainer->addToDesktop (0, parent);
 
-#if JUCE_LINUX
+           #if JUCE_LINUX
             Window hostWindow = (Window) parent;
             Window editorWnd  = (Window) parentContainer->getWindowHandle();
             X11Symbols::getInstance()->xReparentWindow (display, editorWnd, hostWindow, 0, 0);
-#endif
+           #endif
 
             parentContainer->reset (uiResize);
             parentContainer->setVisible (true);
@@ -1710,6 +1710,7 @@ static void juceLV2_selectProgram (LV2_Handle handle, uint32_t bank, uint32_t pr
     handlePtr->lv2SelectProgram(bank, program);
 }
 
+#if JucePlugin_WantsLV2State
 static LV2_State_Status juceLV2_SaveState (LV2_Handle handle, LV2_State_Store_Function store, LV2_State_Handle stateHandle,
                                            uint32_t, const LV2_Feature* const*)
 {
@@ -1721,6 +1722,7 @@ static LV2_State_Status juceLV2_RestoreState (LV2_Handle handle, LV2_State_Retri
 {
     return handlePtr->lv2RestoreState(retrieve, stateHandle, flags);
 }
+#endif
 
 #undef handlePtr
 
@@ -1728,18 +1730,18 @@ static const void* juceLV2_ExtensionData (const char* uri)
 {
     static const LV2_Options_Interface options = { juceLV2_getOptions, juceLV2_setOptions };
     static const LV2_Programs_Interface programs = { juceLV2_getProgram, juceLV2_selectProgram };
-#if JucePlugin_WantsLV2State
+   #if JucePlugin_WantsLV2State
     static const LV2_State_Interface state = { juceLV2_SaveState, juceLV2_RestoreState };
-#endif
+   #endif
 
     if (strcmp(uri, LV2_OPTIONS__interface) == 0)
         return &options;
     if (strcmp(uri, LV2_PROGRAMS__Interface) == 0)
         return &programs;
-#if JucePlugin_WantsLV2State
+   #if JucePlugin_WantsLV2State
     if (strcmp(uri, LV2_STATE__interface) == 0)
         return &state;
-#endif
+   #endif
 
     return nullptr;
 }
