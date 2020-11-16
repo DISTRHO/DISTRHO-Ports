@@ -28,10 +28,17 @@ option('build-vst3',
     description: 'Build VST3 plugin variants',
 )
 
+option('build-legacy-only',
+    type: 'boolean',
+    value: false,
+    description: 'Build only legacy libraries and plugins',
+)
+
 option('plugins',
     type : 'array',
     description: 'Plugins to build',
     choices : [
+        'CHOW',
         'arctican-function',
         'arctican-pilgrim',
         'dexed',

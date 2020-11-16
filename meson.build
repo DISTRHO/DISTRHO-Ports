@@ -20,6 +20,7 @@ endif
 build_lv2 = get_option('build-lv2')
 build_vst2 = get_option('build-vst2')
 build_vst3 = get_option('build-vst3')
+build_legacy_only = get_option('build-legacy-only')
 linux_embed = get_option('linux-embed')
 optimizations = get_option('optimizations') and host_machine.cpu_family().contains('x86')
 
