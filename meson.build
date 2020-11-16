@@ -108,6 +108,7 @@ build_flags = [
 
 build_flags_cpp = [
     '-Wno-class-memaccess',
+    '-std=gnu++11',
 ]
 
 build_flags_debug = [
@@ -134,9 +135,6 @@ if optimizations and not linux_embed
 endif
 
 if not os_darwin
-    build_flags_cpp += [
-        '-std=gnu++11',
-    ]
     build_flags_release += [
         '-fdata-sections', '-ffunction-sections',
     ]
