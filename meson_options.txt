@@ -38,7 +38,7 @@ option('plugins',
     type : 'array',
     description: 'Plugins to build',
     choices : [
-        'CHOW',
+        'chow',
         'arctican-function',
         'arctican-pilgrim',
         'dexed',
