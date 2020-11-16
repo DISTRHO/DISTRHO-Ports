@@ -44,6 +44,7 @@ ports/_todo
 
 libs/juce-*/source/.gitignore
 libs/juce-*/source/.github
+libs/juce-*/source/.gitlab-ci.yml
 libs/juce-*/source/ChangeList.txt
 libs/juce-*/source/amalgamation/
 libs/juce-*/source/docs/
@@ -54,8 +55,10 @@ libs/juce-*/source/juce_amalgamated.cpp
 libs/juce-*/source/juce_amalgamated.h
 libs/juce-*/source/juce_amalgamated.mm
 libs/juce-*/source/BREAKING-CHANGES.txt
-libs/juce-*/source/README.md
+libs/juce-*/source/CMakeLists.txt
+libs/juce-*/source/LICENSE.md
 libs/juce-*/source/doxygen/
+libs/juce-*/source/modules/CMakeLists.txt
 libs/juce-*/source/modules/JUCE Module Format.txt
 libs/juce-*/source/modules/juce_analytics/
 libs/juce-*/source/modules/juce_blocks_basics/
