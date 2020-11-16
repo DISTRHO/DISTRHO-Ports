@@ -61,10 +61,7 @@
   #define __cdecl
  #endif
 
- namespace Vst2
- {
- #include "pluginterfaces/vst2.x/vstfxstore.h"
- }
+ #include <juce_audio_processors/format_types/juce_VSTInterface.h>
 
 #endif
 
@@ -1967,16 +1964,16 @@ public:
 
     bool loadVST2CcnKBlock (const char* data, int size)
     {
-        auto* bank = reinterpret_cast<const Vst2::fxBank*> (data);
+        auto* bank = reinterpret_cast<const vst2FxBank*> (data);
 
-        jassert (ByteOrder::bigEndianInt ("CcnK") == htonl ((uint32) bank->chunkMagic));
-        jassert (ByteOrder::bigEndianInt ("FBCh") == htonl ((uint32) bank->fxMagic));
-        jassert (htonl ((uint32) bank->version) == 1 || htonl ((uint32) bank->version) == 2);
+        jassert (ByteOrder::bigEndianInt ("CcnK") == htonl ((uint32) bank->magic1));
+        jassert (ByteOrder::bigEndianInt ("FBCh") == htonl ((uint32) bank->magic2));
+        jassert (htonl ((uint32) bank->version1) == 1 || htonl ((uint32) bank->version1) == 2);
         jassert (JucePlugin_VSTUniqueID == htonl ((uint32) bank->fxID));
 
-        setStateInformation (bank->content.data.chunk,
-                             jmin ((int) (size - (bank->content.data.chunk - data)),
-                                   (int) htonl ((uint32) bank->content.data.size)));
+        setStateInformation (bank->chunk,
+                             jmin ((int) (size - (bank->chunk - data)),
+                                   (int) htonl ((uint32) bank->chunkSize)));
         return true;
     }
 
@@ -2172,16 +2169,16 @@ public:
             return status;
 
         const int bankBlockSize = 160;
-        Vst2::fxBank bank;
+        vst2FxBank bank;
 
         zerostruct (bank);
-        bank.chunkMagic         = (int32) htonl (ByteOrder::bigEndianInt ("CcnK"));
-        bank.byteSize           = (int32) htonl (bankBlockSize - 8 + (unsigned int) mem.getSize());
-        bank.fxMagic            = (int32) htonl (ByteOrder::bigEndianInt ("FBCh"));
-        bank.version            = (int32) htonl (2);
-        bank.fxID               = (int32) htonl (JucePlugin_VSTUniqueID);
-        bank.fxVersion          = (int32) htonl (JucePlugin_VersionCode);
-        bank.content.data.size  = (int32) htonl ((unsigned int) mem.getSize());
+        bank.magic1     = (int32) htonl (ByteOrder::bigEndianInt ("CcnK"));
+        bank.size       = (int32) htonl (bankBlockSize - 8 + (unsigned int) mem.getSize());
+        bank.magic2     = (int32) htonl (ByteOrder::bigEndianInt ("FBCh"));
+        bank.version1   = (int32) htonl (2);
+        bank.fxID       = (int32) htonl (JucePlugin_VSTUniqueID);
+        bank.version2   = (int32) htonl (JucePlugin_VersionCode);
+        bank.chunkSize  = (int32) htonl ((unsigned int) mem.getSize());
 
         status = state->write (&bank, bankBlockSize);
 
