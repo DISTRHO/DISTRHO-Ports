@@ -57,9 +57,6 @@
  #undef KeyPress
 #endif
 
-#include <fstream>
-#include <iostream>
-
 // LV2 includes..
 #include "includes/lv2.h"
 #include "includes/atom.h"
@@ -78,10 +75,10 @@
 #include "includes/lv2_external_ui.h"
 #include "includes/lv2_programs.h"
 
-#include "../utility/juce_IncludeModuleHeaders.h"
-
 #define JUCE_LV2_STATE_STRING_URI "urn:juce:stateString"
 #define JUCE_LV2_STATE_BINARY_URI "urn:juce:stateBinary"
+
+#include "../utility/juce_IncludeModuleHeaders.h"
 
 using namespace juce;
 
@@ -1129,7 +1126,7 @@ public:
                         if (event->body.type == uridMidiEvent)
                         {
                             const uint8* data = (const uint8*)(event + 1);
-                            midiEvents.addEvent(data, event->body.size, event->time.frames);
+                            midiEvents.addEvent(data, event->body.size, static_cast<int>(event->time.frames));
                             continue;
                         }
  #endif
@@ -1207,7 +1204,7 @@ public:
                                 else if (beatUnit->type == uridAtomInt)
                                     lastPositionData.beatUnit = ((LV2_Atom_Int*)beatUnit)->body;
                                 else if (beatUnit->type == uridAtomLong)
-                                    lastPositionData.beatUnit = ((LV2_Atom_Long*)beatUnit)->body;
+                                    lastPositionData.beatUnit = static_cast<uint32_t>(((LV2_Atom_Long*)beatUnit)->body);
 
                                 if (lastPositionData.beatUnit > 0)
                                     curPosInfo.timeSigDenominator = lastPositionData.beatUnit;
@@ -1529,7 +1526,7 @@ public:
 #else
         if (type == uridMap->map (uridMap->handle, LV2_ATOM__Chunk))
         {
-            filter->setCurrentProgramStateInformation (data, size);
+            filter->setCurrentProgramStateInformation (data, static_cast<int>(size));
 
            #if ! JUCE_AUDIOPROCESSOR_NO_GUI
             if (ui != nullptr)
@@ -1559,15 +1556,19 @@ public:
 
 #if ! JUCE_AUDIOPROCESSOR_NO_GUI
     //==============================================================================
-    JuceLv2UIWrapper* getUI (LV2UI_Write_Function writeFunction, LV2UI_Controller controller, LV2UI_Widget* widget,
-                             const LV2_Feature* const* features, bool isExternal)
+    JuceLv2UIWrapper* getUI (LV2UI_Write_Function writeFunction,
+                             LV2UI_Controller controller,
+                             LV2UI_Widget* widget,
+                             const LV2_Feature* const* features,
+                             bool isExternal)
     {
         const MessageManagerLock mmLock;
 
         if (ui != nullptr)
             ui->resetIfNeeded (writeFunction, controller, widget, features);
         else
-            ui = new JuceLv2UIWrapper (filter, writeFunction, controller, widget, features, isExternal);
+            ui = new JuceLv2UIWrapper (filter,
+                                       writeFunction, controller, widget, features, isExternal);
 
         return ui;
     }

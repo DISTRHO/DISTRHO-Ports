@@ -8,6 +8,9 @@
 
 // NOTE: This file is only meant to be used when included byce juce_LV2_Wrapper.cpp!
 
+#include <fstream>
+#include <iostream>
+
 #if JUCE_MAC
  #define PLUGIN_EXT ".dylib"
 #elif JUCE_LINUX
