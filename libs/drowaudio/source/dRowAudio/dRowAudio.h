@@ -140,14 +140,6 @@
 */
 
 //=============================================================================
-#if JUCE_MAC || JUCE_IOS
- #define Point CarbonDummyPointName
- #define Component CarbonDummyCompName
- #include <Accelerate/Accelerate.h>
- #undef Point
- #undef Component
-#endif
-
 #include <modules/juce_audio_basics/juce_audio_basics.h>
 #include <modules/juce_audio_devices/juce_audio_devices.h>
 #include <modules/juce_audio_formats/juce_audio_formats.h>
@@ -160,6 +152,14 @@
 
 #if JUCE_MODULE_AVAILABLE_juce_cryptography
  #include <modules/juce_cryptography/juce_cryptography.h>
+#endif
+
+#if JUCE_MAC || JUCE_IOS
+ #define Point CarbonDummyPointName
+ #define Component CarbonDummyCompName
+ #include <Accelerate/Accelerate.h>
+ #undef Point
+ #undef Component
 #endif
 
 #undef min
