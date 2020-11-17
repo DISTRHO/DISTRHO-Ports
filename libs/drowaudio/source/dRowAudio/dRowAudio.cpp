@@ -34,6 +34,8 @@
 
 //#include "../juce_core/native/juce_BasicNativeHeaders.h"
 
+#include "dRowAudio.h"
+
 #if JUCE_MAC || JUCE_IOS
     #import <Foundation/Foundation.h>
     #import <AudioToolbox/AudioToolbox.h>
@@ -43,8 +45,6 @@
     #import <AVFoundation/AVFoundation.h>
     #import <MediaPlayer/MediaPlayer.h>
 #endif
-
-#include "dRowAudio.h"
 
 #include "audio/soundtouch/SoundTouch_Source.cpp"
 
