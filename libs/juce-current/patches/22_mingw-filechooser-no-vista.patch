@@ -1,0 +1,31 @@
+diff --git a/modules/juce_gui_basics/native/juce_win32_FileChooser.cpp b/modules/juce_gui_basics/native/juce_win32_FileChooser.cpp
+index 065d873e1..fb9cfc999 100644
+--- a/modules/juce_gui_basics/native/juce_win32_FileChooser.cpp
++++ b/modules/juce_gui_basics/native/juce_win32_FileChooser.cpp
+@@ -167,6 +167,7 @@ private:
+     Atomic<HWND> nativeDialogRef;
+     Atomic<int>  shouldCancel;
+ 
++   #if JUCE_MSVC
+     bool showDialog (IFileDialog& dialog, bool async) const
+     {
+         FILEOPENDIALOGOPTIONS flags = {};
+@@ -303,6 +304,7 @@ private:
+ 
+         return result;
+     }
++   #endif
+ 
+     Array<URL> openDialogPreVista (bool async)
+     {
+@@ -412,8 +414,10 @@ private:
+ 
+         const Remover remover (*this);
+ 
++       #if JUCE_MSVC
+         if (SystemStats::getOperatingSystemType() >= SystemStats::WinVista)
+             return openDialogVistaAndUp (async);
++       #endif
+ 
+         return openDialogPreVista (async);
+     }
