@@ -111,12 +111,12 @@ public:
     {
         g.setColour(this->splineColor);
 
-        Point<float> bufferPoint(0.0f, 0.5f);
+        juce::Point<float> bufferPoint(0.0f, 0.5f);
         for (int i = 0; i < this->pu->getWidth(); i += 3)
         {
             float normalizedValueX = 1.0f / this->pu->getWidth() * i;
             float normalizedValueY = envelopeEditor->getEnvelopeValue(normalizedValueX);
-            Point<int> splinePoint(this->pu->calculateViewPosition(Point<float>(normalizedValueX, normalizedValueY)));
+            juce::Point<int> splinePoint(this->pu->calculateViewPosition(juce::Point<float>(normalizedValueX, normalizedValueY)));
 
             if (i == 0)
             {
@@ -177,8 +177,8 @@ public:
             }
 
             float normalizedValueY = 1.0f / NUMBER_OF_VERTICAL_LINES * i;
-            Point<int> start = this->pu->calculateViewPosition(Point<float>(0.0f, normalizedValueY));
-            Point<int> end = this->pu->calculateViewPosition(Point<float>(1.0f, normalizedValueY));
+            juce::Point<int> start = this->pu->calculateViewPosition(juce::Point<float>(0.0f, normalizedValueY));
+            juce::Point<int> end = this->pu->calculateViewPosition(juce::Point<float>(1.0f, normalizedValueY));
             g.drawLine((float)start.getX(), (float)start.getY(), (float)end.getX(), (float)end.getY());
         }
     }
@@ -208,8 +208,8 @@ public:
             }
 
             float normalizedValueX = 1.0f / numberOfBars * i;
-            Point<int> start = this->pu->calculateViewPosition(Point<float>(normalizedValueX, 0.0f));
-            Point<int> end = this->pu->calculateViewPosition(Point<float>(normalizedValueX, 1.0f));
+            juce::Point<int> start = this->pu->calculateViewPosition(juce::Point<float>(normalizedValueX, 0.0f));
+            juce::Point<int> end = this->pu->calculateViewPosition(juce::Point<float>(normalizedValueX, 1.0f));
             g.drawLine((float)start.getX(), (float)start.getY(), (float)end.getX(), (float)end.getY());
         }
     }
@@ -223,7 +223,7 @@ public:
     void mouseDown(const MouseEvent &e)
     {
         EnvelopeEditor *envelopeEditor = this->filter->getEnvelopeEditor();
-        Point<float> positionNormalized = this->pu->calculateNormalizedPosition(e.getMouseDownPosition());
+        juce::Point<float> positionNormalized = this->pu->calculateNormalizedPosition(e.getMouseDownPosition());
 
         if (!this->selectControlPoint(envelopeEditor, positionNormalized))
         {
@@ -234,7 +234,7 @@ public:
         this->repaint();
     }
 
-    void selectOrInsertCenterPoint(EnvelopeEditor *envelopeEditor, Point<float> positionNormalized)
+    void selectOrInsertCenterPoint(EnvelopeEditor *envelopeEditor, juce::Point<float> positionNormalized)
     {
         SplinePoint *selectedPoint = envelopeEditor->getSplinePoint(positionNormalized);      
         this->deselectAllPoints();
@@ -250,7 +250,7 @@ public:
         }
     }
 
-    bool selectControlPoint(EnvelopeEditor *envelopeEditor, Point<float> positionNormalized)
+    bool selectControlPoint(EnvelopeEditor *envelopeEditor, juce::Point<float> positionNormalized)
     {
         SplinePoint *alreadySelectedPoint = envelopeEditor->getSelectedSplinePoint();
 
@@ -295,7 +295,7 @@ public:
 
         if (selectedPoint != NULL)
         {
-            Point<float> positionNormalized = this->pu->calculateNormalizedPosition(e.getPosition());
+            juce::Point<float> positionNormalized = this->pu->calculateNormalizedPosition(e.getPosition());
 
             if (!this->moveControlPoint(envelopeEditor, selectedPoint, positionNormalized))
             {
@@ -312,7 +312,7 @@ public:
     bool moveControlPoint(
         EnvelopeEditor *envelopeEditor, 
         SplinePoint *selectedPoint, 
-        Point<float> positionNormalized)
+        juce::Point<float> positionNormalized)
     {
         if (selectedPoint->isControlPointSelectedLeft()
             || selectedPoint->isControlPointSelectedRight())
@@ -336,7 +336,7 @@ public:
     void moveCenterPoint(
         EnvelopeEditor *envelopeEditor, 
         SplinePoint *selectedPoint, 
-        Point<float> positionNormalized, 
+        juce::Point<float> positionNormalized, 
         const MouseEvent &e)
     {
         if (e.getPosition().getY() > this->pu->getHeight() + 20

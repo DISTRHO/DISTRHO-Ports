@@ -51,18 +51,18 @@ public:
 
     // In x[0..1], y[0..1]
     // Out x[0..width], y[0..height]
-    Point<int> calculateViewPosition(Point<float> normalizedValues)
+    juce::Point<int> calculateViewPosition(juce::Point<float> normalizedValues)
     {
         float viewX = normalizedValues.getX() * this->width;
         float viewY = (1.0f - normalizedValues.getY()) * this->height;
-        return Point<int>( (int)(viewX + 0.5f), (int)(viewY + 0.5f));
+        return juce::Point<int>( (int)(viewX + 0.5f), (int)(viewY + 0.5f));
     }
 
-    Point<float> calculateNormalizedPosition(Point<int> pixelValues)
+    juce::Point<float> calculateNormalizedPosition(juce::Point<int> pixelValues)
     {
         float viewX = (float)pixelValues.getX() / (float)this->width;
         float viewY = 1.0f - (float)pixelValues.getY() / (float)this->height;
-        return Point<float>(viewX, viewY);
+        return juce::Point<float>(viewX, viewY);
     }
 };
 #endif

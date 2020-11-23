@@ -130,7 +130,7 @@ private:
 
                 float scaleX = (x - points[i]->getCenterPosition().getX()) * 1.0f / deltaX;
 
-                Point<float> result = su.PointOnCubicBezier(
+                juce::Point<float> result = su.PointOnCubicBezier(
                     scaleX, 
                     points[i]->getCenterPosition(), 
                     points[i]->getControlPointRight(), 
@@ -171,8 +171,8 @@ public:
         //const ScopedLock myScopedLock (myCriticalSectionBuffer);
         points.clear();
 
-        SplinePoint *start = new SplinePoint(Point<float>(0.0f, 0.5f));
-        SplinePoint *end = new SplinePoint(Point<float>(1.0f, 0.5f));
+        SplinePoint *start = new SplinePoint(juce::Point<float>(0.0f, 0.5f));
+        SplinePoint *end = new SplinePoint(juce::Point<float>(1.0f, 0.5f));
 
         start->setStartPoint(true);
         end->setEndPoint(true);
@@ -257,7 +257,7 @@ public:
         }
     }
 
-    SplinePoint* getSplinePoint(Point<float> positionNormalized)
+    SplinePoint* getSplinePoint(juce::Point<float> positionNormalized)
     {
         for (int i = 0; i < this->points.size(); i++)
         {
@@ -311,7 +311,7 @@ public:
         }
     }
 
-    SplinePoint* add(Point<float> positionNormalized)
+    SplinePoint* add(juce::Point<float> positionNormalized)
     {
         SplinePoint *newPoint = new SplinePoint(positionNormalized);
         points.insert(1, newPoint);

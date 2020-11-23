@@ -1,4 +1,0 @@
-{
-    global: lv2_descriptor; lv2ui_descriptor; lv2_generate_ttl; VSTPluginMain; DllMain; InitDll; ExitDll; ModuleEntry; ModuleExit; bundleEntry; bundleExit; GetPluginFactory;
-    local: *;
-};

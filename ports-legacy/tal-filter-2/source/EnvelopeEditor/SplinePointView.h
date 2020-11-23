@@ -55,14 +55,14 @@ public:
             if (!this->splinePoint->IsStartPoint())
             {
                 this->setControlPointColor(g, splinePoint->isControlPointSelectedLeft());
-                Point<int> pointLeft = pu->calculateViewPosition(splinePoint->getControlPointLeft());
+                juce::Point<int> pointLeft = pu->calculateViewPosition(splinePoint->getControlPointLeft());
                 g.fillEllipse((float)pointLeft.getX() - CENTER_SIZE / 4, (float)pointLeft.getY() - CENTER_SIZE / 4, (float)CENTER_SIZE / 2, (float)CENTER_SIZE / 2);
             }
 
             if (!this->splinePoint->IsEndPoint())
             {
                 this->setControlPointColor(g, splinePoint->isControlPointSelectedRight());
-                Point<int> pointRight = pu->calculateViewPosition(splinePoint->getControlPointRight());
+                juce::Point<int> pointRight = pu->calculateViewPosition(splinePoint->getControlPointRight());
                 g.fillEllipse((float)pointRight.getX() - CENTER_SIZE / 4, (float)pointRight.getY() - CENTER_SIZE / 4, (float)CENTER_SIZE / 2, (float)CENTER_SIZE / 2);    
             }
         }
@@ -85,7 +85,7 @@ public:
             g.setColour(Colour((const uint8)100, (const uint8)100, (const uint8)100, (const uint8)200));
         }
 
-        Point<int> point = pu->calculateViewPosition(splinePoint->getCenterPosition());
+        juce::Point<int> point = pu->calculateViewPosition(splinePoint->getCenterPosition());
         g.fillEllipse((float)point.getX() - CENTER_SIZE / 2, (float)point.getY() - CENTER_SIZE / 2, (float)CENTER_SIZE, (float)CENTER_SIZE);
 
         g.setColour(Colour((const uint8)255, (const uint8)255, (const uint8)255, (const uint8)150));

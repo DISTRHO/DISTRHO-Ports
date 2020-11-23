@@ -155,10 +155,8 @@
 #endif
 
 #if JUCE_MAC || JUCE_IOS
- #define Point CarbonDummyPointName
  #define Component CarbonDummyCompName
  #include <Accelerate/Accelerate.h>
- #undef Point
  #undef Component
 #endif
 

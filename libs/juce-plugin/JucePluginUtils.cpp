@@ -24,3 +24,8 @@
 #if ! JucePlugin_Build_Standalone
  #include "modules/juce_audio_plugin_client/utility/juce_PluginUtilities.cpp"
 #endif
+
+#if JUCE_MAC && (JucePlugin_Build_VST || JucePlugin_Build_VST3)
+ #undef JUCE_CHECKSETTINGMACROS_H
+ #include "modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.mm"
+#endif

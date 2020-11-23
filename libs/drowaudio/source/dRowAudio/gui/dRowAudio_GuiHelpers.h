@@ -496,7 +496,7 @@ namespace GuiHelpers
             case Slow:
             {
                 Path p;
-                p.addPolygon (Point<float> (50.0f, 50.0f),
+                p.addPolygon (juce::Point<float> (50.0f, 50.0f),
                               8,
                               50.0f,
                               -float_Pi * 0.125f);

@@ -54,7 +54,7 @@ endif
 if os_darwin
     bin_suffix = ''
     lib_suffix = '.dylib'
-    bintype_prefix = 'Mac-'
+    bintype_prefix = 'macOS-'
 elif os_windows
     bin_suffix = '.exe'
     lib_suffix = '.dll'
@@ -102,26 +102,38 @@ build_flags = [
     '-Wall',
     '-Wno-multichar',
     '-Wno-strict-overflow',
-    '-Wno-unused-but-set-variable',
     '-Wno-unused-function',
 ]
 
 build_flags_cpp = [
-    '-Wno-class-memaccess',
     '-std=gnu++11',
 ]
 
+if not os_darwin
+    build_flags += [
+        '-Wno-unused-but-set-variable',
+    ]
+    build_flags_cpp += [
+        '-Wno-class-memaccess',
+    ]
+endif
+
 build_flags_debug = [
-    '-O0', '-ggdb',
-    '-DDEBUG=1', '-D_DEBUG=1',
+    '-O0',
+    '-ggdb',
+    '-DDEBUG=1',
+    '-D_DEBUG=1',
 ]
 
 build_flags_debug_cpp = [
 ]
 
 build_flags_release = [
-    '-O3', '-fvisibility=hidden',
+    '-O3',
+    '-fvisibility=hidden',
     '-DNDEBUG=1',
+    '-fdata-sections',
+    '-ffunction-sections',
 ]
 
 build_flags_release_cpp = [
@@ -134,15 +146,10 @@ if optimizations and not linux_embed
     ]
 endif
 
-if not os_darwin
-    build_flags_release += [
-        '-fdata-sections', '-ffunction-sections',
-    ]
-endif
-
 if os_darwin
     build_flags += [
         '-DMAC=1',
+        '-DGL_SILENCE_DEPRECATION=1',
     ]
     build_flags_cpp += [
         '-ObjC++',
@@ -179,6 +186,8 @@ link_flags_debug = [
 ]
 
 link_flags_release = [
+    '-fdata-sections', 
+    '-ffunction-sections',
 ]
 
 if os_windows
@@ -187,13 +196,19 @@ if os_windows
     ]
 endif
 
-if not os_darwin
+if os_darwin
+    link_flags_release += [
+        '-Wl,-dead_strip',
+        '-Wl,-dead_strip_dylibs',
+    ]
+else
     link_flags += [
         '-Wl,--no-undefined',
     ]
     link_flags_release += [
-        '-fdata-sections', '-ffunction-sections', '-Wl,--gc-sections',
+        '-Wl,-O1',
         '-Wl,--as-needed',
+        '-Wl,--gc-sections',
         '-Wl,--strip-all',
     ]
 endif

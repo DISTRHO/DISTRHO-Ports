@@ -32,10 +32,10 @@ class SplinePoint
 private:
     const float SELECTION_RADIUS;
 
-    Point<float> centerPosition;
+    juce::Point<float> centerPosition;
 
-    Point<float> controlPointLeft;
-    Point<float> controlPointRight;
+    juce::Point<float> controlPointLeft;
+    juce::Point<float> controlPointRight;
 
     bool isStartPoint;
     bool isEndPoint;
@@ -47,7 +47,7 @@ private:
     SplinePoint *linkedPoint;
 
 public:
-    SplinePoint(Point<float> centerPosition) : SELECTION_RADIUS(1.0f / 24.0f)
+    SplinePoint(juce::Point<float> centerPosition) : SELECTION_RADIUS(1.0f / 24.0f)
     {
         this->isStartPoint = false;
         this->isEndPoint = false;
@@ -129,17 +129,17 @@ public:
         this->linkedPoint = linkedPoint;
     }
 
-    Point<float> getCenterPosition()
+    juce::Point<float> getCenterPosition()
     {
         return this->centerPosition;
     }
 
-    Point<float> getControlPointLeft()
+    juce::Point<float> getControlPointLeft()
     {
         return this->controlPointLeft;
     }
 
-    Point<float> getControlPointRight()
+    juce::Point<float> getControlPointRight()
     {
         return this->controlPointRight;
     }
@@ -154,12 +154,12 @@ public:
         return this->centerPosition.getY();
     }
 
-    void setPosition(Point<float> position)
+    void setPosition(juce::Point<float> position)
     {
         position = this->limitBoundaries(position);
 
-        Point<float> deltaPointLeft = this->centerPosition - this->controlPointLeft;
-        Point<float> deltaPointRight = this->centerPosition - this->controlPointRight;
+        juce::Point<float> deltaPointLeft = this->centerPosition - this->controlPointLeft;
+        juce::Point<float> deltaPointRight = this->centerPosition - this->controlPointRight;
 
         // start and end points cant move in x
         if (!this->isStartPoint && !this->isEndPoint)
@@ -180,7 +180,7 @@ public:
         this->controlPointRight = this->limitBoundaries(this->controlPointRight);
     }
 
-    void setLinkedPointPosition(Point<float> position, bool doLinkEndpoints)
+    void setLinkedPointPosition(juce::Point<float> position, bool doLinkEndpoints)
     {
         if (this->linkedPoint != NULL && doLinkEndpoints)
         {
@@ -188,7 +188,7 @@ public:
         }
     }
 
-    void setControlPointLeftPosition(Point<float> position)
+    void setControlPointLeftPosition(juce::Point<float> position)
     {
         position = this->limitBoundaries(position);
         this->controlPointLeft.setXY(position.getX(), position.getY());
@@ -199,7 +199,7 @@ public:
         }
     }
 
-    void setControlPointRightPosition(Point<float> position)
+    void setControlPointRightPosition(juce::Point<float> position)
     {
         position = this->limitBoundaries(position);
         this->controlPointRight.setXY(position.getX(), position.getY());
@@ -210,7 +210,7 @@ public:
         }
     }
 
-    Point<float> limitBoundaries(Point<float> position)
+    juce::Point<float> limitBoundaries(juce::Point<float> position)
     {
         if (position.getX() < 0.0f) position.setX(0.0f);
         if (position.getX() > 1.0f) position.setX(1.0f);
@@ -220,7 +220,7 @@ public:
         return position;
     }
 
-    bool isSelected(Point<float> positionNormalized)
+    bool isSelected(juce::Point<float> positionNormalized)
     {
         float deltaX = positionNormalized.getX() - this->centerPosition.getX();
         float deltaY = positionNormalized.getY() - this->centerPosition.getY();
@@ -228,7 +228,7 @@ public:
         return this->verifyDistance(deltaX, deltaY, SELECTION_RADIUS);
     }
 
-    bool isLeftControlPointSelected(Point<float> positionNormalized)
+    bool isLeftControlPointSelected(juce::Point<float> positionNormalized)
     {
         if (this->isSelected() && !this->IsStartPoint())
         {
@@ -241,7 +241,7 @@ public:
         return false;
     }
 
-    bool isRightControlPointSelected(Point<float> positionNormalized)
+    bool isRightControlPointSelected(juce::Point<float> positionNormalized)
     {
         if (this->isSelected() && !this->IsEndPoint())
         {

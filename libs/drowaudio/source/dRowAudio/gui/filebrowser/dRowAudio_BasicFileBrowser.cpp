@@ -111,7 +111,7 @@ void BasicFileBrowser::removeListener (FileBrowserListener* const listener)
 
 void BasicFileBrowser::mouseDoubleClick (const MouseEvent &e)
 {
-	if (resizer->contains (Point<int> (e.x, e.y)))
+	if (resizer->contains (juce::Point<int> (e.x, e.y)))
     {
 		setSize (jmax (getLongestWidth(), resizeLimits.getMinimumWidth()), 800);
 	}

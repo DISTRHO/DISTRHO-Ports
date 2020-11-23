@@ -68,7 +68,7 @@ private:
 		}
 	};
 
-	int getDelayUnderMouse(Point<int> mousePos, float minDistance = 10);
+	int getDelayUnderMouse(juce::Point<int> mousePos, float minDistance = 10);
 
 	OwnedArray<PitchedDelayTab>& tabs;
 	PitchedDelayAudioProcessor* Proc;

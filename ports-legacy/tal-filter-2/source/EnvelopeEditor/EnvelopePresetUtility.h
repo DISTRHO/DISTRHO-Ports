@@ -65,17 +65,17 @@ public:
             {
                 float centerX = (float)e->getDoubleAttribute(T("centerPointX"), 0.0);
                 float centerY = (float)e->getDoubleAttribute(T("centerPointY"), 0.0);
-                Point<float> centerPoint(centerX, centerY);
+                juce::Point<float> centerPoint(centerX, centerY);
                 SplinePoint *splinePoint = new SplinePoint(centerPoint);
 
                 centerX = (float)e->getDoubleAttribute(T("controlPointLeftX"), 0.0);
                 centerY = (float)e->getDoubleAttribute(T("controlPointLeftY"), 0.0);
-                Point<float> controlPointLeft(centerX, centerY);
+                juce::Point<float> controlPointLeft(centerX, centerY);
                 splinePoint->setControlPointLeftPosition(controlPointLeft);
 
                 centerX = (float)e->getDoubleAttribute(T("controlPointRightX"), 0.0);
                 centerY = (float)e->getDoubleAttribute(T("controlPointRightY"), 0.0);
-                Point<float> controlPointRight(centerX, centerY);
+                juce::Point<float> controlPointRight(centerX, centerY);
                 splinePoint->setControlPointRightPosition(controlPointRight);
 
                 bool isStartPoint = e->getBoolAttribute(T("isStartPoint"), false);
@@ -89,12 +89,12 @@ public:
         else
         {
             // set default points
-            Point<float> centerPointStart(0.0f, 0.5f);
+            juce::Point<float> centerPointStart(0.0f, 0.5f);
             SplinePoint *splinePointStart = new SplinePoint(centerPointStart);
             splinePointStart->setStartPoint(true);
             splinePoints.add(splinePointStart);
 
-            Point<float> centerPointEnd(1.0f, 0.5f);
+            juce::Point<float> centerPointEnd(1.0f, 0.5f);
             SplinePoint *splinePointEnd = new SplinePoint(centerPointEnd);
             splinePointEnd->setEndPoint(true);
             splinePoints.add(splinePointEnd);

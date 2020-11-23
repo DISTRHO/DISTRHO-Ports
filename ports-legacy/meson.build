@@ -75,6 +75,21 @@ plugin_include_dirs = [
 dependencies_plugin = [
 ]
 
+if os_darwin
+    dependencies_plugin += [
+      dependency('Accelerate', method: 'extraframework'),
+      dependency('AudioToolbox', method: 'extraframework'),
+      dependency('Carbon', method: 'extraframework'),
+      dependency('Cocoa', method: 'extraframework'),
+      dependency('CoreAudio', method: 'extraframework'),
+      dependency('CoreAudioKit', method: 'extraframework'),
+      dependency('CoreMIDI', method: 'extraframework'),
+      dependency('IOKit', method: 'extraframework'),
+      dependency('QuartzCore', method: 'extraframework'),
+      dependency('WebKit', method: 'extraframework'),
+    ]
+endif
+
 if os_windows
     dependencies_plugin += [
         cc.find_library('comdlg32'),
@@ -114,32 +129,26 @@ endif
 ###############################################################################
 # link flags for plugins
 
-link_flags_plugin = [
+link_flags_plugin_lv2 = [
+]
+link_flags_plugin_vst2 = [
 ]
 
 if os_darwin
-    link_flags_plugin += [
-        '-Wl,-export-symbols=' + meson.source_root() + '/scripts/plugin-symbols.txt',
+    link_flags_plugin_lv2 += [
+        '-Wl,-exported_symbol,_lv2_generate_ttl',
+        '-Wl,-exported_symbol,_lv2_descriptor',
+        '-Wl,-exported_symbol,_lv2ui_descriptor',
+    ]
+    link_flags_plugin_vst2 += [
+        '-Wl,-exported_symbol,_VSTPluginMain',
     ]
 else
-    link_flags_plugin += [
-        '-Wl,--version-script=' + meson.source_root() + '/scripts/plugin-symbols.version',
+    link_flags_plugin_lv2 += [
+        '-Wl,--version-script=' + meson.source_root() + '/scripts/plugin-symbols-lv2.version',
     ]
-endif
-
-if os_darwin
-    link_flags_plugin += [
-        '-framework Accelerate',
-        '-framework AudioToolbox',
-        '-framework AudioUnit',
-        '-framework Carbon',
-        '-framework Cocoa',
-        '-framework CoreAudio',
-        '-framework CoreAudioKit',
-        '-framework CoreMIDI',
-        '-framework IOKit',
-        '-framework QuartzCore',
-        '-framework WebKit',
+    link_flags_plugin_vst2 += [
+        '-Wl,--version-script=' + meson.source_root() + '/scripts/plugin-symbols-vst2.version',
     ]
 endif
 
@@ -220,9 +229,9 @@ if build_lv2 or build_vst2
 
             if plugin_uses_opengl
                 if os_darwin
-                  plugin_extra_link_flags += [
-                      '-framework OpenGL',
-                  ]
+                    plugin_extra_dependencies += [
+                        dependency('OpenGL', method: 'extraframework'),
+                    ]
                 elif os_windows
                     plugin_extra_dependencies += [
                         cc.find_library('opengl32'),
@@ -262,7 +271,7 @@ if build_lv2 or build_vst2
                     ],
                     c_args: build_flags + build_flags_plugin + build_flags_plugin_lv2 + plugin_extra_build_flags,
                     cpp_args: build_flags_cpp + build_flags_plugin + build_flags_plugin_lv2 + plugin_extra_build_flags,
-                    link_args: link_flags + link_flags_plugin,
+                    link_args: link_flags + link_flags_plugin_lv2,
                     link_with: link_with_plugin,
                 )
 
@@ -293,7 +302,7 @@ if build_lv2 or build_vst2
                     ],
                     c_args: build_flags + build_flags_plugin + build_flags_plugin_vst2 + plugin_extra_build_flags,
                     cpp_args: build_flags_cpp + build_flags_plugin + build_flags_plugin_vst2 + plugin_extra_build_flags,
-                    link_args: link_flags + link_flags_plugin,
+                    link_args: link_flags + link_flags_plugin_vst2,
                     link_with: link_with_plugin,
                     install: true,
                     install_dir: vst2dir,

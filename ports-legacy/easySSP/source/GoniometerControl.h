@@ -26,7 +26,7 @@ private:
 
 		float sqrt2 = std::sqrt(2);
 
-		Point<float> center(getWidth() / 2, getHeight() / 2);
+		juce::Point<float> center(getWidth() / 2, getHeight() / 2);
 
 		float lineScaleX = (getWidth()) / 2 - margin;
 		float lineScaleY = (getHeight()) / 2 - margin;
@@ -64,9 +64,9 @@ public:
 		initLayers();
 	}
 
-	template <typename T> Point<T> movePoint(Point<T> source, T x, T y)
+	template <typename T> juce::Point<T> movePoint(juce::Point<T> source, T x, T y)
 	{
-		Point<T> newPoint(source);
+		juce::Point<T> newPoint(source);
 
 		newPoint.addXY(x, y);
 

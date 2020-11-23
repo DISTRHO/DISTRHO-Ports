@@ -673,7 +673,7 @@ void ObxdAudioProcessorEditor::mouseUp(const MouseEvent& e)
 			menu.addSubMenu("Banks", bankMenu);
 		}
 
-		const Point<int> pos = e.getMouseDownScreenPosition();
+		const juce::Point<int> pos = e.getMouseDownScreenPosition();
 
 		int result = menu.showAt(Rectangle<int>(pos.getX(), pos.getY(), 1, 1));
 		if (result >= (skinStart + 1) && result <= (skinStart + skins.size()))

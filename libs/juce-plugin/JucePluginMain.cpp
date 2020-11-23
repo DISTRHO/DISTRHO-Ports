@@ -32,11 +32,7 @@
  }
  #endif
  #include "modules/juce_audio_processors/format_types/juce_VSTMidiEventList.h"
- #ifdef JUCE_MAC
-  #include "modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.mm"
- #else
-  #include "modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp"
- #endif
+ #include "modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp"
 #elif JucePlugin_Build_VST3
  #include "modules/juce_audio_plugin_client/VST3/juce_VST3_Wrapper.cpp"
 #elif JucePlugin_Build_Standalone

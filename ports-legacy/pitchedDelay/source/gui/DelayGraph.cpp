@@ -310,7 +310,7 @@ void DelayGraph::mouseWheelMove (const MouseEvent& e, const MouseWheelDetails& w
 }
 
 
-int DelayGraph::getDelayUnderMouse(Point<int> mousePos, float minDistance)
+int DelayGraph::getDelayUnderMouse(juce::Point<int> mousePos, float minDistance)
 {
 	const float w = (float) getWidth();
 	const float h = (float) getHeight();
@@ -334,7 +334,7 @@ int DelayGraph::getDelayUnderMouse(Point<int> mousePos, float minDistance)
 		const float x = float(1 + (w-2) * (delayTime - minDelay) / (maxDelay - minDelay));
 		const float y = float(h - (h-16) * (volume+60)/60);
 		
-		const float d = Point<float>(x, y).getDistanceFrom(mousePos.toFloat());
+		const float d = juce::Point<float>(x, y).getDistanceFrom(mousePos.toFloat());
 
 		if (d < newDistancs)
 		{

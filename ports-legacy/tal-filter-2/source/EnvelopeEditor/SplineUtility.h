@@ -42,12 +42,12 @@ public:
     cp[3] is the end point, or P3 in the above diagram
     t is the parameter value, 0 <= t <= 1
     */
-    Point<float> PointOnCubicBezier(float t, Point<float> p1, Point<float> p2, Point<float> p3, Point<float> p4)
+    juce::Point<float> PointOnCubicBezier(float t, juce::Point<float> p1, juce::Point<float> p2, juce::Point<float> p3, juce::Point<float> p4)
     {
         float ax, bx, cx;
         float ay, by, cy;
         float tSquared, tCubed;
-        Point<float> result;
+        juce::Point<float> result;
 
         /* calculate the polynomial coefficients */
         cx = 3.0f * (p2.getX() - p1.getX());

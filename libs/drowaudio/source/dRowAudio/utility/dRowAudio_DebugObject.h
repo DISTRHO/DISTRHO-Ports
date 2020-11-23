@@ -72,7 +72,7 @@ public:
     }
 
     template <typename ValueType>
-    static String convertToString (const Point<ValueType>& arg)
+    static String convertToString (const juce::Point<ValueType>& arg)
     {
         return arg.toString();
     }

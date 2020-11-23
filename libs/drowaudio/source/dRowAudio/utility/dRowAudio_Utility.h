@@ -188,7 +188,7 @@ inline static void drawBufferToImage (const Image& image, const float* samples, 
         const float x2 = x1 + imageXScale;
         const float y2 = image.getHeight() - (samples[i] * image.getHeight());
         
-        const Line<float> line (Point<float> (x1, y1), Point<float> (x2, y2));
+        const Line<float> line (juce::Point<float> (x1, y1), juce::Point<float> (x2, y2));
         g.drawLine (line, thickness);
         
         y1 = y2;

@@ -48,9 +48,11 @@ typedef unsigned char BYTE;
 //          This type is declared in WinDef.h as follows:
 typedef uint16_t WORD;
 
+#if ! JUCE_MAC
 // BOOL  -  A boolean variable
 //          This type is declared in WinDef.h as follows:
 typedef BYTE BOOL;
+#endif
 
 DWORD GetStdHandle (DWORD handle) { return handle; }
 

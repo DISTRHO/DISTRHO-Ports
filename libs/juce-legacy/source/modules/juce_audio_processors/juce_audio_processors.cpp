@@ -111,7 +111,7 @@ struct AutoResizingNSViewComponentWithParent  : public AutoResizingNSViewCompone
 AutoResizingNSViewComponent::AutoResizingNSViewComponent()
     : recursive (false) {}
 
-void AutoResizingNSViewComponent::childBoundsChanged (Component*) override
+void AutoResizingNSViewComponent::childBoundsChanged (Component*)
 {
     if (recursive)
     {
@@ -125,7 +125,7 @@ void AutoResizingNSViewComponent::childBoundsChanged (Component*) override
     }
 }
 
-void AutoResizingNSViewComponent::handleAsyncUpdate() override
+void AutoResizingNSViewComponent::handleAsyncUpdate()
 {
     resizeToFitView();
 }
@@ -149,7 +149,7 @@ JUCE_IOS_MAC_VIEW* AutoResizingNSViewComponentWithParent::getChildView() const
     return nil;
 }
 
-void AutoResizingNSViewComponentWithParent::timerCallback() override
+void AutoResizingNSViewComponentWithParent::timerCallback()
 {
     if (JUCE_IOS_MAC_VIEW* child = getChildView())
     {
