@@ -1,32 +1,34 @@
 language: cpp
 
-os: linux
-
-dist: bionic
-
 jobs:
   include:
     # linux native build
     - os: linux
       compiler: gcc
+      dist: bionic
       env:
         - TARGET="linux"
 
     # linux with win32 cross-compilation
     - os: linux
       compiler: gcc
+      dist: bionic
       env:
         - TARGET="win32"
 
     # linux with win64 cross-compilation
     - os: linux
       compiler: gcc
+      dist: bionic
       env:
         - TARGET="win64"
 
     # macOS native build
     - os: osx
-      compiler: gcc
+      addons:
+        homebrew:
+          packages:
+            - meson
       env:
         - TARGET="macos"
 

@@ -2,9 +2,8 @@
 
 set -e
 
-# Special macOS native handling
+# nothing to do for macOS native
 if [ "${TARGET}" = "macos" ]; then
-    brew install meson || true
     exit 0
 fi
 
