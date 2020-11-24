@@ -2,6 +2,11 @@
 
 set -e
 
+# nothing to do for macOS native
+if [ "${TARGET}" = "macos" ]; then
+    exit 0
+fi
+
 sudo add-apt-repository -y ppa:kxstudio-debian/kxstudio
 sudo add-apt-repository -y ppa:kxstudio-debian/toolchain
 

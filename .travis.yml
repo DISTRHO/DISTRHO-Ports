@@ -24,6 +24,12 @@ jobs:
       env:
         - TARGET="win64"
 
+    # macOS native build
+    - os: osx
+      compiler: gcc
+      env:
+        - TARGET="macos"
+
 before_install:
   - bash ${TRAVIS_BUILD_DIR}/.travis/before_install.sh
 

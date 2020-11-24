@@ -2,6 +2,12 @@
 
 set -e
 
+# Special macOS native handling
+if [ "${TARGET}" = "macos" ]; then
+    brew install meson || true
+    exit 0
+fi
+
 # common
 sudo apt-get install -y build-essential meson
 
