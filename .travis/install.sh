@@ -19,7 +19,7 @@ if [ "${TARGET}" = "linux" ]; then
         lilv-utils lv2lint kxstudio-lv2-extensions lv2-dev
 
 elif [ "${TARGET}" = "win32" ]; then
-    sudo apt-get install -y mingw-w64 binutils-mingw-w64-i686 g++-mingw-w64-i686 wine-stable
+    sudo apt-get install -y mingw-w64 binutils-mingw-w64-i686 g++-mingw-w64-i686 wine-stable wine32
 
 elif [ "${TARGET}" = "win64" ]; then
     sudo apt-get install -y mingw-w64 binutils-mingw-w64-x86-64 g++-mingw-w64-x86-64 wine-stable
