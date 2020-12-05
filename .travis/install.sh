@@ -2,8 +2,9 @@
 
 set -e
 
-# nothing to do for macOS native
+# needed homebrew packages
 if [ "${TARGET}" = "macos" ]; then
+    HOMEBREW_NO_AUTO_UPDATE=1 brew install meson
     exit 0
 fi
 

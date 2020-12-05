@@ -3,36 +3,33 @@ language: cpp
 jobs:
   include:
     # linux native build
-    - name: "Linux native"
-      os: linux
-      compiler: gcc
-      dist: bionic
-      env:
-        - TARGET="linux"
+    #- name: "Linux native"
+      #os: linux
+      #compiler: gcc
+      #dist: bionic
+      #env:
+        #- TARGET="linux"
 
-    # linux with win32 cross-compilation
-    - name: "win32 cross-compiled"
-      os: linux
-      compiler: gcc
-      dist: bionic
-      env:
-        - TARGET="win32"
+    ## linux with win32 cross-compilation
+    #- name: "win32 cross-compiled"
+      #os: linux
+      #compiler: gcc
+      #dist: bionic
+      #env:
+        #- TARGET="win32"
 
-    # linux with win64 cross-compilation
-    - name: "win64 cross-compiled"
-      os: linux
-      compiler: gcc
-      dist: bionic
-      env:
-        - TARGET="win64"
+    ## linux with win64 cross-compilation
+    #- name: "win64 cross-compiled"
+      #os: linux
+      #compiler: gcc
+      #dist: bionic
+      #env:
+        #- TARGET="win64"
 
     # macOS native build
     - name: "macOS native"
       os: osx
-      addons:
-        homebrew:
-          packages:
-            - meson
+      osx_image: xcode10.1
       env:
         - TARGET="macos"
 
