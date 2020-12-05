@@ -33,7 +33,6 @@ jobs:
         homebrew:
           packages:
             - meson
-          update: true
       env:
         - TARGET="macos"
 
