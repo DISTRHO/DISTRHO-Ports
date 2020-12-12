@@ -12,18 +12,6 @@
 template<typename T> T sqr(T v) { return v*v; }
 
 
-inline uint64_t rdtsc()
-{
-	union
-	{
-		uint64_t val;
-		struct { uint32_t lo; uint32_t hi; };
-	} ret;
-	asm ("rdtsc\n": "=a" (ret.lo), "=d" (ret.hi));
-	return ret.val;
-}
-
-
 class wolpSound: public SynthesiserSound
 {
 	public:
