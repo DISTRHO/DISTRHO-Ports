@@ -267,7 +267,7 @@ if build_lv2 or build_vst2
                     ],
                     c_args: build_flags + build_flags_plugin + build_flags_plugin_lv2 + plugin_extra_build_flags,
                     cpp_args: build_flags_cpp + build_flags_plugin + build_flags_plugin_lv2 + plugin_extra_build_flags,
-                    link_args: link_flags + link_flags_plugin_common + link_flags_plugin_lv2,
+                    link_args: link_flags + link_flags_plugin_common + link_flags_plugin_lv2 + plugin_extra_link_flags,
                     link_with: link_with_plugin,
                 )
 
@@ -298,7 +298,7 @@ if build_lv2 or build_vst2
                     ],
                     c_args: build_flags + build_flags_plugin + build_flags_plugin_vst2 + plugin_extra_build_flags,
                     cpp_args: build_flags_cpp + build_flags_plugin + build_flags_plugin_vst2 + plugin_extra_build_flags,
-                    link_args: link_flags + link_flags_plugin_common + link_flags_plugin_vst2,
+                    link_args: link_flags + link_flags_plugin_common + link_flags_plugin_vst2 + plugin_extra_link_flags,
                     link_with: link_with_plugin,
                     install: true,
                     install_dir: vst2dir,

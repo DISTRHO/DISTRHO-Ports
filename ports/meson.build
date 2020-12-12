@@ -221,7 +221,7 @@ foreach plugin : plugins
                 ],
                 c_args: build_flags + build_flags_plugin + build_flags_plugin_lv2 + plugin_extra_build_flags,
                 cpp_args: build_flags_cpp + build_flags_plugin + build_flags_plugin_lv2 + build_flag_plugin_cpp + plugin_extra_build_flags,
-                link_args: link_flags + link_flags_plugin_common + link_flags_plugin_lv2,
+                link_args: link_flags + link_flags_plugin_common + link_flags_plugin_lv2 + plugin_extra_link_flags,
                 link_with: [ lib_juce_current, plugin_lib ],
             )
 
@@ -252,7 +252,7 @@ foreach plugin : plugins
                 ],
                 c_args: build_flags + build_flags_plugin + build_flags_plugin_vst2 + plugin_extra_build_flags,
                 cpp_args: build_flags_cpp + build_flags_plugin + build_flags_plugin_vst2 + build_flag_plugin_cpp + plugin_extra_build_flags,
-                link_args: link_flags + link_flags_plugin_common + link_flags_plugin_vst2,
+                link_args: link_flags + link_flags_plugin_common + link_flags_plugin_vst2 + plugin_extra_link_flags,
                 link_with: [ lib_juce_current, plugin_lib ],
                 install: true,
                 install_dir: vst2dir,
@@ -270,7 +270,7 @@ foreach plugin : plugins
                 ],
                 c_args: build_flags + build_flags_plugin + build_flags_plugin_vst3 + plugin_extra_build_flags,
                 cpp_args: build_flags_cpp + build_flags_plugin + build_flags_plugin_vst3 + build_flag_plugin_cpp + plugin_extra_build_flags,
-                link_args: link_flags + link_flags_plugin_common + link_flags_plugin_vst3,
+                link_args: link_flags + link_flags_plugin_common + link_flags_plugin_vst3 + plugin_extra_link_flags,
                 link_with: [ lib_juce_current, plugin_lib ],
             )
 
