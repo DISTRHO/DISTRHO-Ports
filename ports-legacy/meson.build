@@ -223,7 +223,7 @@ if build_lv2 or build_vst2
                 link_with_plugin += lib_juced
             endif
 
-            if plugin_uses_opengl
+            if plugin_uses_opengl or buildtype == 'debug'
                 if os_darwin
                     plugin_extra_link_flags += [
                         '-framework', 'OpenGL',

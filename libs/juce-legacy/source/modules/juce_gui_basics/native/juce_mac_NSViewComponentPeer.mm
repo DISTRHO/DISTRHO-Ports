@@ -24,6 +24,11 @@
   ==============================================================================
 */
 
+@interface NSEvent (DeviceDelta)
+- (float)deviceDeltaX;
+- (float)deviceDeltaY;
+@end
+
 namespace juce
 {
     typedef void (*AppFocusChangeCallback)();
@@ -640,8 +645,8 @@ public:
            #endif
             if ([ev respondsToSelector: @selector (deviceDeltaX)])
             {
-                wheel.deltaX = checkDeviceDeltaReturnValue ((float) getMsgSendFPRetFn() (ev, @selector (deviceDeltaX)));
-                wheel.deltaY = checkDeviceDeltaReturnValue ((float) getMsgSendFPRetFn() (ev, @selector (deviceDeltaY)));
+                wheel.deltaX = checkDeviceDeltaReturnValue ([ev deviceDeltaX]);
+                wheel.deltaY = checkDeviceDeltaReturnValue ([ev deviceDeltaY]);
             }
         }
         @catch (...)
