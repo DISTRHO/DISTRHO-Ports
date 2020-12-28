@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/DISTRHO/DISTRHO-Ports.png)](https://travis-ci.org/DISTRHO/DISTRHO-Ports)
 
-DISTRHO is an open source project with the goal of making cross-platform audio plugins and GNU/Linux ports.
+DISTRHO is an open source project with the goal of making cross-platform audio plugins and GNU/Linux + LV2 ports.
 
 <b>This repository contains the GNU/Linux plugins and LV2 ports</b>
 
