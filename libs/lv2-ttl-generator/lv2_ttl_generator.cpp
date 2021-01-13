@@ -62,7 +62,20 @@ int main(int argc, char* argv[])
             basename[strrchr(base2, '.')-base2-1] = '\0';
         }
         else
-            strcpy(basename, argv[1]);
+        {
+#ifdef TTL_GENERATOR_WINDOWS
+            // Fix when running through wine
+            if (char* base2 = strrchr(argv[1], '/'))
+            {
+                strcpy(basename, base2+1);
+                basename[strrchr(base2, '.')-base2-1] = '\0';
+            }
+            else
+#endif
+            {
+                strcpy(basename, argv[1]);
+            }
+        }
 
         printf("Generate ttl data for '%s', basename: '%s'\n", argv[1], basename);
 
