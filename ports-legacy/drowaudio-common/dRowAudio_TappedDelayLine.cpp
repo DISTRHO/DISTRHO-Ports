@@ -222,7 +222,7 @@ void TappedDelayLine::processSamples (float* const samples,
 		const float in = samples[i];
 		
 		// incriment buffer position and store new sample
-		if(++bufferWritePos > bufferSize)
+		if(++bufferWritePos >= bufferSize)
 			bufferWritePos = 0;
 		float *bufferInput = &pfDelayBuffer[bufferWritePos];
 		*bufferInput = 0;
