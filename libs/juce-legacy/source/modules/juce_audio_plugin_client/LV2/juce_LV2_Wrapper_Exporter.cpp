@@ -371,6 +371,22 @@ static const String makePresetsFile (AudioProcessor* const filter)
     text += "@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .\n";
     text += "\n";
 
+#if JucePlugin_WantsLV2State
+ #if JucePlugin_WantsLV2StateString
+    text += "<" JUCE_LV2_STATE_STRING_URI ">\n";
+    text += "    a owl:DatatypeProperty ;\n";
+    text += "    rdfs:label \"Plugin state as string\" ;\n";
+    text += "    rdfs:domain state:State ;\n";
+    text += "    rdfs:range xsd:string .\n";
+ #else
+    text += "<" JUCE_LV2_STATE_BINARY_URI ">\n";
+    text += "    a owl:DatatypeProperty ;\n";
+    text += "    rdfs:label \"Plugin state as base64-encoded string\" ;\n";
+    text += "    rdfs:domain state:State ;\n";
+    text += "    rdfs:range xsd:base64Binary .\n";
+ #endif
+#endif
+
     // Presets
     const int numPrograms = filter->getNumPrograms();
     const String presetSeparator(pluginURI.contains("#") ? ":" : "#");
