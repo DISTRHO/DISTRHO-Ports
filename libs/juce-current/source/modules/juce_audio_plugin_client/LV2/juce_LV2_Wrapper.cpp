@@ -383,6 +383,8 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (JuceLv2ParentContainer);
 };
 
+static ThreadLocalValue<bool> inParameterChangedCallback;
+
 //==============================================================================
 /**
     Juce LV2 UI handle
@@ -562,6 +564,12 @@ public:
 
     void audioProcessorParameterChanged (AudioProcessor*, int index, float newValue)
     {
+        if (inParameterChangedCallback.get())
+        {
+            inParameterChangedCallback = false;
+            return;
+        }
+
         if (writeFunction == nullptr || controller == nullptr)
             return;
 
@@ -1078,7 +1086,13 @@ public:
 
                     if (lastControlValues[i] != curValue)
                     {
-                        filter->setParameter (i, curValue);
+                        if (AudioProcessorParameter* const param = filter->getParameters()[i])
+                        {
+                            param->setValue (curValue);
+
+                            inParameterChangedCallback = true;
+                            param->sendValueChangedMessageToListeners (curValue);
+                        }
                         lastControlValues.setUnchecked (i, curValue);
                     }
                 }
