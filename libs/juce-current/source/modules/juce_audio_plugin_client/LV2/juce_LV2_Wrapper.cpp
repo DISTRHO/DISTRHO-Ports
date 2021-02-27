@@ -153,6 +153,8 @@ public:
         const ScopedJuceInitialiser_GUI juceInitialiser;
 
         MessageManager::getInstance()->setCurrentThreadAsMessageThread();
+
+        XWindowSystem::getInstance();
         initialised = true;
 
         MessageManager::getInstance()->runDispatchLoop();
