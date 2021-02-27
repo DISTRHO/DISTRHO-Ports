@@ -1,5 +1,5 @@
 diff --git a/modules/juce_audio_processors/juce_audio_processors.cpp b/modules/juce_audio_processors/juce_audio_processors.cpp
-index ac194a19d..f494ec3a2 100644
+index 43ad88e1b..149154804 100644
 --- a/modules/juce_audio_processors/juce_audio_processors.cpp
 +++ b/modules/juce_audio_processors/juce_audio_processors.cpp
 @@ -47,7 +47,7 @@
@@ -11,7 +11,7 @@ index ac194a19d..f494ec3a2 100644
   #include <X11/Xlib.h>
   #include <X11/Xutil.h>
   #include <sys/utsname.h>
-@@ -141,9 +141,11 @@ JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE ("-Wdeprecated-declarations", "-Wcast-align"
+@@ -230,9 +230,11 @@ struct AutoResizingNSViewComponentWithParent  : public AutoResizingNSViewCompone
  #include "format_types/juce_LegacyAudioParameter.cpp"
  #include "processors/juce_AudioProcessor.cpp"
  #include "processors/juce_AudioPluginInstance.cpp"
@@ -26,7 +26,7 @@ index ac194a19d..f494ec3a2 100644
  #include "format_types/juce_LADSPAPluginFormat.cpp"
  #include "format_types/juce_VSTPluginFormat.cpp"
 diff --git a/modules/juce_audio_processors/processors/juce_AudioProcessor.cpp b/modules/juce_audio_processors/processors/juce_AudioProcessor.cpp
-index caa55b618..41c547b0c 100644
+index 040accf2e..df0b6c67b 100644
 --- a/modules/juce_audio_processors/processors/juce_AudioProcessor.cpp
 +++ b/modules/juce_audio_processors/processors/juce_AudioProcessor.cpp
 @@ -51,12 +51,14 @@ AudioProcessor::AudioProcessor (const BusesProperties& ioConfig)
@@ -44,7 +44,7 @@ index caa55b618..41c547b0c 100644
  
     #if JUCE_DEBUG && ! JUCE_DISABLE_AUDIOPROCESSOR_BEGIN_END_GESTURE_CHECKING
      // This will fail if you've called beginParameterChangeGesture() for one
-@@ -804,6 +806,7 @@ void AudioProcessor::audioIOChanged (bool busNumberChanged, bool channelNumChang
+@@ -826,6 +828,7 @@ void AudioProcessor::audioIOChanged (bool busNumberChanged, bool channelNumChang
      processorLayoutsChanged();
  }
  
@@ -52,7 +52,7 @@ index caa55b618..41c547b0c 100644
  //==============================================================================
  void AudioProcessor::editorBeingDeleted (AudioProcessorEditor* const editor) noexcept
  {
-@@ -840,6 +843,7 @@ AudioProcessorEditor* AudioProcessor::createEditorIfNeeded()
+@@ -862,6 +865,7 @@ AudioProcessorEditor* AudioProcessor::createEditorIfNeeded()
  
      return ed;
  }
@@ -61,7 +61,7 @@ index caa55b618..41c547b0c 100644
  //==============================================================================
  void AudioProcessor::getCurrentProgramStateInformation (juce::MemoryBlock& destData)
 diff --git a/modules/juce_audio_processors/processors/juce_AudioProcessor.h b/modules/juce_audio_processors/processors/juce_AudioProcessor.h
-index dbad562ef..ab9e8a7d6 100644
+index f72a4ed3f..849b77d3c 100644
 --- a/modules/juce_audio_processors/processors/juce_AudioProcessor.h
 +++ b/modules/juce_audio_processors/processors/juce_AudioProcessor.h
 @@ -926,6 +926,7 @@ public:
@@ -103,10 +103,10 @@ index dbad562ef..ab9e8a7d6 100644
      int blockSize = 0, latencySamples = 0;
      bool suspended = false;
 diff --git a/modules/juce_audio_processors/processors/juce_AudioProcessorGraph.cpp b/modules/juce_audio_processors/processors/juce_AudioProcessorGraph.cpp
-index fd8c35879..070f82554 100644
+index 17c5af30c..3d4a0d428 100644
 --- a/modules/juce_audio_processors/processors/juce_AudioProcessorGraph.cpp
 +++ b/modules/juce_audio_processors/processors/juce_AudioProcessorGraph.cpp
-@@ -1496,8 +1496,10 @@ bool AudioProcessorGraph::AudioGraphIOProcessor::producesMidi() const
+@@ -1519,8 +1519,10 @@ bool AudioProcessorGraph::AudioGraphIOProcessor::producesMidi() const
  bool AudioProcessorGraph::AudioGraphIOProcessor::isInput() const noexcept           { return type == audioInputNode  || type == midiInputNode; }
  bool AudioProcessorGraph::AudioGraphIOProcessor::isOutput() const noexcept          { return type == audioOutputNode || type == midiOutputNode; }
  
@@ -118,7 +118,7 @@ index fd8c35879..070f82554 100644
  int AudioProcessorGraph::AudioGraphIOProcessor::getNumPrograms()                    { return 0; }
  int AudioProcessorGraph::AudioGraphIOProcessor::getCurrentProgram()                 { return 0; }
 diff --git a/modules/juce_audio_processors/processors/juce_AudioProcessorGraph.h b/modules/juce_audio_processors/processors/juce_AudioProcessorGraph.h
-index a16e35df0..8d2221f1e 100644
+index a60e67d84..17a121893 100644
 --- a/modules/juce_audio_processors/processors/juce_AudioProcessorGraph.h
 +++ b/modules/juce_audio_processors/processors/juce_AudioProcessorGraph.h
 @@ -355,8 +355,10 @@ public:

@@ -29,10 +29,10 @@ namespace juce
 //==============================================================================
 namespace ReturnHelpers
 {
-    template<typename Type>
+    template <typename Type>
     Type returnDefaultConstructedAnyType()               { return {}; }
 
-    template<>
+    template <>
     inline void returnDefaultConstructedAnyType<void>()  {}
 }
 
@@ -452,6 +452,10 @@ public:
     JUCE_GENERATE_FUNCTION_WITH_DEFAULT (XSync, xSync,
                                          (::Display*, Bool),
                                          void)
+
+    JUCE_GENERATE_FUNCTION_WITH_DEFAULT (XSynchronize, xSynchronize,
+                                         (::Display*, Bool),
+                                         int)
 
     JUCE_GENERATE_FUNCTION_WITH_DEFAULT (XTranslateCoordinates, xTranslateCoordinates,
                                          (::Display*, ::Window, ::Window, int, int, int*, int*, ::Window*),

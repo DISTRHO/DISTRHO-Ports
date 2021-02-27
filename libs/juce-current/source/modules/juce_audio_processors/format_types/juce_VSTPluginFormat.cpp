@@ -53,6 +53,7 @@ namespace Vst2
 JUCE_END_IGNORE_WARNINGS_GCC_LIKE
 JUCE_END_IGNORE_WARNINGS_MSVC
 
+JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE ("-Wdeprecated-declarations")
 JUCE_BEGIN_IGNORE_WARNINGS_MSVC (4355)
 
 #include "juce_VSTMidiEventList.h"
@@ -77,7 +78,7 @@ JUCE_BEGIN_IGNORE_WARNINGS_MSVC (4355)
 //==============================================================================
 namespace juce
 {
-#if JUCE_WINDOWS && JUCE_WIN_PER_MONITOR_DPI_AWARE
+#if JUCE_WINDOWS
  extern void setThreadDPIAwarenessForWindow (HWND);
 #endif
 
@@ -376,7 +377,7 @@ private:
         switchValueType.entries.add (new Entry({ TRANS("Off"), Range ("[0, 0.5[") }));
         switchValueType.entries.add (new Entry({ TRANS("On"),  Range ("[0.5, 1]") }));
 
-        forEachXmlChildElement (xml, item)
+        for (auto* item : xml.getChildIterator())
         {
             if (item->hasTagName ("Param"))           parseParam (*item, nullptr, nullptr);
             else if (item->hasTagName ("ValueType"))  parseValueType (*item);
@@ -430,7 +431,7 @@ private:
         int curEntry = 0;
         const int numEntries = item.getNumChildElements();
 
-        forEachXmlChildElementWithTagName (item, entryXml, "Entry")
+        for (auto* entryXml : item.getChildWithTagNameIterator ("Entry"))
         {
             auto entry = new Entry();
             entry->name = entryXml->getStringAttribute ("name");
@@ -459,7 +460,7 @@ private:
         templates.add (temp);
         temp->name = item.getStringAttribute ("name");
 
-        forEachXmlChildElement (item, param)
+        for (auto* param : item.getChildIterator())
             parseParam (*param, nullptr, temp);
     }
 
@@ -508,7 +509,7 @@ private:
         }
         else
         {
-            forEachXmlChildElement (item, subItem)
+            for (auto* subItem : item.getChildIterator())
             {
                 if (subItem->hasTagName ("Param"))       parseParam (*subItem, group, nullptr);
                 else if (subItem->hasTagName ("Group"))  parseGroup (*subItem, group);
@@ -1596,8 +1597,8 @@ struct VSTPluginInstance     : public AudioPluginInstance,
 
     void handleAsyncUpdate() override
     {
-        // indicates that something about the plugin has changed..
-        updateHostDisplay();
+        updateHostDisplay (AudioProcessorListener::ChangeDetails().withProgramChanged (true)
+                                                                  .withParameterInfoChanged (true));
     }
 
     pointer_sized_int handleCallback (int32 opcode, int32 index, pointer_sized_int value, void* ptr, float opt)
@@ -1763,9 +1764,9 @@ struct VSTPluginInstance     : public AudioPluginInstance,
                 {
                     if (i != oldProg)
                     {
-                        auto prog = (const fxProgram*) (((const char*) (set->programs)) + i * progLen);
+                        auto prog = addBytesToPointer (set->programs, i * progLen);
 
-                        if (((const char*) prog) - ((const char*) set) >= (ssize_t) dataSize)
+                        if (getAddressDifference (prog, set) >= (int) dataSize)
                             return false;
 
                         if (fxbSwap (set->numPrograms) > 0)
@@ -1779,9 +1780,9 @@ struct VSTPluginInstance     : public AudioPluginInstance,
                 if (fxbSwap (set->numPrograms) > 0)
                     setCurrentProgram (oldProg);
 
-                auto prog = (const fxProgram*) (((const char*) (set->programs)) + oldProg * progLen);
+                auto prog = addBytesToPointer (set->programs, oldProg * progLen);
 
-                if (((const char*) prog) - ((const char*) set) >= (ssize_t) dataSize)
+                if (getAddressDifference (prog, set) >= (int) dataSize)
                     return false;
 
                 if (! restoreProgramSettings (prog))
@@ -1901,14 +1902,14 @@ struct VSTPluginInstance     : public AudioPluginInstance,
                 auto oldProgram = getCurrentProgram();
 
                 if (oldProgram >= 0)
-                    setParamsInProgramBlock ((fxProgram*) (((char*) (set->programs)) + oldProgram * progLen));
+                    setParamsInProgramBlock (addBytesToPointer (set->programs, oldProgram * progLen));
 
                 for (int i = 0; i < numPrograms; ++i)
                 {
                     if (i != oldProgram)
                     {
                         setCurrentProgram (i);
-                        setParamsInProgramBlock ((fxProgram*) (((char*) (set->programs)) + i * progLen));
+                        setParamsInProgramBlock (addBytesToPointer (set->programs, i * progLen));
                     }
                 }
 
@@ -2586,7 +2587,7 @@ private:
 
         getCurrentProgramName().copyToUTF8 ((char*) dest.getData(), 63);
 
-        auto p = (float*) (((char*) dest.getData()) + 64);
+        auto p = unalignedPointerCast<float*> (((char*) dest.getData()) + 64);
 
         for (int i = 0; i < numParameters; ++i)
             if (auto* param = getParameters()[i])
@@ -2597,7 +2598,7 @@ private:
     {
         changeProgramName (getCurrentProgram(), (const char*) m.getData());
 
-        auto p = (float*) (((char*) m.getData()) + 64);
+        auto p = unalignedPointerCast<float*> (((char*) m.getData()) + 64);
         auto numParameters = getParameters().size();
 
         for (int i = 0; i < numParameters; ++i)
@@ -2858,9 +2859,7 @@ public:
            #if JUCE_WINDOWS
             if (pluginHWND != 0)
             {
-               #if JUCE_WIN_PER_MONITOR_DPI_AWARE
                 setThreadDPIAwarenessForWindow (pluginHWND);
-               #endif
 
                 MoveWindow (pluginHWND, pos.getX(), pos.getY(),
                             roundToInt (getWidth()  * nativeScaleFactor),
@@ -3123,9 +3122,7 @@ private:
                 // very dodgy logic to decide which size is right.
                 if (std::abs (rw - w) > 350 || std::abs (rh - h) > 350)
                 {
-                   #if JUCE_WIN_PER_MONITOR_DPI_AWARE
                     setThreadDPIAwarenessForWindow (pluginHWND);
-                   #endif
 
                     SetWindowPos (pluginHWND, 0,
                                   0, 0, roundToInt (rw * nativeScaleFactor), roundToInt (rh * nativeScaleFactor),
@@ -3228,7 +3225,7 @@ private:
     bool willCauseRecursiveResize (int w, int h)
     {
         auto newScreenBounds = Rectangle<int> (w, h).withPosition (getScreenPosition());
-        return Desktop::getInstance().getDisplays().findDisplayForRect (newScreenBounds).scale != nativeScaleFactor;
+        return Desktop::getInstance().getDisplays().getDisplayForRect (newScreenBounds)->scale != nativeScaleFactor;
     }
 
     bool isWindowSizeCorrectForPlugin (int w, int h)
@@ -3737,6 +3734,7 @@ void VSTPluginFormat::aboutToScanVSTShellPlugin (const PluginDescription&) {}
 
 } // namespace juce
 
+JUCE_END_IGNORE_WARNINGS_GCC_LIKE
 JUCE_END_IGNORE_WARNINGS_MSVC
 
 #endif

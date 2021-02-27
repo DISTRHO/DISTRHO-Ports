@@ -993,7 +993,7 @@ public:
         It sends a hint to the host that something like the program, number of parameters,
         etc, has changed, and that it should update itself.
     */
-    void updateHostDisplay();
+    void updateHostDisplay (const AudioProcessorListener::ChangeDetails& details = {});
 
     //==============================================================================
     /** Adds a parameter to the AudioProcessor.
@@ -1499,10 +1499,11 @@ private:
     #endif
 
     bool textRecursionCheck = false;
-    std::unordered_set<String> paramIDs;
+    std::unordered_set<String> paramIDs, groupIDs;
    #endif
 
     void checkForDuplicateParamID (AudioProcessorParameter*);
+    void checkForDuplicateGroupIDs (const AudioProcessorParameterGroup&);
 
     AudioProcessorListener* getListenerLocked (int) const noexcept;
     void updateSpeakerFormatStrings();

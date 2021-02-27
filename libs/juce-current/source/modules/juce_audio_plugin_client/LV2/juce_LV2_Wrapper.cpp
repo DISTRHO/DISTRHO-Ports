@@ -577,9 +577,9 @@ public:
         }
     }
 
-    void audioProcessorChanged (AudioProcessor*)
+    void audioProcessorChanged (AudioProcessor*, const ChangeDetails& details)
     {
-        if (filter != nullptr && programsHost != nullptr)
+        if (details.programChanged && filter != nullptr && programsHost != nullptr)
         {
             if (filter->getNumPrograms() != lastProgramCount)
             {

@@ -68,12 +68,14 @@ static bool doUIDsMatch (const Steinberg::TUID a, const Steinberg::TUID b) noexc
 #endif
 
 //==============================================================================
-inline juce::String toString (const Steinberg::char8* string) noexcept      { return juce::String (string); }
-inline juce::String toString (const Steinberg::char16* string) noexcept     { return juce::String (juce::CharPointer_UTF16 ((juce::CharPointer_UTF16::CharType*) string)); }
+inline juce::String toString (const Steinberg::char8* string) noexcept       { return juce::String (juce::CharPointer_UTF8  ((juce::CharPointer_UTF8::CharType*)  string)); }
+inline juce::String toString (const Steinberg::char16* string) noexcept      { return juce::String (juce::CharPointer_UTF16 ((juce::CharPointer_UTF16::CharType*) string)); }
 
 // NB: The casts are handled by a Steinberg::UString operator
-inline juce::String toString (const Steinberg::UString128& string) noexcept { return toString (static_cast<const Steinberg::char16*> (string)); }
-inline juce::String toString (const Steinberg::UString256& string) noexcept { return toString (static_cast<const Steinberg::char16*> (string)); }
+inline juce::String toString (const Steinberg::UString128& string) noexcept  { return toString (static_cast<const Steinberg::char16*> (string)); }
+inline juce::String toString (const Steinberg::UString256& string) noexcept  { return toString (static_cast<const Steinberg::char16*> (string)); }
+
+inline Steinberg::Vst::TChar* toString (const juce::String& source) noexcept { return reinterpret_cast<Steinberg::Vst::TChar*> (source.toUTF16().getAddress()); }
 
 inline void toString128 (Steinberg::Vst::String128 result, const char* source)
 {
@@ -82,12 +84,7 @@ inline void toString128 (Steinberg::Vst::String128 result, const char* source)
 
 inline void toString128 (Steinberg::Vst::String128 result, const juce::String& source)
 {
-    Steinberg::UString (result, 128).fromAscii (source.toUTF8());
-}
-
-inline Steinberg::Vst::TChar* toString (const juce::String& source) noexcept
-{
-    return reinterpret_cast<Steinberg::Vst::TChar*> (source.toUTF16().getAddress());
+    Steinberg::UString (result, 128).assign (toString (source));
 }
 
 #if JUCE_WINDOWS
@@ -355,24 +352,24 @@ static AudioChannelSet getChannelSetForSpeakerArrangement (Steinberg::Vst::Speak
 
 //==============================================================================
 template <class ObjectType>
-class ComSmartPtr
+class VSTComSmartPtr
 {
 public:
-    ComSmartPtr() noexcept : source (nullptr) {}
-    ComSmartPtr (ObjectType* object, bool autoAddRef = true) noexcept  : source (object)    { if (source != nullptr && autoAddRef) source->addRef(); }
-    ComSmartPtr (const ComSmartPtr& other) noexcept : source (other.source)                 { if (source != nullptr) source->addRef(); }
-    ~ComSmartPtr()                                                                          { if (source != nullptr) source->release(); }
+    VSTComSmartPtr() noexcept : source (nullptr) {}
+    VSTComSmartPtr (ObjectType* object, bool autoAddRef = true) noexcept  : source (object)  { if (source != nullptr && autoAddRef) source->addRef(); }
+    VSTComSmartPtr (const VSTComSmartPtr& other) noexcept : source (other.source)            { if (source != nullptr) source->addRef(); }
+    ~VSTComSmartPtr()                                                                        { if (source != nullptr) source->release(); }
 
     operator ObjectType*() const noexcept    { return source; }
     ObjectType* get() const noexcept         { return source; }
     ObjectType& operator*() const noexcept   { return *source; }
     ObjectType* operator->() const noexcept  { return source; }
 
-    ComSmartPtr& operator= (const ComSmartPtr& other)       { return operator= (other.source); }
+    VSTComSmartPtr& operator= (const VSTComSmartPtr& other)       { return operator= (other.source); }
 
-    ComSmartPtr& operator= (ObjectType* const newObjectToTakePossessionOf)
+    VSTComSmartPtr& operator= (ObjectType* const newObjectToTakePossessionOf)
     {
-        ComSmartPtr p (newObjectToTakePossessionOf);
+        VSTComSmartPtr p (newObjectToTakePossessionOf);
         std::swap (p.source, source);
         return *this;
     }

@@ -22,6 +22,8 @@
 
   ==============================================================================
 */
+
+#include <juce_core/system/juce_TargetPlatform.h>
 #include <juce_core/system/juce_CompilerWarnings.h>
 #include "../utility/juce_CheckSettingMacros.h"
 
@@ -45,7 +47,8 @@ JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE ("-Wshorten-64-to-32",
                                      "-Wzero-as-null-pointer-constant",
                                      "-Wnullable-to-nonnull-conversion",
                                      "-Wgnu-zero-variadic-macro-arguments",
-                                     "-Wformat-pedantic")
+                                     "-Wformat-pedantic",
+                                     "-Wdeprecated-anon-enum-enum-conversion")
 
 #include "../utility/juce_IncludeSystemHeaders.h"
 
@@ -352,7 +355,7 @@ public:
                     }
                 }
 
-                err = (busNr == (requestedNumBus - 1) ? noErr : kAudioUnitErr_FormatNotSupported);
+                err = (busNr == (requestedNumBus - 1) ? (OSStatus) noErr : (OSStatus) kAudioUnitErr_FormatNotSupported);
             }
 
             // was there an error?
@@ -1163,16 +1166,24 @@ public:
         sendAUEvent (kAudioUnitEvent_EndParameterChangeGesture, index);
     }
 
-    void audioProcessorChanged (AudioProcessor*) override
+    void audioProcessorChanged (AudioProcessor*, const ChangeDetails& details) override
     {
-        PropertyChanged (kAudioUnitProperty_Latency,       kAudioUnitScope_Global, 0);
-        PropertyChanged (kAudioUnitProperty_ParameterList, kAudioUnitScope_Global, 0);
-        PropertyChanged (kAudioUnitProperty_ParameterInfo, kAudioUnitScope_Global, 0);
-        PropertyChanged (kAudioUnitProperty_ClassInfo,     kAudioUnitScope_Global, 0);
+        if (details.latencyChanged)
+            PropertyChanged (kAudioUnitProperty_Latency, kAudioUnitScope_Global, 0);
 
-        refreshCurrentPreset();
+        if (details.parameterInfoChanged)
+        {
+            PropertyChanged (kAudioUnitProperty_ParameterList, kAudioUnitScope_Global, 0);
+            PropertyChanged (kAudioUnitProperty_ParameterInfo, kAudioUnitScope_Global, 0);
+        }
 
-        PropertyChanged (kAudioUnitProperty_PresentPreset, kAudioUnitScope_Global, 0);
+        PropertyChanged (kAudioUnitProperty_ClassInfo, kAudioUnitScope_Global, 0);
+
+        if (details.programChanged)
+        {
+            refreshCurrentPreset();
+            PropertyChanged (kAudioUnitProperty_PresentPreset, kAudioUnitScope_Global, 0);
+        }
     }
 
     //==============================================================================
@@ -1900,7 +1911,7 @@ private:
 
         return (scope != kAudioUnitScope_Input
              && scope != kAudioUnitScope_Output)
-              ? kAudioUnitErr_InvalidScope : noErr;
+              ? (OSStatus) kAudioUnitErr_InvalidScope : (OSStatus) noErr;
     }
 
     OSStatus elementToBusIdx (AudioUnitScope scope, AudioUnitElement element, bool& isInput, int& busIdx) noexcept
@@ -2040,10 +2051,12 @@ private:
         addSupportedLayoutTags();
 
         for (int i = 0; i < enabledInputs; ++i)
-            if ((err = syncAudioUnitWithChannelSet (true,  i, juceFilter->getChannelLayoutOfBus (true,  i))) != noErr) return err;
+            if ((err = syncAudioUnitWithChannelSet (true,  i, juceFilter->getChannelLayoutOfBus (true,  i))) != noErr)
+                return err;
 
         for (int i = 0; i < enabledOutputs; ++i)
-            if ((err = syncAudioUnitWithChannelSet (false, i, juceFilter->getChannelLayoutOfBus (false, i))) != noErr) return err;
+            if ((err = syncAudioUnitWithChannelSet (false, i, juceFilter->getChannelLayoutOfBus (false, i))) != noErr)
+                return err;
 
         return noErr;
     }
@@ -2166,7 +2179,7 @@ private:
            #endif
 
             // add discrete layout tags
-            int n = bus->getMaxSupportedChannels(maxChannelsToProbeFor());
+            int n = bus->getMaxSupportedChannels (maxChannelsToProbeFor());
 
             for (int ch = 0; ch < n; ++ch)
             {

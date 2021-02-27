@@ -1,5 +1,5 @@
 diff --git a/modules/juce_gui_basics/native/juce_linux_FileChooser.cpp b/modules/juce_gui_basics/native/juce_linux_FileChooser.cpp
-index 97327c59e..0eca4dfb6 100644
+index b799ee2e4..803740c63 100644
 --- a/modules/juce_gui_basics/native/juce_linux_FileChooser.cpp
 +++ b/modules/juce_gui_basics/native/juce_linux_FileChooser.cpp
 @@ -26,6 +26,7 @@
@@ -10,7 +10,7 @@ index 97327c59e..0eca4dfb6 100644
  static bool exeIsAvailable (String executable)
  {
      ChildProcess child;
-@@ -241,10 +242,11 @@ private:
+@@ -245,10 +246,11 @@ private:
  
      JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Native)
  };
@@ -23,7 +23,7 @@ index 97327c59e..0eca4dfb6 100644
      return false;
     #else
      static bool canUseNativeBox = exeIsAvailable ("zenity") || exeIsAvailable ("kdialog");
-@@ -254,7 +256,11 @@ bool FileChooser::isPlatformDialogAvailable()
+@@ -258,7 +260,11 @@ bool FileChooser::isPlatformDialogAvailable()
  
  FileChooser::Pimpl* FileChooser::showPlatformDialog (FileChooser& owner, int flags, FilePreviewComponent*)
  {

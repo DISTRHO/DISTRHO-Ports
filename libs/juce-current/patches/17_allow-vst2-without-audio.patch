@@ -1,8 +1,8 @@
 diff --git a/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp b/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
-index c5e96d204..7e2122580 100644
+index 94f6bf569..ddbe6fd65 100644
 --- a/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
 +++ b/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
-@@ -301,9 +301,6 @@ public:
+@@ -294,9 +294,6 @@ public:
          // You must at least have some channels
          jassert (processor->isMidiEffect() || (maxNumInChannels > 0 || maxNumOutChannels > 0));
  

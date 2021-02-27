@@ -1,5 +1,5 @@
 diff --git a/modules/juce_audio_basics/buffers/juce_AudioSampleBuffer.h b/modules/juce_audio_basics/buffers/juce_AudioSampleBuffer.h
-index 656ab3321..c40e854aa 100644
+index acd165ff0..bdc0bf58f 100644
 --- a/modules/juce_audio_basics/buffers/juce_AudioSampleBuffer.h
 +++ b/modules/juce_audio_basics/buffers/juce_AudioSampleBuffer.h
 @@ -20,6 +20,11 @@
@@ -30,10 +30,10 @@ index ac5ce32da..f0cd938ae 100644
                  { kAudioChannelLayoutTag_TMH_10_2_std, { left, right, centre, topFrontCentre, leftSurroundSide, rightSurroundSide, leftSurround, rightSurround, topFrontLeft, topFrontRight, wideLeft, wideRight, topRearCentre, centreSurround, LFE, LFE2 } },
                  { kAudioChannelLayoutTag_AC3_1_0_1, { centre, LFE } },
 diff --git a/modules/juce_audio_processors/format_types/juce_AudioUnitPluginFormat.mm b/modules/juce_audio_processors/format_types/juce_AudioUnitPluginFormat.mm
-index 892312098..411bf2097 100644
+index 9aa4a338e..7cad3e7c1 100644
 --- a/modules/juce_audio_processors/format_types/juce_AudioUnitPluginFormat.mm
 +++ b/modules/juce_audio_processors/format_types/juce_AudioUnitPluginFormat.mm
-@@ -58,6 +58,10 @@
+@@ -59,6 +59,10 @@ JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE ("-Wdeprecated-declarations")
  namespace juce
  {
  
@@ -44,7 +44,7 @@ index 892312098..411bf2097 100644
  // Change this to disable logging of various activities
  #ifndef AU_LOGGING
   #define AU_LOGGING 1
-@@ -274,7 +278,7 @@ namespace AudioUnitFormatHelpers
+@@ -276,7 +280,7 @@ namespace AudioUnitFormatHelpers
                      NSBundle* bundle = [[NSBundle alloc] initWithPath: (NSString*) fileOrIdentifier.toCFString()];
  
                      NSArray* audioComponents = [bundle objectForInfoDictionaryKey: @"AudioComponents"];
@@ -54,7 +54,7 @@ index 892312098..411bf2097 100644
                      desc.componentManufacturer = stringToOSType (nsStringToJuce ((NSString*) [dict valueForKey: @"manufacturer"]));
                      desc.componentType         = stringToOSType (nsStringToJuce ((NSString*) [dict valueForKey: @"type"]));
 diff --git a/modules/juce_audio_processors/processors/juce_AudioProcessor.h b/modules/juce_audio_processors/processors/juce_AudioProcessor.h
-index 02c3de12e..ae60fde15 100644
+index 39eac8211..f556f12b3 100644
 --- a/modules/juce_audio_processors/processors/juce_AudioProcessor.h
 +++ b/modules/juce_audio_processors/processors/juce_AudioProcessor.h
 @@ -1184,7 +1184,7 @@ public:
@@ -67,7 +67,7 @@ index 02c3de12e..ae60fde15 100644
      //==============================================================================
      /** Not for public use - this is called before deleting an editor component. */
 diff --git a/modules/juce_core/native/juce_osx_ObjCHelpers.h b/modules/juce_core/native/juce_osx_ObjCHelpers.h
-index 407d263d0..f2dc28e36 100644
+index a9a7c8eb7..aa068eaa0 100644
 --- a/modules/juce_core/native/juce_osx_ObjCHelpers.h
 +++ b/modules/juce_core/native/juce_osx_ObjCHelpers.h
 @@ -71,7 +71,7 @@ inline NSArray* varArrayToNSArray (const var& varToParse);
@@ -99,7 +99,7 @@ index 407d263d0..f2dc28e36 100644
      return var (dynamicObject.get());
  }
 diff --git a/modules/juce_core/system/juce_CompilerSupport.h b/modules/juce_core/system/juce_CompilerSupport.h
-index e4d87ab97..ddeef94a5 100644
+index 4d96d7cb0..d76d92d49 100644
 --- a/modules/juce_core/system/juce_CompilerSupport.h
 +++ b/modules/juce_core/system/juce_CompilerSupport.h
 @@ -92,7 +92,7 @@
@@ -112,7 +112,7 @@ index e4d87ab97..ddeef94a5 100644
  #endif
  
 diff --git a/modules/juce_core/system/juce_PlatformDefs.h b/modules/juce_core/system/juce_PlatformDefs.h
-index 52db7c6d6..96ce314d8 100644
+index 43000cab6..0a1798ba2 100644
 --- a/modules/juce_core/system/juce_PlatformDefs.h
 +++ b/modules/juce_core/system/juce_PlatformDefs.h
 @@ -99,11 +99,7 @@ namespace juce
@@ -129,10 +129,10 @@ index 52db7c6d6..96ce314d8 100644
   #if __GNUC__ >= 7
    #define JUCE_FALLTHROUGH [[gnu::fallthrough]];
 diff --git a/modules/juce_core/system/juce_TargetPlatform.h b/modules/juce_core/system/juce_TargetPlatform.h
-index cf610da9a..9173cc34d 100644
+index 5b4d293bb..6b41688b2 100644
 --- a/modules/juce_core/system/juce_TargetPlatform.h
 +++ b/modules/juce_core/system/juce_TargetPlatform.h
-@@ -144,8 +144,8 @@
+@@ -145,8 +145,8 @@
    #endif
  
    #if JUCE_MAC
@@ -144,7 +144,7 @@ index cf610da9a..9173cc34d 100644
        #error "Building for OSX 10.6 is no longer supported!"
      #endif
 diff --git a/modules/juce_graphics/native/juce_mac_CoreGraphicsContext.mm b/modules/juce_graphics/native/juce_mac_CoreGraphicsContext.mm
-index 37bf13094..60467ef61 100644
+index de6ffecfc..2a85d25f5 100644
 --- a/modules/juce_graphics/native/juce_mac_CoreGraphicsContext.mm
 +++ b/modules/juce_graphics/native/juce_mac_CoreGraphicsContext.mm
 @@ -26,6 +26,10 @@
@@ -159,10 +159,10 @@ index 37bf13094..60467ef61 100644
  // This class has been renamed from CoreGraphicsImage to avoid a symbol
  // collision in Pro Tools 2019.12 and possibly 2020 depending on the Pro Tools
 diff --git a/modules/juce_graphics/native/juce_mac_Fonts.mm b/modules/juce_graphics/native/juce_mac_Fonts.mm
-index b6a918ce1..65b094343 100644
+index ff0a23a9f..88142091d 100644
 --- a/modules/juce_graphics/native/juce_mac_Fonts.mm
 +++ b/modules/juce_graphics/native/juce_mac_Fonts.mm
-@@ -362,20 +362,20 @@ namespace CoreTextTypeLayout
+@@ -359,20 +359,20 @@ namespace CoreTextTypeLayout
  
          auto verticalJustification = text.getJustification().getOnlyVerticalFlags();
  
@@ -188,10 +188,10 @@ index b6a918ce1..65b094343 100644
  
          auto frame = createCTFrame (framesetter, CGRectMake ((CGFloat) ctFrameArea.getX(), flipHeight - (CGFloat) ctFrameArea.getBottom(),
 diff --git a/modules/juce_gui_basics/native/juce_mac_NSViewComponentPeer.mm b/modules/juce_gui_basics/native/juce_mac_NSViewComponentPeer.mm
-index 7adb2a869..48ae2951b 100644
+index 26ca40630..bd5e69ab0 100644
 --- a/modules/juce_gui_basics/native/juce_mac_NSViewComponentPeer.mm
 +++ b/modules/juce_gui_basics/native/juce_mac_NSViewComponentPeer.mm
-@@ -1528,17 +1528,21 @@ private:
+@@ -1583,17 +1583,21 @@ private:
              case NSEventTypeSystemDefined:
              case NSEventTypeApplicationDefined:
              case NSEventTypePeriodic:
@@ -215,7 +215,7 @@ index 7adb2a869..48ae2951b 100644
             #if JUCE_64BIT
              case NSEventTypeDirectTouch:
 diff --git a/modules/juce_gui_basics/native/juce_mac_Windowing.mm b/modules/juce_gui_basics/native/juce_mac_Windowing.mm
-index 5ffbe393c..ddb5aedc5 100644
+index 918f0b4a6..63e15d07b 100644
 --- a/modules/juce_gui_basics/native/juce_mac_Windowing.mm
 +++ b/modules/juce_gui_basics/native/juce_mac_Windowing.mm
 @@ -309,7 +309,7 @@ bool DragAndDropContainer::performExternalDragDropOfFiles (const StringArray& fi
@@ -228,10 +228,10 @@ index 5ffbe393c..ddb5aedc5 100644
  
                      auto eventPos = [event locationInWindow];
 diff --git a/modules/juce_gui_basics/native/x11/juce_linux_XWindowSystem.cpp b/modules/juce_gui_basics/native/x11/juce_linux_XWindowSystem.cpp
-index cf8df3b72..6f8417340 100644
+index b8e6e0c7e..6ad01c68a 100644
 --- a/modules/juce_gui_basics/native/x11/juce_linux_XWindowSystem.cpp
 +++ b/modules/juce_gui_basics/native/x11/juce_linux_XWindowSystem.cpp
-@@ -3054,7 +3054,7 @@ void XWindowSystem::handleButtonPressEvent (LinuxComponentPeer<::Window>* peer,
+@@ -3329,7 +3329,7 @@ void XWindowSystem::handleButtonPressEvent (LinuxComponentPeer* peer, const XBut
      peer->toFront (true);
      peer->handleMouseEvent (MouseInputSource::InputSourceType::mouse, getLogicalMousePos (buttonPressEvent, peer->getPlatformScaleFactor()),
                              ModifierKeys::currentModifiers, MouseInputSource::invalidPressure,
@@ -239,12 +239,12 @@ index cf8df3b72..6f8417340 100644
 +                            MouseInputSource::invalidOrientation, getEventTime (buttonPressEvent));
  }
  
- void XWindowSystem::handleButtonPressEvent (LinuxComponentPeer<::Window>* peer, const XButtonPressedEvent& buttonPressEvent) const
+ void XWindowSystem::handleButtonPressEvent (LinuxComponentPeer* peer, const XButtonPressedEvent& buttonPressEvent) const
 diff --git a/modules/juce_gui_basics/windows/juce_ComponentPeer.h b/modules/juce_gui_basics/windows/juce_ComponentPeer.h
-index 3dacc095a..820987e94 100644
+index 691e5679b..ed4f3c199 100644
 --- a/modules/juce_gui_basics/windows/juce_ComponentPeer.h
 +++ b/modules/juce_gui_basics/windows/juce_ComponentPeer.h
-@@ -314,7 +314,7 @@ public:
+@@ -321,7 +321,7 @@ public:
  
      //==============================================================================
      void handleMouseEvent (MouseInputSource::InputSourceType type, Point<float> positionWithinPeer, ModifierKeys newMods, float pressure,
@@ -254,10 +254,10 @@ index 3dacc095a..820987e94 100644
      void handleMouseWheel (MouseInputSource::InputSourceType type, Point<float> positionWithinPeer,
                             int64 time, const MouseWheelDetails&, int touchIndex = 0);
 diff --git a/modules/juce_gui_extra/juce_gui_extra.cpp b/modules/juce_gui_extra/juce_gui_extra.cpp
-index d4ebed7fd..df48cceaf 100644
+index 9cf367411..d42555e13 100644
 --- a/modules/juce_gui_extra/juce_gui_extra.cpp
 +++ b/modules/juce_gui_extra/juce_gui_extra.cpp
-@@ -142,7 +142,9 @@
+@@ -136,7 +136,9 @@
  #include "misc/juce_PushNotifications.cpp"
  #include "misc/juce_RecentlyOpenedFilesList.cpp"
  #include "misc/juce_SplashScreen.cpp"
@@ -267,7 +267,7 @@ index d4ebed7fd..df48cceaf 100644
  #include "misc/juce_LiveConstantEditor.cpp"
  #include "misc/juce_AnimatedAppComponent.cpp"
  
-@@ -154,7 +156,9 @@
+@@ -146,7 +148,9 @@
   #if JUCE_MAC
    #include "native/juce_mac_NSViewComponent.mm"
    #include "native/juce_mac_AppleRemote.mm"
@@ -279,7 +279,7 @@ index d4ebed7fd..df48cceaf 100644
  
   #if JUCE_IOS
 diff --git a/modules/juce_gui_extra/juce_gui_extra.h b/modules/juce_gui_extra/juce_gui_extra.h
-index 822c1885e..77e78c87a 100644
+index bcec491c9..062bde636 100644
 --- a/modules/juce_gui_extra/juce_gui_extra.h
 +++ b/modules/juce_gui_extra/juce_gui_extra.h
 @@ -115,7 +115,9 @@

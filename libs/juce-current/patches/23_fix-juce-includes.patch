@@ -1,8 +1,8 @@
 diff --git a/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp b/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
-index dbf441fb5..63d931efd 100644
+index cabbbcf13..f722ab36c 100644
 --- a/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
 +++ b/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
-@@ -489,7 +489,7 @@ public:
+@@ -488,7 +488,7 @@ public:
  
                  {
                      const int numChannels = jmax (numIn, numOut);

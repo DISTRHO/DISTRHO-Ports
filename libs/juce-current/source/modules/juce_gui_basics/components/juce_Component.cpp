@@ -452,7 +452,7 @@ struct Component::ComponentHelpers
         if (auto* p = comp.getParentComponent())
             return p->getLocalBounds();
 
-        return Desktop::getInstance().getDisplays().getMainDisplay().userArea;
+        return Desktop::getInstance().getDisplays().getPrimaryDisplay()->userArea;
     }
 
     static void releaseAllCachedImageResources (Component& c)
@@ -489,7 +489,7 @@ Component::~Component()
 
     if (parentComponent != nullptr)
         parentComponent->removeChildComponent (parentComponent->childComponentList.indexOf (this), true, false);
-    else if (currentlyFocusedComponent == this || isParentOf (currentlyFocusedComponent))
+    else if (hasKeyboardFocus (true))
         giveAwayFocus (currentlyFocusedComponent != this);
 
     if (flags.hasHeavyweightPeerFlag)
@@ -546,11 +546,12 @@ void Component::setVisible (bool shouldBeVisible)
         {
             ComponentHelpers::releaseAllCachedImageResources (*this);
 
-            if (currentlyFocusedComponent == this || isParentOf (currentlyFocusedComponent))
+            if (hasKeyboardFocus (true))
             {
                 if (parentComponent != nullptr)
                     parentComponent->grabKeyboardFocus();
-                else
+
+                if (hasKeyboardFocus (true))
                     giveAwayFocus (true);
             }
         }
@@ -1059,7 +1060,7 @@ int Component::getParentHeight() const noexcept
 
 Rectangle<int> Component::getParentMonitorArea() const
 {
-    return Desktop::getInstance().getDisplays().findDisplayForRect (getScreenBounds()).userArea;
+    return Desktop::getInstance().getDisplays().getDisplayForRect (getScreenBounds())->userArea;
 }
 
 int Component::getScreenX() const                       { return getScreenPosition().x; }
@@ -1181,7 +1182,12 @@ void Component::sendMovedResizedMessages (bool wasMoved, bool wasResized)
         parentComponent->childBoundsChanged (this);
 
     if (! checker.shouldBailOut())
-        componentListeners.callChecked (checker, [=] (ComponentListener& l) { l.componentMovedOrResized (*this, wasMoved, wasResized); });
+    {
+        componentListeners.callChecked (checker, [this, wasMoved, wasResized] (ComponentListener& l)
+        {
+            l.componentMovedOrResized (*this, wasMoved, wasResized);
+        });
+    }
 }
 
 void Component::setSize (int w, int h)                  { setBounds (getX(), getY(), w, h); }
@@ -2589,6 +2595,9 @@ void Component::internalMagnifyGesture (MouseInputSource source, Point<float> re
 
 void Component::sendFakeMouseMove() const
 {
+    if (flags.ignoresMouseClicksFlag && ! flags.allowChildMouseClicksFlag)
+        return;
+
     auto mainMouse = Desktop::getInstance().getMainMouseSource();
 
     if (! mainMouse.isDragging())

@@ -1,8 +1,8 @@
 diff --git a/modules/juce_core/native/juce_posix_SharedCode.h b/modules/juce_core/native/juce_posix_SharedCode.h
-index 332a64959..c6d95a93a 100644
+index ad46cf390..13724ba7c 100644
 --- a/modules/juce_core/native/juce_posix_SharedCode.h
 +++ b/modules/juce_core/native/juce_posix_SharedCode.h
-@@ -1227,6 +1227,11 @@ public:
+@@ -1239,6 +1239,11 @@ public:
          return 0;
      }
  
@@ -15,7 +15,7 @@ index 332a64959..c6d95a93a 100644
      int pipeHandle = 0;
      int exitCode = -1;
 diff --git a/modules/juce_core/native/juce_win32_Threads.cpp b/modules/juce_core/native/juce_win32_Threads.cpp
-index dbe0c6b5d..098416bd9 100644
+index 4a4148119..1c38ff2cf 100644
 --- a/modules/juce_core/native/juce_win32_Threads.cpp
 +++ b/modules/juce_core/native/juce_win32_Threads.cpp
 @@ -477,6 +477,11 @@ public:

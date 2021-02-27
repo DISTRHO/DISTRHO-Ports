@@ -364,6 +364,7 @@ static const String makePresetsFile (AudioProcessor* const filter)
     // Header
     text += "@prefix atom:  <" LV2_ATOM_PREFIX "> .\n";
     text += "@prefix lv2:   <" LV2_CORE_PREFIX "> .\n";
+    text += "@prefix owl:   <http://www.w3.org/2002/07/owl#> .\n";
     text += "@prefix pset:  <" LV2_PRESETS_PREFIX "> .\n";
     text += "@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n";
     text += "@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .\n";
@@ -385,6 +386,7 @@ static const String makePresetsFile (AudioProcessor* const filter)
     text += "    rdfs:domain state:State ;\n";
     text += "    rdfs:range xsd:base64Binary .\n";
  #endif
+    text += "\n";
 #endif
 
     // Presets

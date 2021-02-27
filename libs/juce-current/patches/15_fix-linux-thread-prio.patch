@@ -1,8 +1,8 @@
 diff --git a/modules/juce_core/native/juce_posix_SharedCode.h b/modules/juce_core/native/juce_posix_SharedCode.h
-index c6d95a93a..9c9053ac4 100644
+index 13724ba7c..f8892081c 100644
 --- a/modules/juce_core/native/juce_posix_SharedCode.h
 +++ b/modules/juce_core/native/juce_posix_SharedCode.h
-@@ -977,7 +977,11 @@ bool Thread::setThreadPriority (void* handle, int priority)
+@@ -989,7 +989,11 @@ bool Thread::setThreadPriority (void* handle, int priority)
      if (pthread_getschedparam ((pthread_t) handle, &policy, &param) != 0)
          return false;
  

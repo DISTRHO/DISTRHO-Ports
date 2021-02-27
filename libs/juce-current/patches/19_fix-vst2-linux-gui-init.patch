@@ -1,15 +1,17 @@
 diff --git a/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp b/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
-index cff9b7a88..3ae14372c 100644
+index ebc9325ca..cabbbcf13 100644
 --- a/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
 +++ b/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
-@@ -209,9 +209,9 @@ struct SharedMessageThread  : public Thread
+@@ -203,11 +203,11 @@ struct SharedMessageThread  : public Thread
      void run() override
      {
          initialiseJuce_GUI();
 -        initialised = true;
  
          MessageManager::getInstance()->setCurrentThreadAsMessageThread();
-+        initialised = true;
  
          XWindowSystem::getInstance();
++        initialised = true;
  
+         while ((! threadShouldExit()) && MessageManager::getInstance()->runDispatchLoopUntil (250))
+         {}

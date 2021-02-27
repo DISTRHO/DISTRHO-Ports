@@ -1,16 +1,23 @@
 diff --git a/modules/juce_gui_basics/native/x11/juce_linux_XWindowSystem.cpp b/modules/juce_gui_basics/native/x11/juce_linux_XWindowSystem.cpp
-index 6f8417340..5e8603833 100644
+index 6ad01c68a..490a3a792 100644
 --- a/modules/juce_gui_basics/native/x11/juce_linux_XWindowSystem.cpp
 +++ b/modules/juce_gui_basics/native/x11/juce_linux_XWindowSystem.cpp
-@@ -2561,8 +2561,9 @@ void XWindowSystem::setWindowType (::Window windowH, int styleFlags) const
+@@ -2804,10 +2804,14 @@ void XWindowSystem::setWindowType (::Window windowH, int styleFlags) const
  
-     Atom netHints [2];
+     if (atoms.windowType != None)
+     {
+-        auto hint = (styleFlags & ComponentPeer::windowIsTemporary) != 0
+-                    || ((styleFlags & ComponentPeer::windowHasDropShadow) == 0 && Desktop::canUseSemiTransparentWindows())
+-                        ? XWindowSystemUtilities::Atoms::getIfExists (display, "_NET_WM_WINDOW_TYPE_COMBO")
+-                        : XWindowSystemUtilities::Atoms::getIfExists (display, "_NET_WM_WINDOW_TYPE_NORMAL");
++        Atom hint = None;
++
++        if (styleFlags & ComponentPeer::windowIsTemporary)
++            hint = XWindowSystemUtilities::Atoms::getIfExists (display, "_NET_WM_WINDOW_TYPE_TOOLTIP");
++        else if ((styleFlags & ComponentPeer::windowHasDropShadow) == 0 && Desktop::canUseSemiTransparentWindows())
++            hint = XWindowSystemUtilities::Atoms::getIfExists (display, "_NET_WM_WINDOW_TYPE_COMBO");
++        else
++            hint = XWindowSystemUtilities::Atoms::getIfExists (display, "_NET_WM_WINDOW_TYPE_NORMAL");
  
--    if ((styleFlags & ComponentPeer::windowIsTemporary) != 0
--        || ((styleFlags & ComponentPeer::windowHasDropShadow) == 0 && Desktop::canUseSemiTransparentWindows()))
-+    if (styleFlags & ComponentPeer::windowIsTemporary)
-+        netHints [0] = XWindowSystemUtilities::Atoms::getIfExists (display, "_NET_WM_WINDOW_TYPE_TOOLTIP");
-+    else if ((styleFlags & ComponentPeer::windowHasDropShadow) == 0 && Desktop::canUseSemiTransparentWindows())
-         netHints [0] = XWindowSystemUtilities::Atoms::getIfExists (display, "_NET_WM_WINDOW_TYPE_COMBO");
-     else
-         netHints [0] = XWindowSystemUtilities::Atoms::getIfExists (display, "_NET_WM_WINDOW_TYPE_NORMAL");
+         if (hint != None)
+             xchangeProperty (windowH, atoms.windowType, XA_ATOM, 32, &hint, 1);
