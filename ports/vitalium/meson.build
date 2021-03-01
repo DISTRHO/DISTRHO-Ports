@@ -6,11 +6,14 @@ plugin_extra_build_flags = [
     '-Wno-sign-compare',
     '-DNO_AUTH=1',
 ]
-# -Ofast -flto
-# -ftree-vectorize -ftree-slp-vectorize -funroll-loops
 
-# -DREQUIRE_AUTH
-# "-DJUCE_DSP_USE_SHARED_FFTW=1"
+if buildtype == 'release'
+    plugin_extra_build_flags += [
+        '-ftree-vectorize',
+        '-ftree-slp-vectorize',
+        '-funroll-loops',
+    ]
+endif
 
 plugin_extra_include_dirs = include_directories([
     '.',

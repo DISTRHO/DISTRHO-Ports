@@ -51,7 +51,9 @@ build_flags_plugin_debug = [
 ]
 
 build_flags_plugin_release = [
+    '-Ofast',
     '-ffast-math',
+    '-flto',
 ]
 
 build_flag_plugin_cpp = [
