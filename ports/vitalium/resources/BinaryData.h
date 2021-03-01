@@ -30,7 +30,7 @@ namespace BinaryData
 
   #endif
     extern const char*  default_vitalskin;
-    const int           default_vitalskinSize = 10485;
+    const int           default_vitalskinSize = 12912;
 
   #ifdef TUNINGS
     extern const char*  _5_Limit_scl;
@@ -121,6 +121,6 @@ namespace BinaryData
     const int           vitaliumunfa_pngSize = 36106;
 
     extern const char*  BinaryData_cpp;
-    const int           BinaryData_cppSize = 2555794;
+    const int           BinaryData_cppSize = 2555792;
 
 }
