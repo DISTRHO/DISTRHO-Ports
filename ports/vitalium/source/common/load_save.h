@@ -113,8 +113,6 @@ class LoadSave {
     static bool isExpired();
     static bool doesExpire();
     static int getDaysToExpire();
-    static bool shouldCheckForUpdates();
-    static bool shouldWorkOffline();
     static std::string getLoadedSkin();
     static bool shouldAnimateWidgets();
     static bool displayHzFrequency();
@@ -130,12 +128,10 @@ class LoadSave {
     static void saveLayoutConfig(vital::StringLayout* layout);
     static void saveVersionConfig();
     static void saveContentVersion(std::string version);
-    static void saveUpdateCheckConfig(bool check_for_updates);
     static void saveWorkOffline(bool work_offline);
     static void saveLoadedSkin(const std::string& name);
     static void saveAnimateWidgets(bool animate_widgets);
     static void saveDisplayHzFrequency(bool display_hz);
-    static void saveAuthenticated(bool authenticated);
     static void saveWindowSize(float window_size);
     static void saveMidiMapConfig(MidiManager* midi_manager);
     static void loadConfig(MidiManager* midi_manager, vital::StringLayout* layout = nullptr);

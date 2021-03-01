@@ -1301,18 +1301,6 @@ void LoadSave::saveContentVersion(std::string version) {
   saveJsonToConfig(data);
 }
 
-void LoadSave::saveUpdateCheckConfig(bool check_for_updates) {
-  json data = getConfigJson();
-  data["check_for_updates"] = check_for_updates;
-  saveJsonToConfig(data);
-}
-
-void LoadSave::saveWorkOffline(bool work_offline) {
-  json data = getConfigJson();
-  data["work_offline"] = work_offline;
-  saveJsonToConfig(data);
-}
-
 void LoadSave::saveLoadedSkin(const std::string& name) {
   json data = getConfigJson();
   data["loaded_skin"] = name;
@@ -1328,12 +1316,6 @@ void LoadSave::saveAnimateWidgets(bool animate_widgets) {
 void LoadSave::saveDisplayHzFrequency(bool hz_frequency) {
   json data = getConfigJson();
   data["hz_frequency"] = hz_frequency;
-  saveJsonToConfig(data);
-}
-
-void LoadSave::saveAuthenticated(bool authenticated) {
-  json data = getConfigJson();
-  data["authenticated"] = authenticated;
   saveJsonToConfig(data);
 }
 
@@ -1567,24 +1549,6 @@ int LoadSave::getDaysToExpire() {
 #endif
 }
 
-bool LoadSave::shouldCheckForUpdates() {
-  json data = getConfigJson();
-
-  if (!data.count("check_for_updates"))
-    return true;
-
-  return data["check_for_updates"];
-}
-
-bool LoadSave::shouldWorkOffline() {
-  json data = getConfigJson();
-
-  if (!data.count("work_offline"))
-    return false;
-
-  return data["work_offline"];
-}
-
 std::string LoadSave::getLoadedSkin() {
   json data = getConfigJson();
 
@@ -1610,15 +1574,6 @@ bool LoadSave::displayHzFrequency() {
     return false;
 
   return data["hz_frequency"];
-}
-
-bool LoadSave::authenticated() {
-  json data = getConfigJson();
-
-  if (!data.count("authenticated"))
-    return false;
-
-  return data["authenticated"];
 }
 
 int LoadSave::getOversamplingAmount() {

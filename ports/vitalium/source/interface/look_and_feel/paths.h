@@ -44,14 +44,6 @@ class Paths {
       return path;
     }
 
-    static Path vitalWord() {
-      return fromSvgData((const void*)BinaryData::vital_word_svg, BinaryData::vital_word_svgSize);
-    }
-
-    static Path vitalWordRing() {
-      return fromSvgData((const void*)BinaryData::vital_word_ring_svg, BinaryData::vital_word_ring_svgSize);
-    }
-
     static Path chorus() {
       return fromSvgData((const void*)BinaryData::chorus_svg, BinaryData::chorus_svgSize);
     }

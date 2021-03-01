@@ -88,8 +88,6 @@ class AboutSection : public Overlay {
     void fullScreen();
 
     std::unique_ptr<OpenGlDeviceSelector> device_selector_;
-    std::unique_ptr<OpenGlToggleButton> check_for_updates_;
-    std::unique_ptr<PlainTextComponent> check_for_updates_text_;
 
     std::unique_ptr<OpenGlToggleButton> size_button_extra_small_;
     std::unique_ptr<OpenGlToggleButton> size_button_small_;
@@ -103,7 +101,7 @@ class AboutSection : public Overlay {
     std::unique_ptr<AppLogo> logo_;
     std::unique_ptr<PlainTextComponent> name_text_;
     std::unique_ptr<PlainTextComponent> version_text_;
-    std::unique_ptr<PlainTextComponent> check_updates_text_;
+    std::unique_ptr<PlainTextComponent> fork_text_;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AboutSection)
 };

@@ -32,7 +32,7 @@ class UnisonViewer;
 class WavetableCreator;
 
 class OscillatorSection : public SynthSection, public PresetSelector::Listener,
-                          TextEditor::Listener, Wavetable3d::Listener, TransposeQuantizeButton::Listener, Timer {
+                          TextEditor::Listener, Wavetable3d::Listener, TransposeQuantizeButton::Listener {
   public:
     static constexpr float kSectionWidthRatio = 0.19f;
 
@@ -43,8 +43,7 @@ class OscillatorSection : public SynthSection, public PresetSelector::Listener,
         virtual void oscillatorDestinationChanged(OscillatorSection* section, int destination) = 0;
     };
 
-    OscillatorSection(Authentication* auth,
-                      int index, const vital::output_map& mono_modulations, const vital::output_map& poly_modulations);
+    OscillatorSection(int index, const vital::output_map& mono_modulations, const vital::output_map& poly_modulations);
     virtual ~OscillatorSection();
 
     void setSkinValues(const Skin& skin, bool top_level) override;
@@ -58,18 +57,12 @@ class OscillatorSection : public SynthSection, public PresetSelector::Listener,
     void buttonClicked(Button* clicked_button) override;
     void setAllValues(vital::control_map& controls) override;
 
-    void textEditorReturnKeyPressed(TextEditor& text_editor) override;
-    void textEditorFocusLost(TextEditor& text_editor) override;
-
-    void timerCallback() override;
-
     void setActive(bool active) override;
     void setName(String name);
 
     void resetOscillatorModulationDistortionType();
     void addListener(Listener* listener) { listeners_.push_back(listener); }
 
-    std::string loadWavetableFromText(const String& text);
     Slider* getWaveFrameSlider();
     void setDistortionSelected(int selection);
     int getDistortion() const { return current_distortion_type_; }
@@ -79,8 +72,6 @@ class OscillatorSection : public SynthSection, public PresetSelector::Listener,
 
     void loadBrowserState();
     void setIndexSelected();
-    void setLanguage(int index);
-    void languageSelectCancelled();
     void prevClicked() override;
     void nextClicked() override;
     void textMouseDown(const MouseEvent& e) override;
@@ -91,7 +82,6 @@ class OscillatorSection : public SynthSection, public PresetSelector::Listener,
     void loadWavetable(json& wavetable_data) override;
     void loadDefaultWavetable() override;
     void resynthesizeToWavetable() override;
-    void textToWavetable() override;
     void saveWavetable() override;
     void loadFile(const File& wavetable_file) override;
     File getCurrentFile() override { return current_file_; }
@@ -107,7 +97,6 @@ class OscillatorSection : public SynthSection, public PresetSelector::Listener,
     Rectangle<float> getWavetableRelativeBounds();
 
   private:
-    void showTtwtSettings();
     void setupSpectralMorph();
     void setupDistortion();
     void setupDestination();
@@ -116,7 +105,6 @@ class OscillatorSection : public SynthSection, public PresetSelector::Listener,
     void notifyDistortionTypeChange();
     void notifyDestinationChange();
 
-    Authentication* auth_;
     std::vector<Listener*> listeners_;
     int index_;
     File current_file_;
@@ -128,9 +116,6 @@ class OscillatorSection : public SynthSection, public PresetSelector::Listener,
     int current_distortion_type_;
     int current_spectral_morph_type_;
     int current_destination_;
-    bool show_ttwt_error_;
-    bool showing_language_menu_;
-    int ttwt_language_;
 
     std::unique_ptr<SynthButton> oscillator_on_;
     std::unique_ptr<SynthButton> dimension_button_;
@@ -165,11 +150,6 @@ class OscillatorSection : public SynthSection, public PresetSelector::Listener,
     std::unique_ptr<SynthSlider> unison_detune_;
     std::unique_ptr<SynthSlider> unison_detune_power_;
     std::unique_ptr<OpenGlShapeButton> edit_button_;
-
-    OpenGlQuad ttwt_overlay_;
-    std::unique_ptr<OpenGlTextEditor> ttwt_;
-    std::unique_ptr<SynthButton> ttwt_settings_;
-    std::unique_ptr<PlainTextComponent> ttwt_error_text_;
 
     std::unique_ptr<OpenGlShapeButton> prev_destination_;
     std::unique_ptr<OpenGlShapeButton> next_destination_;
