@@ -83,13 +83,7 @@ namespace juce
     USE_FUNCTION (glCheckFramebufferStatus, GLenum, (GLenum p1), (p1))\
     USE_FUNCTION (glFramebufferTexture2D,   void, (GLenum p1, GLenum p2, GLenum p3, GLuint p4, GLint p5), (p1, p2, p3, p4, p5))\
     USE_FUNCTION (glFramebufferRenderbuffer,  void, (GLenum p1, GLenum p2, GLenum p3, GLuint p4), (p1, p2, p3, p4))\
-    USE_FUNCTION (glGetFramebufferAttachmentParameteriv, void, (GLenum p1, GLenum p2, GLenum p3, GLint* p4), (p1, p2, p3, p4))\
-    USE_FUNCTION (glTransformFeedbackVaryings, void, (GLuint p1, GLsizei p2, const char **p3, GLenum p4), (p1, p2, p3, p4))\
-    USE_FUNCTION (glBeginTransformFeedback, void, (GLenum p1), (p1))\
-    USE_FUNCTION (glEndTransformFeedback, void, (), ())\
-    USE_FUNCTION (glBindBufferBase, void, (GLenum p1, GLuint p2, GLuint p3), (p1, p2, p3))\
-    USE_FUNCTION (glMapBufferRange, void*, (GLenum p1, GLintptr p2, GLsizeiptr p3, GLbitfield p4), (p1, p2, p3, p4))\
-    USE_FUNCTION (glUnmapBuffer, GLboolean, (GLenum p1), (p1));
+    USE_FUNCTION (glGetFramebufferAttachmentParameteriv, void, (GLenum p1, GLenum p2, GLenum p3, GLint* p4), (p1, p2, p3, p4))
 
 /** @internal This macro contains a list of GL extension functions that need to be dynamically loaded on Windows/Linux.
     @see OpenGLExtensionFunctions

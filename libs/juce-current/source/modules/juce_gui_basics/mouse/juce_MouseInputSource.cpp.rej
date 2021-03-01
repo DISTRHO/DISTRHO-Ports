@@ -1,0 +1,11 @@
+--- modules/juce_gui_basics/mouse/juce_MouseInputSource.cpp
++++ modules/juce_gui_basics/mouse/juce_MouseInputSource.cpp
+@@ -61,7 +61,7 @@ class MouseInputSourceInternal   : private AsyncUpdater
+     {
+         if (auto* peer = comp.getPeer())
+         {
+-            pos = peer->globalToLocal (pos);
++            pos = peer->globalToLocal (pos) * comp.getTotalPixelScaling();
+             auto& peerComp = peer->getComponent();
+             return comp.getLocalPoint (&peerComp, ScalingHelpers::unscaledScreenPosToScaled (peerComp, pos));
+         }

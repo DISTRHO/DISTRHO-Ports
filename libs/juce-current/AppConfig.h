@@ -296,7 +296,7 @@
 
     You must respect the FFTW license when enabling this option.
 */
-#define JUCE_DSP_USE_SHARED_FFTW 0
+#define JUCE_DSP_USE_SHARED_FFTW 1
 
 /** Config: JUCE_DSP_USE_STATIC_FFTW
 
@@ -424,6 +424,8 @@
 
 //=============================================================================
 // juce_opengl
+
+#define JUCE_OPENGL3 1
 
 //=============================================================================
 // drowaudio

@@ -1,0 +1,20 @@
+--- modules/juce_gui_basics/windows/juce_ComponentPeer.cpp
++++ modules/juce_gui_basics/windows/juce_ComponentPeer.cpp
+@@ -474,7 +474,7 @@ bool ComponentPeer::handleDragMove (const ComponentPeer::DragInfo& info)
+             if (DragHelpers::isSuitableTarget (info, newTarget))
+             {
+                 dragAndDropTargetComponent = newTarget;
+-                auto pos = newTarget->getLocalPoint (&component, info.position);
++                auto pos = newTarget->getLocalPoint (&component, info.position * newTarget->getTotalPixelScaling());
+ 
+                 if (DragHelpers::isFileDrag (info))
+                     dynamic_cast<FileDragAndDropTarget*> (newTarget)->fileDragEnter (info.files, pos.x, pos.y);
+@@ -491,7 +491,7 @@ bool ComponentPeer::handleDragMove (const ComponentPeer::DragInfo& info)
+     if (! DragHelpers::isSuitableTarget (info, newTarget))
+         return false;
+ 
+-    auto pos = newTarget->getLocalPoint (&component, info.position);
++    auto pos = newTarget->getLocalPoint (&component, info.position * newTarget->getTotalPixelScaling());
+ 
+     if (DragHelpers::isFileDrag (info))
+         dynamic_cast<FileDragAndDropTarget*> (newTarget)->fileDragMove (info.files, pos.x, pos.y);
