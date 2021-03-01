@@ -47,7 +47,7 @@ AboutSection::AboutSection(const String& name) : Overlay(name), body_(Shaders::k
   version_text_->setTextSize(12.0f);
 
   fork_text_ = std::make_unique<PlainTextComponent>("About fork",
-      String("Original plugin by Matt Tytel\nVital fork by falkTX\nIcon design by unfa"));
+      String("Original plugin by Matt Tytel\nVital fork by falkTX\nLogo design by unfa"));
   addOpenGlComponent(fork_text_.get());
   fork_text_->setFontType(PlainTextComponent::kLight);
   fork_text_->setTextSize(14.0f);
