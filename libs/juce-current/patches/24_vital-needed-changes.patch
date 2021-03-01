@@ -1,0 +1,117 @@
+diff --git a/modules/juce_gui_basics/components/juce_Component.cpp b/modules/juce_gui_basics/components/juce_Component.cpp
+index c4404c637..fa8d3ccf5 100644
+--- a/modules/juce_gui_basics/components/juce_Component.cpp
++++ b/modules/juce_gui_basics/components/juce_Component.cpp
+@@ -387,6 +387,10 @@ struct Component::ComponentHelpers
+     template <typename PointOrRect>
+     static PointOrRect convertCoordinate (const Component* target, const Component* source, PointOrRect p)
+     {
++        float total_scaling = source->getTotalPixelScaling();
++        Component* top = nullptr;
++        if (source)
++            top = source->getTopLevelComponent();
+         while (source != nullptr)
+         {
+             if (source == target)
+@@ -395,6 +399,9 @@ struct Component::ComponentHelpers
+             if (source->isParentOf (target))
+                 return convertFromDistantParentSpace (source, *target, p);
+ 
++            if (source == top)
++              p /= total_scaling;
++
+             p = convertToParentSpace (*source, p);
+             source = source->getParentComponent();
+         }
+@@ -1390,13 +1397,14 @@ bool Component::reallyContains (Point<int> point, bool returnTrueIfWithinAChild)
+ 
+ Component* Component::getComponentAt (Point<int> position)
+ {
++    Point<int> scale = (position.toFloat() * getPixelScaling()).roundToInt();
+     if (flags.visibleFlag && ComponentHelpers::hitTest (*this, position))
+     {
+         for (int i = childComponentList.size(); --i >= 0;)
+         {
+             auto* child = childComponentList.getUnchecked(i);
+ 
+-            child = child->getComponentAt (ComponentHelpers::convertFromParentSpace (*child, position));
++            child = child->getComponentAt (ComponentHelpers::convertFromParentSpace (*child, scale));
+ 
+             if (child != nullptr)
+                 return child;
+diff --git a/modules/juce_gui_basics/components/juce_Component.h b/modules/juce_gui_basics/components/juce_Component.h
+index 6b2b0072b..ccb2681fa 100644
+--- a/modules/juce_gui_basics/components/juce_Component.h
++++ b/modules/juce_gui_basics/components/juce_Component.h
+@@ -2284,6 +2284,17 @@ public:
+     */
+     bool getViewportIgnoreDragFlag() const noexcept                     { return flags.viewportIgnoreDragFlag; }
+ 
++    virtual float getPixelScaling() const { return 1.0f; }
++    float getTotalPixelScaling() const {
++      const Component* component = this;
++      float pixel_scaling = 1.0f;
++      while (component) {
++        pixel_scaling *= component->getPixelScaling();
++        component = component->getParentComponent();
++      }
++      return pixel_scaling;
++    }
++
+ private:
+     //==============================================================================
+     friend class ComponentPeer;
+diff --git a/modules/juce_gui_basics/mouse/juce_MouseInputSource.cpp b/modules/juce_gui_basics/mouse/juce_MouseInputSource.cpp
+index a8c2c283a..ddb15b88d 100644
+--- a/modules/juce_gui_basics/mouse/juce_MouseInputSource.cpp
++++ b/modules/juce_gui_basics/mouse/juce_MouseInputSource.cpp
+@@ -61,7 +61,7 @@ public:
+     {
+         if (auto* peer = comp.getPeer())
+         {
+-            pos = peer->globalToLocal (pos);
++            pos = peer->globalToLocal (pos) * comp.getTotalPixelScaling();
+             auto& peerComp = peer->getComponent();
+             return comp.getLocalPoint (&peerComp, ScalingHelpers::unscaledScreenPosToScaled (peerComp, pos));
+         }
+diff --git a/modules/juce_gui_basics/windows/juce_ComponentPeer.cpp b/modules/juce_gui_basics/windows/juce_ComponentPeer.cpp
+index 8d7febd4b..7ec8fbb00 100644
+--- a/modules/juce_gui_basics/windows/juce_ComponentPeer.cpp
++++ b/modules/juce_gui_basics/windows/juce_ComponentPeer.cpp
+@@ -474,7 +474,7 @@ bool ComponentPeer::handleDragMove (const ComponentPeer::DragInfo& info)
+             if (DragHelpers::isSuitableTarget (info, newTarget))
+             {
+                 dragAndDropTargetComponent = newTarget;
+-                auto pos = newTarget->getLocalPoint (&component, info.position);
++                auto pos = newTarget->getLocalPoint (&component, info.position * newTarget->getTotalPixelScaling());
+ 
+                 if (DragHelpers::isFileDrag (info))
+                     dynamic_cast<FileDragAndDropTarget*> (newTarget)->fileDragEnter (info.files, pos.x, pos.y);
+@@ -491,7 +491,7 @@ bool ComponentPeer::handleDragMove (const ComponentPeer::DragInfo& info)
+     if (! DragHelpers::isSuitableTarget (info, newTarget))
+         return false;
+ 
+-    auto pos = newTarget->getLocalPoint (&component, info.position);
++    auto pos = newTarget->getLocalPoint (&component, info.position * newTarget->getTotalPixelScaling());
+ 
+     if (DragHelpers::isFileDrag (info))
+         dynamic_cast<FileDragAndDropTarget*> (newTarget)->fileDragMove (info.files, pos.x, pos.y);
+diff --git a/modules/juce_opengl/native/juce_OpenGLExtensions.h b/modules/juce_opengl/native/juce_OpenGLExtensions.h
+index e7eab9dbf..d7039b144 100644
+--- a/modules/juce_opengl/native/juce_OpenGLExtensions.h
++++ b/modules/juce_opengl/native/juce_OpenGLExtensions.h
+@@ -83,7 +83,13 @@ namespace juce
+     USE_FUNCTION (glCheckFramebufferStatus, GLenum, (GLenum p1), (p1))\
+     USE_FUNCTION (glFramebufferTexture2D,   void, (GLenum p1, GLenum p2, GLenum p3, GLuint p4, GLint p5), (p1, p2, p3, p4, p5))\
+     USE_FUNCTION (glFramebufferRenderbuffer,  void, (GLenum p1, GLenum p2, GLenum p3, GLuint p4), (p1, p2, p3, p4))\
+-    USE_FUNCTION (glGetFramebufferAttachmentParameteriv, void, (GLenum p1, GLenum p2, GLenum p3, GLint* p4), (p1, p2, p3, p4))
++    USE_FUNCTION (glGetFramebufferAttachmentParameteriv, void, (GLenum p1, GLenum p2, GLenum p3, GLint* p4), (p1, p2, p3, p4))\
++    USE_FUNCTION (glTransformFeedbackVaryings, void, (GLuint p1, GLsizei p2, const char **p3, GLenum p4), (p1, p2, p3, p4))\
++    USE_FUNCTION (glBeginTransformFeedback, void, (GLenum p1), (p1))\
++    USE_FUNCTION (glEndTransformFeedback, void, (), ())\
++    USE_FUNCTION (glBindBufferBase, void, (GLenum p1, GLuint p2, GLuint p3), (p1, p2, p3))\
++    USE_FUNCTION (glMapBufferRange, void*, (GLenum p1, GLintptr p2, GLsizeiptr p3, GLbitfield p4), (p1, p2, p3, p4))\
++    USE_FUNCTION (glUnmapBuffer, GLboolean, (GLenum p1), (p1));
+ 
+ /** @internal This macro contains a list of GL extension functions that need to be dynamically loaded on Windows/Linux.
+     @see OpenGLExtensionFunctions
