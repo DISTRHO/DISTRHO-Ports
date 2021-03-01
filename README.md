@@ -18,6 +18,7 @@ GNU/Linux: (development versions of these)
 
 - ALSA
 - freetype2
+- fftw3
 - OpenGL/Mesa
 - X11 core and extensions (XShm, XRender and XCursor)
 
