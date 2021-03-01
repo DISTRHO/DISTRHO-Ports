@@ -37,13 +37,6 @@ juce_current_extra_cpp_args = [
     '-Wno-non-virtual-dtor',
 ]
 
-if buildtype == 'release'
-    juce_current_extra_cpp_args += [
-        '-Ofast',
-        '-flto',
-    ]
-endif
-
 if os_windows
     juce_current_extra_cpp_args += [
         '-D_NATIVE_WCHAR_T_DEFINED',

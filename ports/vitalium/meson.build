@@ -12,6 +12,8 @@ if buildtype == 'release'
         '-ftree-vectorize',
         '-ftree-slp-vectorize',
         '-funroll-loops',
+        '-Ofast',
+#         '-flto',
     ]
 endif
 
