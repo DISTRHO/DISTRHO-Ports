@@ -46,7 +46,8 @@ AboutSection::AboutSection(const String& name) : Overlay(name), body_(Shaders::k
   version_text_->setFontType(PlainTextComponent::kLight);
   version_text_->setTextSize(12.0f);
 
-  fork_text_ = std::make_unique<PlainTextComponent>("About fork", String("Vital fork by falkTX"));
+  fork_text_ = std::make_unique<PlainTextComponent>("About fork",
+      String("Original plugin by Matt Tytel\nVital fork by falkTX\nIcon design by unfa"));
   addOpenGlComponent(fork_text_.get());
   fork_text_->setFontType(PlainTextComponent::kLight);
   fork_text_->setTextSize(14.0f);
@@ -138,7 +139,7 @@ void AboutSection::resized() {
   version_text_->setBounds(info_rect.getX() + name_x, info_rect.getY() + padding_y + 76 * size_ratio_,
                            info_rect.getWidth() - name_x - kNameRightBuffer * size_ratio_, 32 * size_ratio_);
   fork_text_->setBounds(info_rect.getX() + name_x, info_rect.getY() + padding_y + 110 * size_ratio_,
-                        info_rect.getWidth() + name_x, 40 * size_ratio_);
+                        info_rect.getWidth() + name_x, 70 * size_ratio_);
 
   int size_padding = 5 * size_ratio_;
   int size_start_x = info_rect.getX() + padding_x;
