@@ -27,7 +27,6 @@ namespace juce
 {
 
 extern void* createDraggingHandCursor();
-extern ComponentPeer* getPeerFor (::Window);
 
 //==============================================================================
 class X11DragState
