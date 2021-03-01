@@ -27,7 +27,7 @@
 #define STRINGIFY(x) QUOTE(x)
 
 namespace {
-  const std::string kLinuxUserDataDirectory = "~/.local/share/vital/";
+  const std::string kLinuxUserDataDirectory = "~/.local/share/vitalium/";
   const std::string kAvailablePacksFile = "available_packs.json";
   const std::string kInstalledPacksFile = "packs.json";
 
