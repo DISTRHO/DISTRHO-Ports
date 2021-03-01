@@ -70,6 +70,7 @@ option('plugins',
         'tal-vocoder-2',
         'temper',
         'vex',
+        'vitalium',
         'wolpertinger',
     ],
 )

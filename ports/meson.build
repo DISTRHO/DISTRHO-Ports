@@ -6,6 +6,7 @@ if linux_embed
 else
     plugins = [
         'chow',
+        'vitalium',
     ]
 endif
 
