@@ -117,7 +117,7 @@ void SynthPresetSelector::resized() {
 
 void SynthPresetSelector::buttonClicked(Button* clicked_button) {
   if (clicked_button == menu_button_.get()) {
-    if (ModifierKeys::getCurrentModifiersRealtime().isAltDown())
+    if (ModifierKeys::getCurrentModifiersRealtime().isCtrlDown())
       showAlternatePopupMenu(menu_button_.get());
     else
       showPopupMenu(menu_button_.get());
