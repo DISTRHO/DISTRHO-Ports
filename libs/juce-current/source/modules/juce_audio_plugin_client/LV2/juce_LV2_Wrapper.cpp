@@ -332,8 +332,14 @@ private:
 class JuceLv2ParentContainer : public Component
 {
 public:
-    JuceLv2ParentContainer (std::unique_ptr<AudioProcessorEditor>& editor, const LV2UI_Resize* uiResize_)
-        : uiResize(uiResize_)
+    struct SizeListener {
+        virtual ~SizeListener() {}
+        virtual void parentWindowSizeChanged(int cw, int ch) = 0;
+    };
+
+    JuceLv2ParentContainer (std::unique_ptr<AudioProcessorEditor>& editor,
+                            SizeListener* const sizeListener_)
+        : sizeListener(sizeListener_)
     {
         setOpaque (true);
         editor->setOpaque (true);
@@ -361,24 +367,15 @@ public:
         setSize (cw, ch);
        #endif
 
-        if (uiResize != nullptr)
-            uiResize->ui_resize (uiResize->handle, cw, ch);
-    }
-
-    void reset (const LV2UI_Resize* uiResize_)
-    {
-        uiResize = uiResize_;
-
-        if (uiResize != nullptr)
-            uiResize->ui_resize (uiResize->handle, getWidth(), getHeight());
+        sizeListener->parentWindowSizeChanged (cw, ch);
     }
 
 private:
     //==============================================================================
-    const LV2UI_Resize* uiResize;
    #if JUCE_LINUX
     ::Display* const display = XWindowSystem::getInstance()->getDisplay();
    #endif
+    SizeListener* const sizeListener;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (JuceLv2ParentContainer);
 };
@@ -390,7 +387,8 @@ static ThreadLocalValue<bool> inParameterChangedCallback;
     Juce LV2 UI handle
 */
 class JuceLv2UIWrapper : public AudioProcessorListener,
-                         public Timer
+                         public Timer,
+                         public JuceLv2ParentContainer::SizeListener
 {
 public:
    #if JUCE_LINUX
@@ -544,7 +542,10 @@ public:
             switch (msg.type)
             {
             case IdleMessage::kMessageParameterChanged:
-                writeFunction (controller, msg.index + controlPortOffset, sizeof (float), 0, &msg.value);
+                writeFunction (controller, msg.index + controlPortOffset, sizeof (float), 0, &msg.valuef);
+                break;
+            case IdleMessage::kMessageSizeChanged:
+                uiResize->ui_resize (uiResize->handle, msg.index, msg.valuei);
                 break;
             case IdleMessage::kMessageGestureBegin:
                 uiTouch->touch (uiTouch->handle, msg.index + controlPortOffset, true);
@@ -576,7 +577,7 @@ public:
        #if JUCE_LINUX
         if (hostHasIdleInterface && ! isExternal)
         {
-            const IdleMessage msg = { IdleMessage::kMessageParameterChanged, index, newValue };
+            const IdleMessage msg = { IdleMessage::kMessageParameterChanged, index, 0, newValue };
             const ScopedLock sl(idleMessagesLock);
             idleMessages.add(msg);
         }
@@ -609,7 +610,7 @@ public:
        #if JUCE_LINUX
         if (hostHasIdleInterface && ! isExternal)
         {
-            const IdleMessage msg = { IdleMessage::kMessageGestureBegin, parameterIndex, 0.0f };
+            const IdleMessage msg = { IdleMessage::kMessageGestureBegin, parameterIndex, 0, 0.0f };
             const ScopedLock sl(idleMessagesLock);
             idleMessages.add(msg);
         }
@@ -628,7 +629,7 @@ public:
        #if JUCE_LINUX
         if (hostHasIdleInterface && ! isExternal)
         {
-            const IdleMessage msg = { IdleMessage::kMessageGestureEnd, parameterIndex, 0.0f };
+            const IdleMessage msg = { IdleMessage::kMessageGestureEnd, parameterIndex, 0, 0.0f };
             const ScopedLock sl(idleMessagesLock);
             idleMessages.add(msg);
         }
@@ -636,6 +637,25 @@ public:
        #endif
         {
             uiTouch->touch (uiTouch->handle, parameterIndex + controlPortOffset, false);
+        }
+    }
+
+    void parentWindowSizeChanged(int cw, int ch) override
+    {
+        if (uiResize == nullptr)
+            return;
+
+       #if JUCE_LINUX
+        if (hostHasIdleInterface && ! isExternal)
+        {
+            const IdleMessage msg = { IdleMessage::kMessageSizeChanged, cw, ch, 0.0f };
+            const ScopedLock sl(idleMessagesLock);
+            idleMessages.add(msg);
+        }
+        else
+       #endif
+        {
+            uiResize->ui_resize (uiResize->handle, cw, ch);
         }
     }
 
@@ -720,11 +740,13 @@ private:
     struct IdleMessage {
         enum {
             kMessageParameterChanged,
+            kMessageSizeChanged,
             kMessageGestureBegin,
             kMessageGestureEnd,
         } type;
         int index;
-        float value;
+        int valuei;
+        float valuef;
     };
     Array<IdleMessage> idleMessages;
     CriticalSection idleMessagesLock;
@@ -778,14 +800,14 @@ private:
         if (parent != nullptr)
         {
             if (parentContainer == nullptr)
-                parentContainer = std::make_unique<JuceLv2ParentContainer> (editor, uiResize);
+                parentContainer = std::make_unique<JuceLv2ParentContainer> (editor, this);
 
             parentContainer->setVisible (false);
 
             if (parentContainer->isOnDesktop())
                 parentContainer->removeFromDesktop();
 
-            parentContainer->addToDesktop (0, parent);
+            parentContainer->addToDesktop (ComponentPeer::windowIsResizable, parent);
 
            #if JUCE_LINUX
             Window hostWindow = (Window) parent;
@@ -793,7 +815,9 @@ private:
             X11Symbols::getInstance()->xReparentWindow (display, editorWnd, hostWindow, 0, 0);
            #endif
 
-            parentContainer->reset (uiResize);
+            if (uiResize != nullptr)
+                uiResize->ui_resize (uiResize->handle, parentContainer->getWidth(), parentContainer->getHeight());
+
             parentContainer->setVisible (true);
         }
     }
