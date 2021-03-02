@@ -27,6 +27,9 @@
   #define VITAL_SSE2 1
 #elif defined(__ARM_NEON__) || defined(__ARM_NEON)
   #define VITAL_NEON 1
+  #if !(defined(__aarch64__) || defined(__arm64__))
+    #define NEON_ARM32 1
+  #endif
 #else
   static_assert(false, "No SIMD Intrinsics found which are necessary for compilation");
 #endif
