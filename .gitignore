@@ -8,6 +8,8 @@
 *.o
 *.so
 *.so.*
+*.orig
+*.rej
 
 *.lv2
 *.make
