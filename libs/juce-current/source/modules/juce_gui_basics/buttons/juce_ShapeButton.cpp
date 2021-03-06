@@ -76,9 +76,6 @@ void ShapeButton::setShape (const Path& newShape,
     shape = newShape;
     maintainShapeProportions = maintainShapeProportions_;
 
-    shadow.setShadowProperties (DropShadow (Colours::black.withAlpha (0.5f), 3, Point<int>()));
-    setComponentEffect (hasShadow ? &shadow : nullptr);
-
     if (resizeNowToFitThisShape)
     {
         auto newBounds = shape.getBounds();

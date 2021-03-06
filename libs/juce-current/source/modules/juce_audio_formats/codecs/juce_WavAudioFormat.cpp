@@ -842,6 +842,26 @@ namespace WavFileHelpers
             return out.getMemoryBlock();
         }
     };
+    
+    //==============================================================================
+    struct Clm_Chunk
+    {
+        static MemoryBlock createFrom (const StringPairArray& values)
+        {
+            MemoryOutputStream out;
+            auto s = values["clm "];
+
+            if (s.isNotEmpty())
+            {
+                out.writeString (s);
+
+                if ((out.getDataSize() & 1) != 0)
+                  out.writeByte(0);
+            }
+
+            return out.getMemoryBlock();
+        }
+    };
 
     //==============================================================================
     namespace AXMLChunk
@@ -1321,6 +1341,7 @@ public:
             listInfoChunk = ListInfoChunk::createFrom (metadataValues);
             acidChunk     = AcidChunk::createFrom (metadataValues);
             trckChunk     = TracktionChunk::createFrom (metadataValues);
+            clm_Chunk     = Clm_Chunk::createFrom (metadataValues);
         }
 
         headerPosition = out->getPosition();
@@ -1383,7 +1404,7 @@ public:
     }
 
 private:
-    MemoryBlock tempBlock, bwavChunk, axmlChunk, smplChunk, instChunk, cueChunk, listChunk, listInfoChunk, acidChunk, trckChunk;
+    MemoryBlock tempBlock, bwavChunk, axmlChunk, smplChunk, instChunk, cueChunk, listChunk, listInfoChunk, acidChunk, trckChunk, clm_Chunk;
     uint64 lengthInSamples = 0, bytesWritten = 0;
     int64 headerPosition = 0;
     bool writeFailed = false;
@@ -1421,6 +1442,7 @@ private:
                                        + chunkSize (listInfoChunk)
                                        + chunkSize (acidChunk)
                                        + chunkSize (trckChunk)
+                                       + chunkSize (clm_Chunk)
                                        + (8 + 28)); // (ds64 chunk)
 
         riffChunkSize += (riffChunkSize & 1);
@@ -1503,6 +1525,7 @@ private:
         writeChunk (listInfoChunk, chunkName ("LIST"));
         writeChunk (acidChunk,     chunkName ("acid"));
         writeChunk (trckChunk,     chunkName ("Trkn"));
+        writeChunk (clm_Chunk,     chunkName ("clm "));
 
         writeChunkHeader (chunkName ("data"), isRF64 ? -1 : (int) (lengthInSamples * bytesPerFrame));
 

@@ -393,6 +393,7 @@ public:
             AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
                                               TRANS("Error when trying to open audio device!"),
                                               error);
+        resized();
     }
 
     bool showDeviceControlPanel()
@@ -1120,6 +1121,8 @@ void AudioDeviceSelectorComponent::updateMidiOutput()
         deviceManager.setDefaultMidiOutputDevice ({});
     else
         deviceManager.setDefaultMidiOutputDevice (currentMidiOutputs[selectedId - 1].identifier);
+
+    resized();
 }
 
 void AudioDeviceSelectorComponent::changeListenerCallback (ChangeBroadcaster*)

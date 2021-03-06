@@ -3021,7 +3021,8 @@ void Component::modifierKeysChanged (const ModifierKeys& modifiers)
 
 void Component::internalModifierKeysChanged()
 {
-    sendFakeMouseMove();
+    auto mainMouse = Desktop::getInstance().getMainMouseSource();
+    mainMouse.triggerFakeMove();
     modifierKeysChanged (ModifierKeys::currentModifiers);
 }
 

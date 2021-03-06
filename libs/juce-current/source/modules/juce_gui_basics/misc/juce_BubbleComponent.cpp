@@ -30,9 +30,6 @@ BubbleComponent::BubbleComponent()
   : allowablePlacements (above | below | left | right)
 {
     setInterceptsMouseClicks (false, false);
-
-    shadow.setShadowProperties (DropShadow (Colours::black.withAlpha (0.35f), 5, Point<int>()));
-    setComponentEffect (&shadow);
 }
 
 BubbleComponent::~BubbleComponent() {}

@@ -1292,8 +1292,6 @@ void LookAndFeel_V4::drawCallOutBoxBackground (CallOutBox& box, Graphics& g,
     {
         cachedImage = { Image::ARGB, box.getWidth(), box.getHeight(), true };
         Graphics g2 (cachedImage);
-
-        DropShadow (Colours::black.withAlpha (0.7f), 8, { 0, 2 }).drawForPath (g2, path);
     }
 
     g.setColour (Colours::black);

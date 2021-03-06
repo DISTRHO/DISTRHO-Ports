@@ -83,7 +83,7 @@ void OpenGLHelpers::enableScissorTest (Rectangle<int> clip)
 
 String OpenGLHelpers::translateVertexShaderToV3 (const String& code)
 {
-   #if JUCE_OPENGL3
+   #if JUCE_OPENGL3 || OPENGL_ES
     if (OpenGLShaderProgram::getLanguageVersion() > 1.2)
     {
         String output;
@@ -119,7 +119,7 @@ String OpenGLHelpers::translateVertexShaderToV3 (const String& code)
 
 String OpenGLHelpers::translateFragmentShaderToV3 (const String& code)
 {
-   #if JUCE_OPENGL3
+   #if JUCE_OPENGL3 || OPENGL_ES
     if (OpenGLShaderProgram::getLanguageVersion() > 1.2)
         return JUCE_GLSL_VERSION "\n"
                "out " JUCE_MEDIUMP " vec4 fragColor;\n"

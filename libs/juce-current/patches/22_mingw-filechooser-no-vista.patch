@@ -7,7 +7,7 @@ index 0c1138a2b..a5b42b8ef 100644
      };
  
 +   #if JUCE_MSVC
-     bool showDialog (IFileDialog& dialog, bool async) const
+     bool showDialog (IFileDialog& dialog, bool async)
      {
          FILEOPENDIALOGOPTIONS flags = {};
 @@ -327,6 +328,7 @@ private:

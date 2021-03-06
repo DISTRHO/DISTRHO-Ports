@@ -387,6 +387,10 @@ struct Component::ComponentHelpers
     template <typename PointOrRect>
     static PointOrRect convertCoordinate (const Component* target, const Component* source, PointOrRect p)
     {
+        float total_scaling = source->getTotalPixelScaling();
+        Component* top = nullptr;
+        if (source)
+            top = source->getTopLevelComponent();
         while (source != nullptr)
         {
             if (source == target)
@@ -394,6 +398,9 @@ struct Component::ComponentHelpers
 
             if (source->isParentOf (target))
                 return convertFromDistantParentSpace (source, *target, p);
+
+            if (source == top)
+              p /= total_scaling;
 
             p = convertToParentSpace (*source, p);
             source = source->getParentComponent();
@@ -1390,13 +1397,14 @@ bool Component::reallyContains (Point<int> point, bool returnTrueIfWithinAChild)
 
 Component* Component::getComponentAt (Point<int> position)
 {
+    Point<int> scale = (position.toFloat() * getPixelScaling()).roundToInt();
     if (flags.visibleFlag && ComponentHelpers::hitTest (*this, position))
     {
         for (int i = childComponentList.size(); --i >= 0;)
         {
             auto* child = childComponentList.getUnchecked(i);
 
-            child = child->getComponentAt (ComponentHelpers::convertFromParentSpace (*child, position));
+            child = child->getComponentAt (ComponentHelpers::convertFromParentSpace (*child, scale));
 
             if (child != nullptr)
                 return child;

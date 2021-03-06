@@ -124,7 +124,7 @@
     It's mandatory in OpenGL 3.0 to specify the GLSL version.
 */
 #if JUCE_OPENGL3
- #if JUCE_OPENGL_ES
+ #if JUCE_OPENGL_ES || OPENGL_ES
   #define JUCE_GLSL_VERSION "#version 300 es"
  #else
   #define JUCE_GLSL_VERSION "#version 150"

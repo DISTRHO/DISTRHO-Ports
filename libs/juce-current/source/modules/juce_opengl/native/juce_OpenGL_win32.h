@@ -28,10 +28,6 @@ namespace juce
 
 extern ComponentPeer* createNonRepaintingEmbeddedWindowsPeer (Component&, void* parent);
 
-#if JUCE_WIN_PER_MONITOR_DPI_AWARE
- extern void setThreadDPIAwarenessForWindow (HWND);
-#endif
-
 //==============================================================================
 class OpenGLContext::NativeContext
    #if JUCE_WIN_PER_MONITOR_DPI_AWARE
@@ -97,15 +93,17 @@ public:
 
     bool initialiseOnRenderThread (OpenGLContext& c)
     {
-       #if JUCE_WIN_PER_MONITOR_DPI_AWARE
-        setThreadDPIAwarenessForWindow ((HWND) nativeWindow->getNativeHandle());
-       #endif
-
+        threadAwarenessSetter = std::make_unique<ScopedThreadDPIAwarenessSetter> (nativeWindow->getNativeHandle());
         context = &c;
         return true;
     }
 
-    void shutdownOnRenderThread()           { deactivateCurrentContext(); context = nullptr; }
+    void shutdownOnRenderThread()
+    {
+        deactivateCurrentContext();
+        context = nullptr;
+        threadAwarenessSetter = nullptr;
+    }
 
     static void deactivateCurrentContext()  { wglMakeCurrent (nullptr, nullptr); }
     bool makeActive() const noexcept        { return isActive() || wglMakeCurrent (dc, renderContext) != FALSE; }
@@ -170,6 +168,7 @@ private:
 
     std::unique_ptr<DummyComponent> dummyComponent;
     std::unique_ptr<ComponentPeer> nativeWindow;
+    std::unique_ptr<ScopedThreadDPIAwarenessSetter> threadAwarenessSetter;
     HGLRC renderContext;
     HDC dc;
     OpenGLContext* context = {};
@@ -219,7 +218,13 @@ private:
     void createNativeWindow (Component& component)
     {
         auto* topComp = component.getTopLevelComponent();
-        nativeWindow.reset (createNonRepaintingEmbeddedWindowsPeer (*dummyComponent, topComp->getWindowHandle()));
+
+        {
+            auto* parentHWND = topComp->getWindowHandle();
+
+            ScopedThreadDPIAwarenessSetter setter { parentHWND };
+            nativeWindow.reset (createNonRepaintingEmbeddedWindowsPeer (*dummyComponent, parentHWND));
+        }
 
         if (auto* peer = topComp->getPeer())
         {
@@ -285,6 +290,8 @@ private:
 
             atts[n++] = WGL_DRAW_TO_WINDOW_ARB;   atts[n++] = GL_TRUE;
             atts[n++] = WGL_SUPPORT_OPENGL_ARB;   atts[n++] = GL_TRUE;
+            atts[n++] = WGL_CONTEXT_MAJOR_VERSION_ARB;   atts[n++] = 3;
+            atts[n++] = WGL_CONTEXT_MINOR_VERSION_ARB;   atts[n++] = 2;
             atts[n++] = WGL_DOUBLE_BUFFER_ARB;    atts[n++] = GL_TRUE;
             atts[n++] = WGL_PIXEL_TYPE_ARB;       atts[n++] = WGL_TYPE_RGBA_ARB;
             atts[n++] = WGL_ACCELERATION_ARB;

@@ -833,6 +833,11 @@ struct TextEditor::TextHolderComponent  : public Component,
     {
         owner.drawContent (g);
     }
+    
+    void setTopLeftPosition(Point<int> new_position) override {
+      Component::setTopLeftPosition(new_position);
+      owner.textChanged();
+    }
 
     void restartTimer()
     {
@@ -1558,6 +1563,9 @@ void TextEditor::moveCaretTo (const int newPosition, const bool isSelecting)
         moveCaret (newPosition);
         selection = Range<int>::emptyRange (getCaretPosition());
     }
+  
+    if (listeners.size() != 0 || onTextChange != nullptr)
+        postCommandMessage (TextEditorDefs::textChangeMessageId);
 }
 
 int TextEditor::getTextIndexAt (const int x, const int y)
@@ -2141,6 +2149,9 @@ void TextEditor::focusGained (FocusChangeType cause)
 
     repaint();
     updateCaretPosition();
+  
+    if (listeners.size() != 0 || onTextChange != nullptr)
+        postCommandMessage (TextEditorDefs::textChangeMessageId);
 }
 
 void TextEditor::focusLost (FocusChangeType)

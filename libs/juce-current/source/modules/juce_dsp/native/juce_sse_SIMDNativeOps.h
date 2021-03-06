@@ -74,6 +74,7 @@ struct SIMDNativeOps<float>
     static forcedinline __m128 JUCE_VECTOR_CALLTYPE add (__m128 a, __m128 b) noexcept                    { return _mm_add_ps (a, b); }
     static forcedinline __m128 JUCE_VECTOR_CALLTYPE sub (__m128 a, __m128 b) noexcept                    { return _mm_sub_ps (a, b); }
     static forcedinline __m128 JUCE_VECTOR_CALLTYPE mul (__m128 a, __m128 b) noexcept                    { return _mm_mul_ps (a, b); }
+    static forcedinline __m128 JUCE_VECTOR_CALLTYPE div (__m128 a, __m128 b) noexcept                    { return _mm_div_ps (a, b); }
     static forcedinline __m128 JUCE_VECTOR_CALLTYPE bit_and (__m128 a, __m128 b) noexcept                { return _mm_and_ps (a, b); }
     static forcedinline __m128 JUCE_VECTOR_CALLTYPE bit_or  (__m128 a, __m128 b) noexcept                { return _mm_or_ps  (a, b); }
     static forcedinline __m128 JUCE_VECTOR_CALLTYPE bit_xor (__m128 a, __m128 b) noexcept                { return _mm_xor_ps (a, b); }
@@ -142,6 +143,7 @@ struct SIMDNativeOps<double>
     static forcedinline __m128d JUCE_VECTOR_CALLTYPE add (__m128d a, __m128d b) noexcept                     { return _mm_add_pd (a, b); }
     static forcedinline __m128d JUCE_VECTOR_CALLTYPE sub (__m128d a, __m128d b) noexcept                     { return _mm_sub_pd (a, b); }
     static forcedinline __m128d JUCE_VECTOR_CALLTYPE mul (__m128d a, __m128d b) noexcept                     { return _mm_mul_pd (a, b); }
+    static forcedinline __m128d JUCE_VECTOR_CALLTYPE div (__m128d a, __m128d b) noexcept                     { return _mm_div_pd (a, b); }
     static forcedinline __m128d JUCE_VECTOR_CALLTYPE bit_and (__m128d a, __m128d b) noexcept                 { return _mm_and_pd (a, b); }
     static forcedinline __m128d JUCE_VECTOR_CALLTYPE bit_or  (__m128d a, __m128d b) noexcept                 { return _mm_or_pd  (a, b); }
     static forcedinline __m128d JUCE_VECTOR_CALLTYPE bit_xor (__m128d a, __m128d b) noexcept                 { return _mm_xor_pd (a, b); }

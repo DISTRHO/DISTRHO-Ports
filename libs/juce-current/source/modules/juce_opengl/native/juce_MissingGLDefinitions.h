@@ -126,6 +126,14 @@ enum MissingOpenGLDefinitions
     GL_DYNAMIC_DRAW                 = 0x88E8,
     GL_STREAM_DRAW                  = 0x88E0,
 
+    GL_GEOMETRY_SHADER              = 0x8DD9,
+    GL_LINE_STRIP_ADJACENCY         = 0x000B,
+    GL_INTERLEAVED_ATTRIBS          = 0x8C8C,
+    GL_STATIC_READ                  = 0x88E5,
+    GL_TRANSFORM_FEEDBACK_BUFFER    = 0x8C8E,
+    GL_RASTERIZER_DISCARD           = 0x8C89,
+    GL_MAP_READ_BIT                 = 0x0001,
+
     WGL_NUMBER_PIXEL_FORMATS_ARB    = 0x2000,
     WGL_DRAW_TO_WINDOW_ARB          = 0x2001,
     WGL_ACCELERATION_ARB            = 0x2003,

@@ -69,8 +69,8 @@ public:
 
         GLint attribs[] =
         {
-            GLX_RGBA,
-            GLX_DOUBLEBUFFER,
+            GLX_RENDER_TYPE,      GLX_RGBA_BIT,
+            GLX_DOUBLEBUFFER,     True,
             GLX_RED_SIZE,         cPixelFormat.redBits,
             GLX_GREEN_SIZE,       cPixelFormat.greenBits,
             GLX_BLUE_SIZE,        cPixelFormat.blueBits,
@@ -81,12 +81,20 @@ public:
             GLX_ACCUM_GREEN_SIZE, cPixelFormat.accumulationBufferGreenBits,
             GLX_ACCUM_BLUE_SIZE,  cPixelFormat.accumulationBufferBlueBits,
             GLX_ACCUM_ALPHA_SIZE, cPixelFormat.accumulationBufferAlphaBits,
+            GLX_X_RENDERABLE,     True,
             None
         };
 
-        bestVisual = glXChooseVisual (display, X11Symbols::getInstance()->xDefaultScreen (display), attribs);
-        if (bestVisual == nullptr)
+        int countFbConfigs;
+        fbConfig = glXChooseFBConfig (display, DefaultScreen (display), attribs, &countFbConfigs);
+        if (fbConfig == nullptr)
             return;
+
+        bestVisual = glXGetVisualFromFBConfig (display, *fbConfig);
+        if (bestVisual == nullptr) {
+            X11Symbols::getInstance()->xFree (fbConfig);
+            return;
+        }
 
         auto* peer = component.getPeer();
         jassert (peer != nullptr);
@@ -139,6 +147,9 @@ public:
             }
         }
 
+        if (fbConfig != nullptr)
+            X11Symbols::getInstance()->xFree (fbConfig);
+
         if (bestVisual != nullptr)
             X11Symbols::getInstance()->xFree (bestVisual);
     }
@@ -146,7 +157,18 @@ public:
     bool initialiseOnRenderThread (OpenGLContext& c)
     {
         XWindowSystemUtilities::ScopedXLock xLock;
-        renderContext = glXCreateContext (display, bestVisual, (GLXContext) contextToShareWith, GL_TRUE);
+        PFNGLXCREATECONTEXTATTRIBSARBPROC createContextAttribs;
+        int attribs[] = {
+            GLX_CONTEXT_MAJOR_VERSION_ARB, 3,
+            GLX_CONTEXT_MINOR_VERSION_ARB, 2,
+            GLX_CONTEXT_PROFILE_MASK_ARB,  GLX_CONTEXT_CORE_PROFILE_BIT_ARB,
+            0
+        };
+
+        createContextAttribs = (PFNGLXCREATECONTEXTATTRIBSARBPROC)
+            OpenGLHelpers::getExtensionFunction("glXCreateContextAttribsARB");
+
+        renderContext = createContextAttribs (display, *fbConfig, (GLXContext) contextToShareWith, GL_TRUE, attribs);
         c.makeActive();
         context = &c;
 
@@ -240,6 +262,7 @@ private:
     int swapFrames = 1;
     Rectangle<int> bounds;
     XVisualInfo* bestVisual = nullptr;
+    GLXFBConfig* fbConfig = nullptr;
     void* contextToShareWith;
 
     OpenGLContext* context = nullptr;

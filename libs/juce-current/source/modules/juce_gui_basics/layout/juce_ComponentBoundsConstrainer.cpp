@@ -271,23 +271,6 @@ void ComponentBoundsConstrainer::checkBounds (Rectangle<int>& bounds,
                 bounds.setWidth (roundToInt (bounds.getHeight() * aspectRatio));
             }
         }
-
-        if ((isStretchingTop || isStretchingBottom) && ! (isStretchingLeft || isStretchingRight))
-        {
-            bounds.setX (old.getX() + (old.getWidth() - bounds.getWidth()) / 2);
-        }
-        else if ((isStretchingLeft || isStretchingRight) && ! (isStretchingTop || isStretchingBottom))
-        {
-            bounds.setY (old.getY() + (old.getHeight() - bounds.getHeight()) / 2);
-        }
-        else
-        {
-            if (isStretchingLeft)
-                bounds.setX (old.getRight() - bounds.getWidth());
-
-            if (isStretchingTop)
-                bounds.setY (old.getBottom() - bounds.getHeight());
-        }
     }
 
     jassert (! bounds.isEmpty());

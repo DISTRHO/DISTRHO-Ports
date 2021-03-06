@@ -749,7 +749,7 @@ public:
                               ? e.position.x - mouseDragStartPos.x
                               : mouseDragStartPos.y - e.position.y;
 
-            newPos = owner.valueToProportionOfLength (valueOnMouseDown)
+            newPos = owner.valueToProportionOfLength (valueWhenLastDragged)
                        + mouseDiff * (1.0 / pixelsForFullDragExtent);
 
             if (style == IncDecButtons)
@@ -763,7 +763,7 @@ public:
             auto mouseDiff = (e.position.x - mouseDragStartPos.x)
                                + (mouseDragStartPos.y - e.position.y);
 
-            newPos = owner.valueToProportionOfLength (valueOnMouseDown)
+            newPos = owner.valueToProportionOfLength (valueWhenLastDragged)
                        + mouseDiff * (1.0 / pixelsForFullDragExtent);
         }
         else
@@ -774,6 +774,7 @@ public:
                 newPos = 1.0 - newPos;
         }
 
+        mouseDragStartPos = e.position;
         newPos = (isRotary() && ! rotaryParams.stopAtEnd) ? newPos - std::floor (newPos)
                                                           : jlimit (0.0, 1.0, newPos);
         valueWhenLastDragged = owner.proportionOfLengthToValue (newPos);
