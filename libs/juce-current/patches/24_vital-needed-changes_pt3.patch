@@ -1,0 +1,467 @@
+diff --git a/modules/juce_audio_formats/codecs/juce_WavAudioFormat.cpp b/modules/juce_audio_formats/codecs/juce_WavAudioFormat.cpp
+index 7642040bd..ed02448b8 100644
+--- a/modules/juce_audio_formats/codecs/juce_WavAudioFormat.cpp
++++ b/modules/juce_audio_formats/codecs/juce_WavAudioFormat.cpp
+@@ -842,6 +842,26 @@ namespace WavFileHelpers
+             return out.getMemoryBlock();
+         }
+     };
++    
++    //==============================================================================
++    struct Clm_Chunk
++    {
++        static MemoryBlock createFrom (const StringPairArray& values)
++        {
++            MemoryOutputStream out;
++            auto s = values["clm "];
++
++            if (s.isNotEmpty())
++            {
++                out.writeString (s);
++
++                if ((out.getDataSize() & 1) != 0)
++                  out.writeByte(0);
++            }
++
++            return out.getMemoryBlock();
++        }
++    };
+ 
+     //==============================================================================
+     namespace AXMLChunk
+@@ -1321,6 +1341,7 @@ public:
+             listInfoChunk = ListInfoChunk::createFrom (metadataValues);
+             acidChunk     = AcidChunk::createFrom (metadataValues);
+             trckChunk     = TracktionChunk::createFrom (metadataValues);
++            clm_Chunk     = Clm_Chunk::createFrom (metadataValues);
+         }
+ 
+         headerPosition = out->getPosition();
+@@ -1383,7 +1404,7 @@ public:
+     }
+ 
+ private:
+-    MemoryBlock tempBlock, bwavChunk, axmlChunk, smplChunk, instChunk, cueChunk, listChunk, listInfoChunk, acidChunk, trckChunk;
++    MemoryBlock tempBlock, bwavChunk, axmlChunk, smplChunk, instChunk, cueChunk, listChunk, listInfoChunk, acidChunk, trckChunk, clm_Chunk;
+     uint64 lengthInSamples = 0, bytesWritten = 0;
+     int64 headerPosition = 0;
+     bool writeFailed = false;
+@@ -1421,6 +1442,7 @@ private:
+                                        + chunkSize (listInfoChunk)
+                                        + chunkSize (acidChunk)
+                                        + chunkSize (trckChunk)
++                                       + chunkSize (clm_Chunk)
+                                        + (8 + 28)); // (ds64 chunk)
+ 
+         riffChunkSize += (riffChunkSize & 1);
+@@ -1503,6 +1525,7 @@ private:
+         writeChunk (listInfoChunk, chunkName ("LIST"));
+         writeChunk (acidChunk,     chunkName ("acid"));
+         writeChunk (trckChunk,     chunkName ("Trkn"));
++        writeChunk (clm_Chunk,     chunkName ("clm "));
+ 
+         writeChunkHeader (chunkName ("data"), isRF64 ? -1 : (int) (lengthInSamples * bytesPerFrame));
+ 
+diff --git a/modules/juce_audio_plugin_client/VST3/juce_VST3_Wrapper.cpp b/modules/juce_audio_plugin_client/VST3/juce_VST3_Wrapper.cpp
+index 7909098c9..19eb385fd 100644
+--- a/modules/juce_audio_plugin_client/VST3/juce_VST3_Wrapper.cpp
++++ b/modules/juce_audio_plugin_client/VST3/juce_VST3_Wrapper.cpp
+@@ -28,6 +28,9 @@
+ 
+ //==============================================================================
+ #if JucePlugin_Build_VST3 && (JUCE_MAC || JUCE_WINDOWS || JUCE_LINUX)
++#if JUCE_LINUX^M
++ #include <arpa/inet.h>^M
++#endif^M
+ 
+ #if JUCE_PLUGINHOST_VST3
+  #if JUCE_MAC
+@@ -2618,6 +2621,9 @@ public:
+     //==============================================================================
+     void processParameterChanges (Vst::IParameterChanges& paramChanges)
+     {
++        if (juceVST3EditController == nullptr)
++            return;
++
+         jassert (pluginInstance != nullptr);
+ 
+         auto numParamsChanged = paramChanges.getParameterCount();
+diff --git a/modules/juce_audio_utils/gui/juce_AudioDeviceSelectorComponent.cpp b/modules/juce_audio_utils/gui/juce_AudioDeviceSelectorComponent.cpp
+index 50cae68ed..549d8edb8 100644
+--- a/modules/juce_audio_utils/gui/juce_AudioDeviceSelectorComponent.cpp
++++ b/modules/juce_audio_utils/gui/juce_AudioDeviceSelectorComponent.cpp
+@@ -393,6 +393,7 @@ public:
+             AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
+                                               TRANS("Error when trying to open audio device!"),
+                                               error);
++        resized();
+     }
+ 
+     bool showDeviceControlPanel()
+@@ -1120,6 +1121,8 @@ void AudioDeviceSelectorComponent::updateMidiOutput()
+         deviceManager.setDefaultMidiOutputDevice ({});
+     else
+         deviceManager.setDefaultMidiOutputDevice (currentMidiOutputs[selectedId - 1].identifier);
++
++    resized();
+ }
+ 
+ void AudioDeviceSelectorComponent::changeListenerCallback (ChangeBroadcaster*)
+diff --git a/modules/juce_core/native/juce_curl_Network.cpp b/modules/juce_core/native/juce_curl_Network.cpp
+index 00d428350..dd3375ff7 100644
+--- a/modules/juce_core/native/juce_curl_Network.cpp
++++ b/modules/juce_core/native/juce_curl_Network.cpp
+@@ -332,6 +332,9 @@ public:
+         // or 3) data is in the in buffer
+         while ((! finished) && curlBuffer.getSize() == 0)
+         {
++            if (Thread::currentThreadShouldExit())
++                return false;
++
+             {
+                 const ScopedLock lock (cleanupLock);
+ 
+diff --git a/modules/juce_dsp/native/juce_sse_SIMDNativeOps.h b/modules/juce_dsp/native/juce_sse_SIMDNativeOps.h
+index 7f64d433d..e9360e0de 100644
+--- a/modules/juce_dsp/native/juce_sse_SIMDNativeOps.h
++++ b/modules/juce_dsp/native/juce_sse_SIMDNativeOps.h
+@@ -74,6 +74,7 @@ struct SIMDNativeOps<float>
+     static forcedinline __m128 JUCE_VECTOR_CALLTYPE add (__m128 a, __m128 b) noexcept                    { return _mm_add_ps (a, b); }
+     static forcedinline __m128 JUCE_VECTOR_CALLTYPE sub (__m128 a, __m128 b) noexcept                    { return _mm_sub_ps (a, b); }
+     static forcedinline __m128 JUCE_VECTOR_CALLTYPE mul (__m128 a, __m128 b) noexcept                    { return _mm_mul_ps (a, b); }
++    static forcedinline __m128 JUCE_VECTOR_CALLTYPE div (__m128 a, __m128 b) noexcept                    { return _mm_div_ps (a, b); }
+     static forcedinline __m128 JUCE_VECTOR_CALLTYPE bit_and (__m128 a, __m128 b) noexcept                { return _mm_and_ps (a, b); }
+     static forcedinline __m128 JUCE_VECTOR_CALLTYPE bit_or  (__m128 a, __m128 b) noexcept                { return _mm_or_ps  (a, b); }
+     static forcedinline __m128 JUCE_VECTOR_CALLTYPE bit_xor (__m128 a, __m128 b) noexcept                { return _mm_xor_ps (a, b); }
+@@ -142,6 +143,7 @@ struct SIMDNativeOps<double>
+     static forcedinline __m128d JUCE_VECTOR_CALLTYPE add (__m128d a, __m128d b) noexcept                     { return _mm_add_pd (a, b); }
+     static forcedinline __m128d JUCE_VECTOR_CALLTYPE sub (__m128d a, __m128d b) noexcept                     { return _mm_sub_pd (a, b); }
+     static forcedinline __m128d JUCE_VECTOR_CALLTYPE mul (__m128d a, __m128d b) noexcept                     { return _mm_mul_pd (a, b); }
++    static forcedinline __m128d JUCE_VECTOR_CALLTYPE div (__m128d a, __m128d b) noexcept                     { return _mm_div_pd (a, b); }
+     static forcedinline __m128d JUCE_VECTOR_CALLTYPE bit_and (__m128d a, __m128d b) noexcept                 { return _mm_and_pd (a, b); }
+     static forcedinline __m128d JUCE_VECTOR_CALLTYPE bit_or  (__m128d a, __m128d b) noexcept                 { return _mm_or_pd  (a, b); }
+     static forcedinline __m128d JUCE_VECTOR_CALLTYPE bit_xor (__m128d a, __m128d b) noexcept                 { return _mm_xor_pd (a, b); }
+diff --git a/modules/juce_events/native/juce_mac_MessageManager.mm b/modules/juce_events/native/juce_mac_MessageManager.mm
+index 7a0718868..9d83519ff 100644
+--- a/modules/juce_events/native/juce_mac_MessageManager.mm
++++ b/modules/juce_events/native/juce_mac_MessageManager.mm
+@@ -369,6 +369,7 @@ void MessageManager::runDispatchLoop()
+ static void shutdownNSApp()
+ {
+     [NSApp stop: nil];
++    [NSEvent stopPeriodicEvents];
+     [NSEvent startPeriodicEventsAfterDelay: 0  withPeriod: 0.1];
+ }
+ 
+diff --git a/modules/juce_gui_basics/buttons/juce_Button.cpp b/modules/juce_gui_basics/buttons/juce_Button.cpp
+index 1df2d6e20..e5c243eda 100644
+--- a/modules/juce_gui_basics/buttons/juce_Button.cpp
++++ b/modules/juce_gui_basics/buttons/juce_Button.cpp
+@@ -482,10 +482,7 @@ void Button::mouseDrag (const MouseEvent& e)
+ 
+ bool Button::isMouseSourceOver (const MouseEvent& e)
+ {
+-    if (e.source.isTouch() || e.source.isPen())
+-        return getLocalBounds().toFloat().contains (e.position);
+-
+-    return isMouseOver();
++    return getLocalBounds().toFloat().contains (e.position);
+ }
+ 
+ void Button::focusGained (FocusChangeType)
+diff --git a/modules/juce_gui_basics/buttons/juce_ShapeButton.cpp b/modules/juce_gui_basics/buttons/juce_ShapeButton.cpp
+index 314544638..f3b61e2c3 100644
+--- a/modules/juce_gui_basics/buttons/juce_ShapeButton.cpp
++++ b/modules/juce_gui_basics/buttons/juce_ShapeButton.cpp
+@@ -76,9 +76,6 @@ void ShapeButton::setShape (const Path& newShape,
+     shape = newShape;
+     maintainShapeProportions = maintainShapeProportions_;
+ 
+-    shadow.setShadowProperties (DropShadow (Colours::black.withAlpha (0.5f), 3, Point<int>()));
+-    setComponentEffect (hasShadow ? &shadow : nullptr);
+-
+     if (resizeNowToFitThisShape)
+     {
+         auto newBounds = shape.getBounds();
+diff --git a/modules/juce_gui_basics/buttons/juce_ShapeButton.h b/modules/juce_gui_basics/buttons/juce_ShapeButton.h
+index 6863b1cab..5f9cee9ee 100644
+--- a/modules/juce_gui_basics/buttons/juce_ShapeButton.h
++++ b/modules/juce_gui_basics/buttons/juce_ShapeButton.h
+@@ -88,6 +88,8 @@ public:
+                        Colour overColourOn,
+                        Colour downColourOn);
+ 
++    void setShadowColour (Colour shadow) { shadowColour = shadow; }
++
+     /** Set whether the button should use the 'on' set of colours when its toggle state is 'on'.
+         By default these will be the same as the normal colours but the setOnColours method can be
+         used to provide a different set of colours.
+@@ -112,9 +114,8 @@ public:
+ private:
+     //==============================================================================
+     Colour normalColour,   overColour,   downColour,
+-           normalColourOn, overColourOn, downColourOn, outlineColour;
++           normalColourOn, overColourOn, downColourOn, outlineColour, shadowColour;
+     bool useOnColours;
+-    DropShadowEffect shadow;
+     Path shape;
+     BorderSize<int> border;
+     bool maintainShapeProportions;
+diff --git a/modules/juce_gui_basics/components/juce_Component.cpp b/modules/juce_gui_basics/components/juce_Component.cpp
+index fa8d3ccf5..b2d75c655 100644
+--- a/modules/juce_gui_basics/components/juce_Component.cpp
++++ b/modules/juce_gui_basics/components/juce_Component.cpp
+@@ -3021,7 +3021,8 @@ void Component::modifierKeysChanged (const ModifierKeys& modifiers)
+ 
+ void Component::internalModifierKeysChanged()
+ {
+-    sendFakeMouseMove();
++    auto mainMouse = Desktop::getInstance().getMainMouseSource();
++    mainMouse.triggerFakeMove();
+     modifierKeysChanged (ModifierKeys::currentModifiers);
+ }
+ 
+diff --git a/modules/juce_gui_basics/components/juce_Component.h b/modules/juce_gui_basics/components/juce_Component.h
+index 3add1db6b..ca84bc80e 100644
+--- a/modules/juce_gui_basics/components/juce_Component.h
++++ b/modules/juce_gui_basics/components/juce_Component.h
+@@ -439,7 +439,7 @@ public:
+ 
+         @see setBounds, ComponentListener::componentMovedOrResized
+     */
+-    void setTopLeftPosition (Point<int> newTopLeftPosition);
++    virtual void setTopLeftPosition (Point<int> newTopLeftPosition);
+ 
+     /** Moves the component to a new position.
+ 
+diff --git a/modules/juce_gui_basics/keyboard/juce_CaretComponent.cpp b/modules/juce_gui_basics/keyboard/juce_CaretComponent.cpp
+index 7c6b83fbf..a84cf5a91 100644
+--- a/modules/juce_gui_basics/keyboard/juce_CaretComponent.cpp
++++ b/modules/juce_gui_basics/keyboard/juce_CaretComponent.cpp
+@@ -43,14 +43,9 @@ void CaretComponent::paint (Graphics& g)
+     g.fillRect (getLocalBounds());
+ }
+ 
+-void CaretComponent::timerCallback()
+-{
+-    setVisible (shouldBeShown() && ! isVisible());
+-}
+ 
+ void CaretComponent::setCaretPosition (const Rectangle<int>& characterArea)
+ {
+-    startTimer (380);
+     setVisible (shouldBeShown());
+     setBounds (characterArea.withWidth (2));
+ }
+diff --git a/modules/juce_gui_basics/keyboard/juce_CaretComponent.h b/modules/juce_gui_basics/keyboard/juce_CaretComponent.h
+index a10b26c69..97894c075 100644
+--- a/modules/juce_gui_basics/keyboard/juce_CaretComponent.h
++++ b/modules/juce_gui_basics/keyboard/juce_CaretComponent.h
+@@ -31,8 +31,7 @@ namespace juce
+ 
+     @tags{GUI}
+ */
+-class JUCE_API  CaretComponent   : public Component,
+-                                   private Timer
++class JUCE_API  CaretComponent   : public Component
+ {
+ public:
+     //==============================================================================
+@@ -73,7 +72,6 @@ private:
+     Component* owner;
+ 
+     bool shouldBeShown() const;
+-    void timerCallback() override;
+ 
+     JUCE_DECLARE_NON_COPYABLE (CaretComponent)
+ };
+diff --git a/modules/juce_gui_basics/layout/juce_ComponentBoundsConstrainer.cpp b/modules/juce_gui_basics/layout/juce_ComponentBoundsConstrainer.cpp
+index 9ea63b215..7e8f14993 100644
+--- a/modules/juce_gui_basics/layout/juce_ComponentBoundsConstrainer.cpp
++++ b/modules/juce_gui_basics/layout/juce_ComponentBoundsConstrainer.cpp
+@@ -271,23 +271,6 @@ void ComponentBoundsConstrainer::checkBounds (Rectangle<int>& bounds,
+                 bounds.setWidth (roundToInt (bounds.getHeight() * aspectRatio));
+             }
+         }
+-
+-        if ((isStretchingTop || isStretchingBottom) && ! (isStretchingLeft || isStretchingRight))
+-        {
+-            bounds.setX (old.getX() + (old.getWidth() - bounds.getWidth()) / 2);
+-        }
+-        else if ((isStretchingLeft || isStretchingRight) && ! (isStretchingTop || isStretchingBottom))
+-        {
+-            bounds.setY (old.getY() + (old.getHeight() - bounds.getHeight()) / 2);
+-        }
+-        else
+-        {
+-            if (isStretchingLeft)
+-                bounds.setX (old.getRight() - bounds.getWidth());
+-
+-            if (isStretchingTop)
+-                bounds.setY (old.getBottom() - bounds.getHeight());
+-        }
+     }
+ 
+     jassert (! bounds.isEmpty());
+diff --git a/modules/juce_gui_basics/lookandfeel/juce_LookAndFeel_V1.cpp b/modules/juce_gui_basics/lookandfeel/juce_LookAndFeel_V1.cpp
+index 738fed8c1..f9f79994c 100644
+--- a/modules/juce_gui_basics/lookandfeel/juce_LookAndFeel_V1.cpp
++++ b/modules/juce_gui_basics/lookandfeel/juce_LookAndFeel_V1.cpp
+@@ -41,8 +41,6 @@ LookAndFeel_V1::LookAndFeel_V1()
+     setColour (PopupMenu::highlightedBackgroundColourId,  Colour (0xbfa4c2ce));
+     setColour (PopupMenu::highlightedTextColourId,        Colours::black);
+     setColour (TextEditor::focusedOutlineColourId,  findColour (TextButton::buttonColourId));
+-
+-    scrollbarShadow.setShadowProperties (DropShadow (Colours::black.withAlpha (0.5f), 2, Point<int>()));
+ }
+ 
+ LookAndFeel_V1::~LookAndFeel_V1()
+@@ -291,7 +289,7 @@ void LookAndFeel_V1::drawScrollbar (Graphics& g, ScrollBar& bar,
+ 
+ ImageEffectFilter* LookAndFeel_V1::getScrollbarEffect()
+ {
+-    return &scrollbarShadow;
++    return nullptr;
+ }
+ 
+ 
+@@ -477,7 +475,7 @@ Button* LookAndFeel_V1::createSliderButton (Slider&, const bool isIncrement)
+ 
+ ImageEffectFilter* LookAndFeel_V1::getSliderEffect (Slider&)
+ {
+-    return &scrollbarShadow;
++    return nullptr;
+ }
+ 
+ int LookAndFeel_V1::getSliderThumbRadius (Slider&)
+diff --git a/modules/juce_gui_basics/lookandfeel/juce_LookAndFeel_V1.h b/modules/juce_gui_basics/lookandfeel/juce_LookAndFeel_V1.h
+index b6c05aed7..51508a57a 100644
+--- a/modules/juce_gui_basics/lookandfeel/juce_LookAndFeel_V1.h
++++ b/modules/juce_gui_basics/lookandfeel/juce_LookAndFeel_V1.h
+@@ -97,8 +97,6 @@ public:
+                                         bool positionTitleBarButtonsOnLeft) override;
+ 
+ private:
+-    DropShadowEffect scrollbarShadow;
+-
+     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (LookAndFeel_V1)
+ };
+ 
+diff --git a/modules/juce_gui_basics/lookandfeel/juce_LookAndFeel_V4.cpp b/modules/juce_gui_basics/lookandfeel/juce_LookAndFeel_V4.cpp
+index 21042d0b2..829fed8e6 100644
+--- a/modules/juce_gui_basics/lookandfeel/juce_LookAndFeel_V4.cpp
++++ b/modules/juce_gui_basics/lookandfeel/juce_LookAndFeel_V4.cpp
+@@ -1292,8 +1292,6 @@ void LookAndFeel_V4::drawCallOutBoxBackground (CallOutBox& box, Graphics& g,
+     {
+         cachedImage = { Image::ARGB, box.getWidth(), box.getHeight(), true };
+         Graphics g2 (cachedImage);
+-
+-        DropShadow (Colours::black.withAlpha (0.7f), 8, { 0, 2 }).drawForPath (g2, path);
+     }
+ 
+     g.setColour (Colours::black);
+diff --git a/modules/juce_gui_basics/misc/juce_BubbleComponent.cpp b/modules/juce_gui_basics/misc/juce_BubbleComponent.cpp
+index 7c0848644..2017bccb5 100644
+--- a/modules/juce_gui_basics/misc/juce_BubbleComponent.cpp
++++ b/modules/juce_gui_basics/misc/juce_BubbleComponent.cpp
+@@ -30,9 +30,6 @@ BubbleComponent::BubbleComponent()
+   : allowablePlacements (above | below | left | right)
+ {
+     setInterceptsMouseClicks (false, false);
+-
+-    shadow.setShadowProperties (DropShadow (Colours::black.withAlpha (0.35f), 5, Point<int>()));
+-    setComponentEffect (&shadow);
+ }
+ 
+ BubbleComponent::~BubbleComponent() {}
+diff --git a/modules/juce_gui_basics/misc/juce_BubbleComponent.h b/modules/juce_gui_basics/misc/juce_BubbleComponent.h
+index f086c8ff3..cca6205a3 100644
+--- a/modules/juce_gui_basics/misc/juce_BubbleComponent.h
++++ b/modules/juce_gui_basics/misc/juce_BubbleComponent.h
+@@ -178,7 +178,6 @@ private:
+     Rectangle<int> content;
+     Point<int> arrowTip;
+     int allowablePlacements;
+-    DropShadowEffect shadow;
+ 
+     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BubbleComponent)
+ };
+diff --git a/modules/juce_gui_basics/native/juce_win32_Windowing.cpp b/modules/juce_gui_basics/native/juce_win32_Windowing.cpp
+index f18b890f4..e92e9af14 100644
+--- a/modules/juce_gui_basics/native/juce_win32_Windowing.cpp
++++ b/modules/juce_gui_basics/native/juce_win32_Windowing.cpp
+@@ -1816,7 +1816,7 @@ public:
+             if (peerIsDeleted)
+                 return S_FALSE;
+ 
+-            peer.handleDragExit (dragInfo);
++            peer.handleDragDrop (dragInfo);
+             return S_OK;
+         }
+ 
+diff --git a/modules/juce_gui_basics/widgets/juce_Slider.cpp b/modules/juce_gui_basics/widgets/juce_Slider.cpp
+index 731193ff1..0f68f6efa 100644
+--- a/modules/juce_gui_basics/widgets/juce_Slider.cpp
++++ b/modules/juce_gui_basics/widgets/juce_Slider.cpp
+@@ -749,7 +749,7 @@ public:
+                               ? e.position.x - mouseDragStartPos.x
+                               : mouseDragStartPos.y - e.position.y;
+ 
+-            newPos = owner.valueToProportionOfLength (valueOnMouseDown)
++            newPos = owner.valueToProportionOfLength (valueWhenLastDragged)
+                        + mouseDiff * (1.0 / pixelsForFullDragExtent);
+ 
+             if (style == IncDecButtons)
+@@ -763,7 +763,7 @@ public:
+             auto mouseDiff = (e.position.x - mouseDragStartPos.x)
+                                + (mouseDragStartPos.y - e.position.y);
+ 
+-            newPos = owner.valueToProportionOfLength (valueOnMouseDown)
++            newPos = owner.valueToProportionOfLength (valueWhenLastDragged)
+                        + mouseDiff * (1.0 / pixelsForFullDragExtent);
+         }
+         else
+@@ -774,6 +774,7 @@ public:
+                 newPos = 1.0 - newPos;
+         }
+ 
++        mouseDragStartPos = e.position;
+         newPos = (isRotary() && ! rotaryParams.stopAtEnd) ? newPos - std::floor (newPos)
+                                                           : jlimit (0.0, 1.0, newPos);
+         valueWhenLastDragged = owner.proportionOfLengthToValue (newPos);
+diff --git a/modules/juce_gui_basics/widgets/juce_TextEditor.cpp b/modules/juce_gui_basics/widgets/juce_TextEditor.cpp
+index 233c23305..70afc33a1 100644
+--- a/modules/juce_gui_basics/widgets/juce_TextEditor.cpp
++++ b/modules/juce_gui_basics/widgets/juce_TextEditor.cpp
+@@ -833,6 +833,11 @@ struct TextEditor::TextHolderComponent  : public Component,
+     {
+         owner.drawContent (g);
+     }
++    
++    void setTopLeftPosition(Point<int> new_position) override {
++      Component::setTopLeftPosition(new_position);
++      owner.textChanged();
++    }
+ 
+     void restartTimer()
+     {
+@@ -1558,6 +1563,9 @@ void TextEditor::moveCaretTo (const int newPosition, const bool isSelecting)
+         moveCaret (newPosition);
+         selection = Range<int>::emptyRange (getCaretPosition());
+     }
++  
++    if (listeners.size() != 0 || onTextChange != nullptr)
++        postCommandMessage (TextEditorDefs::textChangeMessageId);
+ }
+ 
+ int TextEditor::getTextIndexAt (const int x, const int y)
+@@ -2141,6 +2149,9 @@ void TextEditor::focusGained (FocusChangeType cause)
+ 
+     repaint();
+     updateCaretPosition();
++  
++    if (listeners.size() != 0 || onTextChange != nullptr)
++        postCommandMessage (TextEditorDefs::textChangeMessageId);
+ }
+ 
+ void TextEditor::focusLost (FocusChangeType)

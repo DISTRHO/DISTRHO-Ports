@@ -1,0 +1,144 @@
+diff --git a/modules/juce_opengl/juce_opengl.h b/modules/juce_opengl/juce_opengl.h
+index f7bc806f8..d325d3e34 100644
+--- a/modules/juce_opengl/juce_opengl.h
++++ b/modules/juce_opengl/juce_opengl.h
+@@ -124,7 +124,7 @@
+     It's mandatory in OpenGL 3.0 to specify the GLSL version.
+ */
+ #if JUCE_OPENGL3
+- #if JUCE_OPENGL_ES
++ #if JUCE_OPENGL_ES || OPENGL_ES
+   #define JUCE_GLSL_VERSION "#version 300 es"
+  #else
+   #define JUCE_GLSL_VERSION "#version 150"
+diff --git a/modules/juce_opengl/native/juce_MissingGLDefinitions.h b/modules/juce_opengl/native/juce_MissingGLDefinitions.h
+index c23ec097a..00c6cf565 100644
+--- a/modules/juce_opengl/native/juce_MissingGLDefinitions.h
++++ b/modules/juce_opengl/native/juce_MissingGLDefinitions.h
+@@ -126,6 +126,14 @@ enum MissingOpenGLDefinitions
+     GL_DYNAMIC_DRAW                 = 0x88E8,
+     GL_STREAM_DRAW                  = 0x88E0,
+ 
++    GL_GEOMETRY_SHADER              = 0x8DD9,
++    GL_LINE_STRIP_ADJACENCY         = 0x000B,
++    GL_INTERLEAVED_ATTRIBS          = 0x8C8C,
++    GL_STATIC_READ                  = 0x88E5,
++    GL_TRANSFORM_FEEDBACK_BUFFER    = 0x8C8E,
++    GL_RASTERIZER_DISCARD           = 0x8C89,
++    GL_MAP_READ_BIT                 = 0x0001,
++
+     WGL_NUMBER_PIXEL_FORMATS_ARB    = 0x2000,
+     WGL_DRAW_TO_WINDOW_ARB          = 0x2001,
+     WGL_ACCELERATION_ARB            = 0x2003,
+diff --git a/modules/juce_opengl/native/juce_OpenGL_linux_X11.h b/modules/juce_opengl/native/juce_OpenGL_linux_X11.h
+index ef7eb852e..b4ba85cc4 100644
+--- a/modules/juce_opengl/native/juce_OpenGL_linux_X11.h
++++ b/modules/juce_opengl/native/juce_OpenGL_linux_X11.h
+@@ -69,8 +69,8 @@ public:
+ 
+         GLint attribs[] =
+         {
+-            GLX_RGBA,
+-            GLX_DOUBLEBUFFER,
++            GLX_RENDER_TYPE,      GLX_RGBA_BIT,
++            GLX_DOUBLEBUFFER,     True,
+             GLX_RED_SIZE,         cPixelFormat.redBits,
+             GLX_GREEN_SIZE,       cPixelFormat.greenBits,
+             GLX_BLUE_SIZE,        cPixelFormat.blueBits,
+@@ -81,13 +81,21 @@ public:
+             GLX_ACCUM_GREEN_SIZE, cPixelFormat.accumulationBufferGreenBits,
+             GLX_ACCUM_BLUE_SIZE,  cPixelFormat.accumulationBufferBlueBits,
+             GLX_ACCUM_ALPHA_SIZE, cPixelFormat.accumulationBufferAlphaBits,
++            GLX_X_RENDERABLE,     True,
+             None
+         };
+ 
+-        bestVisual = glXChooseVisual (display, X11Symbols::getInstance()->xDefaultScreen (display), attribs);
+-        if (bestVisual == nullptr)
++        int countFbConfigs;
++        fbConfig = glXChooseFBConfig (display, DefaultScreen (display), attribs, &countFbConfigs);
++        if (fbConfig == nullptr)
+             return;
+ 
++        bestVisual = glXGetVisualFromFBConfig (display, *fbConfig);
++        if (bestVisual == nullptr) {
++            X11Symbols::getInstance()->xFree (fbConfig);
++            return;
++        }
++
+         auto* peer = component.getPeer();
+         jassert (peer != nullptr);
+ 
+@@ -139,6 +147,9 @@ public:
+             }
+         }
+ 
++        if (fbConfig != nullptr)
++            X11Symbols::getInstance()->xFree (fbConfig);
++
+         if (bestVisual != nullptr)
+             X11Symbols::getInstance()->xFree (bestVisual);
+     }
+@@ -146,7 +157,18 @@ public:
+     bool initialiseOnRenderThread (OpenGLContext& c)
+     {
+         XWindowSystemUtilities::ScopedXLock xLock;
+-        renderContext = glXCreateContext (display, bestVisual, (GLXContext) contextToShareWith, GL_TRUE);
++        PFNGLXCREATECONTEXTATTRIBSARBPROC createContextAttribs;
++        int attribs[] = {
++            GLX_CONTEXT_MAJOR_VERSION_ARB, 3,
++            GLX_CONTEXT_MINOR_VERSION_ARB, 2,
++            GLX_CONTEXT_PROFILE_MASK_ARB,  GLX_CONTEXT_CORE_PROFILE_BIT_ARB,
++            0
++        };
++
++        createContextAttribs = (PFNGLXCREATECONTEXTATTRIBSARBPROC)
++            OpenGLHelpers::getExtensionFunction("glXCreateContextAttribsARB");
++
++        renderContext = createContextAttribs (display, *fbConfig, (GLXContext) contextToShareWith, GL_TRUE, attribs);
+         c.makeActive();
+         context = &c;
+ 
+@@ -240,6 +262,7 @@ private:
+     int swapFrames = 1;
+     Rectangle<int> bounds;
+     XVisualInfo* bestVisual = nullptr;
++    GLXFBConfig* fbConfig = nullptr;
+     void* contextToShareWith;
+ 
+     OpenGLContext* context = nullptr;
+diff --git a/modules/juce_opengl/native/juce_OpenGL_win32.h b/modules/juce_opengl/native/juce_OpenGL_win32.h
+index 6106fce54..7ba46c079 100644
+--- a/modules/juce_opengl/native/juce_OpenGL_win32.h
++++ b/modules/juce_opengl/native/juce_OpenGL_win32.h
+@@ -285,6 +285,8 @@ private:
+ 
+             atts[n++] = WGL_DRAW_TO_WINDOW_ARB;   atts[n++] = GL_TRUE;
+             atts[n++] = WGL_SUPPORT_OPENGL_ARB;   atts[n++] = GL_TRUE;
++            atts[n++] = WGL_CONTEXT_MAJOR_VERSION_ARB;   atts[n++] = 3;
++            atts[n++] = WGL_CONTEXT_MINOR_VERSION_ARB;   atts[n++] = 2;
+             atts[n++] = WGL_DOUBLE_BUFFER_ARB;    atts[n++] = GL_TRUE;
+             atts[n++] = WGL_PIXEL_TYPE_ARB;       atts[n++] = WGL_TYPE_RGBA_ARB;
+             atts[n++] = WGL_ACCELERATION_ARB;
+diff --git a/modules/juce_opengl/opengl/juce_OpenGLHelpers.cpp b/modules/juce_opengl/opengl/juce_OpenGLHelpers.cpp
+index 97dc1f0b5..ad40fa640 100644
+--- a/modules/juce_opengl/opengl/juce_OpenGLHelpers.cpp
++++ b/modules/juce_opengl/opengl/juce_OpenGLHelpers.cpp
+@@ -83,7 +83,7 @@ void OpenGLHelpers::enableScissorTest (Rectangle<int> clip)
+ 
+ String OpenGLHelpers::translateVertexShaderToV3 (const String& code)
+ {
+-   #if JUCE_OPENGL3
++   #if JUCE_OPENGL3 || OPENGL_ES
+     if (OpenGLShaderProgram::getLanguageVersion() > 1.2)
+     {
+         String output;
+@@ -119,7 +119,7 @@ String OpenGLHelpers::translateVertexShaderToV3 (const String& code)
+ 
+ String OpenGLHelpers::translateFragmentShaderToV3 (const String& code)
+ {
+-   #if JUCE_OPENGL3
++   #if JUCE_OPENGL3 || OPENGL_ES
+     if (OpenGLShaderProgram::getLanguageVersion() > 1.2)
+         return JUCE_GLSL_VERSION "\n"
+                "out " JUCE_MEDIUMP " vec4 fragColor;\n"
