@@ -40,6 +40,13 @@
 //=============================================================================
 // juce_audio_basics
 
+#ifdef __ARM_NEON__
+ #define JUCE_USE_ARM_NEON 1
+#endif
+#ifdef __SSE2__
+ #define JUCE_USE_SSE_INTRINSICS 0
+#endif
+
 //=============================================================================
 // juce_audio_devices
 
@@ -407,6 +414,10 @@
  #define JUCE_USE_XCURSOR 0
 #endif
 
+#if LINUX
+ #define JUCE_DISABLE_NATIVE_FILECHOOSERS 1
+#endif
+
 //=============================================================================
 // juce_gui_extra
 
@@ -426,75 +437,6 @@
 // juce_opengl
 
 #define JUCE_OPENGL3 1
-
-//=============================================================================
-// drowaudio
-
-/** Config: DROWAUDIO_USE_FFTREAL
-    Enables the FFTReal library. By default this is enabled except on the Mac
-    where the Accelerate framework is preferred. However, if you do explicity
-    enable this setting fftreal can be used for testing purposes.
- */
-#if JUCE_MAC
- #define DROWAUDIO_USE_FFTREAL 0
-#else
- #define DROWAUDIO_USE_FFTREAL 1
-#endif
-
-/** Config: DROWAUDIO_USE_SOUNDTOUCH
-    Enables the SoundTouch library and the associated SoundTouch classes for
-    independant pitch and tempo scaling. By default this is enabled.
- */
-#define DROWAUDIO_USE_SOUNDTOUCH 1
-
-/** Config: DROWAUDIO_USE_CURL
-    Enables the cURL library and the associated network classes. By default
-    this is enabled.
- */
-#define DROWAUDIO_USE_CURL 0
-
-//=============================================================================
-// juced
-
-/** Config: JUCE_LASH
-        Enables LASH support on Linux.
-        Not enabled by default.
-*/
-#define JUCE_LASH 0
-
-/** Config: JUCE_USE_GLX
-        Enable this under Linux to use GLX for fast openGL rendering with alpha
-        compositing support over a composite manager (compiz / xcompmgr).
-        Not enabled by default.
-*/
-#define JUCE_USE_GLX 0
-
-/** Config: JUCE_SUPPORT_SQLITE
-        Setting this allows the build to use SQLITE libraries for access a self-contained,
-        serverless, zero-configuration, transactional SQL database engine.
-        Not enabled by default.
-*/
-#define JUCE_SUPPORT_SQLITE 0
-
-/** Config: JUCE_SUPPORT_SCRIPTING
-        Setting this allows the build to use Angelscript library for using scripting
-        inside the juce library itself
-        Not enabled by default.
-*/
-#define JUCE_SUPPORT_SCRIPTING 0
-
-/** Config: JUCETICE_INCLUDE_ANGELSCRIPT_CODE
- Enables direct inclusion of the angelscript library.
- Enabled by default.
-*/
-#define JUCETICE_INCLUDE_ANGELSCRIPT_CODE  0
-
-/** Config: JUCETICE_INCLUDE_CURL_CODE
- Enables direct inclusion of curl.
-
- // Currently not available //
-*/
-#define JUCETICE_INCLUDE_CURL_CODE 0
 
 //=============================================================================
 // Linux embed build
