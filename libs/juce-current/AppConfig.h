@@ -44,7 +44,7 @@
  #define JUCE_USE_ARM_NEON 1
 #endif
 #ifdef __SSE2__
- #define JUCE_USE_SSE_INTRINSICS 0
+ #define JUCE_USE_SSE_INTRINSICS 1
 #endif
 
 //=============================================================================
