@@ -7,6 +7,7 @@ else
     plugins = [
         'chow',
         'vitalium',
+        'swankyamp',
     ]
 endif
 
