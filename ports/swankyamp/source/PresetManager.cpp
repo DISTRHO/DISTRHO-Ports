@@ -60,7 +60,7 @@ std::pair<int, String> extractNumAndName(const String& name)
 }
 
 StateEntry::StateEntry(
-    const String& name, File file, std::optional<size_t> stateIdx) :
+    const String& name, File file, nonstd::optional<size_t> stateIdx) :
     name(name), file(file), stateIdx(stateIdx)
 {
 }
@@ -143,7 +143,7 @@ void PresetManager::addStateEntry(
   else
   {
     stateEntryIdx[name] = stateEntries.size();
-    stateEntries.push_back(StateEntry(name, file, std::nullopt));
+    stateEntries.push_back(StateEntry(name, file, nonstd::nullopt));
   }
 }
 
@@ -467,7 +467,7 @@ void PresetManager::comboBoxChanged()
     // cn only happen if name exists
     const StateEntry& currentEntry = stateEntries[stateEntryIdx[name]];
 
-    if (currentEntry.stateIdx != std::nullopt)
+    if (currentEntry.stateIdx != nonstd::nullopt)
     {
       // load the state for this entry
       setState(states[*currentEntry.stateIdx]);

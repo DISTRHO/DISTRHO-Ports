@@ -1,11 +1,8 @@
 ###############################################################################
 
-plugin_extra_build_flags = [
-    '-std=gnu++17',
-]
-
 plugin_extra_include_dirs = include_directories([
     'source',
+    'thirdparty/optional-lite/include',
 ])
 
 plugin_srcs = files([

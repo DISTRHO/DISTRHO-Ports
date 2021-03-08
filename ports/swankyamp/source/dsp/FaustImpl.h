@@ -61,7 +61,7 @@ public:
       FAUSTFLOAT)
   {
     if (zone == nullptr) return;
-    parameterMap.insert_or_assign(label, zone);
+    parameterMap[label] = zone;
   }
   virtual void
   addHorizontalBargraph(const char*, FAUSTFLOAT*, FAUSTFLOAT, FAUSTFLOAT){};

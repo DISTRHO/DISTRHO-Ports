@@ -19,19 +19,19 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include <optional>
+#include <nonstd/optional.hpp>
 #include <unordered_map>
 
 #include "PluginProcessor.h"
 
 struct StateEntry
 {
-  StateEntry(const String& name, File file, std::optional<size_t> stateIdx);
+  StateEntry(const String& name, File file, nonstd::optional<size_t> stateIdx);
   StateEntry() {}
 
   String name;
   File file;
-  std::optional<size_t> stateIdx = std::nullopt;
+  nonstd::optional<size_t> stateIdx = nonstd::nullopt;
 };
 
 /** Connects a value tree state to a combo box and preset directory. */

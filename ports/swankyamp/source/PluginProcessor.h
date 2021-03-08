@@ -82,9 +82,9 @@ public:
       "idPowerAmpSag",   "idPowerAmpSagRatio",
   };
 
-  std::atomic<bool> notifyStateChanged = false;
+  std::atomic<bool> notifyStateChanged { false };
   const int burnInLength = 1024;
-  std::atomic<int> numBurnIn = burnInLength;
+  std::atomic<int> numBurnIn { burnInLength };
 
   void setAmpParameters();
 
