@@ -84,11 +84,11 @@
 	pset:bank <urn:distrho:vitalium#unfa> ;
 	rdfs:seeAlso <Sci_Fi_Piano.ttl> .
 
-<Sprankly_Dreamy_Pad.ttl>
+<Sparkly_Dreamy_Pad.ttl>
 	a pset:Preset ;
 	lv2:appliesTo <urn:distrho:vitalium> ;
 	pset:bank <urn:distrho:vitalium#unfa> ;
-	rdfs:seeAlso <Sprankly_Dreamy_Pad.ttl> .
+	rdfs:seeAlso <Sparkly_Dreamy_Pad.ttl> .
 
 <Supersaw.ttl>
 	a pset:Preset ;

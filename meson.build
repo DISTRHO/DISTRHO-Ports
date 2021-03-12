@@ -284,7 +284,7 @@ if 'vitalium' in get_option('plugins')
         'Vitalium-unfa.lv2/Retro_Ambient_Pluck.ttl',
         'Vitalium-unfa.lv2/Sci_Fi_Computer.ttl',
         'Vitalium-unfa.lv2/Sci_Fi_Piano.ttl',
-        'Vitalium-unfa.lv2/Sprankly_Dreamy_Pad.ttl',
+        'Vitalium-unfa.lv2/Sparkly_Dreamy_Pad.ttl',
         'Vitalium-unfa.lv2/Supersaw.ttl',
         'Vitalium-unfa.lv2/Trance_Pluck.ttl',
         'Vitalium-unfa.lv2/Vitalium_Groove.ttl',

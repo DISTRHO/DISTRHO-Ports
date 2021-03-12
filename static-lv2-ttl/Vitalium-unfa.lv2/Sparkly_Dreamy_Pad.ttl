@@ -9,7 +9,7 @@
 <>
 	a pset:Preset ;
 	lv2:appliesTo <urn:distrho:vitalium> ;
-	rdfs:label "Sprankly Dreamy Pad" ;
+	rdfs:label "Sparkly Dreamy Pad" ;
 	lv2:port [
 		lv2:symbol "band_lower_ratio" ;
 		pset:value 0.89999998
