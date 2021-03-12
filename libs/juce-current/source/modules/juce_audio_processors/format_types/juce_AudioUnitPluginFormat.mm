@@ -499,17 +499,11 @@ public:
 
         float normaliseParamValue (float scaledValue) const noexcept
         {
-            if (discrete)
-                return scaledValue / (getNumSteps() - 1);
-
             return (scaledValue - minValue) / range;
         }
 
         float scaleParamValue (float normalisedValue) const noexcept
         {
-            if (discrete)
-                return normalisedValue * (getNumSteps() - 1);
-
             return minValue + (range * normalisedValue);
         }
 
@@ -1223,23 +1217,33 @@ public:
     }
 
     //==============================================================================
-    int getNumPrograms() override
+    struct ScopedFactoryPresets
     {
-        CFArrayRef presets;
-        UInt32 sz = sizeof (CFArrayRef);
-        int num = 0;
-
-        if (AudioUnitGetProperty (audioUnit, kAudioUnitProperty_FactoryPresets,
-                                  kAudioUnitScope_Global, 0, &presets, &sz) == noErr)
+        ScopedFactoryPresets (AudioUnit& au)
         {
-            if (presets != nullptr)
-            {
-                num = (int) CFArrayGetCount (presets);
-                CFRelease (presets);
-            }
+            UInt32 sz = sizeof (CFArrayRef);
+
+            AudioUnitGetProperty (au, kAudioUnitProperty_FactoryPresets,
+                                  kAudioUnitScope_Global, 0, &presets, &sz);
         }
 
-        return num;
+        ~ScopedFactoryPresets()
+        {
+            if (presets != nullptr)
+                CFRelease (presets);
+        }
+
+        CFArrayRef presets = nullptr;
+    };
+
+    int getNumPrograms() override
+    {
+        ScopedFactoryPresets factoryPresets { audioUnit };
+
+        if (factoryPresets.presets != nullptr)
+            return (int) CFArrayGetCount (factoryPresets.presets);
+
+        return 0;
     }
 
     int getCurrentProgram() override
@@ -1256,33 +1260,26 @@ public:
 
     void setCurrentProgram (int newIndex) override
     {
-        AUPreset current;
-        current.presetNumber = newIndex;
+        ScopedFactoryPresets factoryPresets { audioUnit };
 
-        CFArrayRef presets;
-        UInt32 sz = sizeof (CFArrayRef);
-
-        if (AudioUnitGetProperty (audioUnit, kAudioUnitProperty_FactoryPresets,
-                                  kAudioUnitScope_Global, 0, &presets, &sz) == noErr)
+        if (factoryPresets.presets != nullptr
+            && newIndex < (int) CFArrayGetCount (factoryPresets.presets))
         {
-            if (auto* p = (const AUPreset*) CFArrayGetValueAtIndex (presets, newIndex))
+            AUPreset current;
+            current.presetNumber = newIndex;
+
+            if (auto* p = static_cast<const AUPreset*> (CFArrayGetValueAtIndex (factoryPresets.presets, newIndex)))
                 current.presetName = p->presetName;
 
-            CFRelease (presets);
+            AudioUnitSetProperty (audioUnit, kAudioUnitProperty_PresentPreset,
+                                  kAudioUnitScope_Global, 0, &current, sizeof (AUPreset));
+
+            sendAllParametersChangedEvents();
         }
-
-        AudioUnitSetProperty (audioUnit, kAudioUnitProperty_PresentPreset,
-                              kAudioUnitScope_Global, 0, &current, sizeof (AUPreset));
-
-        sendAllParametersChangedEvents();
     }
 
     const String getProgramName (int index) override
     {
-        String s;
-        CFArrayRef presets;
-        UInt32 sz = sizeof (CFArrayRef);
-
         if (index == -1)
         {
             AUPreset current;
@@ -1294,27 +1291,20 @@ public:
             AudioUnitGetProperty (audioUnit, kAudioUnitProperty_PresentPreset,
                                   kAudioUnitScope_Global, 0, &current, &prstsz);
 
-            s = String::fromCFString (current.presetName);
+            return String::fromCFString (current.presetName);
         }
-        else if (AudioUnitGetProperty (audioUnit, kAudioUnitProperty_FactoryPresets,
-                                       kAudioUnitScope_Global, 0, &presets, &sz) == noErr)
+
+        ScopedFactoryPresets factoryPresets { audioUnit };
+
+        if (factoryPresets.presets != nullptr)
         {
-            for (CFIndex i = 0; i < CFArrayGetCount (presets); ++i)
-            {
-                if (auto* p = (const AUPreset*) CFArrayGetValueAtIndex (presets, i))
-                {
+            for (CFIndex i = 0; i < CFArrayGetCount (factoryPresets.presets); ++i)
+                if (auto* p = static_cast<const AUPreset*> (CFArrayGetValueAtIndex (factoryPresets.presets, i)))
                     if (p->presetNumber == index)
-                    {
-                        s = String::fromCFString (p->presetName);
-                        break;
-                    }
-                }
-            }
-
-            CFRelease (presets);
+                        return String::fromCFString (p->presetName);
         }
 
-        return s;
+        return {};
     }
 
     void changeProgramName (int /*index*/, const String& /*newName*/) override
@@ -1471,7 +1461,7 @@ public:
                                                                    info.defaultValue,
                                                                    (info.flags & kAudioUnitParameterFlag_NonRealTime) == 0,
                                                                    isDiscrete,
-                                                                   isDiscrete ? (int) (info.maxValue + 1.0f) : AudioProcessor::getDefaultNumParameterSteps(),
+                                                                   isDiscrete ? (int) (info.maxValue - info.minValue + 1.0f) : AudioProcessor::getDefaultNumParameterSteps(),
                                                                    isBoolean,
                                                                    label,
                                                                    (info.flags & kAudioUnitParameterFlag_ValuesHaveStrings) != 0);

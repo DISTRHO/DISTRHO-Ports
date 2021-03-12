@@ -253,3 +253,4 @@ struct AutoResizingNSViewComponentWithParent  : public AutoResizingNSViewCompone
 #include "utilities/juce_AudioParameterChoice.cpp"
 #include "utilities/juce_ParameterAttachments.cpp"
 #include "utilities/juce_AudioProcessorValueTreeState.cpp"
+#include "utilities/juce_PluginHostType.cpp"
