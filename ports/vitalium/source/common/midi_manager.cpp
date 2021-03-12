@@ -36,7 +36,7 @@ namespace {
 MidiManager::MidiManager(SynthBase* synth, MidiKeyboardState* keyboard_state,
                          std::map<std::string, String>* gui_state, Listener* listener) :
     synth_(synth), keyboard_state_(keyboard_state), gui_state_(gui_state),
-    listener_(listener), armed_value_(nullptr),
+    listener_(listener),
     msb_pressure_values_(), msb_slide_values_() {
   engine_ = synth_->getEngine();
   current_bank_ = -1;
@@ -53,65 +53,6 @@ MidiManager::MidiManager(SynthBase* synth, MidiKeyboardState* keyboard_state,
 }
 
 MidiManager::~MidiManager() {
-}
-
-void MidiManager::armMidiLearn(std::string name) {
-  current_bank_ = -1;
-  current_folder_ = -1;
-  current_preset_ = -1;
-  armed_value_ = &vital::Parameters::getDetails(name);
-}
-
-void MidiManager::cancelMidiLearn() {
-  armed_value_ = nullptr;
-}
-
-void MidiManager::clearMidiLearn(const std::string& name) {
-  for (auto& controls : midi_learn_map_) {
-    if (controls.second.count(name)) {
-      midi_learn_map_[controls.first].erase(name);
-      LoadSave::saveMidiMapConfig(this);
-    }
-  }
-}
-
-void MidiManager::midiInput(int midi_id, vital::mono_float value) {
-  if (armed_value_) {
-    midi_learn_map_[midi_id][armed_value_->name] = armed_value_;
-    armed_value_ = nullptr;
-
-    // TODO: Probably shouldn't write this config on the audio thread.
-    LoadSave::saveMidiMapConfig(this);
-  }
-
-  if (midi_learn_map_.count(midi_id)) {
-    for (auto& control : midi_learn_map_[midi_id]) {
-      const vital::ValueDetails* details = control.second;
-      vital::mono_float percent = value / kControlMax;
-      vital::mono_float range = details->max - details->min;
-      vital::mono_float translated = percent * range + details->min;
-
-      if (details->value_scale == vital::ValueDetails::kIndexed)
-        translated = std::round(translated);
-      listener_->valueChangedThroughMidi(control.first, translated);
-    }
-  }
-}
-
-bool MidiManager::isMidiMapped(const std::string& name) const {
-  for (auto& controls : midi_learn_map_) {
-    if (controls.second.count(name))
-      return true;
-  }
-  return false;
-}
-
-void MidiManager::setSampleRate(double sample_rate) {
-  midi_collector_.reset(sample_rate);
-}
-
-void MidiManager::removeNextBlockOfMessages(MidiBuffer& buffer, int num_samples) {
-  midi_collector_.removeNextBlockOfMessages(buffer, num_samples);
 }
 
 void MidiManager::readMpeMessage(const MidiMessage& message) {
@@ -310,13 +251,8 @@ void MidiManager::processMidiMessage(const MidiMessage& midi_message, int sample
           current_folder_ = midi_message.getControllerValue();
           return;
       }
-      midiInput(midi_message.getControllerNumber(), midi_message.getControllerValue());
     }
   }
-}
-
-void MidiManager::handleIncomingMidiMessage(MidiInput* source, const MidiMessage &midi_message) {
-  midi_collector_.addMessageToQueue(midi_message);
 }
 
 void MidiManager::replaceKeyboardMessages(MidiBuffer& buffer, int num_samples) {

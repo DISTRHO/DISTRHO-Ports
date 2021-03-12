@@ -270,19 +270,6 @@ String SynthButton::getTextFromValue(bool on) {
   return strings::kOffOnNames[lookup];
 }
 
-void SynthButton::handlePopupResult(int result) {
-  SynthGuiInterface* parent = findParentComponentOfClass<SynthGuiInterface>();
-  if (parent == nullptr)
-    return;
-
-  SynthBase* synth = parent->getSynth();
-
-  if (result == kArmMidiLearn)
-    synth->armMidiLearn(getName().toStdString());
-  else if (result == kClearMidiLearn)
-    synth->clearMidiLearn(getName().toStdString());
-}
-
 void SynthButton::mouseDown(const MouseEvent& e) {
   SynthGuiInterface* parent = findParentComponentOfClass<SynthGuiInterface>();
   if (parent == nullptr)
@@ -290,31 +277,16 @@ void SynthButton::mouseDown(const MouseEvent& e) {
 
   SynthBase* synth = parent->getSynth();
 
-  if (e.mods.isPopupMenu()) {
-    OpenGlToggleButton::mouseExit(e);
-
-    PopupItems options;
-    options.addItem(kArmMidiLearn, "Learn MIDI Assignment");
-    if (parent->getSynth()->isMidiMapped(getName().toStdString()))
-      options.addItem(kClearMidiLearn, "Clear MIDI Assignment");
-
-    SynthSection* parent = findParentComponentOfClass<SynthSection>();
-    parent->showPopupSelector(this, e.getPosition(), options, [=](int selection) { handlePopupResult(selection); });
-  }
-  else {
-    OpenGlToggleButton::mouseDown(e);
-    synth->beginChangeGesture(getName().toStdString());
-  }
+  OpenGlToggleButton::mouseDown(e);
+  synth->beginChangeGesture(getName().toStdString());
 }
 
 void SynthButton::mouseUp(const MouseEvent& e) {
-  if (!e.mods.isPopupMenu()) {
-    OpenGlToggleButton::mouseUp(e);
+  OpenGlToggleButton::mouseUp(e);
 
-    SynthGuiInterface* parent = findParentComponentOfClass<SynthGuiInterface>();
-    if (parent)
-      parent->getSynth()->endChangeGesture(getName().toStdString());
-  }
+  SynthGuiInterface* parent = findParentComponentOfClass<SynthGuiInterface>();
+  if (parent)
+    parent->getSynth()->endChangeGesture(getName().toStdString());
 }
 
 void SynthButton::addButtonListener(SynthButton::ButtonListener* listener) {

@@ -58,7 +58,7 @@ SynthBase::SynthBase() : expired_(false) {
 
   controls_ = engine_->getControls();
 
-  Startup::doStartupChecks(midi_manager_.get());
+  Startup::doStartupChecks();
 }
 
 SynthBase::~SynthBase() { }
@@ -676,22 +676,6 @@ void SynthBase::updateMemoryOutput(int samples, const vital::poly_float* audio) 
   }
 
   memory_input_offset_ -= samples;
-}
-
-void SynthBase::armMidiLearn(const std::string& name) {
-  midi_manager_->armMidiLearn(name);
-}
-
-void SynthBase::cancelMidiLearn() {
-  midi_manager_->cancelMidiLearn();
-}
-
-void SynthBase::clearMidiLearn(const std::string& name) {
-  midi_manager_->clearMidiLearn(name);
-}
-
-bool SynthBase::isMidiMapped(const std::string& name) {
-  return midi_manager_->isMidiMapped(name);
 }
 
 void SynthBase::setAuthor(const String& author) {

@@ -220,12 +220,6 @@ PopupItems SynthSlider::createPopupMenu() {
   if (isDoubleClickReturnEnabled())
     options.addItem(kDefaultValue, "Set to Default Value");
 
-  if (has_parameter_assignment_)
-    options.addItem(kArmMidiLearn, "Learn MIDI Assignment");
-
-  if (has_parameter_assignment_ && synth_interface_->getSynth()->isMidiMapped(getName().toStdString()))
-    options.addItem(kClearMidiLearn, "Clear MIDI Assignment");
-
   options.addItem(kManualEntry, "Enter Value");
 
   std::vector<vital::ModulationConnection*> connections = getConnections();
@@ -710,14 +704,9 @@ std::vector<vital::ModulationConnection*> SynthSlider::getConnections() {
 }
 
 void SynthSlider::handlePopupResult(int result) {
-  SynthBase* synth = synth_interface_->getSynth();
   std::vector<vital::ModulationConnection*> connections = getConnections();
 
-  if (result == kArmMidiLearn)
-    synth->armMidiLearn(getName().toStdString());
-  else if (result == kClearMidiLearn)
-    synth->clearMidiLearn(getName().toStdString());
-  else if (result == kDefaultValue)
+  if (result == kDefaultValue)
     setValue(getDoubleClickReturnValue());
   else if (result == kManualEntry)
     showTextEntry();

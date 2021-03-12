@@ -1353,35 +1353,7 @@ void LoadSave::saveLayoutConfig(vital::StringLayout* layout) {
   saveJsonToConfig(data);
 }
 
-void LoadSave::saveMidiMapConfig(MidiManager* midi_manager) {
-  MidiManager::midi_map midi_learn_map = midi_manager->getMidiLearnMap();
-
-  json midi_mapping_data;
-
-  for (auto& midi_mapping : midi_learn_map) {
-    json midi_map_data;
-    midi_map_data["source"] = midi_mapping.first;
-
-    json destinations_data;
-    for (auto& midi_destination : midi_mapping.second) {
-      json destination_data;
-
-      destination_data["destination"] = midi_destination.first;
-      destination_data["min_range"] = midi_destination.second->min;
-      destination_data["max_range"] = midi_destination.second->max;
-      destinations_data.push_back(destination_data);
-    }
-
-    midi_map_data["destinations"] = destinations_data;
-    midi_mapping_data.push_back(midi_map_data);
-  }
-
-  json data = getConfigJson();
-  data["midi_learn"] = midi_mapping_data;
-  saveJsonToConfig(data);
-}
-
-void LoadSave::loadConfig(MidiManager* midi_manager, vital::StringLayout* layout) {
+void LoadSave::loadConfig(vital::StringLayout* layout) {
   json data = getConfigJson();
 
   // Computer Keyboard Layout
@@ -1390,25 +1362,6 @@ void LoadSave::loadConfig(MidiManager* midi_manager, vital::StringLayout* layout
     std::pair<wchar_t, wchar_t> octave_controls = getComputerKeyboardOctaveControls();
     layout->setDownKey(octave_controls.first);
     layout->setUpKey(octave_controls.second);
-  }
-
-  // Midi Learn Map
-  if (data.count("midi_learn")) {
-    MidiManager::midi_map midi_learn_map = midi_manager->getMidiLearnMap();
-
-    json midi_mapping_data = data["midi_learn"];
-    for (json& midi_map_data : midi_mapping_data) {
-      int source = midi_map_data["source"];
-
-      if (midi_map_data.count("destinations")) {
-        json destinations_data = midi_map_data["destinations"];
-        for (json& midi_destination : destinations_data) {
-          std::string dest = midi_destination["destination"];
-          midi_learn_map[source][dest] = &vital::Parameters::getDetails(dest);
-        }
-      }
-    }
-    midi_manager->setMidiLearnMap(midi_learn_map);
   }
 }
 

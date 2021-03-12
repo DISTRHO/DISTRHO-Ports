@@ -19,14 +19,14 @@
 #include "JuceHeader.h"
 #include "synth_base.h"
 
-void Startup::doStartupChecks(MidiManager* midi_manager, vital::StringLayout* layout) {
+void Startup::doStartupChecks(vital::StringLayout* layout) {
   if (!LoadSave::isInstalled())
     return;
 
   if (LoadSave::wasUpgraded())
     LoadSave::saveVersionConfig();
 
-  LoadSave::loadConfig(midi_manager, layout);
+  LoadSave::loadConfig(layout);
 }
 
 bool Startup::isComputerCompatible() {

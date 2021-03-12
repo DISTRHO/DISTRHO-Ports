@@ -311,12 +311,6 @@ class OpenGlToggleButton : public ToggleButton {
 
 class SynthButton : public OpenGlToggleButton {
   public:
-    enum MenuId {
-      kCancel = 0,
-      kArmMidiLearn,
-      kClearMidiLearn
-    };
-
     class ButtonListener {
       public:
         virtual ~ButtonListener() { }
@@ -330,8 +324,6 @@ class SynthButton : public OpenGlToggleButton {
     }
     const std::string* getStringLookup() const { return string_lookup_; }
     String getTextFromValue(bool value);
-
-    void handlePopupResult(int result);
 
     virtual void mouseDown(const MouseEvent& e) override;
     virtual void mouseUp(const MouseEvent& e) override;

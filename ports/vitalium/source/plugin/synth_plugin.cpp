@@ -129,7 +129,6 @@ const String SynthPlugin::getProgramName(int index) {
 void SynthPlugin::prepareToPlay(double sample_rate, int buffer_size) {
   engine_->setSampleRate(sample_rate);
   engine_->updateAllModulationSwitches();
-  midi_manager_->setSampleRate(sample_rate);
 }
 
 void SynthPlugin::releaseResources() {

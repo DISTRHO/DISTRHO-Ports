@@ -218,12 +218,6 @@ void ModulationAmountKnob::mouseDown(const MouseEvent& e) {
     options.addItem(kToggleStereo, stereo_ ? "Make Mono" : "Make Stereo");
     options.addItem(-1, "");
 
-    if (has_parameter_assignment_)
-      options.addItem(kArmMidiLearn, "Learn MIDI Assignment");
-
-    if (has_parameter_assignment_ && synth_interface_->getSynth()->isMidiMapped(getName().toStdString()))
-      options.addItem(kClearMidiLearn, "Clear MIDI Assignment");
-
     options.addItem(kManualEntry, "Enter Value");
 
     hovering_ = false;

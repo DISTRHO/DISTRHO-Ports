@@ -48,7 +48,7 @@ namespace vital {
   struct ValueDetails;
 } // namespace vital
 
-class MidiManager : public MidiInputCallback {
+class MidiManager {
   public:
     typedef std::map<int, std::map<std::string, const vital::ValueDetails*>> midi_map;
 
@@ -90,15 +90,8 @@ class MidiManager : public MidiInputCallback {
                 std::map<std::string, String>* gui_state, Listener* listener = nullptr);
     virtual ~MidiManager();
 
-    void armMidiLearn(std::string name);
-    void cancelMidiLearn();
-    void clearMidiLearn(const std::string& name);
-    void midiInput(int control, vital::mono_float value);
     void processMidiMessage(const MidiMessage &midi_message, int sample_position = 0);
-    bool isMidiMapped(const std::string& name) const;
 
-    void setSampleRate(double sample_rate);
-    void removeNextBlockOfMessages(MidiBuffer& buffer, int num_samples);
     void replaceKeyboardMessages(MidiBuffer& buffer, int num_samples);
 
     void processAllNotesOff(const MidiMessage& midi_message, int sample_position, int channel);
@@ -121,12 +114,6 @@ class MidiManager : public MidiInputCallback {
 
     void setMpeEnabled(bool enabled) { mpe_enabled_ = enabled; }
 
-    midi_map getMidiLearnMap() { return midi_learn_map_; }
-    void setMidiLearnMap(const midi_map& midi_learn_map) { midi_learn_map_ = midi_learn_map; }
-
-    // MidiInputCallback
-    void handleIncomingMidiMessage(MidiInput *source, const MidiMessage &midi_message) override;
-
     struct PresetLoadedCallback : public CallbackMessage {
       PresetLoadedCallback(Listener* lis, File pre) : listener(lis), preset(std::move(pre)) { }
 
@@ -145,7 +132,6 @@ class MidiManager : public MidiInputCallback {
     SynthBase* synth_;
     vital::SoundEngine* engine_;
     MidiKeyboardState* keyboard_state_;
-    MidiMessageCollector midi_collector_;
     std::map<std::string, String>* gui_state_;
     Listener* listener_;
     int current_bank_;
@@ -153,7 +139,6 @@ class MidiManager : public MidiInputCallback {
     int current_preset_;
 
     const vital::ValueDetails* armed_value_;
-    midi_map midi_learn_map_;
 
     int msb_pressure_values_[vital::kNumMidiChannels];
     int lsb_pressure_values_[vital::kNumMidiChannels];

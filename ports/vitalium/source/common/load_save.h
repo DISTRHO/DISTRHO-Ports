@@ -133,8 +133,7 @@ class LoadSave {
     static void saveAnimateWidgets(bool animate_widgets);
     static void saveDisplayHzFrequency(bool display_hz);
     static void saveWindowSize(float window_size);
-    static void saveMidiMapConfig(MidiManager* midi_manager);
-    static void loadConfig(MidiManager* midi_manager, vital::StringLayout* layout = nullptr);
+    static void loadConfig(vital::StringLayout* layout = nullptr);
 
     static std::wstring getComputerKeyboardLayout();
     static std::string getPreferredTTWTLanguage();

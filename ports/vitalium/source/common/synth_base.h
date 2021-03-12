@@ -95,11 +95,6 @@ class SynthBase : public MidiManager::Listener {
     virtual void endChangeGesture(const std::string& name) { }
     virtual void setValueNotifyHost(const std::string& name, vital::mono_float value) { }
 
-    void armMidiLearn(const std::string& name);
-    void cancelMidiLearn();
-    void clearMidiLearn(const std::string& name);
-    bool isMidiMapped(const std::string& name);
-
     void setAuthor(const String& author);
     void setComments(const String& comments);
     void setStyle(const String& comments);
