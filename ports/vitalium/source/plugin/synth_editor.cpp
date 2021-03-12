@@ -16,7 +16,6 @@
 
 #include "synth_editor.h"
 
-#include "authentication.h"
 #include "default_look_and_feel.h"
 #include "synth_plugin.h"
 #include "load_save.h"
@@ -27,7 +26,6 @@ SynthEditor::SynthEditor(SynthPlugin& synth) :
   
   setLookAndFeel(DefaultLookAndFeel::instance());
 
-  Authentication::create();
   gui_->reset();
   gui_->setOscilloscopeMemory(synth.getOscilloscopeMemory());
   gui_->setAudioMemory(synth.getAudioMemory());

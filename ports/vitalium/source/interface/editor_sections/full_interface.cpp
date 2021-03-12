@@ -20,7 +20,6 @@
 #include "bank_exporter.h"
 #include "bend_section.h"
 #include "delete_section.h"
-#include "expired_section.h"
 #include "extra_mod_section.h"
 #include "skin.h"
 #include "effects_interface.h"
@@ -187,12 +186,6 @@ FullInterface::FullInterface(SynthGuiData* synth_data) : SynthSection("full_inte
   dual_popup_selector_->toFront(true);
   popup_display_1_->toFront(true);
   popup_display_2_->toFront(true);
-
-  if (LoadSave::isExpired()) { 
-    expired_section_ = std::make_unique<ExpiredSection>("expired");
-    addSubSection(expired_section_.get());
-    expired_section_->setAlwaysOnTop(true);
-  }
 
   setAllValues(synth_data->controls);
   setOpaque(true);
@@ -371,9 +364,6 @@ void FullInterface::resized() {
   }
 
   setSizeRatio(ratio);
-
-  if (expired_section_)
-    expired_section_->setBounds(bounds);
 
   popup_browser_->setBounds(bounds);
 

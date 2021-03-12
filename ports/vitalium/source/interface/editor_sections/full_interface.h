@@ -180,7 +180,6 @@ class FullInterface : public SynthSection, public HeaderSection::Listener,
     std::unique_ptr<BankExporter> bank_exporter_;
     std::unique_ptr<SaveSection> save_section_;
     std::unique_ptr<DeleteSection> delete_section_;
-    std::unique_ptr<ExpiredSection> expired_section_;
     SynthSection* full_screen_section_;
 
     int width_;
