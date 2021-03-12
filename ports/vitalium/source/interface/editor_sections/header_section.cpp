@@ -80,7 +80,7 @@ LogoSection::LogoSection() : SynthSection("logo_section") {
 }
 
 void LogoSection::resized() {
-  int logo_padding_y = kLogoPaddingY * size_ratio_;
+  int logo_padding_y = kLogoPaddingY * size_ratio_ * 4;
   int logo_height = getHeight() - 2 * logo_padding_y;
   int logo_padding_x = (getWidth() - logo_height) / 2;
   if (logo_button_)
