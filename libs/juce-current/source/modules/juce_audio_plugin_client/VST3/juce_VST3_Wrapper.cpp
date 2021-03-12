@@ -28,9 +28,6 @@
 
 //==============================================================================
 #if JucePlugin_Build_VST3 && (JUCE_MAC || JUCE_WINDOWS || JUCE_LINUX)
-#if JUCE_LINUX^M
- #include <arpa/inet.h>^M
-#endif^M
 
 #if JUCE_PLUGINHOST_VST3
  #if JUCE_MAC

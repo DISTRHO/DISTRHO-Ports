@@ -66,16 +66,6 @@ diff --git a/modules/juce_audio_plugin_client/VST3/juce_VST3_Wrapper.cpp b/modul
 index 7909098c9..19eb385fd 100644
 --- a/modules/juce_audio_plugin_client/VST3/juce_VST3_Wrapper.cpp
 +++ b/modules/juce_audio_plugin_client/VST3/juce_VST3_Wrapper.cpp
-@@ -28,6 +28,9 @@
- 
- //==============================================================================
- #if JucePlugin_Build_VST3 && (JUCE_MAC || JUCE_WINDOWS || JUCE_LINUX)
-+#if JUCE_LINUX^M
-+ #include <arpa/inet.h>^M
-+#endif^M
- 
- #if JUCE_PLUGINHOST_VST3
-  #if JUCE_MAC
 @@ -2618,6 +2621,9 @@ public:
      //==============================================================================
      void processParameterChanges (Vst::IParameterChanges& paramChanges)

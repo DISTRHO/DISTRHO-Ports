@@ -1378,49 +1378,7 @@ namespace ClipboardHelpers
 }
 
 //==============================================================================
-/* Workaround JUCE saving context in wrong Windows.
- * JUCE is storing pointers as X11 Window context, but these pointers are sometimes in separate, multiple windows.
- * This leads to double-free.
- * Maybe X11 is the one in the wrong? It shouldn't be giving valid Window context pointers for invalid Windows...
- */
-class ValidWindowChecker
-{
-public:
-    ValidWindowChecker (::Window windowH)
-        : oldErrorHandler (X11Symbols::getInstance()->xSetErrorHandler (s_errorCallback)),
-          wmhints (XGetWMHints (XWindowSystem::getInstance()->getDisplay(), (XID) windowH)),
-          errored (s_errorTriggered) {}
-
-    ~ValidWindowChecker()
-    {
-        if (wmhints != nullptr)
-            XFree (wmhints);
-
-        X11Symbols::getInstance()->xSetErrorHandler (oldErrorHandler);
-        s_errorTriggered = false;
-    }
-
-    bool isInvalid() const noexcept
-    {
-        return errored;
-    }
-
-private:
-    const XErrorHandler oldErrorHandler;
-    XWMHints* const wmhints;
-    const bool errored;
-
-    static bool s_errorTriggered;
-    static int s_errorCallback(::Display*, XErrorEvent*)
-    {
-        s_errorTriggered = true;
-        return 0;
-    }
-};
-bool ValidWindowChecker::s_errorTriggered = false;
-
-//==============================================================================
-ComponentPeer* getPeerFor (::Window windowH, bool checkValidWindow)
+ComponentPeer* getPeerFor (::Window windowH)
 {
     if (windowH == 0)
         return nullptr;
@@ -1430,15 +1388,7 @@ ComponentPeer* getPeerFor (::Window windowH, bool checkValidWindow)
     if (auto* display = XWindowSystem::getInstance()->getDisplay())
     {
         XWindowSystemUtilities::ScopedXLock xLock;
-        int ret = X11Symbols::getInstance()->xFindContext (display, (XID) windowH, windowHandleXContext, &peer);
-
-        if (ret == 0 && checkValidWindow)
-        {
-            const ValidWindowChecker vwc (windowH);
-
-            if (vwc.isInvalid())
-                peer = nullptr;
-        }
+        X11Symbols::getInstance()->xFindContext (display, (XID) windowH, windowHandleXContext, &peer);
     }
 
     return unalignedPointerCast<ComponentPeer*> (peer);
@@ -3727,7 +3677,7 @@ void XWindowSystem::windowMessageReceive (XEvent& event)
         if (! juce_handleXEmbedEvent (nullptr, &event))
        #endif
         {
-            if (auto* peer = dynamic_cast<LinuxComponentPeer*> (getPeerFor (event.xany.window, true)))
+            if (auto* peer = dynamic_cast<LinuxComponentPeer*> (getPeerFor (event.xany.window)))
             {
                 XWindowSystem::getInstance()->handleWindowMessage (peer, event);
                 return;
