@@ -10,7 +10,6 @@
 #define BUILD_JUCE_APPCONFIG_H_INCLUDED
 
 #define JUCE_MODULE_AVAILABLE_juce_audio_basics          1
-#define JUCE_MODULE_AVAILABLE_juce_audio_devices         1
 #define JUCE_MODULE_AVAILABLE_juce_audio_formats         1
 #define JUCE_MODULE_AVAILABLE_juce_audio_plugin_client   1
 #define JUCE_MODULE_AVAILABLE_juce_audio_processors      1
@@ -29,6 +28,11 @@
 #define JUCE_MODULE_AVAILABLE_juce_osc                   0
 #define JUCE_MODULE_AVAILABLE_juce_product_unlocking     0
 #define JUCE_MODULE_AVAILABLE_juce_video                 0
+
+// optional
+#ifndef JUCE_MODULE_AVAILABLE_juce_audio_devices
+ #define JUCE_MODULE_AVAILABLE_juce_audio_devices        0
+#endif
 
 //=============================================================================
 

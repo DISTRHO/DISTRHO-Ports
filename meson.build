@@ -74,22 +74,42 @@ cpp = meson.get_compiler('cpp')
 ###############################################################################
 # dependencies
 
-dependencies = [
-]
-
 if os_linux
-    dependencies += [
+    dependencies = [
         cc.find_library('dl'),
         cc.find_library('rt'),
+        dependency('fftw3f').partial_dependency(link_args: false, links: false),
     ]
-endif
-
-if os_linux and not linux_embed
-    dependencies += [
+    dependencies_devices = [
         dependency('alsa'),
-        dependency('freetype2'),
-        dependency('x11'),
-        dependency('xext'),
+    ]
+    if not linux_embed
+        dependencies += [
+            dependency('freetype2'),
+            dependency('x11').partial_dependency(link_args: false, links: false),
+            dependency('xext').partial_dependency(link_args: false, links: false),
+        ]
+    endif
+elif os_windows
+    dependencies = [
+        cc.find_library('comdlg32'),
+        cc.find_library('gdi32'),
+        cc.find_library('imm32'),
+        cc.find_library('ole32'),
+        cc.find_library('oleaut32'),
+        cc.find_library('shlwapi'),
+        cc.find_library('uuid'),
+        cc.find_library('version'),
+        cc.find_library('wininet'),
+        cc.find_library('ws2_32'),
+    ]
+    dependencies_devices = [
+        cc.find_library('winmm'),
+    ]
+else
+    dependencies = [
+    ]
+    dependencies_devices = [
     ]
 endif
 
@@ -236,17 +256,19 @@ subdir('ports-legacy')
 ###############################################################################
 # extra files to install
 
-extra_lv2_preset_bundles = [
-    'TAL-NoiseMaker-Noise4U.lv2',
-]
+if 'tal-noisemaker' in get_option('plugins')
+    extra_lv2_preset_bundles = [
+        'TAL-NoiseMaker-Noise4U.lv2',
+    ]
 
-foreach bundle : extra_lv2_preset_bundles
-    install_data([
-            'static-lv2-ttl/@0@/manifest.ttl'.format(bundle),
-            'static-lv2-ttl/@0@/presets.ttl'.format(bundle),
-        ],
-        install_dir: lv2dir / bundle,
-    )
-endforeach
+    foreach bundle : extra_lv2_preset_bundles
+        install_data([
+                'static-lv2-ttl/@0@/manifest.ttl'.format(bundle),
+                'static-lv2-ttl/@0@/presets.ttl'.format(bundle),
+            ],
+            install_dir: lv2dir / bundle,
+        )
+    endforeach
+endif
 
 ###############################################################################

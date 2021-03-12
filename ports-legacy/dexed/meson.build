@@ -30,5 +30,9 @@ plugin_srcs = files([
 ])
 
 plugin_name = 'Dexed'
+plugin_uses_devices = true
+plugin_extra_build_flags = [
+    '-DJUCE_MODULE_AVAILABLE_juce_audio_devices=1'
+]
 
 ###############################################################################

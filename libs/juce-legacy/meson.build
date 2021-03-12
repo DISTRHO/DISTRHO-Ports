@@ -3,7 +3,6 @@
 if linux_embed
     juce_legacy_srcs = [
         'source/modules/juce_audio_basics/juce_audio_basics.cpp',
-        'source/modules/juce_audio_devices/juce_audio_devices.cpp',
         'source/modules/juce_audio_formats/juce_audio_formats.cpp',
         'source/modules/juce_audio_processors/juce_audio_processors.cpp',
         'source/modules/juce_audio_utils/juce_audio_utils.cpp',
@@ -16,7 +15,6 @@ if linux_embed
 else
     juce_legacy_srcs = [
         'source/modules/juce_audio_basics/juce_audio_basics.cpp',
-        'source/modules/juce_audio_devices/juce_audio_devices.cpp',
         'source/modules/juce_audio_formats/juce_audio_formats.cpp',
         'source/modules/juce_audio_processors/juce_audio_processors.cpp',
         'source/modules/juce_audio_utils/juce_audio_utils.cpp',
@@ -31,6 +29,10 @@ else
         'source/modules/juce_opengl/juce_opengl.cpp',
     ]
 endif
+
+juce_legacy_devices_srcs = [
+    'source/modules/juce_audio_devices/juce_audio_devices.cpp',
+]
 
 juce_legacy_extra_cpp_args = [
     '-Wno-non-virtual-dtor',
@@ -52,6 +54,19 @@ lib_juce_legacy = static_library('juce-legacy',
     ],
     cpp_args: build_flags_cpp + juce_legacy_extra_cpp_args,
     dependencies: dependencies,
+    pic: true,
+    install: false,
+)
+
+lib_juce_legacy_devices = static_library('juce-legacy-devices',
+    sources: juce_legacy_devices_srcs,
+    include_directories: [
+        include_directories('.'),
+        include_directories('source'),
+        include_directories('source' / 'modules'),
+    ],
+    cpp_args: build_flags_cpp + juce_legacy_extra_cpp_args + ['-DJUCE_MODULE_AVAILABLE_juce_audio_devices=1'],
+    dependencies: dependencies_devices,
     pic: true,
     install: false,
 )

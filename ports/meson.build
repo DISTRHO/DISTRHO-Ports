@@ -20,28 +20,6 @@ plugin_include_dirs = [
 ]
 
 ###############################################################################
-# dependencies
-
-dependencies_plugin = [
-]
-
-if os_windows
-    dependencies_plugin += [
-        cc.find_library('comdlg32'),
-        cc.find_library('gdi32'),
-        cc.find_library('imm32'),
-        cc.find_library('ole32'),
-        cc.find_library('oleaut32'),
-        cc.find_library('shlwapi'),
-        cc.find_library('uuid'),
-        cc.find_library('version'),
-        cc.find_library('winmm'),
-        cc.find_library('wininet'),
-        cc.find_library('ws2_32'),
-    ]
-endif
-
-###############################################################################
 # build flags for plugins
 
 build_flags_plugin = [
@@ -167,6 +145,7 @@ endif
 
 foreach plugin : plugins
     if plugin in get_option('plugins') and not build_legacy_only
+        plugin_uses_devices = false
         plugin_uses_opengl = false
         plugin_extra_dependencies = []
         plugin_extra_include_dirs = []
@@ -180,6 +159,15 @@ foreach plugin : plugins
             '../libs/juce-plugin/JucePluginMain.cpp',
             '../libs/juce-plugin/JucePluginUtils.cpp',
         ])
+
+        if plugin_uses_devices
+            link_with_plugin += lib_juce_current_devices
+            if os_linux
+                plugin_extra_dependencies += [
+                    dependency('alsa')
+                ]
+            endif
+        endif
 
         if plugin_uses_opengl
             if os_darwin
@@ -207,7 +195,7 @@ foreach plugin : plugins
             ],
             c_args: build_flags + build_flags_plugin + plugin_extra_build_flags,
             cpp_args: build_flags_cpp + build_flags_plugin + build_flag_plugin_cpp + plugin_extra_build_flags,
-            dependencies: dependencies_plugin + plugin_extra_dependencies,
+            dependencies: plugin_extra_dependencies,
             pic: true,
             install: false,
         )

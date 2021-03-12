@@ -3,7 +3,6 @@
 if linux_embed
     juce_current_srcs = [
         'source/modules/juce_audio_basics/juce_audio_basics.cpp',
-        'source/modules/juce_audio_devices/juce_audio_devices.cpp',
         'source/modules/juce_audio_formats/juce_audio_formats.cpp',
         'source/modules/juce_audio_processors/juce_audio_processors.cpp',
         'source/modules/juce_audio_utils/juce_audio_utils.cpp',
@@ -16,7 +15,6 @@ if linux_embed
 else
     juce_current_srcs = [
         'source/modules/juce_audio_basics/juce_audio_basics.cpp',
-        'source/modules/juce_audio_devices/juce_audio_devices.cpp',
         'source/modules/juce_audio_formats/juce_audio_formats.cpp',
         'source/modules/juce_audio_processors/juce_audio_processors.cpp',
         'source/modules/juce_audio_utils/juce_audio_utils.cpp',
@@ -31,6 +29,10 @@ else
         'source/modules/juce_opengl/juce_opengl.cpp',
     ]
 endif
+
+juce_current_devices_srcs = [
+    'source/modules/juce_audio_devices/juce_audio_devices.cpp',
+]
 
 juce_current_extra_cpp_args = [
     '-std=gnu++14',
@@ -60,6 +62,19 @@ lib_juce_current = static_library('juce-current',
     ],
     cpp_args: build_flags_cpp + juce_current_extra_cpp_args,
     dependencies: dependencies,
+    pic: true,
+    install: false,
+)
+
+lib_juce_current_device = static_library('juce-current-devices',
+    sources: juce_current_devices_srcs,
+    include_directories: [
+        include_directories('.'),
+        include_directories('source'),
+        include_directories('source/modules'),
+    ],
+    cpp_args: build_flags_cpp + juce_current_extra_cpp_args + ['-DJUCE_MODULE_AVAILABLE_juce_audio_devices=1'],
+    dependencies: dependencies_devices,
     pic: true,
     install: false,
 )

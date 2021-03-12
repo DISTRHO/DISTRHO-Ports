@@ -72,22 +72,13 @@ plugin_include_dirs = [
 ###############################################################################
 # dependencies
 
-dependencies_plugin = [
-]
-
-if os_windows
-    dependencies_plugin += [
-        cc.find_library('comdlg32'),
-        cc.find_library('gdi32'),
-        cc.find_library('imm32'),
-        cc.find_library('ole32'),
-        cc.find_library('oleaut32'),
-        cc.find_library('shlwapi'),
-        cc.find_library('uuid'),
-        cc.find_library('version'),
-        cc.find_library('winmm'),
-        cc.find_library('wininet'),
-        cc.find_library('ws2_32'),
+if os_linux and not linux_embed
+    dependencies_plugin = [
+        dependency('x11'),
+        dependency('xext'),
+    ]
+else
+    dependencies_plugin = [
     ]
 endif
 
@@ -197,6 +188,7 @@ if build_lv2 or build_vst2
         if plugin in get_option('plugins')
             plugin_uses_drowaudio = false
             plugin_uses_juced = false
+            plugin_uses_devices = false
             plugin_uses_opengl = false
             plugin_extra_dependencies = []
             plugin_extra_include_dirs = []
@@ -221,6 +213,15 @@ if build_lv2 or build_vst2
 
             if plugin_uses_juced
                 link_with_plugin += lib_juced
+            endif
+
+            if plugin_uses_devices
+                link_with_plugin += lib_juce_legacy_devices
+                if os_linux
+                    plugin_extra_dependencies += [
+                        dependency('alsa'),
+                    ]
+                endif
             endif
 
             if plugin_uses_opengl or buildtype == 'debug'
