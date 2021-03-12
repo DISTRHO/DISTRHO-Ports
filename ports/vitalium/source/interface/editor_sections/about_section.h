@@ -23,33 +23,6 @@
 
 class AppLogo;
 
-class OpenGlDeviceSelector : public OpenGlAutoImageComponent<AudioDeviceSelectorComponent> {
-  public:
-    OpenGlDeviceSelector(AudioDeviceManager& device_manager,
-                         int min_audio_input_channels, int max_audioInput_channels,
-                         int min_audio_output_channels, int max_audioOutput_channels,
-                         bool show_midi_input_options, bool show_midi_output_selector,
-                         bool show_channels_as_stereo_pairs, bool hide_advanced_options_with_button) :
-        OpenGlAutoImageComponent<AudioDeviceSelectorComponent>(device_manager,
-                                                               min_audio_input_channels, max_audioInput_channels,
-                                                               min_audio_output_channels, max_audioOutput_channels,
-                                                               show_midi_input_options, show_midi_output_selector,
-                                                               show_channels_as_stereo_pairs,
-                                                               hide_advanced_options_with_button) {
-      setLookAndFeel(DefaultLookAndFeel::instance());
-      image_component_.setComponent(this);
-    }
-
-    virtual void resized() override {
-      OpenGlAutoImageComponent<AudioDeviceSelectorComponent>::resized();
-      if (isShowing())
-        redoImage();
-    }
-
-  private:
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(OpenGlDeviceSelector)
-};
-
 class AboutSection : public Overlay {
   public:
     static constexpr int kInfoWidth = 430;
@@ -86,8 +59,6 @@ class AboutSection : public Overlay {
   private:
     void setGuiSize(float multiplier);
     void fullScreen();
-
-    std::unique_ptr<OpenGlDeviceSelector> device_selector_;
 
     std::unique_ptr<OpenGlToggleButton> size_button_extra_small_;
     std::unique_ptr<OpenGlToggleButton> size_button_small_;

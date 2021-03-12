@@ -22,7 +22,6 @@
 #if HEADLESS
 
 class FullInterface { };
-class AudioDeviceManager { };
 
 #endif
 
@@ -45,7 +44,6 @@ class SynthGuiInterface {
     SynthGuiInterface(SynthBase* synth, bool use_gui = true);
     virtual ~SynthGuiInterface();
 
-    virtual AudioDeviceManager* getAudioDeviceManager() { return nullptr; }
     SynthBase* getSynth() { return synth_; }
     virtual void updateFullGui();
     virtual void updateGuiControl(const std::string& name, vital::mono_float value);

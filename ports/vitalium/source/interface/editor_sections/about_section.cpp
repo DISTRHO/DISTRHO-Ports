@@ -106,17 +106,6 @@ void AboutSection::setLogoBounds() {
 }
 
 void AboutSection::resized() {
-  SynthGuiInterface* parent = findParentComponentOfClass<SynthGuiInterface>();
-  if (parent && device_selector_ == nullptr) {
-    AudioDeviceManager* device_manager = parent->getAudioDeviceManager();
-    if (device_manager) {
-      device_selector_ = std::make_unique<OpenGlDeviceSelector>(
-          *device_manager, 0, 0, vital::kNumChannels, vital::kNumChannels, true, false, false, false);
-      addAndMakeVisible(device_selector_.get());
-      addOpenGlComponent(device_selector_->getImageComponent());
-    }
-  }
-
   Rectangle<int> info_rect = getInfoRect();
   body_.setBounds(info_rect);
   body_.setRounding(findValue(Skin::kBodyRounding));
@@ -165,28 +154,6 @@ void AboutSection::resized() {
     index++;
   }
 
-  if (device_selector_) {
-    int y = size_button_quadruple_->getBottom() + padding_y;
-    device_selector_->setBounds(info_rect.getX(), y,
-                                info_rect.getWidth(), info_rect.getBottom() - y);
-  }
-
-  if (device_selector_) {
-    Colour background = findColour(Skin::kPopupBackground, true); 
-    setColorRecursively(device_selector_.get(), ListBox::backgroundColourId, background);
-    setColorRecursively(device_selector_.get(), ComboBox::backgroundColourId, background);
-    setColorRecursively(device_selector_.get(), PopupMenu::backgroundColourId, background);
-    setColorRecursively(device_selector_.get(), BubbleComponent::backgroundColourId, background);
-
-    Colour text = findColour(Skin::kBodyText, true);
-    setColorRecursively(device_selector_.get(), ListBox::textColourId, text);
-    setColorRecursively(device_selector_.get(), ComboBox::textColourId, text);
-
-    setColorRecursively(device_selector_.get(), TextEditor::highlightColourId, Colours::transparentBlack);
-    setColorRecursively(device_selector_.get(), ListBox::outlineColourId, Colours::transparentBlack);
-    setColorRecursively(device_selector_.get(), ComboBox::outlineColourId, Colours::transparentBlack);
-  }
-
   name_text_->setTextSize(40.0f * size_ratio_);
   version_text_->setTextSize(12.0f * size_ratio_);
   fork_text_->setTextSize(14.0f * size_ratio_);
@@ -230,8 +197,6 @@ void AboutSection::buttonClicked(Button* clicked_button) {
 Rectangle<int> AboutSection::getInfoRect() {
   int info_height = kBasicInfoHeight * size_ratio_;
   int info_width = kInfoWidth * size_ratio_;
-  if (device_selector_)
-    info_height += device_selector_->getBounds().getHeight();
 
   int x = (getWidth() - info_width) / 2;
   int y = (getHeight() - info_width) / 2;
