@@ -1,0 +1,109 @@
+@prefix lv2: <http://lv2plug.in/ns/lv2core#> .
+@prefix pset: <http://lv2plug.in/ns/ext/presets#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<urn:distrho:vitalium#unfa>
+	a pset:Bank ;
+	rdfs:label "unfa" .
+
+<Analog_Brass.ttl>
+	a pset:Preset ;
+	lv2:appliesTo <urn:distrho:vitalium> ;
+	pset:bank <urn:distrho:vitalium#unfa> ;
+	rdfs:seeAlso <Analog_Brass.ttl> .
+
+<Combat.ttl>
+	a pset:Preset ;
+	lv2:appliesTo <urn:distrho:vitalium> ;
+	pset:bank <urn:distrho:vitalium#unfa> ;
+	rdfs:seeAlso <Combat.ttl> .
+
+<Dark_Ambient.ttl>
+	a pset:Preset ;
+	lv2:appliesTo <urn:distrho:vitalium> ;
+	pset:bank <urn:distrho:vitalium#unfa> ;
+	rdfs:seeAlso <Dark_Ambient.ttl> .
+
+<Dark_Bouncy_Groove.ttl>
+	a pset:Preset ;
+	lv2:appliesTo <urn:distrho:vitalium> ;
+	pset:bank <urn:distrho:vitalium#unfa> ;
+	rdfs:seeAlso <Dark_Bouncy_Groove.ttl> .
+
+<Hardcore_Kick.ttl>
+	a pset:Preset ;
+	lv2:appliesTo <urn:distrho:vitalium> ;
+	pset:bank <urn:distrho:vitalium#unfa> ;
+	rdfs:seeAlso <Hardcore_Kick.ttl> .
+
+<Kickbass.ttl>
+	a pset:Preset ;
+	lv2:appliesTo <urn:distrho:vitalium> ;
+	pset:bank <urn:distrho:vitalium#unfa> ;
+	rdfs:seeAlso <Kickbass.ttl> .
+
+<Koto.ttl>
+	a pset:Preset ;
+	lv2:appliesTo <urn:distrho:vitalium> ;
+	pset:bank <urn:distrho:vitalium#unfa> ;
+	rdfs:seeAlso <Koto.ttl> .
+
+<Nasty_Growl.ttl>
+	a pset:Preset ;
+	lv2:appliesTo <urn:distrho:vitalium> ;
+	pset:bank <urn:distrho:vitalium#unfa> ;
+	rdfs:seeAlso <Nasty_Growl.ttl> .
+
+<Pianium.ttl>
+	a pset:Preset ;
+	lv2:appliesTo <urn:distrho:vitalium> ;
+	pset:bank <urn:distrho:vitalium#unfa> ;
+	rdfs:seeAlso <Pianium.ttl> .
+
+<Power_Lead.ttl>
+	a pset:Preset ;
+	lv2:appliesTo <urn:distrho:vitalium> ;
+	pset:bank <urn:distrho:vitalium#unfa> ;
+	rdfs:seeAlso <Power_Lead.ttl> .
+
+<Retro_Ambient_Pluck.ttl>
+	a pset:Preset ;
+	lv2:appliesTo <urn:distrho:vitalium> ;
+	pset:bank <urn:distrho:vitalium#unfa> ;
+	rdfs:seeAlso <Retro_Ambient_Pluck.ttl> .
+
+<Sci_Fi_Computer.ttl>
+	a pset:Preset ;
+	lv2:appliesTo <urn:distrho:vitalium> ;
+	pset:bank <urn:distrho:vitalium#unfa> ;
+	rdfs:seeAlso <Sci_Fi_Computer.ttl> .
+
+<Sci_Fi_Piano.ttl>
+	a pset:Preset ;
+	lv2:appliesTo <urn:distrho:vitalium> ;
+	pset:bank <urn:distrho:vitalium#unfa> ;
+	rdfs:seeAlso <Sci_Fi_Piano.ttl> .
+
+<Sprankly_Dreamy_Pad.ttl>
+	a pset:Preset ;
+	lv2:appliesTo <urn:distrho:vitalium> ;
+	pset:bank <urn:distrho:vitalium#unfa> ;
+	rdfs:seeAlso <Sprankly_Dreamy_Pad.ttl> .
+
+<Supersaw.ttl>
+	a pset:Preset ;
+	lv2:appliesTo <urn:distrho:vitalium> ;
+	pset:bank <urn:distrho:vitalium#unfa> ;
+	rdfs:seeAlso <Supersaw.ttl> .
+
+<Trance_Pluck.ttl>
+	a pset:Preset ;
+	lv2:appliesTo <urn:distrho:vitalium> ;
+	pset:bank <urn:distrho:vitalium#unfa> ;
+	rdfs:seeAlso <Trance_Pluck.ttl> .
+
+<Vitalium_Groove.ttl>
+	a pset:Preset ;
+	lv2:appliesTo <urn:distrho:vitalium> ;
+	pset:bank <urn:distrho:vitalium#unfa> ;
+	rdfs:seeAlso <Vitalium_Groove.ttl> .

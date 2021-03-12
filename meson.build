@@ -257,17 +257,42 @@ subdir('ports-legacy')
 # extra files to install
 
 if 'tal-noisemaker' in get_option('plugins')
-    extra_lv2_preset_bundles = [
-        'TAL-NoiseMaker-Noise4U.lv2',
+    extra_lv2_preset_files = [
+        'TAL-NoiseMaker-Noise4U.lv2/manifest.ttl',
+        'TAL-NoiseMaker-Noise4U.lv2/presets.ttl',
     ]
-
-    foreach bundle : extra_lv2_preset_bundles
-        install_data([
-                'static-lv2-ttl/@0@/manifest.ttl'.format(bundle),
-                'static-lv2-ttl/@0@/presets.ttl'.format(bundle),
-            ],
-            install_dir: lv2dir / bundle,
+    foreach preset_file : extra_lv2_preset_files
+        install_data([ 'static-lv2-ttl/@0@'.format(preset_file) ],
+            install_dir: lv2dir / 'TAL-NoiseMaker-Noise4U.lv2',
         )
+    endforeach
+endif
+
+if 'vitalium' in get_option('plugins')
+    extra_lv2_preset_files = [
+        'Vitalium-unfa.lv2/manifest.ttl',
+        'Vitalium-unfa.lv2/Analog_Brass.ttl',
+        'Vitalium-unfa.lv2/Combat.ttl',
+        'Vitalium-unfa.lv2/Dark_Ambient.ttl',
+        'Vitalium-unfa.lv2/Dark_Bouncy_Groove.ttl',
+        'Vitalium-unfa.lv2/Hardcore_Kick.ttl',
+        'Vitalium-unfa.lv2/Kickbass.ttl',
+        'Vitalium-unfa.lv2/Koto.ttl',
+        'Vitalium-unfa.lv2/Nasty_Growl.ttl',
+        'Vitalium-unfa.lv2/Pianium.ttl',
+        'Vitalium-unfa.lv2/Power_Lead.ttl',
+        'Vitalium-unfa.lv2/Retro_Ambient_Pluck.ttl',
+        'Vitalium-unfa.lv2/Sci_Fi_Computer.ttl',
+        'Vitalium-unfa.lv2/Sci_Fi_Piano.ttl',
+        'Vitalium-unfa.lv2/Sprankly_Dreamy_Pad.ttl',
+        'Vitalium-unfa.lv2/Supersaw.ttl',
+        'Vitalium-unfa.lv2/Trance_Pluck.ttl',
+        'Vitalium-unfa.lv2/Vitalium_Groove.ttl',
+    ]
+    foreach preset_file : extra_lv2_preset_files
+        install_data([ 'static-lv2-ttl/@0@'.format(preset_file) ], 
+             install_dir: lv2dir / 'Vitalium-unfa.lv2',
+         )
     endforeach
 endif
 
