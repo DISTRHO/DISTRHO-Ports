@@ -19,6 +19,9 @@
 #include "JuceHeader.h"
 #include "synth_constants.h"
 
+// some compilers define this..
+#undef far
+
 class Paths {
   public:
     static constexpr int kLogoWidth = 1701;

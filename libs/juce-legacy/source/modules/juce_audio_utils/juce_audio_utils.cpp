@@ -57,14 +57,18 @@
  #endif
 #endif
 
-#include "gui/juce_AudioDeviceSelectorComponent.cpp"
+#if JUCE_MODULE_AVAILABLE_juce_audio_devices
+ #include "gui/juce_AudioDeviceSelectorComponent.cpp"
+#endif
 #include "gui/juce_AudioThumbnail.cpp"
 #include "gui/juce_AudioThumbnailCache.cpp"
 #include "gui/juce_AudioVisualiserComponent.cpp"
 #include "gui/juce_MidiKeyboardComponent.cpp"
-#include "gui/juce_AudioAppComponent.cpp"
-#include "players/juce_SoundPlayer.cpp"
-#include "players/juce_AudioProcessorPlayer.cpp"
+#if JUCE_MODULE_AVAILABLE_juce_audio_devices
+ #include "gui/juce_AudioAppComponent.cpp"
+ #include "players/juce_SoundPlayer.cpp"
+ #include "players/juce_AudioProcessorPlayer.cpp"
+#endif
 #include "audio_cd/juce_AudioCDReader.cpp"
 
 #if JUCE_MAC

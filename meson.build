@@ -101,10 +101,10 @@ elif os_windows
         cc.find_library('uuid'),
         cc.find_library('version'),
         cc.find_library('wininet'),
+        cc.find_library('winmm'),
         cc.find_library('ws2_32'),
     ]
     dependencies_devices = [
-        cc.find_library('winmm'),
     ]
 else
     dependencies = [

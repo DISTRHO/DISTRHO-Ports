@@ -18,7 +18,11 @@
 #include "futils.h"
 #include "synth_constants.h"
 
+#ifdef __MINGW32__
+#include "mingw-std-threads/mingw.thread.h"
+#else
 #include <thread>
+#endif
 
 namespace vital {
 

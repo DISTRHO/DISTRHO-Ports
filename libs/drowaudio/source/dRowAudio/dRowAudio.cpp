@@ -51,8 +51,10 @@
 namespace drow {
 
 // Audio
-#include "audio/dRowAudio_AudioFilePlayer.cpp"
-#include "audio/dRowAudio_AudioFilePlayerExt.cpp"
+#if JUCE_MODULE_AVAILABLE_juce_audio_devices
+ #include "audio/dRowAudio_AudioFilePlayer.cpp"
+ #include "audio/dRowAudio_AudioFilePlayerExt.cpp"
+#endif
 #include "audio/dRowAudio_AudioSampleBufferAudioFormat.cpp"
 
 #include "audio/dRowAudio_SoundTouchProcessor.cpp"
@@ -81,22 +83,28 @@ namespace drow {
 #include "gui/dRowAudio_AudioFileDropTarget.cpp"
 #include "gui/dRowAudio_GraphicalComponent.cpp"
 #include "gui/dRowAudio_AudioOscilloscope.cpp"
-#include "gui/dRowAudio_AudioTransportCursor.cpp"
+#if JUCE_MODULE_AVAILABLE_juce_audio_devices
+ #include "gui/dRowAudio_AudioTransportCursor.cpp"
+#endif
 #include "gui/dRowAudio_SegmentedMeter.cpp"
 #include "gui/dRowAudio_Sonogram.cpp"
 #include "gui/dRowAudio_Spectrograph.cpp"
 #include "gui/dRowAudio_Spectroscope.cpp"
 #include "gui/dRowAudio_TriggeredScope.cpp"
-#include "gui/dRowAudio_CpuMeter.cpp"
+#if JUCE_MODULE_AVAILABLE_juce_audio_devices
+ #include "gui/dRowAudio_CpuMeter.cpp"
+#endif
 #include "gui/dRowAudio_Clock.cpp"
 //#include "gui/dRowAudio_CentreAlignViewport.cpp"
 #include "gui/dRowAudio_MusicLibraryTable.cpp"
 #include "gui/filebrowser/dRowAudio_BasicFileBrowser.cpp"
 #include "gui/filebrowser/dRowAudio_ColumnFileBrowser.cpp"
-#include "gui/audiothumbnail/dRowAudio_AudioThumbnailImage.cpp"
-#include "gui/audiothumbnail/dRowAudio_ColouredAudioThumbnail.cpp"
-#include "gui/audiothumbnail/dRowAudio_PositionableWaveDisplay.cpp"
-#include "gui/audiothumbnail/dRowAudio_DraggableWaveDisplay.cpp"
+#if JUCE_MODULE_AVAILABLE_juce_audio_devices
+ #include "gui/audiothumbnail/dRowAudio_AudioThumbnailImage.cpp"
+ #include "gui/audiothumbnail/dRowAudio_ColouredAudioThumbnail.cpp"
+ #include "gui/audiothumbnail/dRowAudio_PositionableWaveDisplay.cpp"
+ #include "gui/audiothumbnail/dRowAudio_DraggableWaveDisplay.cpp"
+#endif
 #endif
 
 // maths

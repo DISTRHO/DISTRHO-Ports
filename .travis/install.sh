@@ -14,7 +14,7 @@ sudo apt-get install -y build-essential meson
 if [ "${TARGET}" = "linux" ]; then
     sudo apt-get install -y \
         pkg-config \
-        libasound2-dev libfreetype6-dev libgl1-mesa-dev libglu1-mesa-dev \
+        libasound2-dev libfftw3-dev libfreetype6-dev libgl1-mesa-dev libglu1-mesa-dev \
         libx11-dev libxcomposite-dev libxrender-dev libxcursor-dev \
         lilv-utils lv2lint kxstudio-lv2-extensions lv2-dev
 
