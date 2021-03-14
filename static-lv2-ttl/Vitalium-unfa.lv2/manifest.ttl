@@ -1,10 +1,19 @@
 @prefix lv2: <http://lv2plug.in/ns/lv2core#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix pset: <http://lv2plug.in/ns/ext/presets#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix state: <http://lv2plug.in/ns/ext/state#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 <urn:distrho:vitalium#unfa>
 	a pset:Bank ;
 	rdfs:label "unfa" .
+
+<urn:juce:stateBinary>
+	a owl:DatatypeProperty ;
+	rdfs:label "Plugin state as base64-encoded string" ;
+	rdfs:domain state:State ;
+	rdfs:range xsd:base64Binary .
 
 <Analog_Brass.ttl>
 	a pset:Preset ;
