@@ -47,6 +47,6 @@
 #define JucePlugin_WantsLV2Latency          0
 #define JucePlugin_WantsLV2State            1
 #define JucePlugin_WantsLV2TimePos          0
-#define JucePlugin_WantsLV2Presets          1
+#define JucePlugin_WantsLV2Presets          0
 
 #endif
