@@ -1,0 +1,31 @@
+diff --git a/modules/juce_opengl/native/juce_OpenGL_linux_X11.h b/modules/juce_opengl/native/juce_OpenGL_linux_X11.h
+index 203798b2f..aed0f3af9 100644
+--- a/modules/juce_opengl/native/juce_OpenGL_linux_X11.h
++++ b/modules/juce_opengl/native/juce_OpenGL_linux_X11.h
+@@ -110,7 +110,8 @@ public:
+         auto glBounds = component.getTopLevelComponent()
+                            ->getLocalArea (&component, component.getLocalBounds());
+ 
+-        glBounds = Desktop::getInstance().getDisplays().logicalToPhysical (glBounds);
++        if (JUCEApplicationBase::isStandaloneApp())
++            glBounds = Desktop::getInstance().getDisplays().logicalToPhysical (glBounds);
+ 
+         embeddedWindow = X11Symbols::getInstance()->xCreateWindow (display, windowH,
+                                                                    glBounds.getX(), glBounds.getY(),
+@@ -227,8 +228,14 @@ public:
+         auto physicalBounds = Desktop::getInstance().getDisplays().logicalToPhysical (bounds);
+ 
+         XWindowSystemUtilities::ScopedXLock xLock;
+-        X11Symbols::getInstance()->xMoveResizeWindow (display, embeddedWindow,
+-                                                      physicalBounds.getX(), physicalBounds.getY(),
++
++        if (JUCEApplicationBase::isStandaloneApp())
++            X11Symbols::getInstance()->xMoveResizeWindow (display, embeddedWindow,
++                                                          physicalBounds.getX(), physicalBounds.getY(),
++                                                          (unsigned int) jmax (1, physicalBounds.getWidth()),
++                                                          (unsigned int) jmax (1, physicalBounds.getHeight()));
++        else
++            X11Symbols::getInstance()->xResizeWindow (display, embeddedWindow,
+                                                       (unsigned int) jmax (1, physicalBounds.getWidth()),
+                                                       (unsigned int) jmax (1, physicalBounds.getHeight()));
+     }
