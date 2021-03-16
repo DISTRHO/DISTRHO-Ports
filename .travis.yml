@@ -10,14 +10,6 @@ jobs:
       env:
         - TARGET="linux"
 
-    # linux with win32 cross-compilation
-    - name: "win32 cross-compiled"
-      os: linux
-      compiler: gcc
-      dist: bionic
-      env:
-        - TARGET="win32"
-
     # linux with win64 cross-compilation
     - name: "win64 cross-compiled"
       os: linux
