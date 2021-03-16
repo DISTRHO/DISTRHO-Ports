@@ -17,6 +17,12 @@ if buildtype == 'release'
     ]
 endif
 
+if os_windows and host_machine.cpu() == 'x86'
+    plugin_extra_build_flags += [
+        '-O0',
+    ]
+endif
+
 plugin_extra_include_dirs = include_directories([
     '.',
     'source/common',
