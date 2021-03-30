@@ -58,7 +58,11 @@ enum SYNTHPARAMETERS
 
   // Number of controllable synth paramenters
   NUMPARAM,
+#ifndef __MOD_DEVICES__
   NUMPROGRAMS = 10,
+#else
+  NUMPROGRAMS = 1,
+#endif
 };
 
 class Params
