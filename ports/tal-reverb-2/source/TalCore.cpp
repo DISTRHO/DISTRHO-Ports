@@ -63,18 +63,18 @@ TalCore::TalCore()
 	setStateInformationString(chunk.getXmlChunk());
 	setCurrentProgram(curProgram);
 #else
-	talPresets[0]->programData[DRY] = 0.0f;
-	talPresets[0]->programData[WET] = -24.1f;
-	talPresets[0]->programData[DECAYTIME] = 0.752f;
-	talPresets[0]->programData[PREDELAY] = 37.0f;
-	talPresets[0]->programData[LOWSHELFFREQUENCY] = 257.0f;
-	talPresets[0]->programData[HIGHSHELFFREQUENCY] = 3039.0f;
-	talPresets[0]->programData[PEAKFREQUENCY] = 2237.0f;
-	talPresets[0]->programData[LOWSHELFGAIN] = -0.4f;
-	talPresets[0]->programData[HIGHSHELFGAIN] = -1.2f;
-	talPresets[0]->programData[PEAKGAIN] = -1.7f;
-	talPresets[0]->programData[STEREO] = 1.0f;
-	talPresets[0]->programData[REALSTEREOMODE] = 0.0f;
+	setParameter(DRY, 0.0f);
+	setParameter(WET, -24.1f);
+	setParameter(DECAYTIME, 0.752f);
+	setParameter(PREDELAY, 37.0f);
+	setParameter(LOWSHELFFREQUENCY, 257.0f);
+	setParameter(HIGHSHELFFREQUENCY, 3039.0f);
+	setParameter(PEAKFREQUENCY, 2237.0f);
+	setParameter(LOWSHELFGAIN, -0.4f);
+	setParameter(HIGHSHELFGAIN, -1.2f);
+	setParameter(PEAKGAIN, -1.7f);
+	setParameter(STEREO, 1.0f);
+	setParameter(REALSTEREOMODE, 0.0f);
 #endif
 }
 
