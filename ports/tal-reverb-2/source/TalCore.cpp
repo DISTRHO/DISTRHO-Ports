@@ -48,7 +48,7 @@ TalCore::TalCore()
 	if (this->getSampleRate() > 0)
 		sampleRate = (float)this->getSampleRate();
 	else
-		sampleRate = 44100.0f;
+		sampleRate = 48000.0f;
 
 	engine = new ReverbEngine(sampleRate);
 	params = engine->param;
