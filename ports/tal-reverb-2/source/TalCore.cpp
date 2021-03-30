@@ -467,9 +467,7 @@ void TalCore::setCurrentProgram (int index)
 		curProgram = index;
 		for (int i = 0; i < NUMPARAM; i++)
 		{
-#ifndef __MOD_DEVICES__
 			setParameter(i, talPresets[index]->programData[i]);
-#endif
 		}
 		sendChangeMessage ();
 	}
