@@ -396,7 +396,8 @@ public:
    #endif
 
     JuceLv2UIWrapper (AudioProcessor* filter_, LV2UI_Write_Function writeFunction_, LV2UI_Controller controller_,
-                      LV2UI_Widget* widget, const LV2_Feature* const* features, bool isExternal_)
+                      LV2UI_Widget* widget, const LV2_Feature* const* features, bool isExternal_,
+                      int numInChans, int numOutChans)
         : filter (filter_),
           writeFunction (writeFunction_),
           controller (controller_),
@@ -473,8 +474,7 @@ public:
 #if JucePlugin_WantsLV2Latency
         controlPortOffset += 1;
 #endif
-        controlPortOffset += filter->getTotalNumInputChannels();
-        controlPortOffset += filter->getTotalNumOutputChannels();
+        controlPortOffset += numInChans + numOutChans;
 
         lastProgramCount = filter->getNumPrograms();
     }
@@ -1612,7 +1612,8 @@ public:
             ui->resetIfNeeded (writeFunction, controller, widget, features);
         else
             ui = std::make_unique<JuceLv2UIWrapper> (filter.get(),
-                                                     writeFunction, controller, widget, features, isExternal);
+                                                     writeFunction, controller, widget, features, isExternal,
+                                                     numInChans, numOutChans);
 
         return ui.get();
     }
