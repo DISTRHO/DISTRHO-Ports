@@ -154,7 +154,9 @@ public:
 
         MessageManager::getInstance()->setCurrentThreadAsMessageThread();
 
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
         XWindowSystem::getInstance();
+#endif
         initialised = true;
 
         MessageManager::getInstance()->runDispatchLoop();
@@ -1121,7 +1123,9 @@ public:
                         {
                             param->setValue (curValue);
 
+                           #if ! JUCE_AUDIOPROCESSOR_NO_GUI
                             inParameterChangedCallback = true;
+                           #endif
                             param->sendValueChangedMessageToListeners (curValue);
                         }
                         lastControlValues.setUnchecked (i, curValue);
