@@ -40,3 +40,10 @@
 #else
  #error Invalid configuration
 #endif
+
+#if JUCE_AUDIOPROCESSOR_NO_GUI
+// commonly used classes in DSP code
+namespace juce {
+Colour::Colour(juce::uint32) noexcept {}
+}
+#endif
