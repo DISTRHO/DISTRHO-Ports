@@ -14,7 +14,7 @@
  * along with vital.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !HEADLESS
+#if !HEADLESS && !JUCE_AUDIOPROCESSOR_NO_GUI
 #include "border_bounds_constrainer.cpp"
 #endif
 
@@ -22,7 +22,9 @@
 #include "midi_manager.cpp"
 #include "tuning.cpp"
 #include "startup.cpp"
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
 #include "synth_gui_interface.cpp"
+#endif
 #include "synth_parameters.cpp"
 #include "load_save.cpp"
 #include "synth_types.cpp"

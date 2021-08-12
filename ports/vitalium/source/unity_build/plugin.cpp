@@ -14,5 +14,7 @@
  * along with vital.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
 #include "synth_editor.cpp"
+#endif
 #include "synth_plugin.cpp"

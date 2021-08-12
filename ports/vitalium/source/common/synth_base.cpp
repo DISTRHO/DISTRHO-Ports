@@ -74,11 +74,14 @@ void SynthBase::valueChangedInternal(const std::string& name, vital::mono_float 
 
 void SynthBase::valueChangedThroughMidi(const std::string& name, vital::mono_float value) {
   controls_[name]->set(value);
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
   ValueChangedCallback* callback = new ValueChangedCallback(self_reference_, name, value);
   setValueNotifyHost(name, value);
   callback->post();
+#endif
 }
 
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
 void SynthBase::pitchWheelMidiChanged(vital::mono_float value) {
   ValueChangedCallback* callback = new ValueChangedCallback(self_reference_, "pitch_wheel", value);
   callback->post();
@@ -88,6 +91,7 @@ void SynthBase::modWheelMidiChanged(vital::mono_float value) {
   ValueChangedCallback* callback = new ValueChangedCallback(self_reference_, "mod_wheel", value);
   callback->post();
 }
+#endif
 
 void SynthBase::pitchWheelGuiChanged(vital::mono_float value) {
   engine_->setZonedPitchWheel(value, 0, vital::kNumMidiChannels - 1);
@@ -97,6 +101,7 @@ void SynthBase::modWheelGuiChanged(vital::mono_float value) {
   engine_->setModWheelAllChannels(value);
 }
 
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
 void SynthBase::presetChangedThroughMidi(File preset) {
   SynthGuiInterface* gui_interface = getGuiInterface();
   if (gui_interface) {
@@ -104,6 +109,7 @@ void SynthBase::presetChangedThroughMidi(File preset) {
     gui_interface->notifyFresh();
   }
 }
+#endif
 
 void SynthBase::valueChangedExternal(const std::string& name, vital::mono_float value) {
   valueChanged(name, value);
@@ -112,8 +118,10 @@ void SynthBase::valueChangedExternal(const std::string& name, vital::mono_float 
   else if (name == "pitch_wheel")
     engine_->setZonedPitchWheel(value, 0, vital::kNumMidiChannels - 1);
 
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
   ValueChangedCallback* callback = new ValueChangedCallback(self_reference_, name, value);
   callback->post();
+#endif
 }
 
 vital::ModulationConnection* SynthBase::getConnection(const std::string& source, const std::string& destination) {
@@ -371,11 +379,13 @@ bool SynthBase::loadFromFile(File preset, std::string& error) {
   
   setPresetName(preset.getFileNameWithoutExtension());
 
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
   SynthGuiInterface* gui_interface = getGuiInterface();
   if (gui_interface) {
     gui_interface->updateFullGui();
     gui_interface->notifyFresh();
   }
+#endif
 
   return true;
 }
@@ -555,9 +565,11 @@ bool SynthBase::saveToFile(File preset) {
 
   setPresetName(preset.getFileNameWithoutExtension());
 
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
   SynthGuiInterface* gui_interface = getGuiInterface();
   if (gui_interface)
     gui_interface->notifyFresh();
+#endif
 
   if (preset.replaceWithText(saveToJson().dump())) {
     active_file_ = preset;
@@ -742,6 +754,7 @@ void SynthBase::checkOversampling() {
   return engine_->checkOversampling();
 }
 
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
 void SynthBase::ValueChangedCallback::messageCallback() {
   if (auto synth_base = listener.lock()) {
     SynthGuiInterface* gui_interface = (*synth_base)->getGuiInterface();
@@ -752,3 +765,4 @@ void SynthBase::ValueChangedCallback::messageCallback() {
     }
   }
 }
+#endif

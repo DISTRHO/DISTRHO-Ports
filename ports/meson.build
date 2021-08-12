@@ -1,8 +1,10 @@
 ###############################################################################
 
 if linux_embed
-    # TODO deal with this later
-    plugins = []
+    plugins = [
+        'vitalium',
+        'swankyamp',
+    ]
 else
     plugins = [
         'chow',

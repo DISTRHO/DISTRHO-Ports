@@ -396,6 +396,7 @@ void SwankyAmpAudioProcessor::processBlock(
   }
 }
 
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
 bool SwankyAmpAudioProcessor::hasEditor() const
 {
   return true;  // (change this to false if you choose to not supply an editor)
@@ -405,6 +406,7 @@ AudioProcessorEditor* SwankyAmpAudioProcessor::createEditor()
 {
   return new SwankyAmpAudioProcessorEditor(*this, parameters);
 }
+#endif
 
 void SwankyAmpAudioProcessor::setPresetText(const String& text)
 {

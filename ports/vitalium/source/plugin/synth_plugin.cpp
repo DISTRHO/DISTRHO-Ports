@@ -15,7 +15,9 @@
  */
 
 #include "synth_plugin.h"
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
 #include "synth_editor.h"
+#endif
 #include "sound_engine.h"
 #include "load_save.h"
 
@@ -42,6 +44,7 @@ SynthPlugin::~SynthPlugin() {
   keyboard_state_ = nullptr;
 }
 
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
 SynthGuiInterface* SynthPlugin::getGuiInterface() {
   AudioProcessorEditor* editor = getActiveEditor();
   if (editor)
@@ -65,6 +68,7 @@ void SynthPlugin::setValueNotifyHost(const std::string& name, vital::mono_float 
     bridge_lookup_[name]->setValueNotifyHost(plugin_value);
   }
 }
+#endif
 
 const CriticalSection& SynthPlugin::getCriticalSection() {
   return getCallbackLock();
@@ -119,11 +123,15 @@ double SynthPlugin::getTailLengthSeconds() const {
 }
 
 const String SynthPlugin::getProgramName(int index) {
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
   SynthGuiInterface* editor = getGuiInterface();
   if (editor == nullptr || editor->getSynth() == nullptr)
     return "";
 
   return editor->getSynth()->getPresetName();
+#else
+  return "";
+#endif
 }
 
 void SynthPlugin::prepareToPlay(double sample_rate, int buffer_size) {
@@ -173,6 +181,7 @@ void SynthPlugin::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midi_messa
   }
 }
 
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
 bool SynthPlugin::hasEditor() const {
   return true;
 }
@@ -180,6 +189,7 @@ bool SynthPlugin::hasEditor() const {
 AudioProcessorEditor* SynthPlugin::createEditor() {
   return new SynthEditor(*this);
 }
+#endif
 
 void SynthPlugin::parameterChanged(std::string name, vital::mono_float value) {
   valueChangedExternal(name, value);
@@ -209,13 +219,19 @@ void SynthPlugin::setStateInformation(const void* data, int size_in_bytes) {
   }
   catch (const json::exception& e) {
     std::string error = "There was an error open the preset. Preset file is corrupted.";
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
     AlertWindow::showNativeDialogBox("Error opening preset", error, false);
+#else
+    std::cerr << error << std::endl;
+#endif
   }
   pauseProcessing(false);
 
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
   SynthGuiInterface* editor = getGuiInterface();
   if (editor)
     editor->updateFullGui();
+#endif
 }
 
 AudioProcessor* JUCE_CALLTYPE createPluginFilter() {

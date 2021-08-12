@@ -50,11 +50,15 @@ class SynthBase : public MidiManager::Listener {
 
     void valueChanged(const std::string& name, vital::mono_float value);
     void valueChangedThroughMidi(const std::string& name, vital::mono_float value) override;
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
     void pitchWheelMidiChanged(vital::mono_float value) override;
     void modWheelMidiChanged(vital::mono_float value) override;
+#endif
     void pitchWheelGuiChanged(vital::mono_float value);
     void modWheelGuiChanged(vital::mono_float value);
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
     void presetChangedThroughMidi(File preset) override;
+#endif
     void valueChangedExternal(const std::string& name, vital::mono_float value);
     void valueChangedInternal(const std::string& name, vital::mono_float value);
     bool connectModulation(const std::string& source, const std::string& destination);
@@ -119,6 +123,7 @@ class SynthBase : public MidiManager::Listener {
     virtual void pauseProcessing(bool pause) = 0;
     Tuning* getTuning() { return &tuning_; }
 
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
     struct ValueChangedCallback : public CallbackMessage {
       ValueChangedCallback(std::shared_ptr<SynthBase*> listener, std::string name, vital::mono_float val) :
           listener(listener), control_name(std::move(name)), value(val) { }
@@ -129,11 +134,14 @@ class SynthBase : public MidiManager::Listener {
       std::string control_name;
       vital::mono_float value;
     };
+#endif
 
   protected:
     vital::modulation_change createModulationChange(vital::ModulationConnection* connection);
     bool isInvalidConnection(const vital::modulation_change& change);
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
     virtual SynthGuiInterface* getGuiInterface() = 0;
+#endif
     json saveToJson();
     bool loadFromJson(const json& state);
     vital::ModulationConnection* getConnection(const std::string& source, const std::string& destination);
@@ -198,8 +206,10 @@ class HeadlessSynth : public SynthBase {
         critical_section_.exit();
     }
 
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
   protected:
     virtual SynthGuiInterface* getGuiInterface() override { return nullptr; }
+#endif
 
   private:
     CriticalSection critical_section_;

@@ -30,10 +30,12 @@ class SynthPlugin : public SynthBase, public AudioProcessor, public ValueBridge:
     SynthPlugin();
     virtual ~SynthPlugin();
 
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
     SynthGuiInterface* getGuiInterface() override;
     void beginChangeGesture(const std::string& name) override;
     void endChangeGesture(const std::string& name) override;
     void setValueNotifyHost(const std::string& name, vital::mono_float value) override;
+#endif
     const CriticalSection& getCriticalSection() override;
     void pauseProcessing(bool pause) override;
 
@@ -41,8 +43,10 @@ class SynthPlugin : public SynthBase, public AudioProcessor, public ValueBridge:
     void releaseResources() override;
     void processBlock(AudioSampleBuffer&, MidiBuffer&) override;
 
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
     AudioProcessorEditor* createEditor() override;
     bool hasEditor() const override;
+#endif
 
     const String getName() const override;
     bool supportsMPE() const override { return true; }

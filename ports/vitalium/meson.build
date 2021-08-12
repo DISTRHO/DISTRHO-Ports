@@ -46,17 +46,26 @@ plugin_extra_include_dirs = include_directories([
     'third_party',
 ])
 
-plugin_srcs = files([
-    'BinaryData.cpp',
-    'source/unity_build/common.cpp',
-    'source/unity_build/interface_editor_components.cpp',
-    'source/unity_build/interface_editor_sections.cpp',
-    'source/unity_build/interface_editor_sections2.cpp',
-    'source/unity_build/interface_look_and_feel.cpp',
-    'source/unity_build/interface_wavetable.cpp',
-    'source/unity_build/plugin.cpp',
-    'source/unity_build/synthesis.cpp',
-])
+if linux_embed
+    plugin_srcs = files([
+        'BinaryData.cpp',
+        'source/unity_build/common.cpp',
+        'source/unity_build/plugin.cpp',
+        'source/unity_build/synthesis.cpp',
+    ])
+else
+    plugin_srcs = files([
+        'BinaryData.cpp',
+        'source/unity_build/common.cpp',
+        'source/unity_build/interface_editor_components.cpp',
+        'source/unity_build/interface_editor_sections.cpp',
+        'source/unity_build/interface_editor_sections2.cpp',
+        'source/unity_build/interface_look_and_feel.cpp',
+        'source/unity_build/interface_wavetable.cpp',
+        'source/unity_build/plugin.cpp',
+        'source/unity_build/synthesis.cpp',
+    ])
+endif
 
 plugin_name = 'vitalium'
 plugin_uses_opengl = true

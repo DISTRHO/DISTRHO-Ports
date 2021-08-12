@@ -81,9 +81,11 @@ class MidiManager {
       public:
         virtual ~Listener() { }
         virtual void valueChangedThroughMidi(const std::string& name, vital::mono_float value) = 0;
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
         virtual void pitchWheelMidiChanged(vital::mono_float value) = 0;
         virtual void modWheelMidiChanged(vital::mono_float value) = 0;
         virtual void presetChangedThroughMidi(File preset) = 0;
+#endif
     };
 
     MidiManager(SynthBase* synth, MidiKeyboardState* keyboard_state,
@@ -114,6 +116,7 @@ class MidiManager {
 
     void setMpeEnabled(bool enabled) { mpe_enabled_ = enabled; }
 
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
     struct PresetLoadedCallback : public CallbackMessage {
       PresetLoadedCallback(Listener* lis, File pre) : listener(lis), preset(std::move(pre)) { }
 
@@ -125,6 +128,7 @@ class MidiManager {
       Listener* listener;
       File preset;
     };
+#endif
 
   protected:
     void readMpeMessage(const MidiMessage& message);

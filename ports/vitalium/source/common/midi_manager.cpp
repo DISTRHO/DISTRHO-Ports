@@ -123,18 +123,24 @@ void MidiManager::processPitchBend(const MidiMessage& midi_message, int sample_p
   if (isMpeChannelMasterLowerZone(channel)) {
     engine_->setZonedPitchWheel(value, lowerMasterChannel(), lowerMasterChannel() + 1);
     engine_->setZonedPitchWheel(value, lowerZoneStartChannel(), lowerZoneEndChannel());
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
     listener_->pitchWheelMidiChanged(value);
+#endif
   }
   else if (isMpeChannelMasterUpperZone(channel)) {
     engine_->setZonedPitchWheel(value, upperMasterChannel(), upperMasterChannel() + 1);
     engine_->setZonedPitchWheel(value, upperZoneStartChannel(), upperZoneEndChannel());
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
     listener_->pitchWheelMidiChanged(value);
+#endif
   }
   else if (mpe_enabled_)
     engine_->setPitchWheel(value, channel);
   else {
     engine_->setZonedPitchWheel(value, channel, channel);
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
     listener_->pitchWheelMidiChanged(value);
+#endif
   }
 }
 
@@ -234,7 +240,9 @@ void MidiManager::processMidiMessage(const MidiMessage& midi_message, int sample
         case kModWheel: {
           vital::mono_float percent = (1.0f * midi_message.getControllerValue()) / kControlMax;
           engine_->setModWheel(percent, channel);
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
           listener_->modWheelMidiChanged(percent);
+#endif
           break;
         }
         case kAllNotesOff:
