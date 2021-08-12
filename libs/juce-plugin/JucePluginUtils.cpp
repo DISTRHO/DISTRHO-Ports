@@ -9,7 +9,9 @@
 #include "AppConfig.h"
 
 #define JUCE_CORE_INCLUDE_NATIVE_HEADERS 1
-#define JUCE_GUI_BASICS_INCLUDE_XHEADERS 1
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
+ #define JUCE_GUI_BASICS_INCLUDE_XHEADERS 1
+#endif
 #include "modules/juce_gui_basics/juce_gui_basics.h"
 #undef None
 
