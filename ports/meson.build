@@ -223,7 +223,7 @@ foreach plugin : plugins
                 output: plugin_name + '.lv2',
                 input: plugin_lv2_lib,
                 command: [
-                    'mkdir', '-p', plugin_lv2_dir, '&&',
+                    './helper.sh', 'mkdir', '-p', plugin_lv2_dir, '&&',
                     'cd', plugin_lv2_dir, '&&',
                     'mv', plugin_lv2_lib.full_path(), plugin_lv2_dir / plugin_name + lib_suffix, '&&',
                     (meson.is_cross_build() ? 'wine' : 'env'), lv2_ttl_generator, '.' / plugin_name + lib_suffix,
@@ -272,7 +272,7 @@ foreach plugin : plugins
                 output: plugin_name + '.vst3',
                 input: plugin_vst3_lib,
                 command: [
-                    'mkdir', '-p', plugin_vst3_dir, '&&',
+                    './helper.sh', 'mkdir', '-p', plugin_vst3_dir, '&&',
                     'cd', plugin_vst3_dir, '&&',
                     'mv', plugin_vst3_lib.full_path(), plugin_vst3_dir / plugin_name + lib_suffix,
                 ],
