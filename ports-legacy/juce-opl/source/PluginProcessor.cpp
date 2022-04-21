@@ -453,7 +453,7 @@ void AdlibBlasterAudioProcessor::setIntParameter (String name, int value)
 	int i = paramIdxByName[name];
 	IntFloatParameter* p = (IntFloatParameter*)params[i];
 	p->setParameterValue(value);
-	setParameter(i, p->getParameter());
+	setParameterNotifyingHost(i, p->getParameter());
 }
 
 void AdlibBlasterAudioProcessor::setEnumParameter (String name, int index)
@@ -461,7 +461,7 @@ void AdlibBlasterAudioProcessor::setEnumParameter (String name, int index)
 	int i = paramIdxByName[name];
 	EnumFloatParameter* p = (EnumFloatParameter*)params[i];
 	p->setParameterIndex(index);
-	setParameter(i, p->getParameter());
+	setParameterNotifyingHost(i, p->getParameter());
 }
 
 int AdlibBlasterAudioProcessor::getIntParameter (String name)
@@ -487,6 +487,7 @@ bool AdlibBlasterAudioProcessor::getBoolParameter(String name)
 void AdlibBlasterAudioProcessor::setParameter (int index, float newValue)
 {
 	FloatParameter* p = params[index];
+	bool changed = p->getParameter() != newValue;
 	p->setParameter(newValue);
 	String name = p->getName();
 	int osc = 2;	// Carrier
@@ -529,6 +530,10 @@ void AdlibBlasterAudioProcessor::setParameter (int index, float newValue)
 		Opl->SetEmulator((Emulator)((EnumFloatParameter*)p)->getParameterIndex());
 	} else if (name.startsWith("Percussion")) {
 		Opl->SetPercussionMode(((EnumFloatParameter*)p)->getParameterIndex() > 0);
+	}
+
+	if (changed) {
+		updateGuiIfPresent();
 	}
 }
 
@@ -684,7 +689,7 @@ void AdlibBlasterAudioProcessor::setCurrentProgram (int index)
 	i_program = index;
 	std::vector<float> &v_params = programs[getProgramName(index)];
 	for (unsigned int i = 0; i < params.size() && i < v_params.size(); i++) {
-		setParameter(i, v_params[i]);
+		setParameterNotifyingHost(i, v_params[i]);
 	}
 	updateGuiIfPresent();
 }
@@ -891,7 +896,7 @@ void AdlibBlasterAudioProcessor::setStateInformation (const void* data, int size
 			var param = v[stringToIdentifier(getParameterName(i))];
 
 			if (!param.isVoid())
-				setParameter(i, param);
+				setParameterNotifyingHost(i, param);
 		}
 
 		updateGuiIfPresent();
@@ -903,7 +908,7 @@ void AdlibBlasterAudioProcessor::setStateInformation (const void* data, int size
 	const int parametersToLoad = std::min<int>(sizeInBytes / sizeof(float), getNumParameters());
 
 	for (int i = 0; i < parametersToLoad; i++) {
-		setParameter(i, fdata[i]);
+		setParameterNotifyingHost(i, fdata[i]);
 	}
 }
 
