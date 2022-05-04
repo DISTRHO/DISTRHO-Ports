@@ -34,6 +34,9 @@
  #define JUCE_MODULE_AVAILABLE_juce_audio_devices        0
 #endif
 
+// FIXME needed for Vitalium
+// #define JUCE_MODAL_LOOPS_PERMITTED 1
+
 //=============================================================================
 
 #define JUCE_STANDALONE_APPLICATION 0

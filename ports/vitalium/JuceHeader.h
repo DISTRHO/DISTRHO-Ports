@@ -7,6 +7,7 @@
 #include "BinaryData.h"
 
 using namespace juce;
+using namespace juce::gl;
 
 namespace ProjectInfo
 {

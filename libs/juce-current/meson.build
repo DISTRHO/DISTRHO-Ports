@@ -40,11 +40,6 @@ juce_current_extra_cpp_args = [
 ]
 
 if os_windows
-    juce_current_extra_cpp_args += [
-        '-D_NATIVE_WCHAR_T_DEFINED',
-        '-D__wchar_t=wchar_t',
-        '-Wno-unknown-pragmas',
-    ]
     if host_machine.cpu() == 'x86'
         juce_current_extra_cpp_args += [
             '-mpreferred-stack-boundary=2',
@@ -58,7 +53,7 @@ lib_juce_current = static_library('juce-current',
         include_directories('.'),
         include_directories('source'),
         include_directories('source/modules'),
-        include_directories('..' / 'juced' / 'source' / 'dependancies' / 'ladspa_sdk' / 'src'),
+        include_directories('../juced/source/dependancies/ladspa_sdk/src'),
     ],
     cpp_args: build_flags_cpp + juce_current_extra_cpp_args,
     dependencies: dependencies,

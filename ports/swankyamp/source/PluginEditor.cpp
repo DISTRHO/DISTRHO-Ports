@@ -41,7 +41,7 @@ SwankyAmpAudioProcessorEditor::SwankyAmpAudioProcessorEditor(
     tooltipWindow(this)
 {
   LookAndFeel::getDefaultLookAndFeel().setDefaultSansSerifTypeface(
-      laf.getDefaultFont().getTypeface());
+      laf.getDefaultFont().getTypefacePtr());
   setLookAndFeel(&laf);
   tooltipWindow.setLookAndFeel(&laf);
   tooltipWindow.setOpaque(false);
