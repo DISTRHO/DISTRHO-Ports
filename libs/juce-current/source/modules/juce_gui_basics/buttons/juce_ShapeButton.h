@@ -1,20 +1,13 @@
 /*
   ==============================================================================
 
-   This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   This file is part of the JUCE 7 technical preview.
+   Copyright (c) 2022 - Raw Material Software Limited
 
-   JUCE is an open source library subject to commercial or open-source
-   licensing.
+   You may use this code under the terms of the GPL v3
+   (see www.gnu.org/licenses).
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
-
-   End User License Agreement: www.juce.com/juce-6-licence
-   Privacy Policy: www.juce.com/juce-privacy-policy
-
-   Or: You may also use this code under the terms of the GPL v3 (see
-   www.gnu.org/licenses).
+   For the technical preview this file cannot be licensed commercially.
 
    JUCE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY, AND ALL WARRANTIES, WHETHER
    EXPRESSED OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR PURPOSE, ARE
@@ -88,8 +81,6 @@ public:
                        Colour overColourOn,
                        Colour downColourOn);
 
-    void setShadowColour (Colour shadow) { shadowColour = shadow; }
-
     /** Set whether the button should use the 'on' set of colours when its toggle state is 'on'.
         By default these will be the same as the normal colours but the setOnColours method can be
         used to provide a different set of colours.
@@ -114,8 +105,9 @@ public:
 private:
     //==============================================================================
     Colour normalColour,   overColour,   downColour,
-           normalColourOn, overColourOn, downColourOn, outlineColour, shadowColour;
+           normalColourOn, overColourOn, downColourOn, outlineColour;
     bool useOnColours;
+    DropShadowEffect shadow;
     Path shape;
     BorderSize<int> border;
     bool maintainShapeProportions;

@@ -1,20 +1,13 @@
 /*
   ==============================================================================
 
-   This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   This file is part of the JUCE 7 technical preview.
+   Copyright (c) 2022 - Raw Material Software Limited
 
-   JUCE is an open source library subject to commercial or open-source
-   licensing.
+   You may use this code under the terms of the GPL v3
+   (see www.gnu.org/licenses).
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
-
-   End User License Agreement: www.juce.com/juce-6-licence
-   Privacy Policy: www.juce.com/juce-privacy-policy
-
-   Or: You may also use this code under the terms of the GPL v3 (see
-   www.gnu.org/licenses).
+   For the technical preview this file cannot be licensed commercially.
 
    JUCE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY, AND ALL WARRANTIES, WHETHER
    EXPRESSED OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR PURPOSE, ARE
@@ -25,6 +18,10 @@
 
 namespace juce
 {
+
+JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE ("-Wundeclared-selector")
+const auto menuItemInvokedSelector = @selector (menuItemInvoked:);
+JUCE_END_IGNORE_WARNINGS_GCC_LIKE
 
 //==============================================================================
 struct JuceMainMenuBarHolder : private DeletedAtShutdown
@@ -116,7 +113,6 @@ public:
         NSMenu* sub = createMenu (child, name, menuId, topLevelIndex, true);
 
         [parent setSubmenu: sub forItem: item];
-        [sub setAutoenablesItems: false];
         [sub release];
     }
 
@@ -130,7 +126,6 @@ public:
         for (PopupMenu::MenuItemIterator iter (menuToCopy); iter.next();)
             addMenuItem (iter, menu, menuId, topLevelIndex);
 
-        [menu setAutoenablesItems: false];
         [menu update];
 
         removeItemRecursive ([parentItem submenu]);
@@ -285,11 +280,9 @@ public:
         }
         else
         {
-            JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE ("-Wundeclared-selector")
             auto item = [[NSMenuItem alloc] initWithTitle: text
-                                                   action: @selector (menuItemInvoked:)
+                                                   action: menuItemInvokedSelector
                                             keyEquivalent: nsEmptyString()];
-            JUCE_END_IGNORE_WARNINGS_GCC_LIKE
 
             [item setTag: topLevelIndex];
             [item setEnabled: i.isEnabled];
@@ -338,8 +331,6 @@ public:
     {
         NSMenu* m = [[NSMenu alloc] initWithTitle: juceStringToNS (menuName)];
 
-        [m setAutoenablesItems: false];
-
         if (addDelegate)
             [m setDelegate: (id<NSMenuDelegate>) callback];
 
@@ -368,11 +359,18 @@ private:
             {
                 NSArray* array = nil;
 
-               #if (! defined (MAC_OS_X_VERSION_10_8)) || MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_8
-                [menuNib instantiateNibWithOwner: NSApp  topLevelObjects: &array];
-               #else
-                [menuNib instantiateWithOwner: NSApp  topLevelObjects: &array];
-               #endif
+                if (@available (macOS 10.11, *))
+                {
+                    [menuNib instantiateWithOwner: NSApp
+                                  topLevelObjects: &array];
+                }
+                else
+                {
+                    JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE ("-Wdeprecated-declarations")
+                    [menuNib instantiateNibWithOwner: NSApp
+                                     topLevelObjects: &array];
+                    JUCE_END_IGNORE_WARNINGS_GCC_LIKE
+                }
 
                 for (id object in array)
                 {
@@ -442,9 +440,35 @@ private:
         NSString* f35String = [NSString stringWithCharacters: &f35Key length: 1];
 
         NSMenuItem* item = [[NSMenuItem alloc] initWithTitle: nsStringLiteral ("x")
-                                                      action: nil
+                                                      action: menuItemInvokedSelector
                                                keyEquivalent: f35String];
-        [item setTarget: nil];
+
+        // When the f35Event is invoked, the item's enablement is checked and a
+        // NSBeep is triggered if the item appears to be disabled.
+        // This ValidatorClass exists solely to return YES from validateMenuItem.
+        struct ValidatorClass   : public ObjCClass<NSObject>
+        {
+            ValidatorClass()  : ObjCClass ("JUCEMenuValidator_")
+            {
+                addMethod (menuItemInvokedSelector,       menuItemInvoked);
+                addMethod (@selector (validateMenuItem:), validateMenuItem);
+
+               #if defined (MAC_OS_X_VERSION_10_14)
+                addProtocol (@protocol (NSMenuItemValidation));
+               #endif
+
+                registerClass();
+            }
+
+        private:
+            static BOOL validateMenuItem (id, SEL, NSMenuItem*)      { return YES; }
+            static void menuItemInvoked  (id, SEL, NSMenuItem*)      {}
+        };
+
+        static ValidatorClass validatorClass;
+        static auto* instance = validatorClass.createInstance();
+
+        [item setTarget: instance];
         [menu insertItem: item atIndex: [menu numberOfItems]];
         [item release];
 
@@ -516,17 +540,19 @@ private:
     //==============================================================================
     struct JuceMenuCallbackClass   : public ObjCClass<NSObject>
     {
-        JuceMenuCallbackClass()  : ObjCClass<NSObject> ("JUCEMainMenu_")
+        JuceMenuCallbackClass()  : ObjCClass ("JUCEMainMenu_")
         {
             addIvar<JuceMainMenuHandler*> ("owner");
 
-            JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE ("-Wundeclared-selector")
-            addMethod (@selector (menuItemInvoked:),  menuItemInvoked, "v@:@");
-            JUCE_END_IGNORE_WARNINGS_GCC_LIKE
-
-            addMethod (@selector (menuNeedsUpdate:),  menuNeedsUpdate, "v@:@");
+            addMethod (menuItemInvokedSelector,       menuItemInvoked);
+            addMethod (@selector (menuNeedsUpdate:),  menuNeedsUpdate);
+            addMethod (@selector (validateMenuItem:), validateMenuItem);
 
             addProtocol (@protocol (NSMenuDelegate));
+
+           #if defined (MAC_OS_X_VERSION_10_14)
+            addProtocol (@protocol (NSMenuItemValidation));
+           #endif
 
             registerClass();
         }
@@ -537,17 +563,33 @@ private:
         }
 
     private:
+        static auto* getPopupMenuItem (NSMenuItem* item)
+        {
+            return getJuceClassFromNSObject<PopupMenu::Item> ([item representedObject]);
+        }
+
+        static auto* getOwner (id self)
+        {
+            return getIvar<JuceMainMenuHandler*> (self, "owner");
+        }
+
         static void menuItemInvoked (id self, SEL, NSMenuItem* item)
         {
-            auto owner = getIvar<JuceMainMenuHandler*> (self, "owner");
-
-            if (auto* juceItem = getJuceClassFromNSObject<PopupMenu::Item> ([item representedObject]))
-                owner->invoke (*juceItem, static_cast<int> ([item tag]));
+            if (auto* juceItem = getPopupMenuItem (item))
+                getOwner (self)->invoke (*juceItem, static_cast<int> ([item tag]));
         }
 
         static void menuNeedsUpdate (id self, SEL, NSMenu* menu)
         {
-            getIvar<JuceMainMenuHandler*> (self, "owner")->updateTopLevelMenu (menu);
+            getOwner (self)->updateTopLevelMenu (menu);
+        }
+
+        static BOOL validateMenuItem (id, SEL, NSMenuItem* item)
+        {
+            if (auto* juceItem = getPopupMenuItem (item))
+                return juceItem->isEnabled;
+
+            return YES;
         }
     };
 };

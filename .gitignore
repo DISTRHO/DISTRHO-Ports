@@ -11,6 +11,11 @@
 *.orig
 *.rej
 
+*.cmake
+CMakeCache.txt
+CMakeFiles
+Makefile
+
 *.lv2
 *.make
 *.make-e
@@ -74,3 +79,4 @@ libs/juce-*/source/modules/*/native/javaopt/
 libs/juce-*/source/modules/*/native/oboe/
 libs/juce-*/source/modules/*/native/*_android_*
 libs/juce-*/source/modules/*/native/*_ios_*
+libs/juce-*/source/tools

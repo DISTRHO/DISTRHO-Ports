@@ -1,20 +1,13 @@
 /*
   ==============================================================================
 
-   This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   This file is part of the JUCE 7 technical preview.
+   Copyright (c) 2022 - Raw Material Software Limited
 
-   JUCE is an open source library subject to commercial or open-source
-   licensing.
+   You may use this code under the terms of the GPL v3
+   (see www.gnu.org/licenses).
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
-
-   End User License Agreement: www.juce.com/juce-6-licence
-   Privacy Policy: www.juce.com/juce-privacy-policy
-
-   Or: You may also use this code under the terms of the GPL v3 (see
-   www.gnu.org/licenses).
+   For the technical preview this file cannot be licensed commercially.
 
    JUCE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY, AND ALL WARRANTIES, WHETHER
    EXPRESSED OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR PURPOSE, ARE
@@ -53,6 +46,7 @@ public:
         AbletonLive8,               /**< Represents Ableton Live 8. */
         AbletonLive9,               /**< Represents Ableton Live 9. */
         AbletonLive10,              /**< Represents Ableton Live 10. */
+        AbletonLive11,              /**< Represents Ableton Live 11. */
         AbletonLiveGeneric,         /**< Represents Ableton Live. */
         AdobeAudition,              /**< Represents Adobe Audition. */
         AdobePremierePro,           /**< Represents Adobe Premiere Pro. */
@@ -60,6 +54,7 @@ public:
         AppleLogic,                 /**< Represents Apple Logic Pro. */
         AppleMainStage,             /**< Represents Apple Main Stage. */
         Ardour,                     /**< Represents Ardour. */
+        AULab,                      /**< Represents AU Lab. */
         AvidProTools,               /**< Represents Avid Pro Tools. */
         BitwigStudio,               /**< Represents Bitwig Studio. */
         CakewalkSonar8,             /**< Represents Cakewalk Sonar 8. */
@@ -115,11 +110,14 @@ public:
     //==============================================================================
     /** Returns true if the host is any version of Ableton Live. */
     bool isAbletonLive() const noexcept       { return type == AbletonLive6 || type == AbletonLive7 || type == AbletonLive8
-                                                      || type == AbletonLive9 || type == AbletonLive10 || type == AbletonLiveGeneric; }
+                                                      || type == AbletonLive9 || type == AbletonLive10 || type == AbletonLive11
+                                                      || type == AbletonLiveGeneric; }
     /** Returns true if the host is Adobe Audition. */
     bool isAdobeAudition() const noexcept     { return type == AdobeAudition; }
     /** Returns true if the host is Ardour. */
     bool isArdour() const noexcept            { return type == Ardour; }
+    /** Returns true if the host is AU Lab. */
+    bool isAULab() const noexcept             { return type == AULab; }
     /** Returns true if the host is Bitwig Studio. */
     bool isBitwigStudio() const noexcept      { return type == BitwigStudio; }
     /** Returns true if the host is any version of Steinberg Cubase. */
@@ -202,8 +200,10 @@ public:
     bool isInterAppAudioConnected() const;
     /** Switches to the host application when Inter-App Audio is used on iOS. */
     void switchToHostApplication() const;
+   #if ! JUCE_AUDIOPROCESSOR_NO_GUI
     /** Gets the host app's icon when Inter-App Audio is used on iOS. */
     Image getHostIcon (int size) const;
+   #endif
 
     //==============================================================================
     /** Returns the complete absolute path of the host application executable. */

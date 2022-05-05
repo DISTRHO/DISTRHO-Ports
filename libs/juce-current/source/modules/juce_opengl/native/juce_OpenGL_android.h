@@ -1,20 +1,13 @@
 /*
   ==============================================================================
 
-   This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   This file is part of the JUCE 7 technical preview.
+   Copyright (c) 2022 - Raw Material Software Limited
 
-   JUCE is an open source library subject to commercial or open-source
-   licensing.
+   You may use this code under the terms of the GPL v3
+   (see www.gnu.org/licenses).
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
-
-   End User License Agreement: www.juce.com/juce-6-licence
-   Privacy Policy: www.juce.com/juce-privacy-policy
-
-   Or: You may also use this code under the terms of the GPL v3 (see
-   www.gnu.org/licenses).
+   For the technical preview this file cannot be licensed commercially.
 
    JUCE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY, AND ALL WARRANTIES, WHETHER
    EXPRESSED OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR PURPOSE, ARE
@@ -78,9 +71,9 @@ class OpenGLContext::NativeContext   : private SurfaceHolderCallback
 {
 public:
     NativeContext (Component& comp,
-                   const OpenGLPixelFormat& /*pixelFormat*/,
+                   const OpenGLPixelFormat& pixelFormat,
                    void* /*contextToShareWith*/,
-                   bool /*useMultisampling*/,
+                   bool useMultisamplingIn,
                    OpenGLVersion)
         : component (comp),
           surface (EGL_NO_SURFACE), context (EGL_NO_CONTEXT)
@@ -92,7 +85,7 @@ public:
             return;
 
         // Initialise the EGL display
-        if (! initEGLDisplay())
+        if (! initEGLDisplay (pixelFormat, useMultisamplingIn))
             return;
 
         // create a native surface view
@@ -288,26 +281,33 @@ private:
             juceContext->triggerRepaint();
     }
 
+    bool tryChooseConfig (const std::vector<EGLint>& optionalAttribs)
+    {
+        std::vector<EGLint> allAttribs
+        {
+            EGL_RENDERABLE_TYPE,    EGL_OPENGL_ES2_BIT,
+            EGL_SURFACE_TYPE,       EGL_WINDOW_BIT,
+            EGL_BLUE_SIZE,          8,
+            EGL_GREEN_SIZE,         8,
+            EGL_RED_SIZE,           8,
+            EGL_ALPHA_SIZE,         0,
+            EGL_DEPTH_SIZE,         16
+        };
+
+        allAttribs.insert (allAttribs.end(), optionalAttribs.begin(), optionalAttribs.end());
+
+        allAttribs.push_back (EGL_NONE);
+
+        EGLint numConfigs{};
+        return eglChooseConfig (display, allAttribs.data(), &config, 1, &numConfigs);
+    }
+
     //==============================================================================
-    bool initEGLDisplay()
+    bool initEGLDisplay (const OpenGLPixelFormat& pixelFormat, bool multisample)
     {
         // already initialised?
         if (display != EGL_NO_DISPLAY)
             return true;
-
-        const EGLint attribs[] =
-        {
-            EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-            EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-            EGL_BLUE_SIZE, 8,
-            EGL_GREEN_SIZE, 8,
-            EGL_RED_SIZE, 8,
-            EGL_ALPHA_SIZE, 0,
-            EGL_DEPTH_SIZE, 16,
-            EGL_NONE
-        };
-
-        EGLint numConfigs;
 
         if ((display = eglGetDisplay (EGL_DEFAULT_DISPLAY)) == EGL_NO_DISPLAY)
         {
@@ -321,14 +321,15 @@ private:
             return false;
         }
 
-        if (! eglChooseConfig (display, attribs, &config, 1, &numConfigs))
-        {
-            eglTerminate (display);
-            jassertfalse;
-            return false;
-        }
+        if (tryChooseConfig ({ EGL_SAMPLE_BUFFERS, multisample ? 1 : 0, EGL_SAMPLES, pixelFormat.multisamplingLevel }))
+            return true;
 
-        return true;
+        if (tryChooseConfig ({}))
+            return true;
+
+        eglTerminate (display);
+        jassertfalse;
+        return false;
     }
 
     //==============================================================================

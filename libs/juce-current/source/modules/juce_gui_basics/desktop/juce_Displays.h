@@ -1,20 +1,13 @@
 /*
   ==============================================================================
 
-   This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   This file is part of the JUCE 7 technical preview.
+   Copyright (c) 2022 - Raw Material Software Limited
 
-   JUCE is an open source library subject to commercial or open-source
-   licensing.
+   You may use this code under the terms of the GPL v3
+   (see www.gnu.org/licenses).
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
-
-   End User License Agreement: www.juce.com/juce-6-licence
-   Privacy Policy: www.juce.com/juce-privacy-policy
-
-   Or: You may also use this code under the terms of the GPL v3 (see
-   www.gnu.org/licenses).
+   For the technical preview this file cannot be licensed commercially.
 
    JUCE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY, AND ALL WARRANTIES, WHETHER
    EXPRESSED OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR PURPOSE, ARE
@@ -166,17 +159,16 @@ public:
    #ifndef DOXYGEN
     /** @internal */
     void refresh();
-    /** @internal */
-    ~Displays() = default;
-    // This method has been deprecated - use the getDisplayForPoint() or getDisplayForRect() methods instead
-    // as they can deal with converting between logical and physical pixels
-    JUCE_DEPRECATED (const Display& getDisplayContaining (Point<int> position) const noexcept);
+
+    [[deprecated ("Use the getDisplayForPoint or getDisplayForRect methods instead "
+                 "as they can deal with converting between logical and physical pixels.")]]
+    const Display& getDisplayContaining (Point<int> position) const noexcept;
 
     // These methods have been deprecated - use the methods which return a Display* instead as they will return
     // nullptr on headless systems with no connected displays
-    JUCE_DEPRECATED (const Display& findDisplayForRect (Rectangle<int>, bool isPhysical = false) const noexcept);
-    JUCE_DEPRECATED (const Display& findDisplayForPoint (Point<int>, bool isPhysical = false) const noexcept);
-    JUCE_DEPRECATED (const Display& getMainDisplay() const noexcept);
+    [[deprecated]] const Display& findDisplayForRect (Rectangle<int>, bool isPhysical = false) const noexcept;
+    [[deprecated]] const Display& findDisplayForPoint (Point<int>, bool isPhysical = false) const noexcept;
+    [[deprecated]] const Display& getMainDisplay() const noexcept;
    #endif
 
 private:

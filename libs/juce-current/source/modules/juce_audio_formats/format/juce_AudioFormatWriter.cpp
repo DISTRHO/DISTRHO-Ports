@@ -1,20 +1,13 @@
 /*
   ==============================================================================
 
-   This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   This file is part of the JUCE 7 technical preview.
+   Copyright (c) 2022 - Raw Material Software Limited
 
-   JUCE is an open source library subject to commercial or open-source
-   licensing.
+   You may use this code under the terms of the GPL v3
+   (see www.gnu.org/licenses).
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
-
-   End User License Agreement: www.juce.com/juce-6-licence
-   Privacy Policy: www.juce.com/juce-privacy-policy
-
-   Or: You may also use this code under the terms of the GPL v3 (see
-   www.gnu.org/licenses).
+   For the technical preview this file cannot be licensed commercially.
 
    JUCE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY, AND ALL WARRANTIES, WHETHER
    EXPRESSED OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR PURPOSE, ARE
@@ -157,16 +150,16 @@ bool AudioFormatWriter::writeFromFloatArrays (const float* const* channels, int 
     if (isFloatingPoint())
         return write ((const int**) channels, numSamples);
 
-    int* chans[256];
-    int scratch[4096];
+    std::vector<int*> chans (256);
+    std::vector<int> scratch (4096);
 
-    jassert (numSourceChannels < numElementsInArray (chans));
-    const int maxSamples = (int) (numElementsInArray (scratch) / numSourceChannels);
+    jassert (numSourceChannels < (int) chans.size());
+    const int maxSamples = (int) scratch.size() / numSourceChannels;
 
     for (int i = 0; i < numSourceChannels; ++i)
-        chans[i] = scratch + (i * maxSamples);
+        chans[(size_t) i] = scratch.data() + (i * maxSamples);
 
-    chans[numSourceChannels] = nullptr;
+    chans[(size_t) numSourceChannels] = nullptr;
     int startSample = 0;
 
     while (numSamples > 0)
@@ -174,9 +167,9 @@ bool AudioFormatWriter::writeFromFloatArrays (const float* const* channels, int 
         auto numToDo = jmin (numSamples, maxSamples);
 
         for (int i = 0; i < numSourceChannels; ++i)
-            convertFloatsToInts (chans[i], channels[i] + startSample, numToDo);
+            convertFloatsToInts (chans[(size_t) i], channels[(size_t) i] + startSample, numToDo);
 
-        if (! write ((const int**) chans, numToDo))
+        if (! write ((const int**) chans.data(), numToDo))
             return false;
 
         startSample += numToDo;

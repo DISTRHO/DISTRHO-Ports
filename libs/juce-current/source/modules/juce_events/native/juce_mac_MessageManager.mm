@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2022 - Raw Material Software Limited
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
@@ -37,36 +37,36 @@ struct AppDelegateClass   : public ObjCClass<NSObject>
 {
     AppDelegateClass()  : ObjCClass<NSObject> ("JUCEAppDelegate_")
     {
-        addMethod (@selector (applicationWillFinishLaunching:), applicationWillFinishLaunching, "v@:@");
-        addMethod (@selector (applicationShouldTerminate:),     applicationShouldTerminate,     "I@:@");
-        addMethod (@selector (applicationWillTerminate:),       applicationWillTerminate,       "v@:@");
-        addMethod (@selector (application:openFile:),           application_openFile,           "c@:@@");
-        addMethod (@selector (application:openFiles:),          application_openFiles,          "v@:@@");
-        addMethod (@selector (applicationDidBecomeActive:),     applicationDidBecomeActive,     "v@:@");
-        addMethod (@selector (applicationDidResignActive:),     applicationDidResignActive,     "v@:@");
-        addMethod (@selector (applicationWillUnhide:),          applicationWillUnhide,          "v@:@");
+        addMethod (@selector (applicationWillFinishLaunching:), applicationWillFinishLaunching);
+        addMethod (@selector (applicationShouldTerminate:),     applicationShouldTerminate);
+        addMethod (@selector (applicationWillTerminate:),       applicationWillTerminate);
+        addMethod (@selector (application:openFile:),           application_openFile);
+        addMethod (@selector (application:openFiles:),          application_openFiles);
+        addMethod (@selector (applicationDidBecomeActive:),     applicationDidBecomeActive);
+        addMethod (@selector (applicationDidResignActive:),     applicationDidResignActive);
+        addMethod (@selector (applicationWillUnhide:),          applicationWillUnhide);
 
         JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE ("-Wundeclared-selector")
-        addMethod (@selector (getUrl:withReplyEvent:),          getUrl_withReplyEvent,          "v@:@@");
-        addMethod (@selector (broadcastMessageCallback:),       broadcastMessageCallback,       "v@:@");
-        addMethod (@selector (mainMenuTrackingBegan:),          mainMenuTrackingBegan,          "v@:@");
-        addMethod (@selector (mainMenuTrackingEnded:),          mainMenuTrackingEnded,          "v@:@");
-        addMethod (@selector (dummyMethod),                     dummyMethod,                    "v@:");
+        addMethod (@selector (getUrl:withReplyEvent:),          getUrl_withReplyEvent);
+        addMethod (@selector (broadcastMessageCallback:),       broadcastMessageCallback);
+        addMethod (@selector (mainMenuTrackingBegan:),          mainMenuTrackingBegan);
+        addMethod (@selector (mainMenuTrackingEnded:),          mainMenuTrackingEnded);
+        addMethod (@selector (dummyMethod),                     dummyMethod);
         JUCE_END_IGNORE_WARNINGS_GCC_LIKE
 
        #if JUCE_PUSH_NOTIFICATIONS
         //==============================================================================
         addIvar<NSObject<NSApplicationDelegate, NSUserNotificationCenterDelegate>*> ("pushNotificationsDelegate");
 
-        addMethod (@selector (applicationDidFinishLaunching:),                                applicationDidFinishLaunching,          "v@:@");
+        addMethod (@selector (applicationDidFinishLaunching:),                                applicationDidFinishLaunching);
 
         JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE ("-Wundeclared-selector")
-        addMethod (@selector (setPushNotificationsDelegate:),                                 setPushNotificationsDelegate,           "v@:@");
+        addMethod (@selector (setPushNotificationsDelegate:),                                 setPushNotificationsDelegate);
         JUCE_END_IGNORE_WARNINGS_GCC_LIKE
 
-        addMethod (@selector (application:didRegisterForRemoteNotificationsWithDeviceToken:), registeredForRemoteNotifications,       "v@:@@");
-        addMethod (@selector (application:didFailToRegisterForRemoteNotificationsWithError:), failedToRegisterForRemoteNotifications, "v@:@@");
-        addMethod (@selector (application:didReceiveRemoteNotification:),                     didReceiveRemoteNotification,           "v@:@@");
+        addMethod (@selector (application:didRegisterForRemoteNotificationsWithDeviceToken:), registeredForRemoteNotifications);
+        addMethod (@selector (application:didFailToRegisterForRemoteNotificationsWithError:), failedToRegisterForRemoteNotifications);
+        addMethod (@selector (application:didReceiveRemoteNotification:),                     didReceiveRemoteNotification);
        #endif
 
         registerClass();
@@ -157,13 +157,13 @@ private:
     static void mainMenuTrackingBegan (id /*self*/, SEL, NSNotification*)
     {
         if (menuTrackingChangedCallback != nullptr)
-            (*menuTrackingChangedCallback) (true);
+            menuTrackingChangedCallback (true);
     }
 
     static void mainMenuTrackingEnded (id /*self*/, SEL, NSNotification*)
     {
         if (menuTrackingChangedCallback != nullptr)
-            (*menuTrackingChangedCallback) (false);
+            menuTrackingChangedCallback (false);
     }
 
     static void dummyMethod (id /*self*/, SEL) {}   // (used as a way of running a dummy thread)
@@ -341,9 +341,6 @@ void MessageManager::runDispatchLoop()
             // must only be called by the message thread!
             jassert (isThisTheMessageThread());
 
-          #if JUCE_PROJUCER_LIVE_BUILD
-            runDispatchLoopUntil (std::numeric_limits<int>::max());
-          #else
            #if JUCE_CATCH_UNHANDLED_EXCEPTIONS
             @try
             {
@@ -361,7 +358,6 @@ void MessageManager::runDispatchLoop()
            #else
             [NSApp run];
            #endif
-          #endif
         }
     }
 }
@@ -369,16 +365,11 @@ void MessageManager::runDispatchLoop()
 static void shutdownNSApp()
 {
     [NSApp stop: nil];
-    [NSEvent stopPeriodicEvents];
     [NSEvent startPeriodicEventsAfterDelay: 0  withPeriod: 0.1];
 }
 
 void MessageManager::stopDispatchLoop()
 {
-   #if JUCE_PROJUCER_LIVE_BUILD
-    quitMessagePosted = true;
-   #else
-
     if (isThisTheMessageThread())
     {
         quitMessagePosted = true;
@@ -394,7 +385,6 @@ void MessageManager::stopDispatchLoop()
 
         (new QuitCallback())->post();
     }
-   #endif
 }
 
 #if JUCE_MODAL_LOOPS_PERMITTED
@@ -470,8 +460,8 @@ void MessageManager::broadcastMessage (const String& message)
 }
 
 // Special function used by some plugin classes to re-post carbon events
-void __attribute__ ((visibility("default"))) repostCurrentNSEvent();
-void __attribute__ ((visibility("default"))) repostCurrentNSEvent()
+void repostCurrentNSEvent();
+void repostCurrentNSEvent()
 {
     struct EventReposter  : public CallbackMessage
     {
@@ -525,7 +515,7 @@ private:
             addIvar<Pimpl*> ("owner");
 
             JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE ("-Wundeclared-selector")
-            addMethod (@selector (changed:), changed, "v@:@");
+            addMethod (@selector (changed:), changed);
             JUCE_END_IGNORE_WARNINGS_GCC_LIKE
 
             addProtocol (@protocol (NSTextInput));

@@ -1,20 +1,13 @@
 /*
   ==============================================================================
 
-   This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   This file is part of the JUCE 7 technical preview.
+   Copyright (c) 2022 - Raw Material Software Limited
 
-   JUCE is an open source library subject to commercial or open-source
-   licensing.
+   You may use this code under the terms of the GPL v3
+   (see www.gnu.org/licenses).
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
-
-   End User License Agreement: www.juce.com/juce-6-licence
-   Privacy Policy: www.juce.com/juce-privacy-policy
-
-   Or: You may also use this code under the terms of the GPL v3 (see
-   www.gnu.org/licenses).
+   For the technical preview this file cannot be licensed commercially.
 
    JUCE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY, AND ALL WARRANTIES, WHETHER
    EXPRESSED OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR PURPOSE, ARE
@@ -92,9 +85,9 @@ private:
 
     Threading: It is not safe to interleave calls to the methods of this
     class. If you need to load new impulse responses during processing the
-    `load` calls must be synchronised with `process` calls, which in practice
-    means making the `load` call from the audio thread. The
-    `loadImpulseResponse` functions *are* wait-free and are therefore
+    load() calls must be synchronised with process() calls, which in practice
+    means making the load() call from the audio thread. The
+    loadImpulseResponse() functions *are* wait-free and are therefore
     suitable for use in a realtime context.
 
     @see FIRFilter, FIRFilter::Coefficients, FFT
@@ -166,14 +159,14 @@ public:
     //==============================================================================
     /** Must be called before first calling process.
 
-        In general, calls to `loadImpulseResponse` load the impulse response (IR)
+        In general, calls to loadImpulseResponse() load the impulse response (IR)
         asynchronously. The IR will become active once it has been completely loaded
         and processed, which may take some time.
 
-        Calling process will ensure that the IR supplied to the most recent call to
-        `loadImpulseResponse` is fully initialised. This IR will then be active during
-        the next call to `process`. It is recommended to call `loadImpulseResponse` *before*
-        `process` if a specific IR must be active during the first process call.
+        Calling prepare() will ensure that the IR supplied to the most recent call to
+        loadImpulseResponse() is fully initialised. This IR will then be active during
+        the next call to process(). It is recommended to call loadImpulseResponse() *before*
+        prepare() if a specific IR must be active during the first process() call.
     */
     void prepare (const ProcessSpec&);
 

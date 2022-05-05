@@ -1,20 +1,13 @@
 /*
   ==============================================================================
 
-   This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   This file is part of the JUCE 7 technical preview.
+   Copyright (c) 2022 - Raw Material Software Limited
 
-   JUCE is an open source library subject to commercial or open-source
-   licensing.
+   You may use this code under the terms of the GPL v3
+   (see www.gnu.org/licenses).
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
-
-   End User License Agreement: www.juce.com/juce-6-licence
-   Privacy Policy: www.juce.com/juce-privacy-policy
-
-   Or: You may also use this code under the terms of the GPL v3 (see
-   www.gnu.org/licenses).
+   For the technical preview this file cannot be licensed commercially.
 
    JUCE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY, AND ALL WARRANTIES, WHETHER
    EXPRESSED OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR PURPOSE, ARE
@@ -109,18 +102,16 @@
  #endif
 
 //==============================================================================
-#elif JUCE_LINUX && JUCE_WEB_BROWSER
- JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE ("-Wzero-as-null-pointer-constant", "-Wparentheses")
+#elif (JUCE_LINUX || JUCE_BSD) && JUCE_WEB_BROWSER
+ JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE ("-Wzero-as-null-pointer-constant", "-Wparentheses", "-Wdeprecated-declarations")
 
  // If you're missing this header, you need to install the webkit2gtk-4.0 package
  #include <gtk/gtk.h>
-
- JUCE_END_IGNORE_WARNINGS_GCC_LIKE
-
- // If you're missing these headers, you need to install the webkit2gtk-4.0 package
  #include <gtk/gtkx.h>
  #include <glib-unix.h>
  #include <webkit2/webkit2.h>
+
+ JUCE_END_IGNORE_WARNINGS_GCC_LIKE
 #endif
 
 //==============================================================================
@@ -137,9 +128,7 @@
 #include "misc/juce_PushNotifications.cpp"
 #include "misc/juce_RecentlyOpenedFilesList.cpp"
 #include "misc/juce_SplashScreen.cpp"
-#if !JUCE_MAC || MAC_OS_X_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_8
 #include "misc/juce_SystemTrayIconComponent.cpp"
-#endif
 #include "misc/juce_LiveConstantEditor.cpp"
 #include "misc/juce_AnimatedAppComponent.cpp"
 
@@ -147,11 +136,10 @@
 #if JUCE_MAC || JUCE_IOS
 
  #if JUCE_MAC
+  #include "native/juce_mac_NSViewFrameWatcher.h"
   #include "native/juce_mac_NSViewComponent.mm"
   #include "native/juce_mac_AppleRemote.mm"
-  #if MAC_OS_X_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_8
-   #include "native/juce_mac_SystemTrayIcon.cpp"
-  #endif
+  #include "native/juce_mac_SystemTrayIcon.cpp"
  #endif
 
  #if JUCE_IOS
@@ -172,7 +160,7 @@
  #include "native/juce_win32_SystemTrayIcon.cpp"
 
 //==============================================================================
-#elif JUCE_LINUX
+#elif JUCE_LINUX || JUCE_BSD
  JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE ("-Wzero-as-null-pointer-constant")
 
  #include "native/juce_linux_XEmbedComponent.cpp"
@@ -195,7 +183,9 @@
 #endif
 
 //==============================================================================
-#if ! JUCE_WINDOWS
- juce::ScopedDPIAwarenessDisabler::ScopedDPIAwarenessDisabler()  { ignoreUnused (previousContext); }
- juce::ScopedDPIAwarenessDisabler::~ScopedDPIAwarenessDisabler() {}
+#if ! JUCE_WINDOWS && JUCE_WEB_BROWSER
+ juce::WebBrowserComponent::WebBrowserComponent (ConstructWithoutPimpl) {}
+ juce::WindowsWebView2WebBrowserComponent::WindowsWebView2WebBrowserComponent (bool unloadWhenHidden,
+                                                                               const WebView2Preferences&)
+     : WebBrowserComponent (unloadWhenHidden) {}
 #endif

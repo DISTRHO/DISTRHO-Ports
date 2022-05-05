@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2022 - Raw Material Software Limited
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
@@ -64,7 +64,7 @@
  #endif
 
 #else
- #if JUCE_LINUX || JUCE_ANDROID
+ #if JUCE_LINUX || JUCE_BSD || JUCE_ANDROID
   #include <sys/types.h>
   #include <sys/socket.h>
   #include <sys/errno.h>
@@ -82,7 +82,7 @@
   #include <sys/stat.h>
  #endif
 
- #if JUCE_LINUX
+ #if JUCE_LINUX || JUCE_BSD
   #include <stdio.h>
   #include <langinfo.h>
   #include <ifaddrs.h>
@@ -206,6 +206,7 @@
  #include "native/juce_mac_Files.mm"
  #include "native/juce_mac_Network.mm"
  #include "native/juce_mac_Strings.mm"
+ #include "native/juce_intel_SharedCode.h"
  #include "native/juce_mac_SystemStats.mm"
  #include "native/juce_mac_Threads.mm"
 
@@ -218,12 +219,15 @@
  #include "native/juce_win32_Threads.cpp"
 
 //==============================================================================
-#elif JUCE_LINUX
+#elif JUCE_LINUX || JUCE_BSD
  #include "native/juce_linux_CommonFile.cpp"
  #include "native/juce_linux_Files.cpp"
  #include "native/juce_linux_Network.cpp"
  #if JUCE_USE_CURL
   #include "native/juce_curl_Network.cpp"
+ #endif
+ #if JUCE_BSD
+  #include "native/juce_intel_SharedCode.h"
  #endif
  #include "native/juce_linux_SystemStats.cpp"
  #include "native/juce_linux_Threads.cpp"
@@ -257,6 +261,9 @@
 //==============================================================================
 #if JUCE_UNIT_TESTS
  #include "containers/juce_HashMap_test.cpp"
+
+ #include "containers/juce_Optional.h"
+ #include "containers/juce_Optional_test.cpp"
 #endif
 
 //==============================================================================

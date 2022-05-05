@@ -1,20 +1,13 @@
 /*
   ==============================================================================
 
-   This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   This file is part of the JUCE 7 technical preview.
+   Copyright (c) 2022 - Raw Material Software Limited
 
-   JUCE is an open source library subject to commercial or open-source
-   licensing.
+   You may use this code under the terms of the GPL v3
+   (see www.gnu.org/licenses).
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
-
-   End User License Agreement: www.juce.com/juce-6-licence
-   Privacy Policy: www.juce.com/juce-privacy-policy
-
-   Or: You may also use this code under the terms of the GPL v3 (see
-   www.gnu.org/licenses).
+   For the technical preview this file cannot be licensed commercially.
 
    JUCE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY, AND ALL WARRANTIES, WHETHER
    EXPRESSED OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR PURPOSE, ARE
@@ -135,6 +128,9 @@ AudioProcessorPlayer::~AudioProcessorPlayer()
 //==============================================================================
 AudioProcessorPlayer::NumChannels AudioProcessorPlayer::findMostSuitableLayout (const AudioProcessor& proc) const
 {
+    if (proc.isMidiEffect())
+        return {};
+
     std::vector<NumChannels> layouts { deviceChannels };
 
     if (deviceChannels.ins == 0 || deviceChannels.ins == 1)
@@ -163,39 +159,40 @@ void AudioProcessorPlayer::resizeChannels()
 
 void AudioProcessorPlayer::setProcessor (AudioProcessor* const processorToPlay)
 {
-    if (processor != processorToPlay)
-    {
-        if (processorToPlay != nullptr && sampleRate > 0 && blockSize > 0)
-        {
-            defaultProcessorChannels = NumChannels { processorToPlay->getBusesLayout() };
-            actualProcessorChannels  = findMostSuitableLayout (*processorToPlay);
+    const ScopedLock sl (lock);
 
+    if (processor == processorToPlay)
+        return;
+
+    if (processorToPlay != nullptr && sampleRate > 0 && blockSize > 0)
+    {
+        defaultProcessorChannels = NumChannels { processorToPlay->getBusesLayout() };
+        actualProcessorChannels  = findMostSuitableLayout (*processorToPlay);
+
+        if (processorToPlay->isMidiEffect())
+            processorToPlay->setRateAndBufferSizeDetails (sampleRate, blockSize);
+        else
             processorToPlay->setPlayConfigDetails (actualProcessorChannels.ins,
                                                    actualProcessorChannels.outs,
                                                    sampleRate,
                                                    blockSize);
 
-            auto supportsDouble = processorToPlay->supportsDoublePrecisionProcessing() && isDoublePrecision;
+        auto supportsDouble = processorToPlay->supportsDoublePrecisionProcessing() && isDoublePrecision;
 
-            processorToPlay->setProcessingPrecision (supportsDouble ? AudioProcessor::doublePrecision
-                                                                    : AudioProcessor::singlePrecision);
-            processorToPlay->prepareToPlay (sampleRate, blockSize);
-        }
-
-        AudioProcessor* oldOne = nullptr;
-
-        {
-            const ScopedLock sl (lock);
-
-            oldOne = isPrepared ? processor : nullptr;
-            processor = processorToPlay;
-            isPrepared = true;
-            resizeChannels();
-        }
-
-        if (oldOne != nullptr)
-            oldOne->releaseResources();
+        processorToPlay->setProcessingPrecision (supportsDouble ? AudioProcessor::doublePrecision
+                                                                : AudioProcessor::singlePrecision);
+        processorToPlay->prepareToPlay (sampleRate, blockSize);
     }
+
+    AudioProcessor* oldOne = nullptr;
+
+    oldOne = isPrepared ? processor : nullptr;
+    processor = processorToPlay;
+    isPrepared = true;
+    resizeChannels();
+
+    if (oldOne != nullptr)
+        oldOne->releaseResources();
 }
 
 void AudioProcessorPlayer::setDoublePrecisionProcessing (bool doublePrecision)
@@ -229,18 +226,17 @@ void AudioProcessorPlayer::setMidiOutput (MidiOutput* midiOutputToUse)
 }
 
 //==============================================================================
-void AudioProcessorPlayer::audioDeviceIOCallback (const float** const inputChannelData,
-                                                  const int numInputChannels,
-                                                  float** const outputChannelData,
-                                                  const int numOutputChannels,
-                                                  const int numSamples)
+void AudioProcessorPlayer::audioDeviceIOCallbackWithContext (const float** const inputChannelData,
+                                                             const int numInputChannels,
+                                                             float** const outputChannelData,
+                                                             const int numOutputChannels,
+                                                             const int numSamples,
+                                                             const AudioIODeviceCallbackContext& context)
 {
+    const ScopedLock sl (lock);
+
     // These should have been prepared by audioDeviceAboutToStart()...
     jassert (sampleRate > 0 && blockSize > 0);
-
-    // The processor should be prepared to deal with the same number of output channels
-    // as our output device.
-    jassert (processor == nullptr || numOutputChannels == actualProcessorChannels.outs);
 
     incomingMidi.clear();
     messageCollector.removeNextBlockOfMessages (incomingMidi, numSamples);
@@ -256,42 +252,52 @@ void AudioProcessorPlayer::audioDeviceIOCallback (const float** const inputChann
     const auto totalNumChannels = jmax (actualProcessorChannels.ins, actualProcessorChannels.outs);
     AudioBuffer<float> buffer (channels.data(), (int) totalNumChannels, numSamples);
 
+    if (processor != nullptr)
     {
-        const ScopedLock sl (lock);
+        // The processor should be prepared to deal with the same number of output channels
+        // as our output device.
+        jassert (processor->isMidiEffect() || numOutputChannels == actualProcessorChannels.outs);
 
-        if (processor != nullptr)
+        const ScopedLock sl2 (processor->getCallbackLock());
+
+        processor->setHostTimeNanos (context.hostTimeNs);
+
+        struct AtEndOfScope
         {
-            const ScopedLock sl2 (processor->getCallbackLock());
+            ~AtEndOfScope() { proc.setHostTimeNanos (nullptr); }
+            AudioProcessor& proc;
+        };
 
-            if (! processor->isSuspended())
+        const AtEndOfScope scope { *processor };
+
+        if (! processor->isSuspended())
+        {
+            if (processor->isUsingDoublePrecision())
             {
-                if (processor->isUsingDoublePrecision())
+                conversionBuffer.makeCopyOf (buffer, true);
+                processor->processBlock (conversionBuffer, incomingMidi);
+                buffer.makeCopyOf (conversionBuffer, true);
+            }
+            else
+            {
+                processor->processBlock (buffer, incomingMidi);
+            }
+
+            if (midiOutput != nullptr)
+            {
+                if (midiOutput->isBackgroundThreadRunning())
                 {
-                    conversionBuffer.makeCopyOf (buffer, true);
-                    processor->processBlock (conversionBuffer, incomingMidi);
-                    buffer.makeCopyOf (conversionBuffer, true);
+                    midiOutput->sendBlockOfMessages (incomingMidi,
+                                                     Time::getMillisecondCounterHiRes(),
+                                                     sampleRate);
                 }
                 else
                 {
-                    processor->processBlock (buffer, incomingMidi);
+                    midiOutput->sendBlockOfMessagesNow (incomingMidi);
                 }
-
-                if (midiOutput != nullptr)
-                {
-                    if (midiOutput->isBackgroundThreadRunning())
-                    {
-                        midiOutput->sendBlockOfMessages (incomingMidi,
-                                                         Time::getMillisecondCounterHiRes(),
-                                                         sampleRate);
-                    }
-                    else
-                    {
-                        midiOutput->sendBlockOfMessagesNow (incomingMidi);
-                    }
-                }
-
-                return;
             }
+
+            return;
         }
     }
 

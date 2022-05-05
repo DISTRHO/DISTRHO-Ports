@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2022 - Raw Material Software Limited
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
@@ -82,10 +82,8 @@ namespace CoreMidiHelpers
     struct Sender;
 
    #if JUCE_HAS_NEW_COREMIDI_API
-    JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE ("-Wunguarded-availability-new")
-
     template <>
-    struct Sender<ImplementationStrategy::onlyNew> : public SenderBase
+    struct API_AVAILABLE (macos (11.0), ios (14.0)) Sender<ImplementationStrategy::onlyNew> : public SenderBase
     {
         explicit Sender (MIDIEndpointRef ep)
             : umpConverter (getProtocolForEndpoint (ep))
@@ -177,8 +175,6 @@ namespace CoreMidiHelpers
             send();
         }
     };
-
-    JUCE_END_IGNORE_WARNINGS_GCC_LIKE
    #endif
 
    #if JUCE_HAS_OLD_COREMIDI_API
@@ -414,10 +410,10 @@ namespace CoreMidiHelpers
         MidiDeviceInfo info;
 
         {
-            ScopedCFString str;
+            CFObjectHolder<CFStringRef> str;
 
-            if (CHECK_ERROR (MIDIObjectGetStringProperty (entity, kMIDIPropertyName, &str.cfString)))
-                info.name = String::fromCFString (str.cfString);
+            if (CHECK_ERROR (MIDIObjectGetStringProperty (entity, kMIDIPropertyName, &str.object)))
+                info.name = String::fromCFString (str.object);
         }
 
         SInt32 objectID = 0;
@@ -428,10 +424,10 @@ namespace CoreMidiHelpers
         }
         else
         {
-            ScopedCFString str;
+            CFObjectHolder<CFStringRef> str;
 
-            if (CHECK_ERROR (MIDIObjectGetStringProperty (entity, kMIDIPropertyUniqueID, &str.cfString)))
-                info.identifier = String::fromCFString (str.cfString);
+            if (CHECK_ERROR (MIDIObjectGetStringProperty (entity, kMIDIPropertyUniqueID, &str.object)))
+                info.identifier = String::fromCFString (str.object);
         }
 
         return info;
@@ -486,18 +482,18 @@ namespace CoreMidiHelpers
         MidiDeviceInfo result;
 
         // Does the endpoint have connections?
-        CFDataRef connections = nullptr;
+        CFObjectHolder<CFDataRef> connections;
         int numConnections = 0;
 
-        MIDIObjectGetDataProperty (endpoint, kMIDIPropertyConnectionUniqueID, &connections);
+        MIDIObjectGetDataProperty (endpoint, kMIDIPropertyConnectionUniqueID, &connections.object);
 
-        if (connections != nullptr)
+        if (connections.object != nullptr)
         {
-            numConnections = ((int) CFDataGetLength (connections)) / (int) sizeof (MIDIUniqueID);
+            numConnections = ((int) CFDataGetLength (connections.object)) / (int) sizeof (MIDIUniqueID);
 
             if (numConnections > 0)
             {
-                auto* pid = reinterpret_cast<const SInt32*> (CFDataGetBytePtr (connections));
+                auto* pid = reinterpret_cast<const SInt32*> (CFDataGetBytePtr (connections.object));
 
                 for (int i = 0; i < numConnections; ++i, ++pid)
                 {
@@ -533,8 +529,6 @@ namespace CoreMidiHelpers
                     }
                 }
             }
-
-            CFRelease (connections);
         }
 
         // Here, either the endpoint had no connections, or we failed to obtain names for them.
@@ -552,24 +546,15 @@ namespace CoreMidiHelpers
         uniqueID = JUCE_STRINGIFY (JucePlugin_CFBundleIdentifier);
        #else
         auto appBundle = File::getSpecialLocation (File::currentApplicationFile);
-        ScopedCFString appBundlePath (appBundle.getFullPathName());
+        CFUniquePtr<CFStringRef> appBundlePath (appBundle.getFullPathName().toCFString());
 
-        if (auto bundleURL = CFURLCreateWithFileSystemPath (kCFAllocatorDefault,
-                                                            appBundlePath.cfString,
-                                                            kCFURLPOSIXPathStyle,
-                                                            true))
-        {
-            auto bundleRef = CFBundleCreate (kCFAllocatorDefault, bundleURL);
-            CFRelease (bundleURL);
-
-            if (bundleRef != nullptr)
-            {
-                if (auto bundleId = CFBundleGetIdentifier (bundleRef))
+        if (auto bundleURL = CFUniquePtr<CFURLRef> (CFURLCreateWithFileSystemPath (kCFAllocatorDefault,
+                                                                                   appBundlePath.get(),
+                                                                                   kCFURLPOSIXPathStyle,
+                                                                                   true)))
+            if (auto bundleRef = CFUniquePtr<CFBundleRef> (CFBundleCreate (kCFAllocatorDefault, bundleURL.get())))
+                if (auto bundleId = CFBundleGetIdentifier (bundleRef.get()))
                     uniqueID = String::fromCFString (bundleId);
-
-                CFRelease (bundleRef);
-            }
-        }
        #endif
 
         if (uniqueID.isEmpty())
@@ -620,8 +605,8 @@ namespace CoreMidiHelpers
 
             enableSimulatorMidiSession();
 
-            ScopedCFString name (getGlobalMidiClientName());
-            CHECK_ERROR (MIDIClientCreate (name.cfString, &globalSystemChangeCallback, nullptr, &globalMidiClient));
+            CFUniquePtr<CFStringRef> name (getGlobalMidiClientName().toCFString());
+            CHECK_ERROR (MIDIClientCreate (name.get(), &globalSystemChangeCallback, nullptr, &globalMidiClient));
         }
 
         return globalMidiClient;
@@ -840,10 +825,8 @@ namespace CoreMidiHelpers
     struct CreatorFunctions;
 
    #if JUCE_HAS_NEW_COREMIDI_API
-    JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE ("-Wunguarded-availability-new")
-
     template <>
-    struct CreatorFunctions<ImplementationStrategy::onlyNew>
+    struct API_AVAILABLE (macos (11.0), ios (14.0)) CreatorFunctions<ImplementationStrategy::onlyNew>
     {
         static OSStatus createInputPort (ump::PacketProtocol protocol,
                                          MIDIClientRef client,
@@ -905,8 +888,6 @@ namespace CoreMidiHelpers
             static_cast<MidiPortAndCallback*> (readProcRefCon)->handlePackets (*list);
         }
     };
-
-    JUCE_END_IGNORE_WARNINGS_GCC_LIKE
    #endif
 
    #if JUCE_HAS_OLD_COREMIDI_API
@@ -1058,16 +1039,16 @@ public:
                 if (deviceIdentifier != endpointInfo.identifier)
                     continue;
 
-                ScopedCFString cfName;
+                CFObjectHolder<CFStringRef> cfName;
 
-                if (! CHECK_ERROR (MIDIObjectGetStringProperty (endpoint, kMIDIPropertyName, &cfName.cfString)))
+                if (! CHECK_ERROR (MIDIObjectGetStringProperty (endpoint, kMIDIPropertyName, &cfName.object)))
                     continue;
 
                 if (auto input = makeInput (endpointInfo.name, endpointInfo.identifier, std::forward<Args> (args)...))
                 {
                     MIDIPortRef port;
 
-                    if (! CHECK_ERROR (CreatorFunctionsToUse::createInputPort (protocol, client, cfName.cfString, input->internal.get(), &port)))
+                    if (! CHECK_ERROR (CreatorFunctionsToUse::createInputPort (protocol, client, cfName.object, input->internal.get(), &port)))
                         continue;
 
                     ScopedPortRef scopedPort { port };
@@ -1098,9 +1079,9 @@ public:
             if (auto input = makeInput (deviceName, String (deviceIdentifier), std::forward<Args> (args)...))
             {
                 MIDIEndpointRef endpoint;
-                ScopedCFString name (deviceName);
+                CFUniquePtr<CFStringRef> name (deviceName.toCFString());
 
-                auto err = CreatorFunctionsToUse::createDestination (protocol, client, name.cfString, input->internal.get(), &endpoint);
+                auto err = CreatorFunctionsToUse::createDestination (protocol, client, name.get(), input->internal.get(), &endpoint);
                 ScopedEndpointRef scopedEndpoint { endpoint };
 
                #if JUCE_IOS
@@ -1228,14 +1209,14 @@ std::unique_ptr<MidiOutput> MidiOutput::openDevice (const String& deviceIdentifi
             if (deviceIdentifier != endpointInfo.identifier)
                 continue;
 
-            ScopedCFString cfName;
+            CFObjectHolder<CFStringRef> cfName;
 
-            if (! CHECK_ERROR (MIDIObjectGetStringProperty (endpoint, kMIDIPropertyName, &cfName.cfString)))
+            if (! CHECK_ERROR (MIDIObjectGetStringProperty (endpoint, kMIDIPropertyName, &cfName.object)))
                 continue;
 
             MIDIPortRef port;
 
-            if (! CHECK_ERROR (MIDIOutputPortCreate (client, cfName.cfString, &port)))
+            if (! CHECK_ERROR (MIDIOutputPortCreate (client, cfName.object, &port)))
                 continue;
 
             ScopedPortRef scopedPort { port };
@@ -1258,9 +1239,9 @@ std::unique_ptr<MidiOutput> MidiOutput::createNewDevice (const String& deviceNam
     {
         MIDIEndpointRef endpoint;
 
-        ScopedCFString name (deviceName);
+        CFUniquePtr<CFStringRef> name (deviceName.toCFString());
 
-        auto err = CreatorFunctionsToUse::createSource (ump::PacketProtocol::MIDI_1_0, client, name.cfString, &endpoint);
+        auto err = CreatorFunctionsToUse::createSource (ump::PacketProtocol::MIDI_1_0, client, name.get(), &endpoint);
         ScopedEndpointRef scopedEndpoint { endpoint };
 
        #if JUCE_IOS

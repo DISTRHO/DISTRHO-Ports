@@ -1,20 +1,13 @@
 /*
   ==============================================================================
 
-   This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   This file is part of the JUCE 7 technical preview.
+   Copyright (c) 2022 - Raw Material Software Limited
 
-   JUCE is an open source library subject to commercial or open-source
-   licensing.
+   You may use this code under the terms of the GPL v3
+   (see www.gnu.org/licenses).
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
-
-   End User License Agreement: www.juce.com/juce-6-licence
-   Privacy Policy: www.juce.com/juce-privacy-policy
-
-   Or: You may also use this code under the terms of the GPL v3 (see
-   www.gnu.org/licenses).
+   For the technical preview this file cannot be licensed commercially.
 
    JUCE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY, AND ALL WARRANTIES, WHETHER
    EXPRESSED OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR PURPOSE, ARE
@@ -70,19 +63,17 @@ namespace StateVariableFilter
         using ParametersPtr = typename Parameters<NumericType>::Ptr;
 
         //==============================================================================
-        /** Creates a filter with default parameters.
+       #ifndef DOXYGEN
+        /** Creates a filter with default parameters. */
+        [[deprecated ("The classes in the StateVariableFilter namespace are deprecated. you should "
+                     "use the equivalent functionality in the StateVariableTPTFilter class.")]]
+        Filter() : parameters (new Parameters<NumericType>) { reset(); }
 
-            The classes in the StateVariableFilter namespace are deprecated. you should
-            use the equivalent functionality in the StateVariableTPTFilter class.
-        */
-        JUCE_DEPRECATED_WITH_BODY (Filter(), : parameters (new Parameters<NumericType>) { reset(); })
-
-        /** Creates a filter using some parameters.
-
-            The classes in the StateVariableFilter namespace are deprecated. you should
-            use the equivalent functionality in the StateVariableTPTFilter class.
-        */
-        JUCE_DEPRECATED_WITH_BODY (Filter (ParametersPtr parametersToUse), : parameters (std::move (parametersToUse)) { reset(); })
+        /** Creates a filter using some parameters. */
+        [[deprecated ("The classes in the StateVariableFilter namespace are deprecated. you should "
+                     "use the equivalent functionality in the StateVariableTPTFilter class.")]]
+        Filter (ParametersPtr parametersToUse) : parameters (std::move (parametersToUse)) { reset(); }
+       #endif
 
         /** Creates a copy of another filter. */
         Filter (const Filter&) = default;
@@ -160,7 +151,7 @@ namespace StateVariableFilter
             for (size_t i = 0 ; i < n; ++i)
                 output[i] = processLoop<isBypassed, type> (input[i], state);
 
-           #if JUCE_SNAP_TO_ZERO
+           #if JUCE_DSP_ENABLE_SNAP_TO_ZERO
             snapToZero();
            #endif
 

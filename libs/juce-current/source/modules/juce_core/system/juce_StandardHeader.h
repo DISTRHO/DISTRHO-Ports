@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2022 - Raw Material Software Limited
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
@@ -28,8 +28,8 @@
     See also SystemStats::getJUCEVersion() for a string version.
 */
 #define JUCE_MAJOR_VERSION      6
-#define JUCE_MINOR_VERSION      0
-#define JUCE_BUILDNUMBER        7
+#define JUCE_MINOR_VERSION      1
+#define JUCE_BUILDNUMBER        6
 
 /** Current JUCE version number.
 
@@ -59,9 +59,14 @@
 #include <mutex>
 #include <numeric>
 #include <queue>
+#include <set>
 #include <sstream>
+#include <typeindex>
+#include <unordered_map>
 #include <unordered_set>
+#include <utility>
 #include <vector>
+#include <set>
 
 //==============================================================================
 #include "juce_CompilerSupport.h"
@@ -83,7 +88,7 @@ JUCE_BEGIN_IGNORE_WARNINGS_MSVC (4514 4245 4100)
  #include <signal.h>
 #endif
 
-#if JUCE_LINUX
+#if JUCE_LINUX || JUCE_BSD
  #include <cstring>
  #include <signal.h>
 
@@ -150,13 +155,6 @@ JUCE_END_IGNORE_WARNINGS_MSVC
 
 /** This macro is added to all JUCE public function declarations. */
 #define JUCE_PUBLIC_FUNCTION        JUCE_API JUCE_CALLTYPE
-
-#if (! defined (JUCE_CATCH_DEPRECATED_CODE_MISUSE)) && JUCE_DEBUG && ! DOXYGEN
- /** This turns on some non-essential bits of code that should prevent old code from compiling
-     in cases where method signatures have changed, etc.
- */
- #define JUCE_CATCH_DEPRECATED_CODE_MISUSE 1
-#endif
 
 #ifndef DOXYGEN
  #define JUCE_NAMESPACE juce  // This old macro is deprecated: you should just use the juce namespace directly.

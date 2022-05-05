@@ -1,20 +1,13 @@
 /*
   ==============================================================================
 
-   This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   This file is part of the JUCE 7 technical preview.
+   Copyright (c) 2022 - Raw Material Software Limited
 
-   JUCE is an open source library subject to commercial or open-source
-   licensing.
+   You may use this code under the terms of the GPL v3
+   (see www.gnu.org/licenses).
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
-
-   End User License Agreement: www.juce.com/juce-6-licence
-   Privacy Policy: www.juce.com/juce-privacy-policy
-
-   Or: You may also use this code under the terms of the GPL v3 (see
-   www.gnu.org/licenses).
+   For the technical preview this file cannot be licensed commercially.
 
    JUCE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY, AND ALL WARRANTIES, WHETHER
    EXPRESSED OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR PURPOSE, ARE
@@ -728,9 +721,9 @@ private:
         // to be able to seek back to write the header
         jassert (couldSeekOk);
 
-        auto headerLen = (int) (54 + (markChunk.getSize() > 0 ? markChunk.getSize() + 8 : 0)
-                                   + (comtChunk.getSize() > 0 ? comtChunk.getSize() + 8 : 0)
-                                   + (instChunk.getSize() > 0 ? instChunk.getSize() + 8 : 0));
+        auto headerLen = (int) (54 + (markChunk.isEmpty() ? 0 : markChunk.getSize() + 8)
+                                   + (comtChunk.isEmpty() ? 0 : comtChunk.getSize() + 8)
+                                   + (instChunk.isEmpty() ? 0 : instChunk.getSize() + 8));
         auto audioBytes = (int) (lengthInSamples * ((bitsPerSample * numChannels) / 8));
         audioBytes += (audioBytes & 1);
 
@@ -786,21 +779,21 @@ private:
 
         output->write (sampleRateBytes, 10);
 
-        if (markChunk.getSize() > 0)
+        if (! markChunk.isEmpty())
         {
             output->writeInt (chunkName ("MARK"));
             output->writeIntBigEndian ((int) markChunk.getSize());
             *output << markChunk;
         }
 
-        if (comtChunk.getSize() > 0)
+        if (! comtChunk.isEmpty())
         {
             output->writeInt (chunkName ("COMT"));
             output->writeIntBigEndian ((int) comtChunk.getSize());
             *output << comtChunk;
         }
 
-        if (instChunk.getSize() > 0)
+        if (! instChunk.isEmpty())
         {
             output->writeInt (chunkName ("INST"));
             output->writeIntBigEndian ((int) instChunk.getSize());

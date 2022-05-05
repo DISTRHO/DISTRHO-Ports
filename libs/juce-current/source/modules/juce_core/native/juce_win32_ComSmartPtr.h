@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2022 - Raw Material Software Limited
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
@@ -23,7 +23,7 @@
 namespace juce
 {
 
-#if JUCE_MINGW || (! (defined (_MSC_VER) || defined (__uuidof)))
+#if (JUCE_MINGW && JUCE_32BIT) || (! defined (_MSC_VER) && ! defined (__uuidof))
  #ifdef __uuidof
   #undef __uuidof
  #endif
@@ -47,12 +47,14 @@ namespace juce
 
 #else
  #define JUCE_DECLARE_UUID_GETTER(name, uuid)
- #define JUCE_COMCLASS(name, guid)       struct __declspec (uuid (guid)) name
+ #define JUCE_COMCLASS(name, guid)       struct DECLSPEC_UUID (guid) name
 #endif
 
 #define JUCE_IUNKNOWNCLASS(name, guid)   JUCE_COMCLASS(name, guid) : public IUnknown
 #define JUCE_COMRESULT                   HRESULT STDMETHODCALLTYPE
 #define JUCE_COMCALL                     virtual HRESULT STDMETHODCALLTYPE
+
+JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE ("-Wlanguage-extension-token")
 
 inline GUID uuidFromString (const char* s) noexcept
 {
@@ -198,29 +200,31 @@ template <class... ComClasses>
 class ComBaseClassHelper   : public ComBaseClassHelperBase<ComClasses...>
 {
 public:
-    ComBaseClassHelper (unsigned int initialRefCount = 1) : ComBaseClassHelperBase<ComClasses...> (initialRefCount) {}
+    explicit ComBaseClassHelper (unsigned int initialRefCount = 1)
+        : ComBaseClassHelperBase<ComClasses...> (initialRefCount) {}
 
     JUCE_COMRESULT QueryInterface (REFIID refId, void** result)
     {
-        return queryInterfaceWithType (refId, result, Tag<ComClasses>{}...);
-    }
+        const std::tuple<IID, void*> bases[]
+        {
+            std::make_tuple (__uuidof (ComClasses),
+                             static_cast<void*> (static_cast<ComClasses*> (this)))...
+        };
 
-private:
-    JUCE_COMRESULT queryInterfaceWithType (REFIID refId, void** result)
-    {
+        for (const auto& base : bases)
+        {
+            if (refId == std::get<0> (base))
+            {
+                this->AddRef();
+                *result = std::get<1> (base);
+                return S_OK;
+            }
+        }
+
         return ComBaseClassHelperBase<ComClasses...>::QueryInterface (refId, result);
     }
-
-    template <typename S> struct Tag {};
-
-    template <typename T, typename... Ts>
-    JUCE_COMRESULT queryInterfaceWithType (REFIID refId, void** result, Tag<T>, Tag<Ts>...)
-    {
-        if (refId == __uuidof (T))
-            return this->template castToType<T> (result);
-
-        return queryInterfaceWithType (refId, result, Tag<Ts>{}...);
-    }
 };
+
+JUCE_END_IGNORE_WARNINGS_GCC_LIKE
 
 } // namespace juce

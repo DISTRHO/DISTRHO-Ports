@@ -1,20 +1,13 @@
 /*
   ==============================================================================
 
-   This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   This file is part of the JUCE 7 technical preview.
+   Copyright (c) 2022 - Raw Material Software Limited
 
-   JUCE is an open source library subject to commercial or open-source
-   licensing.
+   You may use this code under the terms of the GPL v3
+   (see www.gnu.org/licenses).
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
-
-   End User License Agreement: www.juce.com/juce-6-licence
-   Privacy Policy: www.juce.com/juce-privacy-policy
-
-   Or: You may also use this code under the terms of the GPL v3 (see
-   www.gnu.org/licenses).
+   For the technical preview this file cannot be licensed commercially.
 
    JUCE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY, AND ALL WARRANTIES, WHETHER
    EXPRESSED OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR PURPOSE, ARE
@@ -30,22 +23,20 @@ namespace juce
 /**
     Creates a dialog box to choose a file or directory to load or save.
 
-    To use a FileChooser:
-    - create one (as a local stack variable is the neatest way)
-    - call one of its browseFor.. methods
-    - if this returns true, the user has selected a file, so you can retrieve it
-      with the getResult() method.
+    @code
+    std::unique_ptr<FileChooser> myChooser;
 
-    e.g. @code
     void loadMooseFile()
     {
-        FileChooser myChooser ("Please select the moose you want to load...",
-                               File::getSpecialLocation (File::userHomeDirectory),
-                               "*.moose");
+        myChooser = std::make_unique<FileChooser> ("Please select the moose you want to load...",
+                                                   File::getSpecialLocation (File::userHomeDirectory),
+                                                   "*.moose");
 
-        if (myChooser.browseForFileToOpen())
+        auto folderChooserFlags = FileBrowserComponent::openMode | FileBrowserComponent::canSelectDirectories;
+
+        myChooser->launchAsync (folderChooserFlags, [this] (const FileChooser& chooser)
         {
-            File mooseFile (myChooser.getResult());
+            File mooseFile (chooser.getResult());
 
             loadMoose (mooseFile);
         }
@@ -125,7 +116,7 @@ public:
     ~FileChooser();
 
     //==============================================================================
-   #if JUCE_MODAL_LOOPS_PERMITTED || DOXYGEN
+   #if JUCE_MODAL_LOOPS_PERMITTED
     /** Shows a dialog box to choose a file to open.
 
         This will display the dialog box modally, using an "open file" mode, so that
@@ -181,7 +172,6 @@ public:
         browseForFileToOpen() for more info about the behaviour of this method.
     */
     bool browseForMultipleFilesOrDirectories (FilePreviewComponent* previewComponent = nullptr);
-   #endif
 
     //==============================================================================
     /** Runs a dialog box for the given set of option flags.
@@ -193,6 +183,7 @@ public:
         @see FileBrowserComponent::FileChooserFlags
     */
     bool showDialog (int flags, FilePreviewComponent* previewComponent);
+   #endif
 
     /** Use this method to launch the file browser window asynchronously.
 
@@ -200,11 +191,8 @@ public:
         structure and will launch it modally, returning immediately.
 
         You must specify a callback which is called when the file browser is
-        canceled or a file is selected. To abort the file selection, simply
+        cancelled or a file is selected. To abort the file selection, simply
         delete the FileChooser object.
-
-        You can use the ModalCallbackFunction::create method to wrap a lambda
-        into a modal Callback object.
 
         You must ensure that the lifetime of the callback object is longer than
         the lifetime of the file-chooser.

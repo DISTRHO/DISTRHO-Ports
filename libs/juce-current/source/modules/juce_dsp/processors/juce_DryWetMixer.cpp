@@ -1,20 +1,13 @@
 /*
   ==============================================================================
 
-   This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   This file is part of the JUCE 7 technical preview.
+   Copyright (c) 2022 - Raw Material Software Limited
 
-   JUCE is an open source library subject to commercial or open-source
-   licensing.
+   You may use this code under the terms of the GPL v3
+   (see www.gnu.org/licenses).
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
-
-   End User License Agreement: www.juce.com/juce-6-licence
-   Privacy Policy: www.juce.com/juce-privacy-policy
-
-   Or: You may also use this code under the terms of the GPL v3 (see
-   www.gnu.org/licenses).
+   For the technical preview this file cannot be licensed commercially.
 
    JUCE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY, AND ALL WARRANTIES, WHETHER
    EXPRESSED OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR PURPOSE, ARE
@@ -36,8 +29,9 @@ DryWetMixer<SampleType>::DryWetMixer()
 }
 
 template <typename SampleType>
-DryWetMixer<SampleType>::DryWetMixer (int maximumWetLatencyInSamples)
-    : dryDelayLine (maximumWetLatencyInSamples)
+DryWetMixer<SampleType>::DryWetMixer (int maximumWetLatencyInSamplesIn)
+    : dryDelayLine (maximumWetLatencyInSamplesIn),
+      maximumWetLatencyInSamples (maximumWetLatencyInSamplesIn)
 {
     dryDelayLine.setDelay (0);
 
@@ -91,6 +85,9 @@ void DryWetMixer<SampleType>::reset()
     wetVolume.reset (sampleRate, 0.05);
 
     dryDelayLine.reset();
+
+    fifo = SingleThreadedAbstractFifo (nextPowerOfTwo (bufferDry.getNumSamples()));
+    bufferDry.setSize (bufferDry.getNumChannels(), fifo.getSize(), false, false, true);
 }
 
 //==============================================================================
@@ -98,24 +95,50 @@ template <typename SampleType>
 void DryWetMixer<SampleType>::pushDrySamples (const AudioBlock<const SampleType> drySamples)
 {
     jassert (drySamples.getNumChannels() <= (size_t) bufferDry.getNumChannels());
+    jassert (drySamples.getNumSamples() <= (size_t) fifo.getRemainingSpace());
 
-    auto dryBlock = AudioBlock<SampleType> (bufferDry);
-    dryBlock = dryBlock.getSubsetChannelBlock (0, drySamples.getNumChannels()).getSubBlock (0, drySamples.getNumSamples());
+    auto offset = 0;
 
-    auto context = ProcessContextNonReplacing<SampleType>(drySamples, dryBlock);
-    dryDelayLine.process (context);
+    for (const auto& range : fifo.write ((int) drySamples.getNumSamples()))
+    {
+        if (range.getLength() == 0)
+            continue;
+
+        auto block = AudioBlock<SampleType> (bufferDry).getSubsetChannelBlock (0, drySamples.getNumChannels())
+                                                       .getSubBlock ((size_t) range.getStart(), (size_t) range.getLength());
+
+        auto inputBlock = drySamples.getSubBlock ((size_t) offset, (size_t) range.getLength());
+
+        if (maximumWetLatencyInSamples == 0)
+            block.copyFrom (inputBlock);
+        else
+            dryDelayLine.process (ProcessContextNonReplacing<SampleType> (inputBlock, block));
+
+        offset += range.getLength();
+    }
 }
 
 template <typename SampleType>
 void DryWetMixer<SampleType>::mixWetSamples (AudioBlock<SampleType> inOutBlock)
 {
-    auto dryBlock = AudioBlock<SampleType> (bufferDry);
-    dryBlock = dryBlock.getSubsetChannelBlock (0, inOutBlock.getNumChannels()).getSubBlock (0, inOutBlock.getNumSamples());
-
-    dryBlock.multiplyBy (dryVolume);
     inOutBlock.multiplyBy (wetVolume);
 
-    inOutBlock.add (dryBlock);
+    jassert (inOutBlock.getNumSamples() <= (size_t) fifo.getNumReadable());
+
+    auto offset = 0;
+
+    for (const auto& range : fifo.read ((int) inOutBlock.getNumSamples()))
+    {
+        if (range.getLength() == 0)
+            continue;
+
+        auto block = AudioBlock<SampleType> (bufferDry).getSubsetChannelBlock (0, inOutBlock.getNumChannels())
+                                                       .getSubBlock ((size_t) range.getStart(), (size_t) range.getLength());
+        block.multiplyBy (dryVolume);
+        inOutBlock.getSubBlock ((size_t) offset).add (block);
+
+        offset += range.getLength();
+    }
 }
 
 //==============================================================================
@@ -174,6 +197,168 @@ void DryWetMixer<SampleType>::update()
 //==============================================================================
 template class DryWetMixer<float>;
 template class DryWetMixer<double>;
+
+
+//==============================================================================
+//==============================================================================
+#if JUCE_UNIT_TESTS
+
+struct DryWetMixerTests : public UnitTest
+{
+    DryWetMixerTests() : UnitTest ("DryWetMixer", UnitTestCategories::dsp) {}
+
+    enum class Kind { down, up };
+
+    static auto getRampBuffer (ProcessSpec spec, Kind kind)
+    {
+        AudioBuffer<float> buffer ((int) spec.numChannels, (int) spec.maximumBlockSize);
+
+        for (uint32_t sample = 0; sample < spec.maximumBlockSize; ++sample)
+        {
+            for (uint32_t channel = 0; channel < spec.numChannels; ++channel)
+            {
+                const auto ramp = kind == Kind::up ? sample : spec.maximumBlockSize - sample;
+
+                buffer.setSample ((int) channel,
+                                  (int) sample,
+                                  jmap ((float) ramp, 0.0f, (float) spec.maximumBlockSize, 0.0f, 1.0f));
+            }
+        }
+
+        return buffer;
+    }
+
+    void runTest() override
+    {
+        constexpr ProcessSpec spec { 44100.0, 512, 2 };
+        constexpr auto numBlocks = 5;
+
+        const auto wetBuffer = getRampBuffer (spec, Kind::up);
+        const auto dryBuffer = getRampBuffer (spec, Kind::down);
+
+        for (auto maxLatency : { 0, 100, 200, 512 })
+        {
+            beginTest ("Mixer can push multiple small buffers");
+            {
+                DryWetMixer<float> mixer (maxLatency);
+                mixer.setWetMixProportion (0.5f);
+                mixer.prepare (spec);
+
+                for (auto block = 0; block < numBlocks; ++block)
+                {
+                    // Push samples one-by-one
+                    for (uint32_t sample = 0; sample < spec.maximumBlockSize; ++sample)
+                        mixer.pushDrySamples (AudioBlock<const float> (dryBuffer).getSubBlock (sample, 1));
+
+                    // Mix wet samples in one go
+                    auto outputBlock = wetBuffer;
+                    mixer.mixWetSamples ({ outputBlock });
+
+                    // The output block should contain the wet and dry samples averaged
+                    for (uint32_t sample = 0; sample < spec.maximumBlockSize; ++sample)
+                    {
+                        for (uint32_t channel = 0; channel < spec.numChannels; ++channel)
+                        {
+                            const auto outputValue = outputBlock.getSample ((int) channel, (int) sample);
+                            expectWithinAbsoluteError (outputValue, 0.5f, 0.0001f);
+                        }
+                    }
+                }
+            }
+
+            beginTest ("Mixer can pop multiple small buffers");
+            {
+                DryWetMixer<float> mixer (maxLatency);
+                mixer.setWetMixProportion (0.5f);
+                mixer.prepare (spec);
+
+                for (auto block = 0; block < numBlocks; ++block)
+                {
+                    // Push samples in one go
+                    mixer.pushDrySamples ({ dryBuffer });
+
+                    // Process wet samples one-by-one
+                    for (uint32_t sample = 0; sample < spec.maximumBlockSize; ++sample)
+                    {
+                        AudioBuffer<float> outputBlock ((int) spec.numChannels, 1);
+                        AudioBlock<const float> (wetBuffer).getSubBlock (sample, 1).copyTo (outputBlock);
+                        mixer.mixWetSamples ({ outputBlock });
+
+                        // The output block should contain the wet and dry samples averaged
+                        for (uint32_t channel = 0; channel < spec.numChannels; ++channel)
+                        {
+                            const auto outputValue = outputBlock.getSample ((int) channel, 0);
+                            expectWithinAbsoluteError (outputValue, 0.5f, 0.0001f);
+                        }
+                    }
+                }
+            }
+
+            beginTest ("Mixer can push and pop multiple small buffers");
+            {
+                DryWetMixer<float> mixer (maxLatency);
+                mixer.setWetMixProportion (0.5f);
+                mixer.prepare (spec);
+
+                for (auto block = 0; block < numBlocks; ++block)
+                {
+                    // Push dry samples and process wet samples one-by-one
+                    for (uint32_t sample = 0; sample < spec.maximumBlockSize; ++sample)
+                    {
+                        mixer.pushDrySamples (AudioBlock<const float> (dryBuffer).getSubBlock (sample, 1));
+
+                        AudioBuffer<float> outputBlock ((int) spec.numChannels, 1);
+                        AudioBlock<const float> (wetBuffer).getSubBlock (sample, 1).copyTo (outputBlock);
+                        mixer.mixWetSamples ({ outputBlock });
+
+                        // The output block should contain the wet and dry samples averaged
+                        for (uint32_t channel = 0; channel < spec.numChannels; ++channel)
+                        {
+                            const auto outputValue = outputBlock.getSample ((int) channel, 0);
+                            expectWithinAbsoluteError (outputValue, 0.5f, 0.0001f);
+                        }
+                    }
+                }
+            }
+
+            beginTest ("Mixer can push and pop full-sized blocks after encountering a shorter block");
+            {
+                DryWetMixer<float> mixer (maxLatency);
+                mixer.setWetMixProportion (0.5f);
+                mixer.prepare (spec);
+
+                constexpr auto shortBlockLength = spec.maximumBlockSize / 2;
+                AudioBuffer<float> shortBlock (spec.numChannels, shortBlockLength);
+                mixer.pushDrySamples (AudioBlock<const float> (dryBuffer).getSubBlock (shortBlockLength));
+                mixer.mixWetSamples ({ shortBlock });
+
+                for (auto block = 0; block < numBlocks; ++block)
+                {
+                    // Push a full block of dry samples
+                    mixer.pushDrySamples ({ dryBuffer });
+
+                    // Mix a full block of wet samples
+                    auto outputBlock = wetBuffer;
+                    mixer.mixWetSamples ({ outputBlock });
+
+                    // The output block should contain the wet and dry samples averaged
+                    for (uint32_t sample = 0; sample < spec.maximumBlockSize; ++sample)
+                    {
+                        for (uint32_t channel = 0; channel < spec.numChannels; ++channel)
+                        {
+                            const auto outputValue = outputBlock.getSample ((int) channel, (int) sample);
+                            expectWithinAbsoluteError (outputValue, 0.5f, 0.0001f);
+                        }
+                    }
+                }
+            }
+        }
+    }
+};
+
+static const DryWetMixerTests dryWetMixerTests;
+
+#endif
 
 } // namespace dsp
 } // namespace juce

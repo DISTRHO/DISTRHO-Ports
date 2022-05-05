@@ -1,20 +1,13 @@
 /*
   ==============================================================================
 
-   This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   This file is part of the JUCE 7 technical preview.
+   Copyright (c) 2022 - Raw Material Software Limited
 
-   JUCE is an open source library subject to commercial or open-source
-   licensing.
+   You may use this code under the terms of the GPL v3
+   (see www.gnu.org/licenses).
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
-
-   End User License Agreement: www.juce.com/juce-6-licence
-   Privacy Policy: www.juce.com/juce-privacy-policy
-
-   Or: You may also use this code under the terms of the GPL v3 (see
-   www.gnu.org/licenses).
+   For the technical preview this file cannot be licensed commercially.
 
    JUCE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY, AND ALL WARRANTIES, WHETHER
    EXPRESSED OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR PURPOSE, ARE
@@ -35,7 +28,7 @@
 
   ID:                 juce_dsp
   vendor:             juce
-  version:            6.0.7
+  version:            6.1.6
   name:               JUCE DSP classes
   description:        Classes for audio buffer manipulation, digital audio processing, filtering, oversampling, fast math functions etc.
   website:            http://www.juce.com/juce
@@ -123,10 +116,11 @@
     If this flag is set, then JUCE will use Intel's MKL for JUCE's FFT and
     convolution classes.
 
-    The folder containing the mkl_dfti.h header must be in your header
-    search paths when using this flag. You also need to add all the necessary
-    intel mkl libraries to the "External Libraries to Link" field in the
-    Projucer.
+    If you're using the Projucer's Visual Studio exporter, you should also set
+    the "Use MKL Library (oneAPI)" option in the exporter settings to
+    "Sequential" or "Parallel". If you're not using the Visual Studio exporter,
+    the folder containing the mkl_dfti.h header must be in your header search
+    paths, and you must link against all the necessary MKL libraries.
 */
 #ifndef JUCE_DSP_USE_INTEL_MKL
  #define JUCE_DSP_USE_INTEL_MKL 0

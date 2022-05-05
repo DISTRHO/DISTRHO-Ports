@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2022 - Raw Material Software Limited
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
@@ -287,11 +287,14 @@ MidiMessage& MidiMessage::operator= (const MidiMessage& other)
     {
         if (other.isHeapAllocated())
         {
-            if (isHeapAllocated())
-                packedData.allocatedData = static_cast<uint8*> (std::realloc (packedData.allocatedData, (size_t) other.size));
-            else
-                packedData.allocatedData = static_cast<uint8*> (std::malloc ((size_t) other.size));
+            auto* newStorage = static_cast<uint8*> (isHeapAllocated()
+              ? std::realloc (packedData.allocatedData, (size_t) other.size)
+              : std::malloc ((size_t) other.size));
 
+            if (newStorage == nullptr)
+                throw std::bad_alloc{}; // The midi message has not been adjusted at this point
+
+            packedData.allocatedData = newStorage;
             memcpy (packedData.allocatedData, other.packedData.allocatedData, (size_t) other.size);
         }
         else

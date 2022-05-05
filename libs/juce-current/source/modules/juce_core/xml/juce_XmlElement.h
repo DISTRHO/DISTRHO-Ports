@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2022 - Raw Material Software Limited
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
@@ -40,7 +40,7 @@ namespace juce
     if (myElement->hasTagName ("ANIMALS"))
     {
         // now we'll iterate its sub-elements looking for 'giraffe' elements..
-        forEachXmlChildElement (*myElement, e)
+        for (auto* e : myElement->getChildIterator())
         {
             if (e->hasTagName ("GIRAFFE"))
             {
@@ -144,8 +144,8 @@ public:
         int lineWrapLength = 60;           /**< A maximum line length before wrapping is done. (If newLineChars is nullptr, this is ignored) */
         const char* newLineChars = "\r\n"; /**< Allows the newline characters to be set. If you set this to nullptr, then the whole XML document will be placed on a single line. */
 
-        TextFormat singleLine() const;     /**< returns a copy of this format with newLineChars set to nullptr. */
-        TextFormat withoutHeader() const;  /**< returns a copy of this format with the addDefaultHeader flag set to false. */
+        JUCE_NODISCARD TextFormat singleLine() const;     /**< returns a copy of this format with newLineChars set to nullptr. */
+        JUCE_NODISCARD TextFormat withoutHeader() const;  /**< returns a copy of this format with the addDefaultHeader flag set to false. */
     };
 
     /** Returns a text version of this XML element.
@@ -345,7 +345,8 @@ public:
 
     /** Returns the first of this element's sub-elements.
         see getNextElement() for an example of how to iterate the sub-elements.
-        @see forEachXmlChildElement
+
+        @see getChildIterator
     */
     XmlElement* getFirstChildElement() const noexcept       { return firstChildElement; }
 
@@ -368,12 +369,12 @@ public:
         out.
 
         Also, it's much easier and neater to use this method indirectly via the
-        forEachXmlChildElement macro.
+        getChildIterator() method.
 
         @returns    the sibling element that follows this one, or a nullptr if
                     this is the last element in its parent
 
-        @see getNextElement, isTextElement, forEachXmlChildElement
+        @see getNextElement, isTextElement, getChildIterator
     */
     inline XmlElement* getNextElement() const noexcept          { return nextListItem; }
 
@@ -383,7 +384,7 @@ public:
         This is like getNextElement(), but will scan through the list until it
         finds an element with the given tag name.
 
-        @see getNextElement, forEachXmlChildElementWithTagName
+        @see getNextElement, getChildIterator
     */
     XmlElement* getNextElementWithTagName (StringRef requiredTagName) const;
 
@@ -731,32 +732,30 @@ public:
         return Iterator<GetNextElementWithTagName> { getChildByName (name), name };
     }
 
-    /** This allows us to trigger a warning inside deprecated macros. */
    #ifndef DOXYGEN
-    JUCE_DEPRECATED_WITH_BODY (void macroBasedForLoop() const noexcept, {})
+    [[deprecated]] void macroBasedForLoop() const noexcept {}
+
+    [[deprecated ("This has been deprecated in favour of the toString method.")]]
+    String createDocument (StringRef dtdToUse,
+                           bool allOnOneLine = false,
+                           bool includeXmlHeader = true,
+                           StringRef encodingType = "UTF-8",
+                           int lineWrapLength = 60) const;
+
+    [[deprecated ("This has been deprecated in favour of the writeTo method.")]]
+    void writeToStream (OutputStream& output,
+                        StringRef dtdToUse,
+                        bool allOnOneLine = false,
+                        bool includeXmlHeader = true,
+                        StringRef encodingType = "UTF-8",
+                        int lineWrapLength = 60) const;
+
+    [[deprecated ("This has been deprecated in favour of the writeTo method.")]]
+    bool writeToFile (const File& destinationFile,
+                      StringRef dtdToUse,
+                      StringRef encodingType = "UTF-8",
+                      int lineWrapLength = 60) const;
    #endif
-
-    //==============================================================================
-    /** This has been deprecated in favour of the toString() method. */
-    JUCE_DEPRECATED (String createDocument (StringRef dtdToUse,
-                                            bool allOnOneLine = false,
-                                            bool includeXmlHeader = true,
-                                            StringRef encodingType = "UTF-8",
-                                            int lineWrapLength = 60) const);
-
-    /** This has been deprecated in favour of the writeTo() method. */
-    JUCE_DEPRECATED (void writeToStream (OutputStream& output,
-                                         StringRef dtdToUse,
-                                         bool allOnOneLine = false,
-                                         bool includeXmlHeader = true,
-                                         StringRef encodingType = "UTF-8",
-                                         int lineWrapLength = 60) const);
-
-    /** This has been deprecated in favour of the writeTo() method. */
-    JUCE_DEPRECATED (bool writeToFile (const File& destinationFile,
-                                       StringRef dtdToUse,
-                                       StringRef encodingType = "UTF-8",
-                                       int lineWrapLength = 60) const);
 
 private:
     //==============================================================================
@@ -800,6 +799,8 @@ private:
 };
 
 //==============================================================================
+#ifndef DOXYGEN
+
 /** DEPRECATED: A handy macro to make it easy to iterate all the child elements in an XmlElement.
 
     New code should avoid this macro, and instead use getChildIterator directly.
@@ -850,5 +851,7 @@ private:
 */
 #define forEachXmlChildElementWithTagName(parentXmlElement, childElementVariableName, requiredTagName) \
     for (auto* (childElementVariableName) : ((parentXmlElement).macroBasedForLoop(), (parentXmlElement).getChildWithTagNameIterator ((requiredTagName))))
+
+#endif
 
 } // namespace juce

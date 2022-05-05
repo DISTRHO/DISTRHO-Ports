@@ -1,20 +1,13 @@
 /*
   ==============================================================================
 
-   This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   This file is part of the JUCE 7 technical preview.
+   Copyright (c) 2022 - Raw Material Software Limited
 
-   JUCE is an open source library subject to commercial or open-source
-   licensing.
+   You may use this code under the terms of the GPL v3
+   (see www.gnu.org/licenses).
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
-
-   End User License Agreement: www.juce.com/juce-6-licence
-   Privacy Policy: www.juce.com/juce-privacy-policy
-
-   Or: You may also use this code under the terms of the GPL v3 (see
-   www.gnu.org/licenses).
+   For the technical preview this file cannot be licensed commercially.
 
    JUCE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY, AND ALL WARRANTIES, WHETHER
    EXPRESSED OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR PURPOSE, ARE
@@ -175,8 +168,12 @@ void AudioFormatReader::read (AudioBuffer<float>* buffer,
             read (chans, 2, readerStartSample, numSamples, true);
 
             // if the target's stereo and the source is mono, dupe the first channel..
-            if (numTargetChannels > 1 && (chans[0] == nullptr || chans[1] == nullptr))
+            if (numTargetChannels > 1
+                && (chans[0] == nullptr || chans[1] == nullptr)
+                && (dests[0] != nullptr && dests[1] != nullptr))
+            {
                 memcpy (dests[1], dests[0], (size_t) numSamples * sizeof (float));
+            }
 
             if (! usesFloatingPointData)
                 convertFixedToFloat (dests, 2, numSamples);

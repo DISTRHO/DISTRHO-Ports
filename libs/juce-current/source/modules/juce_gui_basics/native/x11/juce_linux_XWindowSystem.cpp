@@ -1,20 +1,13 @@
 /*
   ==============================================================================
 
-   This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   This file is part of the JUCE 7 technical preview.
+   Copyright (c) 2022 - Raw Material Software Limited
 
-   JUCE is an open source library subject to commercial or open-source
-   licensing.
+   You may use this code under the terms of the GPL v3
+   (see www.gnu.org/licenses).
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
-
-   End User License Agreement: www.juce.com/juce-6-licence
-   Privacy Policy: www.juce.com/juce-privacy-policy
-
-   Or: You may also use this code under the terms of the GPL v3 (see
-   www.gnu.org/licenses).
+   For the technical preview this file cannot be licensed commercially.
 
    JUCE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY, AND ALL WARRANTIES, WHETHER
    EXPRESSED OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR PURPOSE, ARE
@@ -23,8 +16,6 @@
   ==============================================================================
 */
 
-#include <unordered_map>
-
 namespace juce
 {
 
@@ -32,7 +23,7 @@ namespace juce
  #define JUCE_DEBUG_XERRORS 1
 
  #if ! defined (JUCE_DEBUG_XERRORS_SYNCHRONOUSLY)
-  #define JUCE_DEBUG_XERRORS_SYNCHRONOUSLY 1
+  #define JUCE_DEBUG_XERRORS_SYNCHRONOUSLY 0
  #endif
 #endif
 
@@ -156,7 +147,7 @@ String XWindowSystemUtilities::Atoms::getName (::Display* display, Atom atom)
     if (atom == None)
         return "None";
 
-    return X11Symbols::getInstance()->xGetAtomName (display, atom);
+    return makeXFreePtr (X11Symbols::getInstance()->xGetAtomName (display, atom)).get();
 }
 
 bool XWindowSystemUtilities::Atoms::isMimeTypeFile (::Display* display, Atom atom)
@@ -165,11 +156,10 @@ bool XWindowSystemUtilities::Atoms::isMimeTypeFile (::Display* display, Atom ato
 }
 
 //==============================================================================
-XWindowSystemUtilities::GetXProperty::GetXProperty (Window window, Atom atom, long offset,
-                                                    long length, bool shouldDelete, Atom requestedType)
+XWindowSystemUtilities::GetXProperty::GetXProperty (::Display* display, Window window, Atom atom,
+                                                    long offset, long length, bool shouldDelete, Atom requestedType)
 {
-    success = (X11Symbols::getInstance()->xGetWindowProperty (XWindowSystem::getInstance()->getDisplay(),
-                                                              window, atom, offset, length,
+    success = (X11Symbols::getInstance()->xGetWindowProperty (display, window, atom, offset, length,
                                                               (Bool) shouldDelete, requestedType, &actualType,
                                                               &actualFormat, &numItems, &bytesLeft, &data) == Success)
                 && data != nullptr;
@@ -179,6 +169,154 @@ XWindowSystemUtilities::GetXProperty::~GetXProperty()
 {
     if (data != nullptr)
         X11Symbols::getInstance()->xFree (data);
+}
+
+//==============================================================================
+std::unique_ptr<XWindowSystemUtilities::XSettings> XWindowSystemUtilities::XSettings::createXSettings (::Display* d)
+{
+    const auto settingsAtom = Atoms::getCreating (d, "_XSETTINGS_SETTINGS");
+    const auto settingsWindow = X11Symbols::getInstance()->xGetSelectionOwner (d,
+                                                                               Atoms::getCreating (d, "_XSETTINGS_S0"));
+
+    if (settingsWindow == None)
+        return {};
+
+    return rawToUniquePtr (new XWindowSystemUtilities::XSettings (d, settingsWindow, settingsAtom));
+}
+
+XWindowSystemUtilities::XSettings::XSettings (::Display* d, ::Window settingsWindowIn, Atom settingsAtomIn)
+    : display (d), settingsWindow (settingsWindowIn), settingsAtom (settingsAtomIn)
+{
+    update();
+}
+
+XWindowSystemUtilities::XSetting XWindowSystemUtilities::XSettings::getSetting (const String& name) const
+{
+    const auto iter = settings.find (name);
+
+    if (iter != settings.end())
+        return iter->second;
+
+    return {};
+}
+
+void XWindowSystemUtilities::XSettings::update()
+{
+    const GetXProperty prop { display,
+                              settingsWindow,
+                              settingsAtom,
+                              0L,
+                              std::numeric_limits<long>::max(),
+                              false,
+                              settingsAtom };
+
+    if (prop.success
+        && prop.actualType == settingsAtom
+        && prop.actualFormat == 8
+        && prop.numItems > 0)
+    {
+        const auto bytes = (size_t) prop.numItems;
+        auto* data = prop.data;
+        size_t byteNum = 0;
+
+        const auto increment = [&] (size_t amount)
+        {
+            data    += amount;
+            byteNum += amount;
+        };
+
+        struct Header
+        {
+            CARD8 byteOrder;
+            CARD8 padding[3];
+            CARD32 serial;
+            CARD32 nSettings;
+        };
+
+        const auto* header = unalignedPointerCast<const Header*> (data);
+        const auto headerSerial = (int) header->serial;
+        increment (sizeof (Header));
+
+        const auto readCARD16 = [&]() -> CARD16
+        {
+            if (byteNum + sizeof (CARD16) > bytes)
+                return {};
+
+            const auto value = header->byteOrder == MSBFirst ? ByteOrder::bigEndianShort (data)
+                                                             : ByteOrder::littleEndianShort (data);
+            increment (sizeof (CARD16));
+            return value;
+        };
+
+        const auto readCARD32 = [&]() -> CARD32
+        {
+            if (byteNum + sizeof (CARD32) > bytes)
+                return {};
+
+            const auto value = header->byteOrder == MSBFirst ? ByteOrder::bigEndianInt (data)
+                                                             : ByteOrder::littleEndianInt (data);
+            increment (sizeof (CARD32));
+            return value;
+        };
+
+        const auto readString = [&] (size_t nameLen) -> String
+        {
+            const auto padded = (nameLen + 3) & (~(size_t) 3);
+
+            if (byteNum + padded > bytes)
+                return {};
+
+            auto* ptr = reinterpret_cast<const char*> (data);
+            const String result (ptr, nameLen);
+            increment (padded);
+            return result;
+        };
+
+        CARD16 setting = 0;
+
+        while (byteNum < bytes && setting < header->nSettings)
+        {
+            const auto type = *reinterpret_cast<const char*> (data);
+            increment (2);
+
+            const auto name   = readString (readCARD16());
+            const auto serial = (int) readCARD32();
+
+            enum { XSettingsTypeInteger, XSettingsTypeString, XSettingsTypeColor };
+
+            const auto parsedSetting = [&]() -> XSetting
+            {
+                switch (type)
+                {
+                    case XSettingsTypeInteger:
+                        return { name, (int) readCARD32() };
+
+                    case XSettingsTypeString:
+                        return { name, readString (readCARD32()) };
+
+                    case XSettingsTypeColor:
+                        // Order is important, these should be kept as separate statements!
+                        const auto r = (uint8) readCARD16();
+                        const auto g = (uint8) readCARD16();
+                        const auto b = (uint8) readCARD16();
+                        const auto a = (uint8) readCARD16();
+                        return { name, Colour { r, g, b, a } };
+                }
+
+                return {};
+            }();
+
+            if (serial > lastUpdateSerial)
+            {
+                settings[parsedSetting.name] = parsedSetting;
+                listeners.call ([&parsedSetting] (Listener& l) { l.settingChanged (parsedSetting); });
+            }
+
+            setting += 1;
+        }
+
+        lastUpdateSerial = headerSerial;
+    }
 }
 
 //==============================================================================
@@ -421,6 +559,7 @@ enum
  {
      static int trappedErrorCode = 0;
 
+     extern "C" int errorTrapHandler (Display*, XErrorEvent* err);
      extern "C" int errorTrapHandler (Display*, XErrorEvent* err)
      {
          trappedErrorCode = err->error_code;
@@ -628,13 +767,13 @@ namespace Visuals
                         {
                             for (int i = 0; i < numVisuals; ++i)
                             {
-                                auto pictVisualFormat = X11Symbols::getInstance()->xRenderFindVisualFormat (display, xvinfos[i].visual);
+                                auto pictVisualFormat = X11Symbols::getInstance()->xRenderFindVisualFormat (display, xvinfos.get()[i].visual);
 
                                 if (pictVisualFormat != nullptr
                                      && pictVisualFormat->type == PictTypeDirect
                                      && pictVisualFormat->direct.alphaMask)
                                 {
-                                    visual = xvinfos[i].visual;
+                                    visual = xvinfos.get()[i].visual;
                                     matchedDepth = 32;
                                     break;
                                 }
@@ -678,6 +817,16 @@ namespace Visuals
 class XBitmapImage  : public ImagePixelData
 {
 public:
+    explicit XBitmapImage (XImage* image)
+        : ImagePixelData (image->depth == 24 ? Image::RGB : Image::ARGB, image->width, image->height),
+          xImage (image),
+          imageDepth ((unsigned int) xImage->depth)
+    {
+        pixelStride = xImage->bits_per_pixel / 8;
+        lineStride = xImage->bytes_per_line;
+        imageData = reinterpret_cast<uint8*> (xImage->data);
+    }
+
     XBitmapImage (Image::PixelFormat format, int w, int h,
                   bool clearImage, unsigned int imageDepth_, Visual* visual)
         : ImagePixelData (format, w, h),
@@ -701,8 +850,8 @@ public:
             segmentInfo.shmaddr = (char *) -1;
             segmentInfo.readOnly = False;
 
-            xImage = X11Symbols::getInstance()->xShmCreateImage (display, visual, imageDepth, ZPixmap, nullptr,
-                                                                 &segmentInfo, (unsigned int) w, (unsigned int) h);
+            xImage.reset (X11Symbols::getInstance()->xShmCreateImage (display, visual, imageDepth, ZPixmap, nullptr,
+                                                                      &segmentInfo, (unsigned int) w, (unsigned int) h));
 
             if (xImage != nullptr)
             {
@@ -741,7 +890,7 @@ public:
             imageDataAllocated.allocate ((size_t) (lineStride * h), format == Image::ARGB && clearImage);
             imageData = imageDataAllocated;
 
-            xImage = (XImage*) ::calloc (1, sizeof (XImage));
+            xImage.reset ((XImage*) ::calloc (1, sizeof (XImage)));
 
             xImage->width = w;
             xImage->height = h;
@@ -775,7 +924,7 @@ public:
                 xImage->blue_mask  = visual->blue_mask;
             }
 
-            if (! X11Symbols::getInstance()->xInitImage (xImage))
+            if (! X11Symbols::getInstance()->xInitImage (xImage.get()))
                 jassertfalse;
         }
     }
@@ -793,7 +942,6 @@ public:
             X11Symbols::getInstance()->xShmDetach (display, &segmentInfo);
 
             X11Symbols::getInstance()->xFlush (display);
-            X11Symbols::getInstance()->xDestroyImage (xImage);
 
             shmdt (segmentInfo.shmaddr);
             shmctl (segmentInfo.shmid, IPC_RMID, nullptr);
@@ -802,7 +950,6 @@ public:
        #endif
         {
             xImage->data = nullptr;
-            X11Symbols::getInstance()->xDestroyImage (xImage);
         }
     }
 
@@ -815,7 +962,9 @@ public:
     void initialiseBitmapData (Image::BitmapData& bitmap, int x, int y,
                                Image::BitmapData::ReadWriteMode mode) override
     {
-        bitmap.data = imageData + x * pixelStride + y * lineStride;
+        const auto offset = (size_t) (x * pixelStride + y * lineStride);
+        bitmap.data = imageData + offset;
+        bitmap.size = (size_t) (lineStride * height) - offset;
         bitmap.pixelFormat = pixelFormat;
         bitmap.lineStride = lineStride;
         bitmap.pixelStride = pixelStride;
@@ -879,7 +1028,7 @@ public:
                     auto* pixel = (PixelRGB*) p;
                     p += srcData.pixelStride;
 
-                    X11Symbols::getInstance()->xPutPixel (xImage, x, y,
+                    X11Symbols::getInstance()->xPutPixel (xImage.get(), x, y,
                                                               (((((uint32) pixel->getRed())   << rShiftL) >> rShiftR) & rMask)
                                                             | (((((uint32) pixel->getGreen()) << gShiftL) >> gShiftR) & gMask)
                                                             | (((((uint32) pixel->getBlue())  << bShiftL) >> bShiftR) & bMask));
@@ -890,10 +1039,10 @@ public:
         // blit results to screen.
        #if JUCE_USE_XSHM
         if (isUsingXShm())
-            X11Symbols::getInstance()->xShmPutImage (display, (::Drawable) window, gc, xImage, sx, sy, dx, dy, dw, dh, True);
+            X11Symbols::getInstance()->xShmPutImage (display, (::Drawable) window, gc, xImage.get(), sx, sy, dx, dy, dw, dh, True);
         else
        #endif
-            X11Symbols::getInstance()->xPutImage (display, (::Drawable) window, gc, xImage, sx, sy, dx, dy, dw, dh);
+            X11Symbols::getInstance()->xPutImage (display, (::Drawable) window, gc, xImage.get(), sx, sy, dx, dy, dw, dh);
     }
 
     #if JUCE_USE_XSHM
@@ -902,7 +1051,15 @@ public:
 
 private:
     //==============================================================================
-    XImage* xImage = nullptr;
+    struct Deleter
+    {
+        void operator() (XImage* img) const noexcept
+        {
+            X11Symbols::getInstance()->xDestroyImage (img);
+        }
+    };
+
+    std::unique_ptr<XImage, Deleter> xImage;
     const unsigned int imageDepth;
     HeapBlock<uint8> imageDataAllocated;
     HeapBlock<char> imageData16Bit;
@@ -932,158 +1089,6 @@ private:
 //=============================== X11 - Displays ===============================
 namespace DisplayHelpers
 {
-    template <typename Callback>
-    void parseXSettings (const unsigned char* dataPtr, const size_t bytes, Callback&& callback)
-    {
-        struct Header
-        {
-            CARD8 byteOrder;
-            CARD8 padding[3];
-            CARD32 serial;
-            CARD32 nSettings;
-        };
-
-        auto* data     = dataPtr;
-        size_t byteNum = 0;
-
-        const auto increment = [&] (size_t amount)
-        {
-            data    += amount;
-            byteNum += amount;
-        };
-
-        const auto* header = reinterpret_cast<const Header*> (data);
-        increment (sizeof (Header));
-
-        const auto readCARD16 = [&]() -> CARD16
-        {
-            if (byteNum + sizeof (CARD16) > bytes)
-                return {};
-
-            const auto value = header->byteOrder == MSBFirst ? ByteOrder::bigEndianShort (data)
-                                                             : ByteOrder::littleEndianShort (data);
-            increment (sizeof (CARD16));
-            return value;
-        };
-
-        const auto readCARD32 = [&]() -> CARD32
-        {
-            if (byteNum + sizeof (CARD32) > bytes)
-                return {};
-
-            const auto value = header->byteOrder == MSBFirst ? ByteOrder::bigEndianInt (data)
-                                                             : ByteOrder::littleEndianInt (data);
-            increment (sizeof (CARD32));
-            return value;
-        };
-
-        const auto readString = [&] (size_t nameLen) -> std::string
-        {
-            const auto padded = (nameLen + 3) & (~(size_t) 3);
-
-            if (byteNum + padded > bytes)
-                return {};
-
-            auto* ptr = reinterpret_cast<const char*> (data);
-            const std::string result (ptr, ptr + nameLen);
-            increment (padded);
-            return result;
-        };
-
-        CARD16 setting = 0;
-
-        while (byteNum < bytes && setting < header->nSettings)
-        {
-            const auto type = *reinterpret_cast<const char*> (data);
-            increment (2);
-
-            const auto name   = readString (readCARD16());
-            const auto serial = readCARD32();
-            ignoreUnused (serial);
-
-            enum { XSettingsTypeInteger, XSettingsTypeString, XSettingsTypeColor };
-
-            switch (type)
-            {
-                case XSettingsTypeInteger:
-                {
-                    callback (name, (INT32) readCARD32());
-                    break;
-                }
-
-                case XSettingsTypeString:
-                {
-                    callback (name, readString (readCARD32()));
-                    break;
-                }
-
-                case XSettingsTypeColor:
-                {
-                    // Order is important, these should be kept as separate statements!
-                    const auto r = readCARD16();
-                    const auto g = readCARD16();
-                    const auto b = readCARD16();
-                    const auto a = readCARD16();
-                    callback (name, r, g, b, a);
-                    break;
-                }
-            }
-
-            setting += 1;
-        }
-    }
-
-    double getScalingFactorFromXSettings()
-    {
-        if (auto* display = XWindowSystem::getInstance()->getDisplay())
-        {
-            using namespace XWindowSystemUtilities;
-
-            ScopedXLock xLock;
-
-            const auto selectionWindow = X11Symbols::getInstance()->xGetSelectionOwner (display,
-                                                                                        Atoms::getCreating (display, "_XSETTINGS_S0"));
-
-            if (selectionWindow != None)
-            {
-                const auto xsettingsSettingsAtom = Atoms::getCreating (display, "_XSETTINGS_SETTINGS");
-
-                const GetXProperty prop { selectionWindow,
-                                          xsettingsSettingsAtom,
-                                          0L,
-                                          std::numeric_limits<long>::max(),
-                                          false,
-                                          xsettingsSettingsAtom };
-
-                if (prop.success
-                    && prop.actualType == xsettingsSettingsAtom
-                    && prop.actualFormat == 8)
-                {
-                    struct ExtractRelevantSettings
-                    {
-                        void operator() (const std::string& name, INT32 value)
-                        {
-                            if (name == "Gdk/WindowScalingFactor")
-                                scaleFactor = value;
-                        }
-
-                        void operator() (const std::string&, const std::string&) {}
-                        void operator() (const std::string&, CARD16, CARD16, CARD16, CARD16) {}
-
-                        INT32 scaleFactor = 0;
-                    };
-
-                    ExtractRelevantSettings callback;
-                    parseXSettings (prop.data, prop.numItems, callback);
-
-                    return (double) callback.scaleFactor;
-                }
-            }
-        }
-
-        return 0.0;
-    }
-
     static double getDisplayDPI (::Display* display, int index)
     {
         auto widthMM  = X11Symbols::getInstance()->xDisplayWidthMM  (display, index);
@@ -1098,10 +1103,16 @@ namespace DisplayHelpers
 
     static double getDisplayScale (const String& name, double dpi)
     {
-        const auto scaleFactorFromXSettings = getScalingFactorFromXSettings();
+        if (auto* xSettings = XWindowSystem::getInstance()->getXSettings())
+        {
+            auto windowScalingFactorSetting = xSettings->getSetting (XWindowSystem::getWindowScalingFactorSettingName());
 
-        if (scaleFactorFromXSettings > 0.0)
-            return scaleFactorFromXSettings;
+            if (windowScalingFactorSetting.isValid()
+                && windowScalingFactorSetting.integerValue > 0)
+            {
+                return (double) windowScalingFactorSetting.integerValue;
+            }
+        }
 
         if (name.isNotEmpty())
         {
@@ -1256,7 +1267,7 @@ namespace ClipboardHelpers
     {
         if (display != nullptr)
         {
-            XWindowSystemUtilities::GetXProperty prop (window, atom, 0L, 100000, false, AnyPropertyType);
+            XWindowSystemUtilities::GetXProperty prop (display, window, atom, 0L, 100000, false, AnyPropertyType);
 
             if (prop.success)
             {
@@ -1328,27 +1339,35 @@ namespace ClipboardHelpers
         int propertyFormat = 0;
         size_t numDataItems = 0;
 
-        if (evt.selection == XA_PRIMARY || evt.selection == XWindowSystem::getInstance()->getAtoms().clipboard)
+        const auto& atoms = XWindowSystem::getInstance()->getAtoms();
+
+        if (evt.selection == XA_PRIMARY || evt.selection == atoms.clipboard)
         {
-            if (evt.target == XA_STRING || evt.target == XWindowSystem::getInstance()->getAtoms().utf8String)
+            if (evt.target == XA_STRING || evt.target == atoms.utf8String)
             {
                 auto localContent = XWindowSystem::getInstance()->getLocalClipboardContent();
 
-                // translate to utf8
-                numDataItems = localContent.getNumBytesAsUTF8() + 1;
-                data.calloc (numDataItems);
-                localContent.copyToUTF8 (data, numDataItems);
-                propertyFormat = 8; // bits/item
+                // Translate to utf8
+                numDataItems = localContent.getNumBytesAsUTF8();
+                auto numBytesRequiredToStore = numDataItems + 1;
+                data.calloc (numBytesRequiredToStore);
+                localContent.copyToUTF8 (data, numBytesRequiredToStore);
+                propertyFormat = 8;   // bits per item
             }
-            else if (evt.target == XWindowSystem::getInstance()->getAtoms().targets)
+            else if (evt.target == atoms.targets)
             {
-                // another application wants to know what we are able to send
+                // Another application wants to know what we are able to send
+
                 numDataItems = 2;
-                propertyFormat = 32; // atoms are 32-bit
-                data.calloc (numDataItems * 4);
-                Atom* atoms = unalignedPointerCast<Atom*> (data.getData());
-                atoms[0] = XWindowSystem::getInstance()->getAtoms().utf8String;
-                atoms[1] = XA_STRING;
+                data.calloc (numDataItems * sizeof (Atom));
+
+                // Atoms are flagged as 32-bit irrespective of sizeof (Atom)
+                propertyFormat = 32;
+
+                auto* dataAtoms = unalignedPointerCast<Atom*> (data.getData());
+
+                dataAtoms[0] = atoms.utf8String;
+                dataAtoms[1] = XA_STRING;
 
                 evt.target = XA_ATOM;
             }
@@ -1367,7 +1386,7 @@ namespace ClipboardHelpers
             {
                 X11Symbols::getInstance()->xChangeProperty (evt.display, evt.requestor,
                                                             evt.property, evt.target,
-                                                            propertyFormat /* 8 or 32 */, PropModeReplace,
+                                                            propertyFormat, PropModeReplace,
                                                             reinterpret_cast<const unsigned char*> (data.getData()), (int) numDataItems);
                 reply.property = evt.property; // " == success"
             }
@@ -1604,12 +1623,16 @@ void XWindowSystem::setTitle (::Window windowH, const String& title) const
 {
     jassert (windowH != 0);
 
-    XTextProperty nameProperty;
+    XTextProperty nameProperty{};
     char* strings[] = { const_cast<char*> (title.toRawUTF8()) };
 
     XWindowSystemUtilities::ScopedXLock xLock;
 
-    if (X11Symbols::getInstance()->xStringListToTextProperty (strings, 1, &nameProperty))
+    if (X11Symbols::getInstance()->xutf8TextListToTextProperty (display,
+                                                                strings,
+                                                                numElementsInArray (strings),
+                                                                XUTF8StringStyle,
+                                                                &nameProperty) >= 0)
     {
         X11Symbols::getInstance()->xSetWMName (display, windowH, &nameProperty);
         X11Symbols::getInstance()->xSetWMIconName (display, windowH, &nameProperty);
@@ -1703,6 +1726,8 @@ void XWindowSystem::setBounds (::Window windowH, Rectangle<int> newBounds, bool 
             }
         }
 
+        updateConstraints (windowH, *peer);
+
         XWindowSystemUtilities::ScopedXLock xLock;
 
         if (auto hints = makeXFreePtr (X11Symbols::getInstance()->xAllocSizeHints()))
@@ -1712,24 +1737,64 @@ void XWindowSystem::setBounds (::Window windowH, Rectangle<int> newBounds, bool 
             hints->y      = newBounds.getY();
             hints->width  = newBounds.getWidth();
             hints->height = newBounds.getHeight();
-
-            if ((peer->getStyleFlags() & ComponentPeer::windowIsResizable) == 0)
-            {
-                hints->min_width  = hints->max_width  = hints->width;
-                hints->min_height = hints->max_height = hints->height;
-                hints->flags |= PMinSize | PMaxSize;
-            }
-
             X11Symbols::getInstance()->xSetWMNormalHints (display, windowH, hints.get());
         }
 
-        auto windowBorder = peer->getFrameSize();
+        const auto windowBorder = [&]() -> BorderSize<int>
+        {
+            if (const auto& frameSize = peer->getFrameSizeIfPresent())
+                return *frameSize;
+
+            return {};
+        }();
 
         X11Symbols::getInstance()->xMoveResizeWindow (display, windowH,
                                                       newBounds.getX() - windowBorder.getLeft(),
                                                       newBounds.getY() - windowBorder.getTop(),
                                                       (unsigned int) newBounds.getWidth(),
                                                       (unsigned int) newBounds.getHeight());
+    }
+}
+
+void XWindowSystem::updateConstraints (::Window windowH) const
+{
+    if (auto* peer = getPeerFor (windowH))
+        updateConstraints (windowH, *peer);
+}
+
+void XWindowSystem::updateConstraints (::Window windowH, ComponentPeer& peer) const
+{
+    XWindowSystemUtilities::ScopedXLock xLock;
+
+    if (auto hints = makeXFreePtr (X11Symbols::getInstance()->xAllocSizeHints()))
+    {
+        if ((peer.getStyleFlags() & ComponentPeer::windowIsResizable) == 0)
+        {
+            hints->min_width  = hints->max_width  = peer.getBounds().getWidth();
+            hints->min_height = hints->max_height = peer.getBounds().getHeight();
+            hints->flags = PMinSize | PMaxSize;
+        }
+        else if (auto* c = peer.getConstrainer())
+        {
+            const auto windowBorder = [&]() -> BorderSize<int>
+            {
+                if (const auto& frameSize = peer.getFrameSizeIfPresent())
+                    return *frameSize;
+
+                return {};
+            }();
+
+            const auto factor       = peer.getPlatformScaleFactor();
+            const auto leftAndRight = windowBorder.getLeftAndRight();
+            const auto topAndBottom = windowBorder.getTopAndBottom();
+            hints->min_width  = jmax (1, (int) (factor * c->getMinimumWidth())  - leftAndRight);
+            hints->max_width  = jmax (1, (int) (factor * c->getMaximumWidth())  - leftAndRight);
+            hints->min_height = jmax (1, (int) (factor * c->getMinimumHeight()) - topAndBottom);
+            hints->max_height = jmax (1, (int) (factor * c->getMaximumHeight()) - topAndBottom);
+            hints->flags = PMinSize | PMaxSize;
+        }
+
+        X11Symbols::getInstance()->xSetWMNormalHints (display, windowH, hints.get());
     }
 }
 
@@ -1746,7 +1811,7 @@ bool XWindowSystem::contains (::Window windowH, Point<int> localPos) const
           && child == None;
 }
 
-BorderSize<int> XWindowSystem::getBorderSize (::Window windowH) const
+ComponentPeer::OptionalBorderSize XWindowSystem::getBorderSize (::Window windowH) const
 {
     jassert (windowH != 0);
 
@@ -1755,7 +1820,7 @@ BorderSize<int> XWindowSystem::getBorderSize (::Window windowH) const
 
     if (hints != None)
     {
-        XWindowSystemUtilities::GetXProperty prop (windowH, hints, 0, 4, false, XA_CARDINAL);
+        XWindowSystemUtilities::GetXProperty prop (display, windowH, hints, 0, 4, false, XA_CARDINAL);
 
         if (prop.success && prop.actualFormat == 32)
         {
@@ -1768,7 +1833,7 @@ BorderSize<int> XWindowSystem::getBorderSize (::Window windowH) const
                 data += sizeof (unsigned long);
             }
 
-            return { (int) sizes[2], (int) sizes[0], (int) sizes[3], (int) sizes[1] };
+            return ComponentPeer::OptionalBorderSize ({ (int) sizes[2], (int) sizes[0], (int) sizes[3], (int) sizes[1] });
         }
     }
 
@@ -1799,7 +1864,9 @@ Rectangle<int> XWindowSystem::getWindowBounds (::Window windowH, ::Window parent
         }
         else
         {
-            parentScreenPosition = Point<int> (rootX, rootY);
+            // XGetGeometry returns wx and wy relative to the parent window's origin.
+            // XTranslateCoordinates returns rootX and rootY relative to the root window.
+            parentScreenPosition = Point<int> (rootX - wx, rootY - wy);
         }
     }
 
@@ -1837,7 +1904,7 @@ bool XWindowSystem::isMinimised (::Window windowH) const
     jassert (windowH != 0);
 
     XWindowSystemUtilities::ScopedXLock xLock;
-    XWindowSystemUtilities::GetXProperty prop (windowH, atoms.state, 0, 64, false, atoms.state);
+    XWindowSystemUtilities::GetXProperty prop (display, windowH, atoms.state, 0, 64, false, atoms.state);
 
     if (prop.success && prop.actualType == atoms.state
         && prop.actualFormat == 32 && prop.numItems > 0)
@@ -1898,10 +1965,13 @@ void XWindowSystem::toBehind (::Window windowH, ::Window otherWindow) const
 {
     jassert (windowH != 0 && otherWindow != 0);
 
-    Window newStack[] = { otherWindow, windowH };
+    const auto topLevelA = findTopLevelWindowOf (windowH);
+    const auto topLevelB = findTopLevelWindowOf (otherWindow);
+
+    Window newStack[] = { topLevelA, topLevelB };
 
     XWindowSystemUtilities::ScopedXLock xLock;
-    X11Symbols::getInstance()->xRestackWindows (display, newStack, 2);
+    X11Symbols::getInstance()->xRestackWindows (display, newStack, numElementsInArray (newStack));
 }
 
 bool XWindowSystem::isFocused (::Window windowH) const
@@ -1996,6 +2066,37 @@ bool XWindowSystem::canUseARGBImages() const
    #endif
 
     return canUseARGB;
+}
+
+bool XWindowSystem::isDarkModeActive() const
+{
+    const auto themeName = [this]() -> String
+    {
+        if (xSettings != nullptr)
+        {
+            const auto themeNameSetting = xSettings->getSetting (getThemeNameSettingName());
+
+            if (themeNameSetting.isValid()
+                && themeNameSetting.stringValue.isNotEmpty())
+            {
+                return themeNameSetting.stringValue;
+            }
+        }
+
+        ChildProcess gsettings;
+
+        if (File ("/usr/bin/gsettings").existsAsFile()
+            && gsettings.start ("/usr/bin/gsettings get org.gnome.desktop.interface gtk-theme", ChildProcess::wantStdOut))
+        {
+            if (gsettings.waitForProcessToFinish (200))
+                return gsettings.readAllProcessOutput();
+        }
+
+        return {};
+    }();
+
+    return (themeName.isNotEmpty()
+          && (themeName.containsIgnoreCase ("dark") || themeName.containsIgnoreCase ("black")));
 }
 
 Image XWindowSystem::createImage (bool isSemiTransparent, int width, int height, bool argb) const
@@ -2114,10 +2215,10 @@ void XWindowSystem::setMousePosition (Point<float> pos) const
                                              roundToInt (pos.getX()), roundToInt (pos.getY()));
 }
 
-void* XWindowSystem::createCustomMouseCursorInfo (const Image& image, Point<int> hotspot) const
+Cursor XWindowSystem::createCustomMouseCursorInfo (const Image& image, Point<int> hotspot) const
 {
     if (display == nullptr)
-        return nullptr;
+        return {};
 
     XWindowSystemUtilities::ScopedXLock xLock;
 
@@ -2138,9 +2239,9 @@ void* XWindowSystem::createCustomMouseCursorInfo (const Image& image, Point<int>
             for (int x = 0; x < (int) imageW; ++x)
                 *dest++ = image.getPixelAt (x, y).getARGB();
 
-        auto* result = (void*) X11Symbols::getInstance()->xcursorImageLoadCursor (display, xcImage.get());
+        auto result = X11Symbols::getInstance()->xcursorImageLoadCursor (display, xcImage.get());
 
-        if (result != nullptr)
+        if (result != Cursor{})
             return result;
     }
    #endif
@@ -2150,7 +2251,7 @@ void* XWindowSystem::createCustomMouseCursorInfo (const Image& image, Point<int>
 
     unsigned int cursorW, cursorH;
     if (! X11Symbols::getInstance()->xQueryBestCursor (display, root, imageW, imageH, &cursorW, &cursorH))
-        return nullptr;
+        return {};
 
     Image im (Image::ARGB, (int) cursorW, (int) cursorH, true);
 
@@ -2200,20 +2301,20 @@ void* XWindowSystem::createCustomMouseCursorInfo (const Image& image, Point<int>
     black.red = black.green = black.blue = 0;
     white.red = white.green = white.blue = 0xffff;
 
-    return (void*) X11Symbols::getInstance()->xCreatePixmapCursor (display, sourcePixmap.value, maskPixmap.value, &white, &black,
-                                                                   (unsigned int) hotspotX, (unsigned int) hotspotY);
+    return X11Symbols::getInstance()->xCreatePixmapCursor (display, sourcePixmap.value, maskPixmap.value, &white, &black,
+                                                           (unsigned int) hotspotX, (unsigned int) hotspotY);
 }
 
-void XWindowSystem::deleteMouseCursor (void* cursorHandle) const
+void XWindowSystem::deleteMouseCursor (Cursor cursorHandle) const
 {
-    if (cursorHandle != nullptr && display != nullptr)
+    if (cursorHandle != Cursor{} && display != nullptr)
     {
         XWindowSystemUtilities::ScopedXLock xLock;
         X11Symbols::getInstance()->xFreeCursor (display, (Cursor) cursorHandle);
     }
 }
 
-void* createDraggingHandCursor()
+static Cursor createDraggingHandCursor()
 {
     constexpr unsigned char dragHandData[] = {
         71,73,70,56,57,97,16,0,16,0,145,2,0,0,0,0,255,255,255,0,0,0,0,0,0,33,249,4,1,0,0,2,0,44,0,0,0,0,16,0,16,0,
@@ -2221,10 +2322,11 @@ void* createDraggingHandCursor()
         114,34,236,37,52,77,217, 247,154,191,119,110,240,193,128,193,95,163,56,60,234,98,135,2,0,59
     };
 
-    return CustomMouseCursorInfo (ImageFileFormat::loadFrom (dragHandData, (size_t) numElementsInArray (dragHandData)), { 8, 7 }).create();
+    auto image = ImageFileFormat::loadFrom (dragHandData, (size_t) numElementsInArray (dragHandData));
+    return XWindowSystem::getInstance()->createCustomMouseCursorInfo (std::move (image), { 8, 7 });
 }
 
-void* XWindowSystem::createStandardMouseCursor (MouseCursor::StandardCursorType type) const
+Cursor XWindowSystem::createStandardMouseCursor (MouseCursor::StandardCursorType type) const
 {
     if (display == nullptr)
         return None;
@@ -2235,7 +2337,7 @@ void* XWindowSystem::createStandardMouseCursor (MouseCursor::StandardCursorType 
     {
         case MouseCursor::NormalCursor:
         case MouseCursor::ParentCursor:                  return None; // Use parent cursor
-        case MouseCursor::NoCursor:                      return CustomMouseCursorInfo (Image (Image::ARGB, 16, 16, true), {}).create();
+        case MouseCursor::NoCursor:                      return XWindowSystem::createCustomMouseCursorInfo (Image (Image::ARGB, 16, 16, true), {});
 
         case MouseCursor::WaitCursor:                    shape = XC_watch; break;
         case MouseCursor::IBeamCursor:                   shape = XC_xterm; break;
@@ -2263,7 +2365,8 @@ void* XWindowSystem::createStandardMouseCursor (MouseCursor::StandardCursorType 
                 252,114,147,74,83,5,50,68,147,208,217,16,71,149,252,124,5,0,59,0,0
             };
 
-            return CustomMouseCursorInfo (ImageFileFormat::loadFrom (copyCursorData, (size_t) numElementsInArray (copyCursorData)), { 1, 3 }).create();
+            auto image = ImageFileFormat::loadFrom (copyCursorData, (size_t) numElementsInArray (copyCursorData));
+            return createCustomMouseCursorInfo (std::move (image), { 1, 3 });
         }
 
         case MouseCursor::NumStandardCursorTypes:
@@ -2276,10 +2379,10 @@ void* XWindowSystem::createStandardMouseCursor (MouseCursor::StandardCursorType 
 
     XWindowSystemUtilities::ScopedXLock xLock;
 
-    return (void*) X11Symbols::getInstance()->xCreateFontCursor (display, shape);
+    return X11Symbols::getInstance()->xCreateFontCursor (display, shape);
 }
 
-void XWindowSystem::showCursor (::Window windowH, void* cursorHandle) const
+void XWindowSystem::showCursor (::Window windowH, Cursor cursorHandle) const
 {
     jassert (windowH != 0);
 
@@ -2388,7 +2491,7 @@ Array<Displays::Display> XWindowSystem::findDisplays (float masterScale) const
             for (int i = 0; i < numMonitors; ++i)
             {
                 auto rootWindow = X11Symbols::getInstance()->xRootWindow (display, i);
-                XWindowSystemUtilities::GetXProperty prop (rootWindow, workAreaHints, 0, 4, false, XA_CARDINAL);
+                XWindowSystemUtilities::GetXProperty prop (display, rootWindow, workAreaHints, 0, 4, false, XA_CARDINAL);
 
                 if (! hasWorkAreaData (prop))
                     continue;
@@ -2480,7 +2583,8 @@ Array<Displays::Display> XWindowSystem::findDisplays (float masterScale) const
 
             for (int i = 0; i < numMonitors; ++i)
             {
-                XWindowSystemUtilities::GetXProperty prop (X11Symbols::getInstance()->xRootWindow (display, i),
+                XWindowSystemUtilities::GetXProperty prop (display,
+                                                           X11Symbols::getInstance()->xRootWindow (display, i),
                                                            workAreaHints, 0, 4, false, XA_CARDINAL);
 
                 auto workArea = getWorkArea (prop);
@@ -2588,14 +2692,12 @@ void XWindowSystem::copyTextToClipboard (const String& clipText)
 {
     localClipboardContent = clipText;
 
-    X11Symbols::getInstance()->xSetSelectionOwner (display, XA_PRIMARY,       juce_messageWindowHandle, CurrentTime);
+    X11Symbols::getInstance()->xSetSelectionOwner (display, XA_PRIMARY,      juce_messageWindowHandle, CurrentTime);
     X11Symbols::getInstance()->xSetSelectionOwner (display, atoms.clipboard, juce_messageWindowHandle, CurrentTime);
 }
 
 String XWindowSystem::getTextFromClipboard() const
 {
-    String content;
-
     /* 1) try to read from the "CLIPBOARD" selection first (the "high
        level" clipboard that is supposed to be filled by ctrl-C
        etc). When a clipboard manager is running, the content of this
@@ -2605,27 +2707,56 @@ String XWindowSystem::getTextFromClipboard() const
        2) and then try to read from "PRIMARY" selection (the "legacy" selection
        filled by good old x11 apps such as xterm)
     */
-    auto selection = XA_PRIMARY;
-    Window selectionOwner = None;
 
-    if ((selectionOwner = X11Symbols::getInstance()->xGetSelectionOwner (display, selection)) == None)
+    auto getContentForSelection = [this] (Atom selectionAtom) -> String
     {
-        selection = atoms.clipboard;
-        selectionOwner = X11Symbols::getInstance()->xGetSelectionOwner (display, selection);
-    }
+        auto selectionOwner = X11Symbols::getInstance()->xGetSelectionOwner (display, selectionAtom);
 
-    if (selectionOwner != None)
-    {
+        if (selectionOwner == None)
+            return {};
+
         if (selectionOwner == juce_messageWindowHandle)
-            content = localClipboardContent;
-        else if (! ClipboardHelpers::requestSelectionContent (display, content, selection, atoms.utf8String))
-            ClipboardHelpers::requestSelectionContent (display, content, selection, XA_STRING);
-    }
+            return localClipboardContent;
+
+        String content;
+
+        if (! ClipboardHelpers::requestSelectionContent (display, content, selectionAtom, atoms.utf8String))
+            ClipboardHelpers::requestSelectionContent (display, content, selectionAtom, XA_STRING);
+
+        return content;
+    };
+
+    auto content = getContentForSelection (atoms.clipboard);
+
+    if (content.isEmpty())
+        content = getContentForSelection (XA_PRIMARY);
 
     return content;
 }
 
 //==============================================================================
+::Window XWindowSystem::findTopLevelWindowOf (::Window w) const
+{
+    if (w == 0)
+        return 0;
+
+    Window* windowList = nullptr;
+    uint32 windowListSize = 0;
+    Window parent, root;
+
+    XWindowSystemUtilities::ScopedXLock xLock;
+    const auto result = X11Symbols::getInstance()->xQueryTree (display, w, &root, &parent, &windowList, &windowListSize);
+    const auto deleter = makeXFreePtr (windowList);
+
+    if (result == 0)
+        return 0;
+
+    if (parent == root)
+        return w;
+
+    return findTopLevelWindowOf (parent);
+}
+
 bool XWindowSystem::isParentWindowOf (::Window windowH, ::Window possibleChild) const
 {
     if (windowH == 0 || possibleChild == 0)
@@ -2911,7 +3042,7 @@ long XWindowSystem::getUserTime (::Window windowH) const
 {
     jassert (windowH != 0);
 
-    XWindowSystemUtilities::GetXProperty prop (windowH, atoms.userTime, 0, 65536, false, XA_CARDINAL);
+    XWindowSystemUtilities::GetXProperty prop (display, windowH, atoms.userTime, 0, 65536, false, XA_CARDINAL);
 
     if (! prop.success)
         return 0;
@@ -2920,6 +3051,16 @@ long XWindowSystem::getUserTime (::Window windowH) const
     std::memcpy (&result, prop.data, sizeof (long));
 
     return result;
+}
+
+void XWindowSystem::initialiseXSettings()
+{
+    xSettings = XWindowSystemUtilities::XSettings::createXSettings (display);
+
+    if (xSettings != nullptr)
+        X11Symbols::getInstance()->xSelectInput (display,
+                                                 xSettings->getSettingsWindow(),
+                                                 StructureNotifyMask | PropertyChangeMask);
 }
 
 XWindowSystem::DisplayVisuals::DisplayVisuals (::Display* xDisplay)
@@ -3006,6 +3147,7 @@ bool XWindowSystem::initialiseXDisplay()
 
     initialisePointerMap();
     updateModifierMappings();
+    initialiseXSettings();
 
    #if JUCE_USE_XSHM
     if (XSHMHelpers::isShmAvailable (display))
@@ -3058,26 +3200,33 @@ void XWindowSystem::destroyXDisplay()
     {
         jassert (display != nullptr);
 
-        XWindowSystemUtilities::ScopedXLock xLock;
+        {
+            XWindowSystemUtilities::ScopedXLock xLock;
 
-        X11Symbols::getInstance()->xDestroyWindow (display, juce_messageWindowHandle);
-        juce_messageWindowHandle = 0;
-        X11Symbols::getInstance()->xSync (display, True);
+            X11Symbols::getInstance()->xDestroyWindow (display, juce_messageWindowHandle);
+            juce_messageWindowHandle = 0;
+            X11Symbols::getInstance()->xSync (display, True);
+        }
 
         LinuxEventLoop::unregisterFdCallback (X11Symbols::getInstance()->xConnectionNumber (display));
 
-        X11Symbols::getInstance()->xCloseDisplay (display);
-        display = nullptr;
-        displayVisuals = nullptr;
+        {
+            XWindowSystemUtilities::ScopedXLock xLock;
+            X11Symbols::getInstance()->xCloseDisplay (display);
+            display = nullptr;
+            displayVisuals = nullptr;
+        }
     }
 }
 
 //==============================================================================
+::Window juce_createKeyProxyWindow (ComponentPeer* peer);
 ::Window juce_createKeyProxyWindow (ComponentPeer* peer)
 {
     return XWindowSystem::getInstance()->createKeyProxy ((::Window) peer->getNativeHandle());
 }
 
+void juce_deleteKeyProxyWindow (::Window keyProxy);
 void juce_deleteKeyProxyWindow (::Window keyProxy)
 {
     XWindowSystem::getInstance()->deleteKeyProxy (keyProxy);
@@ -3332,8 +3481,8 @@ void XWindowSystem::handleButtonPressEvent (LinuxComponentPeer* peer, const XBut
     ModifierKeys::currentModifiers = ModifierKeys::currentModifiers.withFlags (buttonModifierFlag);
     peer->toFront (true);
     peer->handleMouseEvent (MouseInputSource::InputSourceType::mouse, getLogicalMousePos (buttonPressEvent, peer->getPlatformScaleFactor()),
-                            ModifierKeys::currentModifiers, MouseInputSource::invalidPressure,
-                            MouseInputSource::invalidOrientation, getEventTime (buttonPressEvent));
+                            ModifierKeys::currentModifiers, MouseInputSource::defaultPressure,
+                            MouseInputSource::defaultOrientation, getEventTime (buttonPressEvent), {});
 }
 
 void XWindowSystem::handleButtonPressEvent (LinuxComponentPeer* peer, const XButtonPressedEvent& buttonPressEvent) const
@@ -3382,7 +3531,7 @@ void XWindowSystem::handleButtonReleaseEvent (LinuxComponentPeer* peer, const XB
         dragState.handleExternalDragButtonReleaseEvent();
 
     peer->handleMouseEvent (MouseInputSource::InputSourceType::mouse, getLogicalMousePos (buttonRelEvent, peer->getPlatformScaleFactor()),
-                            ModifierKeys::currentModifiers, MouseInputSource::invalidPressure, MouseInputSource::invalidOrientation, getEventTime (buttonRelEvent));
+                            ModifierKeys::currentModifiers, MouseInputSource::defaultPressure, MouseInputSource::defaultOrientation, getEventTime (buttonRelEvent));
 }
 
 void XWindowSystem::handleMotionNotifyEvent (LinuxComponentPeer* peer, const XPointerMovedEvent& movedEvent) const
@@ -3395,8 +3544,8 @@ void XWindowSystem::handleMotionNotifyEvent (LinuxComponentPeer* peer, const XPo
         dragState.handleExternalDragMotionNotify();
 
     peer->handleMouseEvent (MouseInputSource::InputSourceType::mouse, getLogicalMousePos (movedEvent, peer->getPlatformScaleFactor()),
-                            ModifierKeys::currentModifiers, MouseInputSource::invalidPressure,
-                            MouseInputSource::invalidOrientation, getEventTime (movedEvent));
+                            ModifierKeys::currentModifiers, MouseInputSource::defaultPressure,
+                            MouseInputSource::defaultOrientation, getEventTime (movedEvent));
 }
 
 void XWindowSystem::handleEnterNotifyEvent (LinuxComponentPeer* peer, const XEnterWindowEvent& enterEvent) const
@@ -3408,8 +3557,8 @@ void XWindowSystem::handleEnterNotifyEvent (LinuxComponentPeer* peer, const XEnt
     {
         updateKeyModifiers ((int) enterEvent.state);
         peer->handleMouseEvent (MouseInputSource::InputSourceType::mouse, getLogicalMousePos (enterEvent, peer->getPlatformScaleFactor()),
-                                ModifierKeys::currentModifiers, MouseInputSource::invalidPressure,
-                                MouseInputSource::invalidOrientation, getEventTime (enterEvent));
+                                ModifierKeys::currentModifiers, MouseInputSource::defaultPressure,
+                                MouseInputSource::defaultOrientation, getEventTime (enterEvent));
     }
 }
 
@@ -3423,8 +3572,8 @@ void XWindowSystem::handleLeaveNotifyEvent (LinuxComponentPeer* peer, const XLea
     {
         updateKeyModifiers ((int) leaveEvent.state);
         peer->handleMouseEvent (MouseInputSource::InputSourceType::mouse, getLogicalMousePos (leaveEvent, peer->getPlatformScaleFactor()),
-                                ModifierKeys::currentModifiers, MouseInputSource::invalidPressure,
-                                MouseInputSource::invalidOrientation, getEventTime (leaveEvent));
+                                ModifierKeys::currentModifiers, MouseInputSource::defaultPressure,
+                                MouseInputSource::defaultOrientation, getEventTime (leaveEvent));
     }
 }
 
@@ -3496,7 +3645,9 @@ void XWindowSystem::dismissBlockingModals (LinuxComponentPeer* peer) const
 {
     if (peer->getComponent().isCurrentlyBlockedByAnotherModalComponent())
         if (auto* currentModalComp = Component::getCurrentlyModalComponent())
-            currentModalComp->inputAttemptWhenModal();
+            if (auto* otherPeer = currentModalComp->getPeer())
+                if ((otherPeer->getStyleFlags() & ComponentPeer::windowIsTemporary) != 0)
+                    currentModalComp->inputAttemptWhenModal();
 }
 
 void XWindowSystem::handleConfigureNotifyEvent (LinuxComponentPeer* peer, XConfigureEvent& confEvent) const
@@ -3538,12 +3689,12 @@ void XWindowSystem::propertyNotifyEvent (LinuxComponentPeer* peer, const XProper
             return false;
 
         XWindowSystemUtilities::ScopedXLock xLock;
-        XWindowSystemUtilities::GetXProperty prop (event.window, atoms.windowState, 0, 128, false, XA_ATOM);
+        XWindowSystemUtilities::GetXProperty prop (display, event.window, atoms.windowState, 0, 128, false, XA_ATOM);
 
         if (! (prop.success && prop.actualFormat == 32 && prop.actualType == XA_ATOM))
             return false;
 
-        const auto data = reinterpret_cast<const long*> (prop.data);
+        const auto* data = unalignedPointerCast<const long*> (prop.data);
         const auto end = data + prop.numItems;
 
         return std::find (data, end, atoms.windowStateHidden) != end;
@@ -3551,6 +3702,9 @@ void XWindowSystem::propertyNotifyEvent (LinuxComponentPeer* peer, const XProper
 
     if (isStateChangeEvent() || isHidden())
         dismissBlockingModals (peer);
+
+    if (event.atom == XWindowSystemUtilities::Atoms::getIfExists (display, "_NET_FRAME_EXTENTS"))
+        peer->updateBorderSize();
 }
 
 void XWindowSystem::handleMappingNotify (XMappingEvent& mappingEvent) const
@@ -3612,7 +3766,6 @@ void XWindowSystem::handleClientMessageEvent (LinuxComponentPeer* peer, XClientM
     else if (clientMsg.message_type == atoms.XdndLeave)
     {
         dragAndDropStateMap[peer].handleDragAndDropExit();
-        dragAndDropStateMap.erase (peer);
     }
     else if (clientMsg.message_type == atoms.XdndPosition)
     {
@@ -3677,6 +3830,21 @@ void XWindowSystem::windowMessageReceive (XEvent& event)
         if (! juce_handleXEmbedEvent (nullptr, &event))
        #endif
         {
+            auto* instance = XWindowSystem::getInstance();
+
+            if (auto* xSettings = instance->getXSettings())
+            {
+                if (event.xany.window == xSettings->getSettingsWindow())
+                {
+                    if (event.xany.type == PropertyNotify)
+                        xSettings->update();
+                    else if (event.xany.type == DestroyNotify)
+                        instance->initialiseXSettings();
+
+                    return;
+                }
+            }
+
             if (auto* peer = dynamic_cast<LinuxComponentPeer*> (getPeerFor (event.xany.window)))
             {
                 XWindowSystem::getInstance()->handleWindowMessage (peer, event);
@@ -3685,8 +3853,6 @@ void XWindowSystem::windowMessageReceive (XEvent& event)
 
             if (event.type != ConfigureNotify)
                 return;
-
-            const auto* instance = XWindowSystem::getInstance();
 
             for (auto i = ComponentPeer::getNumPeers(); --i >= 0;)
                 instance->dismissBlockingModals (dynamic_cast<LinuxComponentPeer*> (ComponentPeer::getPeer (i)),
@@ -3702,5 +3868,37 @@ void XWindowSystem::windowMessageReceive (XEvent& event)
 
 //==============================================================================
 JUCE_IMPLEMENT_SINGLETON (XWindowSystem)
+
+Image createSnapshotOfNativeWindow (void* window)
+{
+    ::Window root;
+    int wx, wy;
+    unsigned int ww, wh, bw, bitDepth;
+
+    XWindowSystemUtilities::ScopedXLock xLock;
+
+    const auto display = XWindowSystem::getInstance()->getDisplay();
+
+    if (! X11Symbols::getInstance()->xGetGeometry (display, (::Drawable) window, &root, &wx, &wy, &ww, &wh, &bw, &bitDepth))
+        return {};
+
+    const auto scale = []
+    {
+        if (auto* d = Desktop::getInstance().getDisplays().getPrimaryDisplay())
+            return d->scale;
+
+        return 1.0;
+    }();
+
+    auto image = Image { new XBitmapImage { X11Symbols::getInstance()->xGetImage (display,
+                                                                                  (::Drawable) window,
+                                                                                  0,
+                                                                                  0,
+                                                                                  ww,
+                                                                                  wh,
+                                                                                  AllPlanes,
+                                                                                  ZPixmap) } };
+    return image.rescaled ((int) ((double) ww / scale), (int) ((double) wh / scale));
+}
 
 } // namespace juce

@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2022 - Raw Material Software Limited
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
@@ -402,7 +402,8 @@ private:
     template <typename T = ElementType>
     TriviallyCopyableVoid<T> addArrayInternal (const ElementType* otherElements, int numElements)
     {
-        memcpy (elements + numUsed, otherElements, (size_t) numElements * sizeof (ElementType));
+        if (numElements > 0)
+            memcpy (elements + numUsed, otherElements, (size_t) numElements * sizeof (ElementType));
     }
 
     template <typename Type, typename T = ElementType>
@@ -590,8 +591,7 @@ private:
         // be deleted indirectly during the reallocation operation! To work around this,
         // make a local copy of the item you're trying to add (and maybe use std::move to
         // move it into the add() method to avoid any extra overhead)
-        jassert (std::addressof (element) < begin() || end() <= std::addressof (element));
-        ignoreUnused (element);
+        jassertquiet (std::addressof (element) < begin() || end() <= std::addressof (element));
     }
 
     //==============================================================================

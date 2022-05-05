@@ -1,20 +1,13 @@
 /*
   ==============================================================================
 
-   This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   This file is part of the JUCE 7 technical preview.
+   Copyright (c) 2022 - Raw Material Software Limited
 
-   JUCE is an open source library subject to commercial or open-source
-   licensing.
+   You may use this code under the terms of the GPL v3
+   (see www.gnu.org/licenses).
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
-
-   End User License Agreement: www.juce.com/juce-6-licence
-   Privacy Policy: www.juce.com/juce-privacy-policy
-
-   Or: You may also use this code under the terms of the GPL v3 (see
-   www.gnu.org/licenses).
+   For the technical preview this file cannot be licensed commercially.
 
    JUCE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY, AND ALL WARRANTIES, WHETHER
    EXPRESSED OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR PURPOSE, ARE
@@ -57,7 +50,7 @@ public:
     NativeContext (Component& comp,
                    const OpenGLPixelFormat& cPixelFormat,
                    void* shareContext,
-                   bool /*useMultisampling*/,
+                   bool useMultisamplingIn,
                    OpenGLVersion)
         : component (comp), contextToShareWith (shareContext), dummy (*this)
     {
@@ -67,34 +60,14 @@ public:
 
         X11Symbols::getInstance()->xSync (display, False);
 
-        GLint attribs[] =
+        const std::vector<GLint> optionalAttribs
         {
-            GLX_RENDER_TYPE,      GLX_RGBA_BIT,
-            GLX_DOUBLEBUFFER,     True,
-            GLX_RED_SIZE,         cPixelFormat.redBits,
-            GLX_GREEN_SIZE,       cPixelFormat.greenBits,
-            GLX_BLUE_SIZE,        cPixelFormat.blueBits,
-            GLX_ALPHA_SIZE,       cPixelFormat.alphaBits,
-            GLX_DEPTH_SIZE,       cPixelFormat.depthBufferBits,
-            GLX_STENCIL_SIZE,     cPixelFormat.stencilBufferBits,
-            GLX_ACCUM_RED_SIZE,   cPixelFormat.accumulationBufferRedBits,
-            GLX_ACCUM_GREEN_SIZE, cPixelFormat.accumulationBufferGreenBits,
-            GLX_ACCUM_BLUE_SIZE,  cPixelFormat.accumulationBufferBlueBits,
-            GLX_ACCUM_ALPHA_SIZE, cPixelFormat.accumulationBufferAlphaBits,
-            GLX_X_RENDERABLE,     True,
-            None
+            GLX_SAMPLE_BUFFERS, useMultisamplingIn ? 1 : 0,
+            GLX_SAMPLES,        cPixelFormat.multisamplingLevel
         };
 
-        int countFbConfigs;
-        fbConfig = glXChooseFBConfig (display, DefaultScreen (display), attribs, &countFbConfigs);
-        if (fbConfig == nullptr)
+        if (! tryChooseVisual (cPixelFormat, optionalAttribs) && ! tryChooseVisual (cPixelFormat, {}))
             return;
-
-        bestVisual = glXGetVisualFromFBConfig (display, *fbConfig);
-        if (bestVisual == nullptr) {
-            X11Symbols::getInstance()->xFree (fbConfig);
-            return;
-        }
 
         auto* peer = component.getPeer();
         jassert (peer != nullptr);
@@ -110,8 +83,7 @@ public:
         auto glBounds = component.getTopLevelComponent()
                            ->getLocalArea (&component, component.getLocalBounds());
 
-        if (JUCEApplicationBase::isStandaloneApp())
-            glBounds = Desktop::getInstance().getDisplays().logicalToPhysical (glBounds);
+        glBounds = Desktop::getInstance().getDisplays().logicalToPhysical (glBounds);
 
         embeddedWindow = X11Symbols::getInstance()->xCreateWindow (display, windowH,
                                                                    glBounds.getX(), glBounds.getY(),
@@ -157,9 +129,6 @@ public:
             }
         }
 
-        if (fbConfig != nullptr)
-            X11Symbols::getInstance()->xFree (fbConfig);
-
         if (bestVisual != nullptr)
             X11Symbols::getInstance()->xFree (bestVisual);
     }
@@ -167,18 +136,7 @@ public:
     bool initialiseOnRenderThread (OpenGLContext& c)
     {
         XWindowSystemUtilities::ScopedXLock xLock;
-        PFNGLXCREATECONTEXTATTRIBSARBPROC createContextAttribs;
-        int attribs[] = {
-            GLX_CONTEXT_MAJOR_VERSION_ARB, 3,
-            GLX_CONTEXT_MINOR_VERSION_ARB, 2,
-            GLX_CONTEXT_PROFILE_MASK_ARB,  GLX_CONTEXT_CORE_PROFILE_BIT_ARB,
-            0
-        };
-
-        createContextAttribs = (PFNGLXCREATECONTEXTATTRIBSARBPROC)
-            OpenGLHelpers::getExtensionFunction("glXCreateContextAttribsARB");
-
-        renderContext = createContextAttribs (display, *fbConfig, (GLXContext) contextToShareWith, GL_TRUE, attribs);
+        renderContext = glXCreateContext (display, bestVisual, (GLXContext) contextToShareWith, GL_TRUE);
         c.makeActive();
         context = &c;
 
@@ -228,14 +186,8 @@ public:
         auto physicalBounds = Desktop::getInstance().getDisplays().logicalToPhysical (bounds);
 
         XWindowSystemUtilities::ScopedXLock xLock;
-
-        if (JUCEApplicationBase::isStandaloneApp())
-            X11Symbols::getInstance()->xMoveResizeWindow (display, embeddedWindow,
-                                                          physicalBounds.getX(), physicalBounds.getY(),
-                                                          (unsigned int) jmax (1, physicalBounds.getWidth()),
-                                                          (unsigned int) jmax (1, physicalBounds.getHeight()));
-        else
-            X11Symbols::getInstance()->xResizeWindow (display, embeddedWindow,
+        X11Symbols::getInstance()->xMoveResizeWindow (display, embeddedWindow,
+                                                      physicalBounds.getX(), physicalBounds.getY(),
                                                       (unsigned int) jmax (1, physicalBounds.getWidth()),
                                                       (unsigned int) jmax (1, physicalBounds.getHeight()));
     }
@@ -271,6 +223,33 @@ public:
     struct Locker { Locker (NativeContext&) {} };
 
 private:
+    bool tryChooseVisual (const OpenGLPixelFormat& format, const std::vector<GLint>& optionalAttribs)
+    {
+        std::vector<GLint> allAttribs
+        {
+            GLX_RGBA,
+            GLX_DOUBLEBUFFER,
+            GLX_RED_SIZE,         format.redBits,
+            GLX_GREEN_SIZE,       format.greenBits,
+            GLX_BLUE_SIZE,        format.blueBits,
+            GLX_ALPHA_SIZE,       format.alphaBits,
+            GLX_DEPTH_SIZE,       format.depthBufferBits,
+            GLX_STENCIL_SIZE,     format.stencilBufferBits,
+            GLX_ACCUM_RED_SIZE,   format.accumulationBufferRedBits,
+            GLX_ACCUM_GREEN_SIZE, format.accumulationBufferGreenBits,
+            GLX_ACCUM_BLUE_SIZE,  format.accumulationBufferBlueBits,
+            GLX_ACCUM_ALPHA_SIZE, format.accumulationBufferAlphaBits
+        };
+
+        allAttribs.insert (allAttribs.end(), optionalAttribs.begin(), optionalAttribs.end());
+
+        allAttribs.push_back (None);
+
+        bestVisual = glXChooseVisual (display, X11Symbols::getInstance()->xDefaultScreen (display), allAttribs.data());
+
+        return bestVisual != nullptr;
+    }
+
     static constexpr int embeddedWindowEventMask = ExposureMask | StructureNotifyMask;
 
     Component& component;
@@ -280,7 +259,6 @@ private:
     int swapFrames = 1;
     Rectangle<int> bounds;
     XVisualInfo* bestVisual = nullptr;
-    GLXFBConfig* fbConfig = nullptr;
     void* contextToShareWith;
 
     OpenGLContext* context = nullptr;

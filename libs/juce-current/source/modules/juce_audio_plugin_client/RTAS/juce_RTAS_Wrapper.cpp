@@ -1,20 +1,13 @@
 /*
   ==============================================================================
 
-   This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   This file is part of the JUCE 7 technical preview.
+   Copyright (c) 2022 - Raw Material Software Limited
 
-   JUCE is an open source library subject to commercial or open-source
-   licensing.
+   You may use this code under the terms of the GPL v3
+   (see www.gnu.org/licenses).
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
-
-   End User License Agreement: www.juce.com/juce-6-licence
-   Privacy Policy: www.juce.com/juce-privacy-policy
-
-   Or: You may also use this code under the terms of the GPL v3 (see
-   www.gnu.org/licenses).
+   For the technical preview this file cannot be licensed commercially.
 
    JUCE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY, AND ALL WARRANTIES, WHETHER
    EXPRESSED OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR PURPOSE, ARE
@@ -23,6 +16,7 @@
   ==============================================================================
 */
 
+#include <juce_core/system/juce_CompilerWarnings.h>
 #include <juce_core/system/juce_TargetPlatform.h>
 #include "../utility/juce_CheckSettingMacros.h"
 
@@ -162,15 +156,15 @@ class JucePlugInProcess  : public CEffectProcessMIDI,
 {
 public:
     //==============================================================================
-    // RTAS builds will be removed from JUCE in the next release
-    JUCE_DEPRECATED_WITH_BODY (JucePlugInProcess(),
+    [[deprecated ("RTAS builds will be removed from JUCE in the next release.")]]
+    JucePlugInProcess()
     {
         juceFilter.reset (createPluginFilterOfType (AudioProcessor::wrapperType_RTAS));
 
         AddChunk (juceChunkType, "Juce Audio Plugin Data");
 
         ++numInstances;
-    })
+    }
 
     ~JucePlugInProcess()
     {
@@ -587,7 +581,7 @@ public:
 
                 AudioBuffer<float> chans (channels, totalChans, numSamples);
 
-                if (mBypassed)
+                if (mBypassed && juceFilter->getBypassParameter() == nullptr)
                     juceFilter->processBlockBypassed (chans, midiEvents);
                 else
                     juceFilter->processBlock (chans, midiEvents);
@@ -684,6 +678,10 @@ public:
         else
         {
             mBypassed = (value > 0);
+
+            if (auto* param = juceFilter->getBypassParameter())
+                if (mBypassed != (param->getValue() >= 0.5f))
+                    param.setValueNotifyingHost (mBypassed ? 1.0f : 0.0f);
         }
 
         return CProcess::UpdateControlValue (controlIndex, value);
@@ -756,21 +754,24 @@ public:
         info.ppqLoopStart = 0;
         info.ppqLoopEnd = 0;
 
-        double framesPerSec = 24.0;
-
-        switch (fTimeCodeInfo.mFrameRate)
+        info.frameRate = [this]
         {
-            case ficFrameRate_24Frame:       info.frameRate = AudioPlayHead::fps24;       break;
-            case ficFrameRate_25Frame:       info.frameRate = AudioPlayHead::fps25;       framesPerSec = 25.0; break;
-            case ficFrameRate_2997NonDrop:   info.frameRate = AudioPlayHead::fps2997;     framesPerSec = 30.0 * 1000.0 / 1001.0; break;
-            case ficFrameRate_2997DropFrame: info.frameRate = AudioPlayHead::fps2997drop; framesPerSec = 30.0 * 1000.0 / 1001.0; break;
-            case ficFrameRate_30NonDrop:     info.frameRate = AudioPlayHead::fps30;       framesPerSec = 30.0; break;
-            case ficFrameRate_30DropFrame:   info.frameRate = AudioPlayHead::fps30drop;   framesPerSec = 30.0; break;
-            case ficFrameRate_23976:         info.frameRate = AudioPlayHead::fps23976;    framesPerSec = 24.0 * 1000.0 / 1001.0; break;
-            default:                         info.frameRate = AudioPlayHead::fpsUnknown;  break;
-        }
+            switch (fTimeCodeInfo.mFrameRate)
+            {
+                case ficFrameRate_24Frame:              return FrameRate().withBaseRate (24);
+                case ficFrameRate_23976:                return FrameRate().withBaseRate (24).withPullDown();
+                case ficFrameRate_25Frame:              return FrameRate().withBaseRate (25);
+                case ficFrameRate_30NonDrop:            return FrameRate().withBaseRate (30);
+                case ficFrameRate_30DropFrame:          return FrameRate().withBaseRate (30).withDrop();
+                case ficFrameRate_2997NonDrop:          return FrameRate().withBaseRate (30).withPullDown();
+                case ficFrameRate_2997DropFrame:        return FrameRate().withBaseRate (30).withPullDown().withDrop();
+            }
 
-        info.editOriginTime = fTimeCodeInfo.mFrameOffset / framesPerSec;
+            return FrameRate();
+        }();
+
+        const auto effectiveRate = info.frameRate.getEffectiveRate();
+        info.editOriginTime = effectiveRate != 0.0 ? fTimeCodeInfo.mFrameOffset / effectiveRate : 0.0;
 
         return true;
     }
