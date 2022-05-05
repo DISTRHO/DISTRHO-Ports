@@ -1,8 +1,8 @@
 diff --git a/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp b/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
-index 7e2122580..cff9b7a88 100644
+index 243e194fc..a2b0286fb 100644
 --- a/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
 +++ b/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
-@@ -1841,7 +1841,7 @@ private:
+@@ -1853,7 +1853,7 @@ private:
  
      pointer_sized_int handleGetPlugInName (VstOpCodeArguments args)
      {

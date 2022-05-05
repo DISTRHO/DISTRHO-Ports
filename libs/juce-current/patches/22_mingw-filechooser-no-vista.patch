@@ -1,8 +1,8 @@
 diff --git a/modules/juce_gui_basics/native/juce_win32_FileChooser.cpp b/modules/juce_gui_basics/native/juce_win32_FileChooser.cpp
-index 0c1138a2b..a5b42b8ef 100644
+index ec946b7a4..ce42c0093 100644
 --- a/modules/juce_gui_basics/native/juce_win32_FileChooser.cpp
 +++ b/modules/juce_gui_basics/native/juce_win32_FileChooser.cpp
-@@ -172,6 +172,7 @@ private:
+@@ -159,6 +159,7 @@ private:
          void operator() (LPWSTR ptr) const noexcept { CoTaskMemFree (ptr); }
      };
  
@@ -10,7 +10,7 @@ index 0c1138a2b..a5b42b8ef 100644
      bool showDialog (IFileDialog& dialog, bool async)
      {
          FILEOPENDIALOGOPTIONS flags = {};
-@@ -327,6 +328,7 @@ private:
+@@ -376,6 +377,7 @@ private:
  
          return result;
      }
@@ -18,7 +18,7 @@ index 0c1138a2b..a5b42b8ef 100644
  
      Array<URL> openDialogPreVista (bool async)
      {
-@@ -436,11 +438,13 @@ private:
+@@ -492,11 +494,13 @@ private:
  
          const Remover remover (*this);
  

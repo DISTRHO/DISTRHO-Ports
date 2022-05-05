@@ -1,0 +1,14 @@
+diff --git a/modules/juce_audio_processors/utilities/juce_ExtensionsVisitor.h b/modules/juce_audio_processors/utilities/juce_ExtensionsVisitor.h
+index a272fee76..5b484f4e4 100644
+--- a/modules/juce_audio_processors/utilities/juce_ExtensionsVisitor.h
++++ b/modules/juce_audio_processors/utilities/juce_ExtensionsVisitor.h
+@@ -56,7 +56,9 @@ typedef AudioComponentInstance AudioUnit;
+     }
+     @endcode
+ */
++#ifndef _VESTIGE_H
+ struct AEffect;
++#endif
+ 
+ //==============================================================================
+ namespace juce

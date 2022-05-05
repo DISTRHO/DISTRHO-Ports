@@ -1,8 +1,8 @@
 diff --git a/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp b/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
-index 8683dc728..94f6bf569 100644
+index a2b0286fb..431919098 100644
 --- a/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
 +++ b/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
-@@ -61,7 +61,7 @@ JUCE_BEGIN_IGNORE_WARNINGS_MSVC (4996 4100)
+@@ -55,7 +55,7 @@ JUCE_BEGIN_IGNORE_WARNINGS_MSVC (4996 4100)
   #define PRAGMA_ALIGN_SUPPORTED 1
  #endif
  
@@ -11,27 +11,11 @@ index 8683dc728..94f6bf569 100644
   #define __cdecl
  #endif
  
-diff --git a/modules/juce_audio_plugin_client/utility/juce_CheckSettingMacros.h b/modules/juce_audio_plugin_client/utility/juce_CheckSettingMacros.h
-index 6bea84307..baaa59f06 100644
---- a/modules/juce_audio_plugin_client/utility/juce_CheckSettingMacros.h
-+++ b/modules/juce_audio_plugin_client/utility/juce_CheckSettingMacros.h
-@@ -73,11 +73,6 @@
-  #define JucePlugin_Build_RTAS 0
- #endif
- 
--#if ! (defined (_MSC_VER) || defined (__APPLE_CPP__) || defined (__APPLE_CC__) || defined (LINUX) || defined (__linux__))
-- #undef JucePlugin_Build_VST3
-- #define JucePlugin_Build_VST3 0
--#endif
--
- //==============================================================================
- #if JucePlugin_Build_LV2 && ! defined (JucePlugin_LV2URI)
-  #error "You need to define the JucePlugin_LV2URI value!"
 diff --git a/modules/juce_audio_processors/format_types/juce_VSTPluginFormat.cpp b/modules/juce_audio_processors/format_types/juce_VSTPluginFormat.cpp
-index 620ba9874..d9359b736 100644
+index 06b5d5a95..f3506b8bd 100644
 --- a/modules/juce_audio_processors/format_types/juce_VSTPluginFormat.cpp
 +++ b/modules/juce_audio_processors/format_types/juce_VSTPluginFormat.cpp
-@@ -62,9 +62,6 @@ JUCE_BEGIN_IGNORE_WARNINGS_MSVC (4355)
+@@ -50,9 +50,6 @@ JUCE_BEGIN_IGNORE_WARNINGS_MSVC (4355)
   #ifndef WM_APPCOMMAND
    #define WM_APPCOMMAND 0x0319
   #endif
@@ -41,18 +25,75 @@ index 620ba9874..d9359b736 100644
  #elif ! JUCE_WINDOWS
   static void _fpreset() {}
   static void _clearfp() {}
-diff --git a/modules/juce_core/threads/juce_WaitableEvent.h b/modules/juce_core/threads/juce_WaitableEvent.h
-index 52269f706..670903653 100644
---- a/modules/juce_core/threads/juce_WaitableEvent.h
-+++ b/modules/juce_core/threads/juce_WaitableEvent.h
-@@ -20,6 +20,10 @@
-   ==============================================================================
- */
+diff --git a/modules/juce_gui_basics/juce_gui_basics.cpp b/modules/juce_gui_basics/juce_gui_basics.cpp
+index 2727a4507..bd19f7bec 100644
+--- a/modules/juce_gui_basics/juce_gui_basics.cpp
++++ b/modules/juce_gui_basics/juce_gui_basics.cpp
+@@ -62,9 +62,12 @@
+  #include <vfw.h>
+  #include <commdlg.h>
+  #include <commctrl.h>
+- #include <UIAutomation.h>
+  #include <sapi.h>
  
-+#if JUCE_MINGW && !defined(_GLIBCXX_HAS_GTHREADS)
-+#include "mingw-std-threads/mingw.condition_variable.h"
-+#endif
++ #if JUCE_MSVC
++  #include <UIAutomation.h>
++ #endif
 +
- namespace juce
- {
+  #if JUCE_WEB_BROWSER
+   #include <exdisp.h>
+   #include <exdispid.h>
+@@ -279,13 +282,15 @@ namespace juce
+  #include "native/juce_mac_MouseCursor.mm"
  
+ #elif JUCE_WINDOWS
+- #include "native/accessibility/juce_win32_ComInterfaces.h"
+- #include "native/accessibility/juce_win32_WindowsUIAWrapper.h"
+- #include "native/accessibility/juce_win32_AccessibilityElement.h"
+- #include "native/accessibility/juce_win32_UIAHelpers.h"
+- #include "native/accessibility/juce_win32_UIAProviders.h"
+- #include "native/accessibility/juce_win32_AccessibilityElement.cpp"
+- #include "native/accessibility/juce_win32_Accessibility.cpp"
++ #if JUCE_MSVC
++  #include "native/accessibility/juce_win32_ComInterfaces.h"
++  #include "native/accessibility/juce_win32_WindowsUIAWrapper.h"
++  #include "native/accessibility/juce_win32_AccessibilityElement.h"
++  #include "native/accessibility/juce_win32_UIAHelpers.h"
++  #include "native/accessibility/juce_win32_UIAProviders.h"
++  #include "native/accessibility/juce_win32_AccessibilityElement.cpp"
++  #include "native/accessibility/juce_win32_Accessibility.cpp"
++ #endif
+  #include "native/juce_win32_Windowing.cpp"
+  #include "native/juce_win32_DragAndDrop.cpp"
+  #include "native/juce_win32_FileChooser.cpp"
+diff --git a/modules/juce_gui_basics/native/juce_win32_Windowing.cpp b/modules/juce_gui_basics/native/juce_win32_Windowing.cpp
+index 954200135..a62f8521e 100644
+--- a/modules/juce_gui_basics/native/juce_win32_Windowing.cpp
++++ b/modules/juce_gui_basics/native/juce_win32_Windowing.cpp
+@@ -1524,8 +1524,10 @@ public:
+         // do this first to avoid messages arriving for this window before it's destroyed
+         JuceWindowIdentifier::setAsJUCEWindow (hwnd, false);
+ 
++       #if JUCE_MSVC
+         if (isAccessibilityActive)
+             WindowsAccessibility::revokeUIAMapEntriesForWindow (hwnd);
++       #endif
+ 
+         shadower = nullptr;
+         currentTouches.deleteAllTouchesForPeer (this);
+@@ -4057,6 +4059,7 @@ private:
+             case WM_GETDLGCODE:
+                 return DLGC_WANTALLKEYS;
+ 
++           #if JUCE_MSVC
+             case WM_GETOBJECT:
+             {
+                 if (static_cast<long> (lParam) == WindowsAccessibility::getUiaRootObjectId())
+@@ -4075,6 +4078,7 @@ private:
+ 
+                 break;
+             }
++           #endif
+             default:
+                 break;
+         }

@@ -1,8 +1,8 @@
 diff --git a/modules/juce_core/native/juce_posix_SharedCode.h b/modules/juce_core/native/juce_posix_SharedCode.h
-index 082a5697a..c79ca18ea 100644
+index 661f90d60..f3a8f061b 100644
 --- a/modules/juce_core/native/juce_posix_SharedCode.h
 +++ b/modules/juce_core/native/juce_posix_SharedCode.h
-@@ -600,12 +600,39 @@ File juce_getExecutableFile()
+@@ -611,12 +611,39 @@ File juce_getExecutableFile()
  
              auto localSymbol = (void*) juce_getExecutableFile;
              dladdr (localSymbol, &exeInfo);

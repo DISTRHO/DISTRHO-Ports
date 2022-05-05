@@ -1,16 +1,15 @@
 diff --git a/modules/juce_core/native/juce_linux_Files.cpp b/modules/juce_core/native/juce_linux_Files.cpp
-index d2a302e3e..3dc4602ce 100644
+index f661e4ab4..dce73fcc2 100644
 --- a/modules/juce_core/native/juce_linux_Files.cpp
 +++ b/modules/juce_core/native/juce_linux_Files.cpp
-@@ -211,15 +211,21 @@ bool Process::openDocument (const String& fileName, const String& parameters)
+@@ -223,15 +223,21 @@ bool Process::openDocument (const String& fileName, const String& parameters)
  
-     const char* const argv[4] = { "/bin/sh", "-c", cmdString.toUTF8(), nullptr };
+     const char* const argv[] = { "/bin/sh", "-c", cmdString.toUTF8(), nullptr };
  
--    auto cpid = fork();
 +#if JUCE_USE_VFORK
 +    const auto cpid = vfork();
 +#else
-+    const auto cpid = fork();
+     const auto cpid = fork();
 +#endif
  
      if (cpid == 0)
@@ -22,13 +21,13 @@ index d2a302e3e..3dc4602ce 100644
          // Child process
 -        execve (argv[0], (char**) argv, environ);
 -        exit (0);
-+        if (execvp (argv[0], (char**) argv) < 0)
++        if (execve (argv[0], (char**) argv, environ) < 0)
 +            _exit (0);
      }
  
      return cpid >= 0;
 diff --git a/modules/juce_core/native/juce_mac_Files.mm b/modules/juce_core/native/juce_mac_Files.mm
-index 1a4d07516..f385a089f 100644
+index aefa76317..066c12cde 100644
 --- a/modules/juce_core/native/juce_mac_Files.mm
 +++ b/modules/juce_core/native/juce_mac_Files.mm
 @@ -92,23 +92,22 @@ namespace MacFileHelpers
@@ -65,10 +64,10 @@ index 1a4d07516..f385a089f 100644
     #endif
  }
 diff --git a/modules/juce_core/native/juce_posix_SharedCode.h b/modules/juce_core/native/juce_posix_SharedCode.h
-index c79ca18ea..ad46cf390 100644
+index f3a8f061b..bcd3eab59 100644
 --- a/modules/juce_core/native/juce_posix_SharedCode.h
 +++ b/modules/juce_core/native/juce_posix_SharedCode.h
-@@ -1104,7 +1104,18 @@ public:
+@@ -1125,7 +1125,18 @@ public:
  
          if (pipe (pipeHandles) == 0)
          {
@@ -88,7 +87,7 @@ index c79ca18ea..ad46cf390 100644
  
              if (result < 0)
              {
-@@ -1113,6 +1124,7 @@ public:
+@@ -1134,6 +1145,7 @@ public:
              }
              else if (result == 0)
              {
@@ -96,7 +95,7 @@ index c79ca18ea..ad46cf390 100644
                  // we're the child process..
                  close (pipeHandles[0]);   // close the read handle
  
-@@ -1127,17 +1139,10 @@ public:
+@@ -1148,17 +1160,10 @@ public:
                      dup2 (open ("/dev/null", O_WRONLY), STDERR_FILENO);
  
                  close (pipeHandles[1]);

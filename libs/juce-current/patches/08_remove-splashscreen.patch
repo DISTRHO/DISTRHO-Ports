@@ -1,8 +1,8 @@
 diff --git a/modules/juce_audio_processors/processors/juce_AudioProcessorEditor.cpp b/modules/juce_audio_processors/processors/juce_AudioProcessorEditor.cpp
-index b980441c9..670cb3969 100644
+index 099bce14e..fd71901db 100644
 --- a/modules/juce_audio_processors/processors/juce_AudioProcessorEditor.cpp
 +++ b/modules/juce_audio_processors/processors/juce_AudioProcessorEditor.cpp
-@@ -40,8 +40,6 @@ AudioProcessorEditor::AudioProcessorEditor (AudioProcessor* p) noexcept  : proce
+@@ -33,8 +33,6 @@ AudioProcessorEditor::AudioProcessorEditor (AudioProcessor* p) noexcept  : proce
  
  AudioProcessorEditor::~AudioProcessorEditor()
  {
@@ -11,7 +11,7 @@ index b980441c9..670cb3969 100644
      // if this fails, then the wrapper hasn't called editorBeingDeleted() on the
      // filter for some reason..
      jassert (processor.getActiveEditor() != this);
-@@ -56,23 +54,6 @@ void AudioProcessorEditor::hostMIDIControllerIsAvailable (bool)                {
+@@ -49,23 +47,6 @@ void AudioProcessorEditor::hostMIDIControllerIsAvailable (bool)                {
  
  void AudioProcessorEditor::initialise()
  {
@@ -32,50 +32,50 @@ index b980441c9..670cb3969 100644
 -
 -    // END SECTION A
 -
-     resizable = false;
- 
      attachConstrainer (&defaultConstrainer);
+     resizeListener.reset (new AudioProcessorEditorListener (*this));
+     addComponentListener (resizeListener.get());
 diff --git a/modules/juce_audio_processors/processors/juce_AudioProcessorEditor.h b/modules/juce_audio_processors/processors/juce_AudioProcessorEditor.h
-index ff694b78f..07d3765f4 100644
+index 9824bf8b6..81a91d8ff 100644
 --- a/modules/juce_audio_processors/processors/juce_AudioProcessorEditor.h
 +++ b/modules/juce_audio_processors/processors/juce_AudioProcessorEditor.h
-@@ -206,7 +206,6 @@ private:
-     bool resizable;
+@@ -228,7 +228,6 @@ private:
      ComponentBoundsConstrainer defaultConstrainer;
-     ComponentBoundsConstrainer* constrainer = {};
+     ComponentBoundsConstrainer* constrainer = nullptr;
+     AudioProcessorEditorHostContext* hostContext = nullptr;
 -    Component::SafePointer<Component> splashScreen;
      AffineTransform hostScaleTransform;
  
      JUCE_DECLARE_NON_COPYABLE (AudioProcessorEditor)
 diff --git a/modules/juce_gui_basics/juce_gui_basics.cpp b/modules/juce_gui_basics/juce_gui_basics.cpp
-index 056ff591b..a4d798606 100644
+index d9697568b..2727a4507 100644
 --- a/modules/juce_gui_basics/juce_gui_basics.cpp
 +++ b/modules/juce_gui_basics/juce_gui_basics.cpp
-@@ -218,7 +218,6 @@ namespace juce
- #include "application/juce_Application.cpp"
+@@ -242,7 +242,6 @@ namespace juce
  #include "misc/juce_BubbleComponent.cpp"
  #include "misc/juce_DropShadower.cpp"
+ #include "misc/juce_FocusOutline.cpp"
 -#include "misc/juce_JUCESplashScreen.cpp"
  
  #include "layout/juce_FlexBox.cpp"
  #include "layout/juce_GridItem.cpp"
 diff --git a/modules/juce_gui_basics/juce_gui_basics.h b/modules/juce_gui_basics/juce_gui_basics.h
-index 729461282..a4873d04b 100644
+index 57d10f3ee..8878ae4c6 100644
 --- a/modules/juce_gui_basics/juce_gui_basics.h
 +++ b/modules/juce_gui_basics/juce_gui_basics.h
-@@ -250,7 +250,6 @@ namespace juce
- #include "menus/juce_BurgerMenuComponent.h"
+@@ -257,7 +257,6 @@ namespace juce
  #include "buttons/juce_ToolbarButton.h"
  #include "misc/juce_DropShadower.h"
+ #include "misc/juce_FocusOutline.h"
 -#include "misc/juce_JUCESplashScreen.h"
  #include "widgets/juce_TreeView.h"
  #include "windows/juce_TopLevelWindow.h"
- #include "windows/juce_AlertWindow.h"
+ #include "windows/juce_MessageBoxOptions.h"
 diff --git a/modules/juce_gui_basics/windows/juce_ResizableWindow.cpp b/modules/juce_gui_basics/windows/juce_ResizableWindow.cpp
-index dc3c7279a..d1d20d6c7 100644
+index 3904da287..dea49aa70 100644
 --- a/modules/juce_gui_basics/windows/juce_ResizableWindow.cpp
 +++ b/modules/juce_gui_basics/windows/juce_ResizableWindow.cpp
-@@ -41,8 +41,6 @@ ResizableWindow::ResizableWindow (const String& name, Colour bkgnd, bool shouldA
+@@ -34,8 +34,6 @@ ResizableWindow::ResizableWindow (const String& name, Colour bkgnd, bool shouldA
  
  ResizableWindow::~ResizableWindow()
  {
@@ -84,7 +84,7 @@ index dc3c7279a..d1d20d6c7 100644
      // Don't delete or remove the resizer components yourself! They're managed by the
      // ResizableWindow, and you should leave them alone! You may have deleted them
      // accidentally by careless use of deleteAllChildren()..?
-@@ -60,27 +58,6 @@ ResizableWindow::~ResizableWindow()
+@@ -53,27 +51,6 @@ ResizableWindow::~ResizableWindow()
  
  void ResizableWindow::initialise (const bool shouldAddToDesktop)
  {
@@ -113,10 +113,10 @@ index dc3c7279a..d1d20d6c7 100644
  
      lastNonFullScreenPos.setBounds (50, 50, 256, 256);
 diff --git a/modules/juce_gui_basics/windows/juce_ResizableWindow.h b/modules/juce_gui_basics/windows/juce_ResizableWindow.h
-index d67303595..e59f620c1 100644
+index d9e4e7fcf..310767c0f 100644
 --- a/modules/juce_gui_basics/windows/juce_ResizableWindow.h
 +++ b/modules/juce_gui_basics/windows/juce_ResizableWindow.h
-@@ -383,7 +383,7 @@ protected:
+@@ -384,7 +384,7 @@ protected:
  
  private:
      //==============================================================================
