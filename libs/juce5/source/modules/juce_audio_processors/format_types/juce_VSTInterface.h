@@ -27,7 +27,10 @@
 #ifndef JUCE_VSTINTERFACE_H_INCLUDED
 #define JUCE_VSTINTERFACE_H_INCLUDED
 
-using namespace juce;
+using juce::int16;
+using juce::int32;
+using juce::uint32;
+using juce::pointer_sized_int;
 
 #if JUCE_MSVC
  #define VSTINTERFACECALL __cdecl

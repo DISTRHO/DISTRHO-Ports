@@ -81,6 +81,8 @@
 
 #include "../../juce_audio_processors/format_types/juce_VSTCommon.h"
 
+using namespace juce;
+
 #ifdef _MSC_VER
  #pragma pack (pop)
 #endif

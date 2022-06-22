@@ -24,8 +24,9 @@
   ==============================================================================
 */
 
-// NB: this must come first, *before* the header-guard.
-#ifdef JUCE_VSTINTERFACE_H_INCLUDED
+#pragma once
+
+#include "juce_VSTInterface.h"
 
 namespace juce
 {
@@ -187,5 +188,3 @@ private:
 };
 
 } // namespace juce
-
-#endif // JUCE_VSTINTERFACE_H_INCLUDED
