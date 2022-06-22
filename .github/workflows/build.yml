@@ -15,13 +15,13 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
-      - name: Set up cache
-        id: cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            build
-          key: linux-arm64-v${{ env.CACHE_VERSION }}
+      #- name: Set up cache
+        #id: cache
+        #uses: actions/cache@v2
+        #with:
+          #path: |
+            #build
+          #key: linux-arm64-v${{ env.CACHE_VERSION }}
       - name: Fix GitHub's mess
         run: |
           sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list
@@ -48,7 +48,7 @@ jobs:
           LDFLAGS: -static-libgcc -static-libstdc++
           PKG_CONFIG_PATH: /usr/lib/aarch64-linux-gnu/pkgconfig
         run: |
-          meson build --buildtype=release --prefix=/usr
+          meson build --buildtype=release --prefix=/usr -Dsse-optimizations=false
           ninja -C build
       - name: Install linux armhf
         run: |
@@ -86,13 +86,13 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
-      - name: Set up cache
-        id: cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            build
-          key: linux-armhf-v${{ env.CACHE_VERSION }}
+      #- name: Set up cache
+        #id: cache
+        #uses: actions/cache@v2
+        #with:
+          #path: |
+            #build
+          #key: linux-armhf-v${{ env.CACHE_VERSION }}
       - name: Fix GitHub's mess
         run: |
           sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list
@@ -121,7 +121,7 @@ jobs:
           LDFLAGS: -static-libgcc -static-libstdc++
           PKG_CONFIG_PATH: /usr/lib/arm-linux-gnueabihf/pkgconfig
         run: |
-          meson build --buildtype=release --prefix=/usr
+          meson build --buildtype=release --prefix=/usr -Dsse-optimizations=false
           ninja -C build
       - name: Install linux armhf
         run: |
@@ -159,13 +159,13 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
-      - name: Set up cache
-        id: cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            build
-          key: linux-i686-v${{ env.CACHE_VERSION }}
+      #- name: Set up cache
+        #id: cache
+        #uses: actions/cache@v2
+        #with:
+          #path: |
+            #build
+          #key: linux-i686-v${{ env.CACHE_VERSION }}
       - name: Fix GitHub's mess
         run: |
           sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list
@@ -222,13 +222,13 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
-      - name: Set up cache
-        id: cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            build
-          key: linux-x86_64-v${{ env.CACHE_VERSION }}
+      #- name: Set up cache
+        #id: cache
+        #uses: actions/cache@v2
+        #with:
+          #path: |
+            #build
+          #key: linux-x86_64-v${{ env.CACHE_VERSION }}
       - name: Set up dependencies
         run: |
           sudo apt-get update -qq
@@ -320,20 +320,20 @@ jobs:
     runs-on: macos-10.15
     steps:
       - uses: actions/checkout@v2
-      - name: Set up cache
-        id: cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            build
-          key: macos-intel-v${{ env.CACHE_VERSION }}
+      #- name: Set up cache
+        #id: cache
+        #uses: actions/cache@v2
+        #with:
+          #path: |
+            #build
+          #key: macos-intel-v${{ env.CACHE_VERSION }}
       - name: Set up dependencies
         run: |
           brew install meson
       - name: Build macOS intel
         env:
           CFLAGS: -arch x86_64 -mmacosx-version-min=10.8 -DMAC_OS_X_VERSION_MAX_ALLOWED=MAC_OS_X_VERSION_10_8 -DMAC_OS_X_VERSION_MIN_REQUIRED=MAC_OS_X_VERSION_10_8
-          CXXFLAGS: -arch x86_64 -mmacosx-version-min=10.8 -DMAC_OS_X_VERSION_MAX_ALLOWED=MAC_OS_X_VERSION_10_8 -DMAC_OS_X_VERSION_MIN_REQUIRED=MAC_OS_X_VERSION_10_8
+          CXXFLAGS: -arch x86_64 -mmacosx-version-min=10.8 -stdlib=libc++ -DMAC_OS_X_VERSION_MAX_ALLOWED=MAC_OS_X_VERSION_10_8 -DMAC_OS_X_VERSION_MIN_REQUIRED=MAC_OS_X_VERSION_10_8
           LDFLAGS: -arch x86_64 -mmacosx-version-min=10.8 -stdlib=libc++
         run: |
           meson build --buildtype=release --prefix=/usr
@@ -365,13 +365,13 @@ jobs:
     runs-on: macos-10.15
     steps:
       - uses: actions/checkout@v2
-      - name: Set up cache
-        id: cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            build
-          key: macos-universal-v${{ env.CACHE_VERSION }}
+      #- name: Set up cache
+        #id: cache
+        #uses: actions/cache@v2
+        #with:
+          #path: |
+            #build
+          #key: macos-universal-v${{ env.CACHE_VERSION }}
       - name: Fix up Xcode
         run: |
           sudo rm -Rf /Library/Developer/CommandLineTools/SDKs/*
@@ -414,13 +414,13 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
-      - name: Set up cache
-        id: cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            build
-          key: win32-v${{ env.CACHE_VERSION }}
+      #- name: Set up cache
+        #id: cache
+        #uses: actions/cache@v2
+        #with:
+          #path: |
+            #build
+          #key: win32-v${{ env.CACHE_VERSION }}
       - name: Fix GitHub's mess
         run: |
           sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list
@@ -463,13 +463,13 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
-      - name: Set up cache
-        id: cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            build
-          key: win64-v${{ env.CACHE_VERSION }}
+      #- name: Set up cache
+        #id: cache
+        #uses: actions/cache@v2
+        #with:
+          #path: |
+            #build
+          #key: win64-v${{ env.CACHE_VERSION }}
       - name: Fix GitHub's mess
         run: |
           sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list

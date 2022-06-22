@@ -1,7 +1,19 @@
 option('optimizations',
     type: 'boolean',
     value: true,
-    description: 'Enable various optimizations',
+    description: 'Enable various math-related optimizations',
+)
+
+option('lto-optimizations',
+    type: 'boolean',
+    value: true,
+    description: 'Enable LTO optimizations',
+)
+
+option('sse-optimizations',
+    type: 'boolean',
+    value: true,
+    description: 'Enable SSE optimizations',
 )
 
 option('linux-embed',

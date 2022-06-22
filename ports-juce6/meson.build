@@ -28,31 +28,9 @@ build_flags_plugin = [
     '-Werror=deprecated-declarations',
 ]
 
-build_flags_plugin_debug = [
-]
-
-build_flags_plugin_release = [
-    '-ffast-math',
-]
-
 build_flag_plugin_cpp = [
     '-std=gnu++14',
 ]
-
-if optimizations and not linux_embed
-    build_flags_plugin_release += [
-        '-mfpmath=sse',
-    ]
-endif
-
-###############################################################################
-# combine flags depending on build type
-
-if buildtype == 'debug'
-    build_flags_plugin += build_flags_plugin_debug
-else
-    build_flags_plugin += build_flags_plugin_release
-endif
 
 ###############################################################################
 # format-specific build flags

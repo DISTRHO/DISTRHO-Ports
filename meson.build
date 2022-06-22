@@ -26,6 +26,8 @@ build_juce6_only = get_option('build-juce6-only')
 build_juce7_only = get_option('build-juce7-only')
 build_universal = get_option('build-universal')
 optimizations = get_option('optimizations') and buildtype != 'debug'
+lto_optimizations = get_option('lto-optimizations') and buildtype != 'debug'
+sse_optimizations = get_option('sse-optimizations') and buildtype != 'debug'
 
 ###############################################################################
 # set paths
@@ -176,28 +178,37 @@ build_flags_release_cpp = [
     '-fvisibility-inlines-hidden',
 ]
 
+if optimizations or sse_optimizations
+    build_flags_release += [
+        '-ffast-math',
+    ]
+endif
+
 if optimizations
     build_flags_release += [
-        # common
-        '-ffast-math', '-fomit-frame-pointer', '-ftree-vectorize', '-funroll-loops',
-        # lto
-        '-fno-strict-aliasing', '-flto',
+        '-fomit-frame-pointer', '-ftree-vectorize', '-funroll-loops',
     ]
     if not os_darwin
-        # common, gcc only
         build_flags_release += [
             '-fprefetch-loop-arrays',
         ]
     endif
-    if build_machine.cpu_family().contains('x86') or build_universal
+endif
+
+if lto_optimizations
+    build_flags_release += [
+        '-fno-strict-aliasing', '-flto',
+    ]
+endif
+
+if sse_optimizations or build_universal
+    build_flags_release += [
+        '-mtune=generic', '-msse', '-msse2',
+    ]
+    if not build_universal
         build_flags_release += [
-            '-mtune=generic', '-msse', '-msse2',
+            '-mfpmath=sse',
         ]
-        if not build_universal
-            build_flags_release += [
-                '-mfpmath=sse',
-            ]
-        endif
     endif
 endif
 
@@ -254,7 +265,7 @@ link_flags_release = [
     '-ffunction-sections',
 ]
 
-if optimizations
+if lto_optimizations
     link_flags_release += [
         '-Werror=odr',
         '-Werror=lto-type-mismatch',
