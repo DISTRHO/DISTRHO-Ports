@@ -24,7 +24,7 @@ build_juce5_only = get_option('build-juce5-only')
 build_juce6_only = get_option('build-juce6-only')
 build_juce7_only = get_option('build-juce7-only')
 linux_embed = get_option('linux-embed')
-optimizations = get_option('optimizations') and host_machine.cpu_family().contains('x86')
+optimizations = get_option('optimizations') and buildtype != 'debug'
 
 ###############################################################################
 # set paths
@@ -120,6 +120,7 @@ endif
 
 build_flags = [
     '-DJUCE_APP_CONFIG_HEADER="AppConfig.h"',
+    '-fno-common',
     '-pthread',
     '-Wall',
     '-Wno-multichar',
@@ -140,6 +141,15 @@ if not os_darwin
     ]
 endif
 
+if not (os_darwin or os_windows)
+    build_flags += [
+        '-fno-gnu-unique'
+    ]
+endif
+
+###############################################################################
+# build flags (debug)
+
 build_flags_debug = [
     '-O0',
     '-ggdb',
@@ -149,6 +159,9 @@ build_flags_debug = [
 
 build_flags_debug_cpp = [
 ]
+
+###############################################################################
+# build flags (release)
 
 build_flags_release = [
     '-O3',
@@ -162,11 +175,28 @@ build_flags_release_cpp = [
     '-fvisibility-inlines-hidden',
 ]
 
-if optimizations and not linux_embed
+if optimizations
     build_flags_release += [
-        '-mtune=generic', '-msse', '-msse2',
+        # common
+        '-ffast-math', '-fomit-frame-pointer', '-ftree-vectorize', '-funroll-loops',
+        # lto
+        '-fno-strict-aliasing', '-flto',
     ]
+    if not os_darwin
+        # common, gcc only
+        build_flags_release += [
+            '-fprefetch-loop-arrays',
+        ]
+    endif
+    if host_machine.cpu_family().contains('x86')
+        build_flags_release += [
+            '-mtune=generic', '-msse', '-msse2', '-mfpmath=sse',
+        ]
+    endif
 endif
+
+###############################################################################
+# build flags (per-OS macros and setup)
 
 if os_darwin
     build_flags += [
@@ -212,6 +242,13 @@ link_flags_release = [
     '-ffunction-sections',
 ]
 
+if optimizations
+    link_flags_release += [
+        '-Werror=odr',
+        '-Werror=lto-type-mismatch',
+    ]
+endif
+
 if os_windows
     link_flags += [
         '-static',
@@ -220,18 +257,14 @@ endif
 
 if os_darwin
     link_flags_release += [
-        '-Wl,-dead_strip',
-        '-Wl,-dead_strip_dylibs',
+        '-Wl,-dead_strip,-dead_strip_dylibs,-x',
     ]
 else
     link_flags += [
-        '-Wl,--no-undefined',
+        '-Wl,--as-needed,--no-undefined',
     ]
     link_flags_release += [
-        '-Wl,-O1',
-        '-Wl,--as-needed',
-        '-Wl,--gc-sections',
-        '-Wl,--strip-all',
+        '-Wl,-O1,--gc-sections,--strip-all',
     ]
 endif
 

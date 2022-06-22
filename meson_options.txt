@@ -1,7 +1,7 @@
 option('optimizations',
     type: 'boolean',
     value: true,
-    description: 'Enable SSE2 optimizations',
+    description: 'Enable various optimizations',
 )
 
 option('linux-embed',
