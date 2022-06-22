@@ -20,7 +20,9 @@ endif
 build_lv2 = get_option('build-lv2')
 build_vst2 = get_option('build-vst2')
 build_vst3 = get_option('build-vst3')
-build_legacy_only = get_option('build-legacy-only')
+build_juce5_only = get_option('build-juce5-only')
+build_juce6_only = get_option('build-juce6-only')
+build_juce7_only = get_option('build-juce7-only')
 linux_embed = get_option('linux-embed')
 optimizations = get_option('optimizations') and host_machine.cpu_family().contains('x86')
 
@@ -250,8 +252,14 @@ endif
 # go into subdir to build libraries and plugins
 
 subdir('libs')
-subdir('ports')
-subdir('ports-legacy')
+
+if not (build_juce6_only or build_juce7_only)
+    subdir('ports-juce5')
+endif
+
+if not (build_juce5_only or build_juce7_only)
+    subdir('ports-juce6')
+endif
 
 ###############################################################################
 # extra files to install

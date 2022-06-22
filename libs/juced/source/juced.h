@@ -26,17 +26,17 @@
 #ifndef __JUCED_JUCEHEADER__
 #define __JUCED_JUCEHEADER__
 
-#include "../../juce-legacy/source/modules/juce_audio_basics/juce_audio_basics.h"
-#include "../../juce-legacy/source/modules/juce_audio_devices/juce_audio_devices.h"
-#include "../../juce-legacy/source/modules/juce_audio_formats/juce_audio_formats.h"
-#include "../../juce-legacy/source/modules/juce_audio_processors/juce_audio_processors.h"
-#include "../../juce-legacy/source/modules/juce_audio_utils/juce_audio_utils.h"
-#include "../../juce-legacy/source/modules/juce_core/juce_core.h"
-#include "../../juce-legacy/source/modules/juce_data_structures/juce_data_structures.h"
-#include "../../juce-legacy/source/modules/juce_events/juce_events.h"
-#include "../../juce-legacy/source/modules/juce_graphics/juce_graphics.h"
-#include "../../juce-legacy/source/modules/juce_gui_basics/juce_gui_basics.h"
-#include "../../juce-legacy/source/modules/juce_gui_extra/juce_gui_extra.h"
+#include "../../juce5/source/modules/juce_audio_basics/juce_audio_basics.h"
+#include "../../juce5/source/modules/juce_audio_devices/juce_audio_devices.h"
+#include "../../juce5/source/modules/juce_audio_formats/juce_audio_formats.h"
+#include "../../juce5/source/modules/juce_audio_processors/juce_audio_processors.h"
+#include "../../juce5/source/modules/juce_audio_utils/juce_audio_utils.h"
+#include "../../juce5/source/modules/juce_core/juce_core.h"
+#include "../../juce5/source/modules/juce_data_structures/juce_data_structures.h"
+#include "../../juce5/source/modules/juce_events/juce_events.h"
+#include "../../juce5/source/modules/juce_graphics/juce_graphics.h"
+#include "../../juce5/source/modules/juce_gui_basics/juce_gui_basics.h"
+#include "../../juce5/source/modules/juce_gui_extra/juce_gui_extra.h"
 
 #define BEGIN_JUCE_NAMESPACE namespace juce {
 #define END_JUCE_NAMESPACE }

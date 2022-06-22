@@ -14,10 +14,10 @@ else
 endif
 
 plugin_include_dirs = [
-    include_directories('../libs/juce-current'),
-    include_directories('../libs/juce-current/source'),
-    include_directories('../libs/juce-current/source/modules'),
-    include_directories('../libs/juce-current/source/modules/juce_audio_processors/format_types/VST3_SDK'),
+    include_directories('../libs/juce6'),
+    include_directories('../libs/juce6/source'),
+    include_directories('../libs/juce6/source/modules'),
+    include_directories('../libs/juce6/source/modules/juce_audio_processors/format_types/VST3_SDK'),
     include_directories('../libs/juce-plugin'),
 ]
 
@@ -146,7 +146,7 @@ endif
 ###############################################################################
 
 foreach plugin : plugins
-    if plugin in get_option('plugins') and not build_legacy_only
+    if plugin in get_option('plugins')
         plugin_uses_devices = false
         plugin_uses_opengl = false
         plugin_extra_dependencies = []
@@ -163,7 +163,7 @@ foreach plugin : plugins
         ])
 
         if plugin_uses_devices
-            link_with_plugin += lib_juce_current_devices
+            link_with_plugin += lib_juce6_devices
             if os_linux
                 plugin_extra_dependencies += [
                     dependency('alsa')
@@ -214,7 +214,7 @@ foreach plugin : plugins
                 c_args: build_flags + build_flags_plugin + build_flags_plugin_lv2 + plugin_extra_build_flags,
                 cpp_args: build_flags_cpp + build_flags_plugin + build_flags_plugin_lv2 + build_flag_plugin_cpp + plugin_extra_build_flags,
                 link_args: link_flags + link_flags_plugin_common + link_flags_plugin_lv2 + plugin_extra_link_flags,
-                link_with: [ lib_juce_current, plugin_lib ],
+                link_with: [ lib_juce6, plugin_lib ],
             )
 
             plugin_lv2_dir = meson.current_build_dir() / plugin_name + '.lv2'
@@ -245,7 +245,7 @@ foreach plugin : plugins
                 c_args: build_flags + build_flags_plugin + build_flags_plugin_vst2 + plugin_extra_build_flags,
                 cpp_args: build_flags_cpp + build_flags_plugin + build_flags_plugin_vst2 + build_flag_plugin_cpp + plugin_extra_build_flags,
                 link_args: link_flags + link_flags_plugin_common + link_flags_plugin_vst2 + plugin_extra_link_flags,
-                link_with: [ lib_juce_current, plugin_lib ],
+                link_with: [ lib_juce6, plugin_lib ],
                 install: true,
                 install_dir: vst2dir,
             )
@@ -263,7 +263,7 @@ foreach plugin : plugins
                 c_args: build_flags + build_flags_plugin + build_flags_plugin_vst3 + plugin_extra_build_flags,
                 cpp_args: build_flags_cpp + build_flags_plugin + build_flags_plugin_vst3 + build_flag_plugin_cpp + plugin_extra_build_flags,
                 link_args: link_flags + link_flags_plugin_common + link_flags_plugin_vst3 + plugin_extra_link_flags,
-                link_with: [ lib_juce_current, plugin_lib ],
+                link_with: [ lib_juce6, plugin_lib ],
             )
 
             plugin_vst3_dir = meson.current_build_dir() / plugin_name + '.vst3' / 'Contents' / host_machine.cpu_family() + '-' + host_machine.system()

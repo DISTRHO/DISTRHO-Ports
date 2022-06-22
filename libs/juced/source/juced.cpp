@@ -42,7 +42,7 @@
 #include <unistd.h>
 #endif
 
-#include "../../juce-legacy/source/modules/juce_core/native/juce_BasicNativeHeaders.h"
+#include "../../juce5/source/modules/juce_core/native/juce_BasicNativeHeaders.h"
 #include "juced.h"
 
 // START_AUTOINCLUDE

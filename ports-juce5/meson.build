@@ -63,9 +63,9 @@ endif
 plugin_include_dirs = [
     include_directories('../libs/drowaudio/source'),
     include_directories('../libs/juced/source'),
-    include_directories('../libs/juce-legacy'),
-    include_directories('../libs/juce-legacy/source'),
-    include_directories('../libs/juce-legacy/source/modules'),
+    include_directories('../libs/juce5'),
+    include_directories('../libs/juce5/source'),
+    include_directories('../libs/juce5/source/modules'),
     include_directories('../libs/juce-plugin'),
 ]
 
@@ -204,7 +204,7 @@ if build_lv2 or build_vst2
             ])
 
             link_with_plugin = [
-                lib_juce_legacy
+                lib_juce5
             ]
 
             if plugin_uses_drowaudio
@@ -216,7 +216,7 @@ if build_lv2 or build_vst2
             endif
 
             if plugin_uses_devices
-                link_with_plugin += lib_juce_legacy_devices
+                link_with_plugin += lib_juce5_devices
                 if os_linux
                     plugin_extra_dependencies += [
                         dependency('alsa'),

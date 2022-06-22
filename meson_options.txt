@@ -28,16 +28,29 @@ option('build-vst3',
     description: 'Build VST3 plugin variants',
 )
 
-option('build-legacy-only',
+option('build-juce5-only',
     type: 'boolean',
     value: false,
-    description: 'Build only legacy libraries and plugins',
+    description: 'Build only juce5 libraries and plugins',
+)
+
+option('build-juce6-only',
+    type: 'boolean',
+    value: false,
+    description: 'Build only juce6 libraries and plugins',
+)
+
+option('build-juce7-only',
+    type: 'boolean',
+    value: false,
+    description: 'Build only juce7 libraries and plugins',
 )
 
 option('plugins',
     type : 'array',
     description: 'Plugins to build',
     choices : [
+        # juce5
         'arctican-function',
         'arctican-pilgrim',
         'dexed',
@@ -59,7 +72,6 @@ option('plugins',
         'pitchedDelay',
         'refine',
         'stereosourceseparation',
-        'swankyamp',
         'tal-dub-3',
         'tal-filter',
         'tal-filter-2',
@@ -70,7 +82,9 @@ option('plugins',
         'tal-vocoder-2',
         'temper',
         'vex',
-        'vitalium',
         'wolpertinger',
+        # juce6
+        'swankyamp',
+        'vitalium',
     ],
 )

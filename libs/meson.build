@@ -1,12 +1,15 @@
 ###############################################################################
 
-subdir('drowaudio')
-subdir('juced')
-subdir('juce-legacy')
 subdir('lv2-ttl-generator')
 
-if not build_legacy_only
-    subdir('juce-current')
+if not (build_juce6_only or build_juce7_only)
+    subdir('drowaudio')
+    subdir('juced')
+    subdir('juce5')
+endif
+
+if not (build_juce5_only or build_juce7_only)
+    subdir('juce6')
 endif
 
 ###############################################################################

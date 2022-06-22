@@ -2,13 +2,13 @@
 
 lib_juced = static_library('juced',
     sources: [
-        'source' / 'juced.cpp'
+        'source/juced.cpp'
     ],
     include_directories: [
         include_directories('.'),
-        include_directories('..' / 'juce-legacy'),
-        include_directories('..' / 'juce-legacy' / 'source'),
-        include_directories('..' / 'juce-legacy' / 'source' / 'modules'),
+        include_directories('../juce5'),
+        include_directories('../juce5/source'),
+        include_directories('../juce5/source/modules'),
     ],
     cpp_args: build_flags_cpp,
     dependencies: dependencies,

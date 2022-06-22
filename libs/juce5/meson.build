@@ -1,7 +1,7 @@
 ###############################################################################
 
 if linux_embed
-    juce_legacy_srcs = [
+    juce5_srcs = [
         'source/modules/juce_audio_basics/juce_audio_basics.cpp',
         'source/modules/juce_audio_formats/juce_audio_formats.cpp',
         'source/modules/juce_audio_processors/juce_audio_processors.cpp',
@@ -13,7 +13,7 @@ if linux_embed
         'source/modules/juce_events/juce_events.cpp',
     ]
 else
-    juce_legacy_srcs = [
+    juce5_srcs = [
         'source/modules/juce_audio_basics/juce_audio_basics.cpp',
         'source/modules/juce_audio_formats/juce_audio_formats.cpp',
         'source/modules/juce_audio_processors/juce_audio_processors.cpp',
@@ -30,42 +30,42 @@ else
     ]
 endif
 
-juce_legacy_devices_srcs = [
+juce5_devices_srcs = [
     'source/modules/juce_audio_devices/juce_audio_devices.cpp',
 ]
 
-juce_legacy_extra_cpp_args = [
+juce5_extra_cpp_args = [
     '-Wno-non-virtual-dtor',
 ]
 
 if os_windows
-    juce_legacy_extra_cpp_args += [
+    juce5_extra_cpp_args += [
         '-Wno-unknown-pragmas',
     ]
 endif
 
-lib_juce_legacy = static_library('juce-legacy',
-    sources: juce_legacy_srcs,
+lib_juce5 = static_library('juce5',
+    sources: juce5_srcs,
     include_directories: [
         include_directories('.'),
         include_directories('source'),
         include_directories('source' / 'modules'),
         include_directories('..' / 'juced' / 'source' / 'dependancies' / 'ladspa_sdk' / 'src'),
     ],
-    cpp_args: build_flags_cpp + juce_legacy_extra_cpp_args,
+    cpp_args: build_flags_cpp + juce5_extra_cpp_args,
     dependencies: dependencies,
     pic: true,
     install: false,
 )
 
-lib_juce_legacy_devices = static_library('juce-legacy-devices',
-    sources: juce_legacy_devices_srcs,
+lib_juce5_devices = static_library('juce5-devices',
+    sources: juce5_devices_srcs,
     include_directories: [
         include_directories('.'),
         include_directories('source'),
         include_directories('source' / 'modules'),
     ],
-    cpp_args: build_flags_cpp + juce_legacy_extra_cpp_args + ['-DJUCE_MODULE_AVAILABLE_juce_audio_devices=1'],
+    cpp_args: build_flags_cpp + juce5_extra_cpp_args + ['-DJUCE_MODULE_AVAILABLE_juce_audio_devices=1'],
     dependencies: dependencies_devices,
     pic: true,
     install: false,

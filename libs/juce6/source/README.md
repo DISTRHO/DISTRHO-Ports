@@ -1,4 +1,4 @@
-# The JUCE Library
+# The JUCE 6 Library
 
 **The JUCE fork provided by this repository uses GPLv3 license.  
 See [GNU General Public License v.3](https://www.gnu.org/licenses/gpl-3.0.en.html)
