@@ -46,6 +46,12 @@ option('build-juce7-only',
     description: 'Build only juce7 libraries and plugins',
 )
 
+option('build-universal',
+    type: 'boolean',
+    value: false,
+    description: 'Build macOS universal binaries',
+)
+
 option('plugins',
     type : 'array',
     description: 'Plugins to build',

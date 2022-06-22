@@ -23,6 +23,7 @@ build_vst3 = get_option('build-vst3')
 build_juce5_only = get_option('build-juce5-only')
 build_juce6_only = get_option('build-juce6-only')
 build_juce7_only = get_option('build-juce7-only')
+build_universal = get_option('build-universal')
 linux_embed = get_option('linux-embed')
 optimizations = get_option('optimizations') and buildtype != 'debug'
 
@@ -188,10 +189,15 @@ if optimizations
             '-fprefetch-loop-arrays',
         ]
     endif
-    if host_machine.cpu_family().contains('x86')
+    if host_machine.cpu_family().contains('x86') or build_universal
         build_flags_release += [
-            '-mtune=generic', '-msse', '-msse2', '-mfpmath=sse',
+            '-mtune=generic', '-msse', '-msse2',
         ]
+        if not build_universal
+            build_flags_release += [
+                '-mfpmath=sse',
+            ]
+        endif
     endif
 endif
 
@@ -206,6 +212,12 @@ if os_darwin
     build_flags_cpp += [
         '-ObjC++',
     ]
+    if universal
+        build_flags += [
+            '-arch', 'x86_64',
+            '-arch', 'arm64',
+        ]
+    endif
 elif os_windows
     build_flags += [
         '-DWINDOWS=1',
@@ -249,15 +261,19 @@ if optimizations
     ]
 endif
 
-if os_windows
-    link_flags += [
-        '-static',
-    ]
-endif
-
 if os_darwin
+    if universal
+        link_flags += [
+            '-arch', 'x86_64',
+            '-arch', 'arm64',
+        ]
+    endif
     link_flags_release += [
         '-Wl,-dead_strip,-dead_strip_dylibs,-x',
+    ]
+elif os_windows
+    link_flags += [
+        '-static',
     ]
 else
     link_flags += [
