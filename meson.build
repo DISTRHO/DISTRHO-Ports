@@ -17,14 +17,14 @@ if libdir.contains('/')
     libdir = 'lib'
 endif
 
+linux_embed = get_option('linux-embed')
 build_lv2 = get_option('build-lv2')
-build_vst2 = get_option('build-vst2')
-build_vst3 = get_option('build-vst3')
+build_vst2 = get_option('build-vst2') and not linux_embed
+build_vst3 = get_option('build-vst3') and not linux_embed
 build_juce5_only = get_option('build-juce5-only')
 build_juce6_only = get_option('build-juce6-only')
 build_juce7_only = get_option('build-juce7-only')
 build_universal = get_option('build-universal')
-linux_embed = get_option('linux-embed')
 optimizations = get_option('optimizations') and buildtype != 'debug'
 
 ###############################################################################
@@ -189,7 +189,7 @@ if optimizations
             '-fprefetch-loop-arrays',
         ]
     endif
-    if host_machine.cpu_family().contains('x86') or build_universal
+    if build_machine.cpu_family().contains('x86') or build_universal
         build_flags_release += [
             '-mtune=generic', '-msse', '-msse2',
         ]
@@ -212,7 +212,7 @@ if os_darwin
     build_flags_cpp += [
         '-ObjC++',
     ]
-    if universal
+    if build_universal
         build_flags += [
             '-arch', 'x86_64',
             '-arch', 'arm64',
@@ -262,7 +262,7 @@ if optimizations
 endif
 
 if os_darwin
-    if universal
+    if build_universal
         link_flags += [
             '-arch', 'x86_64',
             '-arch', 'arm64',
