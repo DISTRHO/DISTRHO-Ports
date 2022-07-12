@@ -22,7 +22,9 @@
 
 #include <JuceHeader.h>
 
-#include "PluginEditor.h"
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
+ #include "PluginEditor.h"
+#endif
 #include "Utils.h"
 
 #include "PluginProcessor.h"

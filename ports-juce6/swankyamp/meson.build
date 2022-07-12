@@ -7,9 +7,7 @@ plugin_extra_include_dirs = include_directories([
 
 if linux_embed
     plugin_srcs = files([
-        'source/BinaryData.cpp',
         'source/PluginProcessor.cpp',
-        'source/PresetManager.cpp',
         'source/Utils.cpp',
     ])
 else
