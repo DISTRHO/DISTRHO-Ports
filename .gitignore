@@ -76,6 +76,7 @@ libs/juce*/source/modules/juce_osc/
 libs/juce*/source/modules/juce_product_unlocking/
 libs/juce*/source/modules/juce_video/
 libs/juce*/source/modules/*/native/java/
+libs/juce*/source/modules/*/native/javacore/
 libs/juce*/source/modules/*/native/javaopt/
 libs/juce*/source/modules/*/native/oboe/
 libs/juce*/source/modules/*/native/*_android_*
