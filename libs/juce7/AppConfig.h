@@ -9,6 +9,9 @@
 #ifndef BUILD_JUCE_APPCONFIG_H_INCLUDED
 #define BUILD_JUCE_APPCONFIG_H_INCLUDED
 
+// needed for some plugins
+// #define JUCE_MODAL_LOOPS_PERMITTED 1
+
 #define JUCE_MODULE_AVAILABLE_juce_audio_basics          1
 #define JUCE_MODULE_AVAILABLE_juce_audio_formats         1
 #define JUCE_MODULE_AVAILABLE_juce_audio_plugin_client   1

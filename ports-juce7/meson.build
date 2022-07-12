@@ -56,6 +56,7 @@ build_flags_plugin_vst3 = [
     '-DJucePlugin_Build_VST=0',
     '-DJucePlugin_Build_VST3=1',
     '-DJucePlugin_Build_Standalone=0',
+    '-Wno-non-virtual-dtor',
 ]
 
 ###############################################################################

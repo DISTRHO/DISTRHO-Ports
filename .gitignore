@@ -38,6 +38,7 @@ bin/vst
 build/
 debian
 intermediate
+juce_lv2_helper
 lv2_ttl_generator
 
 scripts/*.h
@@ -79,4 +80,5 @@ libs/juce*/source/modules/*/native/javaopt/
 libs/juce*/source/modules/*/native/oboe/
 libs/juce*/source/modules/*/native/*_android_*
 libs/juce*/source/modules/*/native/*_ios_*
+libs/juce*/source/modules/*/native/accessibility/*_test.cpp
 libs/juce*/source/tools
