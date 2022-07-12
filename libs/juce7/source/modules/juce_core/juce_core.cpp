@@ -249,6 +249,9 @@
 
 #endif
 
+#include "files/juce_common_MimeTypes.h"
+#include "files/juce_common_MimeTypes.cpp"
+#include "native/juce_android_AndroidDocument.cpp"
 #include "threads/juce_HighResolutionTimer.cpp"
 #include "threads/juce_WaitableEvent.cpp"
 #include "network/juce_URL.cpp"
@@ -263,7 +266,6 @@
 #if JUCE_UNIT_TESTS
  #include "containers/juce_HashMap_test.cpp"
 
- #include "containers/juce_Optional.h"
  #include "containers/juce_Optional_test.cpp"
 #endif
 

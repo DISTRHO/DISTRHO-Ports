@@ -519,6 +519,7 @@ public:
     {
         midiMessages.clear();
         lastTimeStamp.mSampleTime = std::numeric_limits<Float64>::max();
+        lastTimeStamp.mFlags = 0;
     }
 
     //==============================================================================
@@ -852,7 +853,6 @@ public:
         midiMessages.ensureSize (2048);
         midiMessages.clear();
 
-        zeromem (&lastAudioHead, sizeof (lastAudioHead));
         hostMusicalContextCallback = [getAudioUnit() musicalContextBlock];
         hostTransportStateCallback = [getAudioUnit() transportStateBlock];
 
@@ -1004,16 +1004,13 @@ public:
     }
 
     //==============================================================================
-    bool getCurrentPosition (CurrentPositionInfo& info) override
+    Optional<PositionInfo> getPosition() const override
     {
-        bool musicContextCallSucceeded = false;
-        bool transportStateCallSucceeded = false;
+        PositionInfo info;
+        info.setTimeInSamples ((int64) (lastTimeStamp.mSampleTime + 0.5));
+        info.setTimeInSeconds (*info.getTimeInSamples() / getAudioProcessor().getSampleRate());
 
-        info = lastAudioHead;
-        info.timeInSamples = (int64) (lastTimeStamp.mSampleTime + 0.5);
-        info.timeInSeconds = info.timeInSamples / getAudioProcessor().getSampleRate();
-
-        info.frameRate = [this]
+        info.setFrameRate ([this]
         {
             switch (lastTimeStamp.mSMPTETime.mType)
             {
@@ -1033,7 +1030,7 @@ public:
             }
 
             return FrameRate();
-        }();
+        }());
 
         double num;
         NSInteger den;
@@ -1047,17 +1044,14 @@ public:
 
             if (musicalContextCallback (&bpm, &num, &den, &ppqPosition, &outDeltaSampleOffsetToNextBeat, &outCurrentMeasureDownBeat))
             {
-                musicContextCallSucceeded = true;
-
-                info.timeSigNumerator   = (int) num;
-                info.timeSigDenominator = (int) den;
-                info.ppqPositionOfLastBarStart = outCurrentMeasureDownBeat;
-                info.bpm = bpm;
-                info.ppqPosition = ppqPosition;
+                info.setTimeSignature (TimeSignature { (int) num, (int) den });
+                info.setPpqPositionOfLastBarStart (outCurrentMeasureDownBeat);
+                info.setBpm (bpm);
+                info.setPpqPosition (ppqPosition);
             }
         }
 
-        double outCurrentSampleInTimeLine, outCycleStartBeat = 0, outCycleEndBeat = 0;
+        double outCurrentSampleInTimeLine = 0, outCycleStartBeat = 0, outCycleEndBeat = 0;
         AUHostTransportStateFlags flags;
 
         if (hostTransportStateCallback != nullptr)
@@ -1066,22 +1060,19 @@ public:
 
             if (transportStateCallback (&flags, &outCurrentSampleInTimeLine, &outCycleStartBeat, &outCycleEndBeat))
             {
-                transportStateCallSucceeded = true;
-
-                info.timeInSamples  = (int64) (outCurrentSampleInTimeLine + 0.5);
-                info.timeInSeconds  = info.timeInSamples / getAudioProcessor().getSampleRate();
-                info.isPlaying      = ((flags & AUHostTransportStateMoving) != 0);
-                info.isLooping      = ((flags & AUHostTransportStateCycling) != 0);
-                info.isRecording    = ((flags & AUHostTransportStateRecording) != 0);
-                info.ppqLoopStart   = outCycleStartBeat;
-                info.ppqLoopEnd     = outCycleEndBeat;
+                info.setTimeInSamples  ((int64) (outCurrentSampleInTimeLine + 0.5));
+                info.setTimeInSeconds  (*info.getTimeInSamples() / getAudioProcessor().getSampleRate());
+                info.setIsPlaying      ((flags & AUHostTransportStateMoving) != 0);
+                info.setIsLooping      ((flags & AUHostTransportStateCycling) != 0);
+                info.setIsRecording    ((flags & AUHostTransportStateRecording) != 0);
+                info.setLoopPoints     (LoopPoints { outCycleStartBeat, outCycleEndBeat });
             }
         }
 
-        if (musicContextCallSucceeded && transportStateCallSucceeded)
-            lastAudioHead = info;
+        if ((lastTimeStamp.mFlags & kAudioTimeStampHostTimeValid) != 0)
+            info.setHostTimeNs (timeConversions.hostTimeToNanos (lastTimeStamp.mHostTime));
 
-        return true;
+        return info;
     }
 
     //==============================================================================
@@ -1553,23 +1544,6 @@ private:
 
         const auto numProcessorBusesOut = AudioUnitHelpers::getBusCount (processor, false);
 
-        if (timestamp != nullptr)
-        {
-            if ((timestamp->mFlags & kAudioTimeStampHostTimeValid) != 0)
-            {
-                const auto convertedTime = timeConversions.hostTimeToNanos (timestamp->mHostTime);
-                getAudioProcessor().setHostTimeNanos (&convertedTime);
-            }
-        }
-
-        struct AtEndOfScope
-        {
-            ~AtEndOfScope() { proc.setHostTimeNanos (nullptr); }
-            AudioProcessor& proc;
-        };
-
-        const AtEndOfScope scope { getAudioProcessor() };
-
         if (lastTimeStamp.mSampleTime != timestamp->mSampleTime)
         {
             // process params and incoming midi (only once for a given timestamp)
@@ -1854,7 +1828,6 @@ private:
     ObjCBlock<AUHostTransportStateBlock> hostTransportStateCallback;
 
     AudioTimeStamp lastTimeStamp;
-    CurrentPositionInfo lastAudioHead;
 
     String contextName;
 

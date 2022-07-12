@@ -25,7 +25,6 @@
 
 #include <juce_core/system/juce_CompilerWarnings.h>
 #include <juce_core/system/juce_TargetPlatform.h>
-#include <juce_core/containers/juce_Optional.h>
 #include "../utility/juce_CheckSettingMacros.h"
 
 #if JucePlugin_Build_VST
@@ -388,14 +387,6 @@ public:
             {
                 updateCallbackContextInfo();
 
-                struct AtEndOfScope
-                {
-                    ~AtEndOfScope() { proc.setHostTimeNanos (nullptr); }
-                    AudioProcessor& proc;
-                };
-
-                const AtEndOfScope scope { *processor };
-
                 int i;
                 for (i = 0; i < numOut; ++i)
                 {
@@ -618,30 +609,19 @@ public:
         }
 
         auto& info = currentPosition.emplace();
-        info.bpm = (ti->flags & Vst2::vstTimingInfoFlagTempoValid) != 0 ? ti->tempoBPM : 0.0;
+        info.setBpm ((ti->flags & Vst2::vstTimingInfoFlagTempoValid) != 0 ? makeOptional (ti->tempoBPM) : nullopt);
 
-        if ((ti->flags & Vst2::vstTimingInfoFlagTimeSignatureValid) != 0)
+        info.setTimeSignature ((ti->flags & Vst2::vstTimingInfoFlagTimeSignatureValid) != 0 ? makeOptional (TimeSignature { ti->timeSignatureNumerator, ti->timeSignatureDenominator })
+                                                                                       : nullopt);
+
+        info.setTimeInSamples ((int64) (ti->samplePosition + 0.5));
+        info.setTimeInSeconds (ti->samplePosition / ti->sampleRate);
+        info.setPpqPosition ((ti->flags & Vst2::vstTimingInfoFlagMusicalPositionValid) != 0 ? makeOptional (ti->musicalPosition) : nullopt);
+        info.setPpqPositionOfLastBarStart ((ti->flags & Vst2::vstTimingInfoFlagLastBarPositionValid) != 0 ? makeOptional (ti->lastBarPosition) : nullopt);
+
+        if ((ti->flags & Vst2::vstTimingInfoFlagSmpteValid) != 0)
         {
-            info.timeSigNumerator   = ti->timeSignatureNumerator;
-            info.timeSigDenominator = ti->timeSignatureDenominator;
-        }
-        else
-        {
-            info.timeSigNumerator   = 4;
-            info.timeSigDenominator = 4;
-        }
-
-        info.timeInSamples = (int64) (ti->samplePosition + 0.5);
-        info.timeInSeconds = ti->samplePosition / ti->sampleRate;
-        info.ppqPosition = (ti->flags & Vst2::vstTimingInfoFlagMusicalPositionValid) != 0 ? ti->musicalPosition : 0.0;
-        info.ppqPositionOfLastBarStart = (ti->flags & Vst2::vstTimingInfoFlagLastBarPositionValid) != 0 ? ti->lastBarPosition : 0.0;
-
-        std::tie (info.frameRate, info.editOriginTime) = [ti]
-        {
-            if ((ti->flags & Vst2::vstTimingInfoFlagSmpteValid) == 0)
-                return std::make_tuple (FrameRate(), 0.0);
-
-            const auto rate = [&]
+            info.setFrameRate ([&]() -> Optional<FrameRate>
             {
                 switch (ti->smpteRate)
                 {
@@ -663,43 +643,27 @@ public:
                     case Vst2::vstSmpteRate35mmFilm:       return FrameRate().withBaseRate (24);
                 }
 
-                return FrameRate();
-            }();
+                return nullopt;
+            }());
 
-            const auto effectiveRate = rate.getEffectiveRate();
-            return std::make_tuple (rate, effectiveRate != 0.0 ? ti->smpteOffset / (80.0 * effectiveRate) : 0.0);
-        }();
-
-        info.isRecording = (ti->flags & Vst2::vstTimingInfoFlagCurrentlyRecording) != 0;
-        info.isPlaying   = (ti->flags & (Vst2::vstTimingInfoFlagCurrentlyRecording | Vst2::vstTimingInfoFlagCurrentlyPlaying)) != 0;
-        info.isLooping   = (ti->flags & Vst2::vstTimingInfoFlagLoopActive) != 0;
-
-        if ((ti->flags & Vst2::vstTimingInfoFlagLoopPositionValid) != 0)
-        {
-            info.ppqLoopStart = ti->loopStartPosition;
-            info.ppqLoopEnd   = ti->loopEndPosition;
-        }
-        else
-        {
-            info.ppqLoopStart = 0;
-            info.ppqLoopEnd = 0;
+            const auto effectiveRate = info.getFrameRate().hasValue() ? info.getFrameRate()->getEffectiveRate() : 0.0;
+            info.setEditOriginTime (effectiveRate != 0.0 ? makeOptional (ti->smpteOffset / (80.0 * effectiveRate)) : nullopt);
         }
 
-        if ((ti->flags & Vst2::vstTimingInfoFlagNanosecondsValid) != 0)
-        {
-            const auto nanos = (uint64_t) ti->systemTimeNanoseconds;
-            processor->setHostTimeNanos (&nanos);
-        }
+        info.setIsRecording ((ti->flags & Vst2::vstTimingInfoFlagCurrentlyRecording) != 0);
+        info.setIsPlaying   ((ti->flags & (Vst2::vstTimingInfoFlagCurrentlyRecording | Vst2::vstTimingInfoFlagCurrentlyPlaying)) != 0);
+        info.setIsLooping   ((ti->flags & Vst2::vstTimingInfoFlagLoopActive) != 0);
+
+        info.setLoopPoints ((ti->flags & Vst2::vstTimingInfoFlagLoopPositionValid) != 0 ? makeOptional (LoopPoints { ti->loopStartPosition, ti->loopEndPosition })
+                                                                                        : nullopt);
+
+        info.setHostTimeNs ((ti->flags & Vst2::vstTimingInfoFlagNanosecondsValid) != 0 ? makeOptional ((uint64_t) ti->systemTimeNanoseconds) : nullopt);
     }
 
     //==============================================================================
-    bool getCurrentPosition (AudioPlayHead::CurrentPositionInfo& info) override
+    Optional<PositionInfo> getPosition() const override
     {
-        if (! currentPosition.hasValue())
-            return false;
-
-        info = *currentPosition;
-        return true;
+        return currentPosition;
     }
 
     //==============================================================================
@@ -2139,7 +2103,7 @@ private:
     Vst2::VstEditorBounds editorRect;
     MidiBuffer midiEvents;
     VSTMidiEventList outgoingEvents;
-    Optional<CurrentPositionInfo> currentPosition;
+    Optional<PositionInfo> currentPosition;
 
     LegacyAudioParametersWrapper juceParameters;
 

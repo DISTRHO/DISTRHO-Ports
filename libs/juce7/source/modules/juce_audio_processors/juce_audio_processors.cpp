@@ -42,7 +42,6 @@
 
 #include "juce_audio_processors.h"
 #include <juce_gui_extra/juce_gui_extra.h>
-#include <juce_core/containers/juce_Optional.h>
 
 //==============================================================================
 #if (JUCE_PLUGINHOST_VST || JUCE_PLUGINHOST_VST3) && (JUCE_LINUX || JUCE_BSD) && ! JUCE_AUDIOPROCESSOR_NO_GUI
@@ -157,21 +156,19 @@ private:
         }
     }
 
-    struct FlippedNSView : public ObjCClass<NSView>
+    struct InnerNSView : public ObjCClass<NSView>
     {
-        FlippedNSView()
-            : ObjCClass ("JuceFlippedNSView_")
+        InnerNSView()
+            : ObjCClass ("JuceInnerNSView_")
         {
             addIvar<NSViewComponentWithParent*> ("owner");
 
-            addMethod (@selector (isFlipped),      isFlipped);
             addMethod (@selector (isOpaque),       isOpaque);
             addMethod (@selector (didAddSubview:), didAddSubview);
 
             registerClass();
         }
 
-        static BOOL isFlipped (id, SEL) { return YES; }
         static BOOL isOpaque  (id, SEL) { return YES; }
 
         static void nudge (id self)
@@ -181,15 +178,12 @@ private:
                     owner->triggerAsyncUpdate();
         }
 
-        static void viewDidUnhide (id self, SEL)               { nudge (self); }
         static void didAddSubview (id self, SEL, NSView*)      { nudge (self); }
-        static void viewDidMoveToSuperview (id self, SEL)      { nudge (self); }
-        static void viewDidMoveToWindow (id self, SEL)         { nudge (self); }
     };
 
-    static FlippedNSView& getViewClass()
+    static InnerNSView& getViewClass()
     {
-        static FlippedNSView result;
+        static InnerNSView result;
         return result;
     }
 };
@@ -239,8 +233,13 @@ private:
 #include "format_types/juce_LV2PluginFormat.cpp"
 
 #if JUCE_UNIT_TESTS
- #include "format_types/juce_VST3PluginFormat_test.cpp"
- #include "format_types/juce_LV2PluginFormat_test.cpp"
+ #if JUCE_PLUGINHOST_VST3
+  #include "format_types/juce_VST3PluginFormat_test.cpp"
+ #endif
+
+ #if JUCE_PLUGINHOST_LV2
+  #include "format_types/juce_LV2PluginFormat_test.cpp"
+ #endif
 #endif
 
 #if JUCE_AUDIOPROCESSOR_NO_GUI

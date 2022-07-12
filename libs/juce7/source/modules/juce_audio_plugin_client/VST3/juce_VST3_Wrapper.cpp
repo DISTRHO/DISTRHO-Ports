@@ -2867,34 +2867,50 @@ public:
                                      Steinberg::int32 channel, Vst::UnitID& unitId) override                                    { return comPluginInstance->getUnitByBus (type, dir, busIndex, channel, unitId); }
 
     //==============================================================================
-    bool getCurrentPosition (CurrentPositionInfo& info) override
+    Optional<PositionInfo> getPosition() const override
     {
-        info.timeInSamples              = jmax ((juce::int64) 0, processContext.projectTimeSamples);
-        info.timeInSeconds              = static_cast<double> (info.timeInSamples) / processContext.sampleRate;
-        info.bpm                        = jmax (1.0, processContext.tempo);
-        info.timeSigNumerator           = jmax (1, (int) processContext.timeSigNumerator);
-        info.timeSigDenominator         = jmax (1, (int) processContext.timeSigDenominator);
-        info.ppqPositionOfLastBarStart  = processContext.barPositionMusic;
-        info.ppqPosition                = processContext.projectTimeMusic;
-        info.ppqLoopStart               = processContext.cycleStartMusic;
-        info.ppqLoopEnd                 = processContext.cycleEndMusic;
-        info.isRecording                = (processContext.state & Vst::ProcessContext::kRecording) != 0;
-        info.isPlaying                  = (processContext.state & Vst::ProcessContext::kPlaying) != 0;
-        info.isLooping                  = (processContext.state & Vst::ProcessContext::kCycleActive) != 0;
+        PositionInfo info;
+        info.setTimeInSamples (jmax ((juce::int64) 0, processContext.projectTimeSamples));
+        info.setTimeInSeconds (static_cast<double> (*info.getTimeInSamples()) / processContext.sampleRate);
+        info.setIsRecording ((processContext.state & Vst::ProcessContext::kRecording) != 0);
+        info.setIsPlaying ((processContext.state & Vst::ProcessContext::kPlaying) != 0);
+        info.setIsLooping ((processContext.state & Vst::ProcessContext::kCycleActive) != 0);
 
-        info.frameRate = [&]
-        {
-            if ((processContext.state & Vst::ProcessContext::kSmpteValid) == 0)
-                return FrameRate();
+        info.setBpm ((processContext.state & Vst::ProcessContext::kTempoValid) != 0
+                     ? makeOptional (processContext.tempo)
+                     : nullopt);
 
-            return FrameRate().withBaseRate ((int) processContext.frameRate.framesPerSecond)
-                              .withDrop ((processContext.frameRate.flags & Vst::FrameRate::kDropRate) != 0)
-                              .withPullDown ((processContext.frameRate.flags & Vst::FrameRate::kPullDownRate) != 0);
-        }();
+        info.setTimeSignature ((processContext.state & Vst::ProcessContext::kTimeSigValid) != 0
+                               ? makeOptional (TimeSignature { processContext.timeSigNumerator, processContext.timeSigDenominator })
+                               : nullopt);
 
-        info.editOriginTime = (double) processContext.smpteOffsetSubframes / (80.0 * info.frameRate.getEffectiveRate());
+        info.setLoopPoints ((processContext.state & Vst::ProcessContext::kCycleValid) != 0
+                            ? makeOptional (LoopPoints { processContext.cycleStartMusic, processContext.cycleEndMusic })
+                            : nullopt);
 
-        return true;
+        info.setPpqPosition ((processContext.state & Vst::ProcessContext::kProjectTimeMusicValid) != 0
+                             ? makeOptional (processContext.projectTimeMusic)
+                             : nullopt);
+
+        info.setPpqPositionOfLastBarStart ((processContext.state & Vst::ProcessContext::kBarPositionValid) != 0
+                                           ? makeOptional (processContext.barPositionMusic)
+                                           : nullopt);
+
+        info.setFrameRate ((processContext.state & Vst::ProcessContext::kSmpteValid) != 0
+                           ? makeOptional (FrameRate().withBaseRate ((int) processContext.frameRate.framesPerSecond)
+                                                      .withDrop ((processContext.frameRate.flags & Vst::FrameRate::kDropRate) != 0)
+                                                      .withPullDown ((processContext.frameRate.flags & Vst::FrameRate::kPullDownRate) != 0))
+                           : nullopt);
+
+        info.setEditOriginTime (info.getFrameRate().hasValue()
+                                ? makeOptional ((double) processContext.smpteOffsetSubframes / (80.0 * info.getFrameRate()->getEffectiveRate()))
+                                : nullopt);
+
+        info.setHostTimeNs ((processContext.state & Vst::ProcessContext::kSystemTimeValid) != 0
+                            ? makeOptional ((uint64_t) processContext.systemTime)
+                            : nullopt);
+
+        return info;
     }
 
     //==============================================================================
@@ -3066,33 +3082,82 @@ public:
 
         if (type == Vst::kAudio)
         {
-            if (index < 0 || index >= getNumAudioBuses (dir == Vst::kInput))
+            const auto numInputBuses  = getNumAudioBuses (true);
+            const auto numOutputBuses = getNumAudioBuses (false);
+
+            if (! isPositiveAndBelow (index, dir == Vst::kInput ? numInputBuses : numOutputBuses))
                 return kResultFalse;
 
-            // Some hosts (old cakewalk, bitwig studio) might call this function without
-            // deactivating the plugin, so we update the channel mapping here.
-            if (dir == Vst::BusDirections::kInput)
-                bufferMapper.setInputBusActive ((size_t) index, state != 0);
+            // The host is allowed to enable/disable buses as it sees fit, so the plugin needs to be
+            // able to handle any set of enabled/disabled buses, including layouts for which
+            // AudioProcessor::isBusesLayoutSupported would return false.
+            // Our strategy is to keep track of the layout that the host last requested, and to
+            // attempt to apply that layout directly.
+            // If the layout isn't supported by the processor, we'll try enabling all the buses
+            // instead.
+            // If the host enables a bus that the processor refused to enable, then we'll ignore
+            // that bus (and return silence for output buses). If the host disables a bus that the
+            // processor refuses to disable, the wrapper will provide the processor with silence for
+            // input buses, and ignore the contents of output buses.
+            // Note that some hosts (old bitwig and cakewalk) may incorrectly call this function
+            // when the plugin is in an activated state.
+            if (dir == Vst::kInput)
+                bufferMapper.setInputBusHostActive ((size_t) index, state != 0);
             else
-                bufferMapper.setOutputBusActive ((size_t) index, state != 0);
+                bufferMapper.setOutputBusHostActive ((size_t) index, state != 0);
 
-            if (auto* bus = pluginInstance->getBus (dir == Vst::kInput, index))
+            AudioProcessor::BusesLayout desiredLayout;
+
+            for (auto i = 0; i < numInputBuses; ++i)
+                desiredLayout.inputBuses.add (bufferMapper.getRequestedLayoutForInputBus ((size_t) i));
+
+            for (auto i = 0; i < numOutputBuses; ++i)
+                desiredLayout.outputBuses.add (bufferMapper.getRequestedLayoutForOutputBus ((size_t) i));
+
+            const auto prev = pluginInstance->getBusesLayout();
+
+            const auto busesLayoutSupported = [&]
             {
                #ifdef JucePlugin_PreferredChannelConfigurations
-                auto newLayout = pluginInstance->getBusesLayout();
-                auto targetLayout = (state != 0 ? bus->getLastEnabledLayout() : AudioChannelSet::disabled());
+                struct ChannelPair
+                {
+                    short ins, outs;
 
-                (dir == Vst::kInput ? newLayout.inputBuses : newLayout.outputBuses).getReference (index) = targetLayout;
+                    auto tie() const { return std::tie (ins, outs); }
+                    bool operator== (ChannelPair x) const { return tie() == x.tie(); }
+                };
 
-                short configs[][2] = { JucePlugin_PreferredChannelConfigurations };
-                auto compLayout = pluginInstance->getNextBestLayoutInLayoutList (newLayout, configs);
+                const auto countChannels = [] (auto& range)
+                {
+                    return std::accumulate (range.begin(), range.end(), 0, [] (auto acc, auto set)
+                    {
+                        return acc + set.size();
+                    });
+                };
 
-                if ((dir == Vst::kInput ? compLayout.inputBuses : compLayout.outputBuses).getReference (index) != targetLayout)
-                    return kResultFalse;
+                const auto toShort = [] (int x)
+                {
+                    jassert (0 <= x && x <= std::numeric_limits<short>::max());
+                    return (short) x;
+                };
+
+                const ChannelPair requested { toShort (countChannels (desiredLayout.inputBuses)),
+                                              toShort (countChannels (desiredLayout.outputBuses)) };
+                const ChannelPair configs[] = { JucePlugin_PreferredChannelConfigurations };
+                return std::find (std::begin (configs), std::end (configs), requested) != std::end (configs);
+               #else
+                return pluginInstance->checkBusesLayoutSupported (desiredLayout);
                #endif
+            }();
 
-                return bus->enable (state != 0) ? kResultTrue : kResultFalse;
-            }
+            if (busesLayoutSupported)
+                pluginInstance->setBusesLayout (desiredLayout);
+            else
+                pluginInstance->enableAllBuses();
+
+            bufferMapper.updateActiveClientBuses (pluginInstance->getBusesLayout());
+
+            return kResultTrue;
         }
 
         return kResultFalse;
@@ -3152,7 +3217,11 @@ public:
             return kResultFalse;
        #endif
 
-        return pluginInstance->setBusesLayoutWithoutEnabling (requested) ? kResultTrue : kResultFalse;
+        if (! pluginInstance->setBusesLayoutWithoutEnabling (requested))
+            return kResultFalse;
+
+        bufferMapper.updateFromProcessor (*pluginInstance);
+        return kResultTrue;
     }
 
     tresult PLUGIN_API getBusArrangement (Vst::BusDirection dir, Steinberg::int32 index, Vst::SpeakerArrangement& arr) override
@@ -3286,12 +3355,6 @@ public:
         {
             processContext = *data.processContext;
 
-            if ((processContext.state & Vst::ProcessContext::kSystemTimeValid) != 0)
-            {
-                const auto timestamp = (uint64_t) processContext.systemTime;
-                getPluginInstance().setHostTimeNanos (&timestamp);
-            }
-
             if (juceVST3EditController != nullptr)
                 juceVST3EditController->vst3IsPlaying = (processContext.state & Vst::ProcessContext::kPlaying) != 0;
         }
@@ -3302,14 +3365,6 @@ public:
             if (juceVST3EditController != nullptr)
                 juceVST3EditController->vst3IsPlaying = false;
         }
-
-        struct AtEndOfScope
-        {
-            ~AtEndOfScope() { proc.setHostTimeNanos (nullptr); }
-            AudioProcessor& proc;
-        };
-
-        const AtEndOfScope scope { getPluginInstance() };
 
         midiBuffer.clear();
 
@@ -3412,7 +3467,9 @@ private:
     template <typename FloatType>
     void processAudio (Vst::ProcessData& data)
     {
-        auto buffer = bufferMapper.getJuceLayoutForVst3Buffer (detail::Tag<FloatType>{}, data);
+        ClientRemappedBuffer<FloatType> remappedBuffer { bufferMapper, data };
+        auto& buffer = remappedBuffer.buffer;
+
         jassert ((int) buffer.getNumChannels() == jmax (pluginInstance->getTotalNumInputChannels(),
                                                         pluginInstance->getTotalNumOutputChannels()));
 
@@ -3487,7 +3544,8 @@ private:
         midiBuffer.ensureSize (2048);
         midiBuffer.clear();
 
-        bufferMapper.prepare (p, bufferSize);
+        bufferMapper.updateFromProcessor (p);
+        bufferMapper.prepare (bufferSize);
     }
 
     //==============================================================================
@@ -3593,7 +3651,7 @@ DEF_CLASS_IID (JuceAudioProcessor)
  // Defined in PluginUtilities.cpp
  void getUUIDForVST2ID (bool, uint8[16]);
 
- FUID getFUIDForVST2ID (bool forControllerUID)
+ static FUID getFUIDForVST2ID (bool forControllerUID)
  {
      TUID uuid;
      getUUIDForVST2ID (forControllerUID, (uint8*) uuid);

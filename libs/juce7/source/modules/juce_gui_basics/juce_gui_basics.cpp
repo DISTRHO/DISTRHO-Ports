@@ -45,6 +45,8 @@
 
 #include "juce_gui_basics.h"
 
+#include <cctype>
+
 //==============================================================================
 #if JUCE_MAC
  #import <WebKit/WebKit.h>
@@ -259,7 +261,7 @@ namespace juce
  #include "native/juce_MultiTouchMapper.h"
 #endif
 
-#if JUCE_ANDROID || JUCE_WINDOWS
+#if JUCE_ANDROID || JUCE_WINDOWS || JUCE_UNIT_TESTS
  #include "native/accessibility/juce_AccessibilityTextHelpers.h"
 #endif
 
@@ -314,9 +316,9 @@ namespace juce
  #include "native/juce_linux_FileChooser.cpp"
 
 #elif JUCE_ANDROID
+ #include "juce_core/files/juce_common_MimeTypes.h"
  #include "native/accessibility/juce_android_Accessibility.cpp"
  #include "native/juce_android_Windowing.cpp"
- #include "native/juce_common_MimeTypes.cpp"
  #include "native/juce_android_FileChooser.cpp"
 
  #if JUCE_CONTENT_SHARING
@@ -411,3 +413,7 @@ bool juce::isWindowOnCurrentVirtualDesktop (void* x)
 
 // Depends on types defined in platform-specific windowing files
 #include "mouse/juce_MouseCursor.cpp"
+
+#if JUCE_UNIT_TESTS
+#include "native/accessibility/juce_AccessibilityTextHelpers_test.cpp"
+#endif

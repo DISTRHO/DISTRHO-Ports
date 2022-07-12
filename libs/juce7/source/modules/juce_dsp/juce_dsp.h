@@ -35,7 +35,7 @@
 
   ID:                 juce_dsp
   vendor:             juce
-  version:            6.1.6
+  version:            7.0.1
   name:               JUCE DSP classes
   description:        Classes for audio buffer manipulation, digital audio processing, filtering, oversampling, fast math functions etc.
   website:            http://www.juce.com/juce
@@ -93,7 +93,7 @@
 
 #ifndef JUCE_VECTOR_CALLTYPE
  // __vectorcall does not work on 64-bit due to internal compiler error in
- // release mode in both VS2015 and VS2017. Re-enable when Microsoft fixes this
+ // release mode VS2017. Re-enable when Microsoft fixes this
  #if _MSC_VER && JUCE_USE_SIMD && ! (defined(_M_X64) || defined(__amd64__))
   #define JUCE_VECTOR_CALLTYPE __vectorcall
  #else
