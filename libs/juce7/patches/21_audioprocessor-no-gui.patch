@@ -1,0 +1,420 @@
+diff --git a/modules/juce_audio_plugin_client/LV2/juce_LV2_Client.cpp b/modules/juce_audio_plugin_client/LV2/juce_LV2_Client.cpp
+index dc2e6cc83..425f7ac23 100644
+--- a/modules/juce_audio_plugin_client/LV2/juce_LV2_Client.cpp
++++ b/modules/juce_audio_plugin_client/LV2/juce_LV2_Client.cpp
+@@ -39,12 +39,17 @@
+ 
+ #include <juce_audio_plugin_client/juce_audio_plugin_client.h>
+ #include <juce_audio_plugin_client/utility/juce_CheckSettingMacros.h>
+-#include <juce_audio_plugin_client/utility/juce_LinuxMessageThread.h>
++#if ! JUCE_AUDIOPROCESSOR_NO_GUI
++ #include <juce_audio_plugin_client/utility/juce_LinuxMessageThread.h>
++#endif
+ 
+ #include <juce_audio_processors/utilities/juce_FlagCache.h>
+ #include <juce_audio_processors/format_types/juce_LegacyAudioParameter.cpp>
+ 
+-#include "JuceLV2Defines.h"
++#ifndef JucePlugin_LV2URI
++ #include "JuceLV2Defines.h"
++#endif
++
+ #include <juce_audio_processors/format_types/juce_LV2Common.h>
+ 
+ #include <fstream>
+@@ -693,6 +698,7 @@ public:
+         return LV2_STATE_SUCCESS;
+     }
+ 
++    #if ! JUCE_AUDIOPROCESSOR_NO_GUI
+     std::unique_ptr<AudioProcessorEditor> createEditor()
+     {
+         return std::unique_ptr<AudioProcessorEditor> (processor->createEditorIfNeeded());
+@@ -702,6 +708,7 @@ public:
+     {
+         processor->editorBeingDeleted (editor);
+     }
++   #endif
+ 
+     static std::unique_ptr<AudioProcessor> createProcessorInstance()
+     {
+@@ -759,7 +766,7 @@ private:
+ 
+     ScopedJuceInitialiser_GUI scopedJuceInitialiser;
+ 
+-   #if JUCE_LINUX || JUCE_BSD
++   #if (JUCE_LINUX || JUCE_BSD) && ! JUCE_AUDIOPROCESSOR_NO_GUI
+     SharedResourcePointer<MessageThread> messageThread;
+    #endif
+ 
+@@ -842,6 +849,7 @@ private:
+               "\tlv2:binary <" << URL::addEscapeChars (libraryPath.getFileName(), false) << "> ;\n"
+               "\trdfs:seeAlso <dsp.ttl> .\n";
+ 
++       #if ! JUCE_AUDIOPROCESSOR_NO_GUI
+         if (proc.hasEditor())
+         {
+            #if JUCE_MAC
+@@ -861,6 +869,7 @@ private:
+                   "\trdfs:seeAlso <ui.ttl> .\n"
+                   "\n";
+         }
++       #endif
+ 
+         for (auto i = 0, end = proc.getNumPrograms(); i < end; ++i)
+         {
+@@ -1088,8 +1097,10 @@ private:
+ 
+         os << "<" JucePlugin_LV2URI ">\n";
+ 
++       #if ! JUCE_AUDIOPROCESSOR_NO_GUI
+         if (proc.hasEditor())
+             os << "\tui:ui <" << JucePluginLV2UriUi << "> ;\n";
++       #endif
+ 
+         const auto versionParts = StringArray::fromTokens (JucePlugin_VersionString, ".", "");
+ 
+@@ -1293,6 +1304,7 @@ private:
+ 
+     static Result writeUiTtl (AudioProcessor& proc, const File& libraryPath)
+     {
++       #if ! JUCE_AUDIOPROCESSOR_NO_GUI
+         if (! proc.hasEditor())
+             return Result::ok();
+ 
+@@ -1331,6 +1343,7 @@ private:
+               "\topts:supportedOption\n"
+               "\t\tui:scaleFactor ,\n"
+               "\t\tparam:sampleRate .\n";
++       #endif
+ 
+         return Result::ok();
+     }
+@@ -1459,6 +1472,7 @@ static Optional<float> findScaleFactor (const LV2_URID_Map* symap, const LV2_Opt
+     return parser.parseNumericOption<float> (scaleFactorOption);
+ }
+ 
++#if ! JUCE_AUDIOPROCESSOR_NO_GUI
+ class LV2UIInstance : private Component,
+                       private ComponentListener
+ {
+@@ -1771,6 +1785,7 @@ LV2_SYMBOL_EXPORT const LV2UI_Descriptor* lv2ui_descriptor (uint32_t index)
+ 
+     return &descriptor;
+ }
++#endif
+ 
+ }
+ }
+diff --git a/modules/juce_audio_processors/juce_audio_processors.cpp b/modules/juce_audio_processors/juce_audio_processors.cpp
+index df3a1e8a9..e0b75a685 100644
+--- a/modules/juce_audio_processors/juce_audio_processors.cpp
++++ b/modules/juce_audio_processors/juce_audio_processors.cpp
+@@ -34,7 +34,9 @@
+ 
+ #define JUCE_CORE_INCLUDE_NATIVE_HEADERS 1
+ #define JUCE_CORE_INCLUDE_OBJC_HELPERS 1
+-#define JUCE_GUI_BASICS_INCLUDE_XHEADERS 1
++#if ! JUCE_AUDIOPROCESSOR_NO_GUI
++ #define JUCE_GUI_BASICS_INCLUDE_XHEADERS 1
++#endif
+ #define JUCE_GUI_BASICS_INCLUDE_SCOPED_THREAD_DPI_AWARENESS_SETTER 1
+ #define JUCE_GRAPHICS_INCLUDE_COREGRAPHICS_HELPERS 1
+ 
+@@ -42,7 +44,7 @@
+ #include <juce_gui_extra/juce_gui_extra.h>
+ 
+ //==============================================================================
+-#if (JUCE_PLUGINHOST_VST || JUCE_PLUGINHOST_VST3) && (JUCE_LINUX || JUCE_BSD)
++#if (JUCE_PLUGINHOST_VST || JUCE_PLUGINHOST_VST3) && (JUCE_LINUX || JUCE_BSD) && ! JUCE_AUDIOPROCESSOR_NO_GUI
+  #include <X11/Xlib.h>
+  #include <X11/Xutil.h>
+  #include <sys/utsname.h>
+@@ -196,9 +198,11 @@ private:
+ #include "format_types/juce_LegacyAudioParameter.cpp"
+ #include "processors/juce_AudioProcessor.cpp"
+ #include "processors/juce_AudioPluginInstance.cpp"
+-#include "processors/juce_AudioProcessorEditor.cpp"
+ #include "processors/juce_AudioProcessorGraph.cpp"
+-#include "processors/juce_GenericAudioProcessorEditor.cpp"
++#if ! JUCE_AUDIOPROCESSOR_NO_GUI
++ #include "processors/juce_AudioProcessorEditor.cpp"
++ #include "processors/juce_GenericAudioProcessorEditor.cpp"
++#endif
+ #include "processors/juce_PluginDescription.cpp"
+ #include "format_types/juce_ARACommon.cpp"
+ #include "format_types/juce_LADSPAPluginFormat.cpp"
+@@ -206,9 +210,11 @@ private:
+ #include "format_types/juce_VST3PluginFormat.cpp"
+ #include "format_types/juce_AudioUnitPluginFormat.mm"
+ #include "format_types/juce_ARAHosting.cpp"
+-#include "scanning/juce_KnownPluginList.cpp"
+-#include "scanning/juce_PluginDirectoryScanner.cpp"
+-#include "scanning/juce_PluginListComponent.cpp"
++#if ! JUCE_AUDIOPROCESSOR_NO_GUI
++ #include "scanning/juce_KnownPluginList.cpp"
++ #include "scanning/juce_PluginDirectoryScanner.cpp"
++ #include "scanning/juce_PluginListComponent.cpp"
++#endif
+ #include "processors/juce_AudioProcessorParameterGroup.cpp"
+ #include "utilities/juce_AudioProcessorParameterWithID.cpp"
+ #include "utilities/juce_RangedAudioParameter.cpp"
+@@ -216,7 +222,9 @@ private:
+ #include "utilities/juce_AudioParameterInt.cpp"
+ #include "utilities/juce_AudioParameterBool.cpp"
+ #include "utilities/juce_AudioParameterChoice.cpp"
+-#include "utilities/juce_ParameterAttachments.cpp"
++#if ! JUCE_AUDIOPROCESSOR_NO_GUI
++ #include "utilities/juce_ParameterAttachments.cpp"
++#endif
+ #include "utilities/juce_AudioProcessorValueTreeState.cpp"
+ #include "utilities/juce_PluginHostType.cpp"
+ #include "utilities/juce_NativeScaleFactorNotifier.cpp"
+@@ -233,3 +241,8 @@ private:
+   #include "format_types/juce_LV2PluginFormat_test.cpp"
+  #endif
+ #endif
++
++#if JUCE_AUDIOPROCESSOR_NO_GUI
++// commonly used classes in DSP code
++namespace juce { Colour::Colour(juce::uint32) noexcept {} }
++#endif
+diff --git a/modules/juce_audio_processors/juce_audio_processors.h b/modules/juce_audio_processors/juce_audio_processors.h
+index 1664b90ae..389caf794 100644
+--- a/modules/juce_audio_processors/juce_audio_processors.h
++++ b/modules/juce_audio_processors/juce_audio_processors.h
+@@ -138,14 +138,18 @@
+ #include "processors/juce_AudioProcessorParameter.h"
+ #include "processors/juce_HostedAudioProcessorParameter.h"
+ #include "processors/juce_AudioProcessorEditorHostContext.h"
+-#include "processors/juce_AudioProcessorEditor.h"
++#if ! JUCE_AUDIOPROCESSOR_NO_GUI
++ #include "processors/juce_AudioProcessorEditor.h"
++#endif
+ #include "processors/juce_AudioProcessorListener.h"
+ #include "processors/juce_AudioProcessorParameterGroup.h"
+ #include "processors/juce_AudioProcessor.h"
+ #include "processors/juce_PluginDescription.h"
+ #include "processors/juce_AudioPluginInstance.h"
+ #include "processors/juce_AudioProcessorGraph.h"
+-#include "processors/juce_GenericAudioProcessorEditor.h"
++#if ! JUCE_AUDIOPROCESSOR_NO_GUI
++ #include "processors/juce_GenericAudioProcessorEditor.h"
++#endif
+ #include "format/juce_AudioPluginFormat.h"
+ #include "format/juce_AudioPluginFormatManager.h"
+ #include "scanning/juce_KnownPluginList.h"
+@@ -164,7 +168,9 @@
+ #include "utilities/juce_AudioParameterInt.h"
+ #include "utilities/juce_AudioParameterBool.h"
+ #include "utilities/juce_AudioParameterChoice.h"
+-#include "utilities/juce_ParameterAttachments.h"
++#if ! JUCE_AUDIOPROCESSOR_NO_GUI
++ #include "utilities/juce_ParameterAttachments.h"
++#endif
+ #include "utilities/juce_AudioProcessorValueTreeState.h"
+ #include "utilities/juce_PluginHostType.h"
+ #include "utilities/ARA/juce_ARA_utils.h"
+diff --git a/modules/juce_audio_processors/processors/juce_AudioProcessor.cpp b/modules/juce_audio_processors/processors/juce_AudioProcessor.cpp
+index 53aa9c3d8..a84bd22be 100644
+--- a/modules/juce_audio_processors/processors/juce_AudioProcessor.cpp
++++ b/modules/juce_audio_processors/processors/juce_AudioProcessor.cpp
+@@ -50,12 +50,14 @@ AudioProcessor::AudioProcessor (const BusesProperties& ioConfig)
+ 
+ AudioProcessor::~AudioProcessor()
+ {
++   #if ! JUCE_AUDIOPROCESSOR_NO_GUI
+     {
+         const ScopedLock sl (activeEditorLock);
+ 
+         // ooh, nasty - the editor should have been deleted before its AudioProcessor.
+         jassert (activeEditor == nullptr);
+     }
++   #endif
+ 
+    #if JUCE_DEBUG && ! JUCE_DISABLE_AUDIOPROCESSOR_BEGIN_END_GESTURE_CHECKING
+     // This will fail if you've called beginParameterChangeGesture() for one
+@@ -874,6 +876,7 @@ void AudioProcessor::audioIOChanged (bool busNumberChanged, bool channelNumChang
+     processorLayoutsChanged();
+ }
+ 
++#if ! JUCE_AUDIOPROCESSOR_NO_GUI
+ //==============================================================================
+ void AudioProcessor::editorBeingDeleted (AudioProcessorEditor* const editor) noexcept
+ {
+@@ -910,6 +913,7 @@ AudioProcessorEditor* AudioProcessor::createEditorIfNeeded()
+ 
+     return ed;
+ }
++#endif
+ 
+ //==============================================================================
+ void AudioProcessor::getCurrentProgramStateInformation (juce::MemoryBlock& destData)
+diff --git a/modules/juce_audio_processors/processors/juce_AudioProcessor.h b/modules/juce_audio_processors/processors/juce_AudioProcessor.h
+index 36e9769f2..27b5eb9cd 100644
+--- a/modules/juce_audio_processors/processors/juce_AudioProcessor.h
++++ b/modules/juce_audio_processors/processors/juce_AudioProcessor.h
+@@ -949,6 +949,7 @@ public:
+     */
+     virtual void setNonRealtime (bool isNonRealtime) noexcept;
+ 
++   #if ! JUCE_AUDIOPROCESSOR_NO_GUI
+     //==============================================================================
+     /** Creates the processor's GUI.
+ 
+@@ -998,6 +999,7 @@ public:
+         This may call createEditor() internally to create the component.
+     */
+     AudioProcessorEditor* createEditorIfNeeded();
++   #endif
+ 
+     //==============================================================================
+     /** Returns the default number of steps for a parameter.
+@@ -1209,9 +1211,11 @@ public:
+ 
+     virtual CurveData getResponseCurve (CurveData::Type /*curveType*/) const      { return {}; }
+ 
++   #if ! JUCE_AUDIOPROCESSOR_NO_GUI
+     //==============================================================================
+     /** Not for public use - this is called before deleting an editor component. */
+     void editorBeingDeleted (AudioProcessorEditor*) noexcept;
++   #endif
+ 
+     /** Flags to indicate the type of plugin context in which a processor is being used. */
+     enum WrapperType
+@@ -1241,7 +1245,9 @@ public:
+     struct TrackProperties
+     {
+         String name;    // The name of the track - this will be empty if the track name is not known
++       #if ! JUCE_AUDIOPROCESSOR_NO_GUI
+         Colour colour;  // The colour of the track - this will be transparentBlack if the colour is not known
++       #endif
+ 
+         // other properties may be added in the future
+     };
+@@ -1490,7 +1496,9 @@ private:
+ 
+     //==============================================================================
+     Array<AudioProcessorListener*> listeners;
++   #if ! JUCE_AUDIOPROCESSOR_NO_GUI
+     Component::SafePointer<AudioProcessorEditor> activeEditor;
++   #endif
+     double currentSampleRate = 0;
+     int blockSize = 0, latencySamples = 0;
+     bool suspended = false;
+diff --git a/modules/juce_audio_processors/processors/juce_AudioProcessorGraph.cpp b/modules/juce_audio_processors/processors/juce_AudioProcessorGraph.cpp
+index ea943564b..6a0bed1af 100644
+--- a/modules/juce_audio_processors/processors/juce_AudioProcessorGraph.cpp
++++ b/modules/juce_audio_processors/processors/juce_AudioProcessorGraph.cpp
+@@ -1568,8 +1568,10 @@ bool AudioProcessorGraph::AudioGraphIOProcessor::producesMidi() const
+ bool AudioProcessorGraph::AudioGraphIOProcessor::isInput() const noexcept           { return type == audioInputNode  || type == midiInputNode; }
+ bool AudioProcessorGraph::AudioGraphIOProcessor::isOutput() const noexcept          { return type == audioOutputNode || type == midiOutputNode; }
+ 
++#if ! JUCE_AUDIOPROCESSOR_NO_GUI
+ bool AudioProcessorGraph::AudioGraphIOProcessor::hasEditor() const                  { return false; }
+ AudioProcessorEditor* AudioProcessorGraph::AudioGraphIOProcessor::createEditor()    { return nullptr; }
++#endif
+ 
+ int AudioProcessorGraph::AudioGraphIOProcessor::getNumPrograms()                    { return 0; }
+ int AudioProcessorGraph::AudioGraphIOProcessor::getCurrentProgram()                 { return 0; }
+diff --git a/modules/juce_audio_processors/processors/juce_AudioProcessorGraph.h b/modules/juce_audio_processors/processors/juce_AudioProcessorGraph.h
+index 5b6908824..f8e534009 100644
+--- a/modules/juce_audio_processors/processors/juce_AudioProcessorGraph.h
++++ b/modules/juce_audio_processors/processors/juce_AudioProcessorGraph.h
+@@ -364,8 +364,10 @@ public:
+         bool acceptsMidi() const override;
+         bool producesMidi() const override;
+ 
++       #if ! JUCE_AUDIOPROCESSOR_NO_GUI
+         bool hasEditor() const override;
+         AudioProcessorEditor* createEditor() override;
++       #endif
+ 
+         int getNumPrograms() override;
+         int getCurrentProgram() override;
+@@ -401,8 +403,10 @@ public:
+     bool acceptsMidi() const override;
+     bool producesMidi() const override;
+ 
++   #if ! JUCE_AUDIOPROCESSOR_NO_GUI
+     bool hasEditor() const override                         { return false; }
+     AudioProcessorEditor* createEditor() override           { return nullptr; }
++   #endif
+     int getNumPrograms() override                           { return 0; }
+     int getCurrentProgram() override                        { return 0; }
+     void setCurrentProgram (int) override                   { }
+diff --git a/modules/juce_audio_processors/utilities/juce_AudioProcessorValueTreeState.cpp b/modules/juce_audio_processors/utilities/juce_AudioProcessorValueTreeState.cpp
+index caf7eb798..1d59658ab 100644
+--- a/modules/juce_audio_processors/utilities/juce_AudioProcessorValueTreeState.cpp
++++ b/modules/juce_audio_processors/utilities/juce_AudioProcessorValueTreeState.cpp
+@@ -473,6 +473,7 @@ void AudioProcessorValueTreeState::timerCallback()
+ }
+ 
+ //==============================================================================
++#if ! JUCE_AUDIOPROCESSOR_NO_GUI
+ template <typename Attachment, typename Control>
+ std::unique_ptr<Attachment> makeAttachment (const AudioProcessorValueTreeState& stateToUse,
+                                             const String& parameterID,
+@@ -505,6 +506,7 @@ AudioProcessorValueTreeState::ButtonAttachment::ButtonAttachment (AudioProcessor
+     : attachment (makeAttachment<ButtonParameterAttachment> (stateToUse, parameterID, button))
+ {
+ }
++#endif
+ 
+ //==============================================================================
+ //==============================================================================
+diff --git a/modules/juce_audio_processors/utilities/juce_AudioProcessorValueTreeState.h b/modules/juce_audio_processors/utilities/juce_AudioProcessorValueTreeState.h
+index 4c498f9b2..4e33e2a67 100644
+--- a/modules/juce_audio_processors/utilities/juce_AudioProcessorValueTreeState.h
++++ b/modules/juce_audio_processors/utilities/juce_AudioProcessorValueTreeState.h
+@@ -526,6 +526,7 @@ public:
+         friend class AudioProcessorValueTreeState::ParameterAdapter;
+     };
+ 
++   #if ! JUCE_AUDIOPROCESSOR_NO_GUI
+     //==============================================================================
+     /** An object of this class maintains a connection between a Slider and a parameter
+         in an AudioProcessorValueTreeState.
+@@ -593,6 +594,7 @@ public:
+         std::unique_ptr<ButtonParameterAttachment> attachment;
+         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ButtonAttachment)
+     };
++   #endif
+ 
+ private:
+     //==============================================================================
+diff --git a/modules/juce_audio_processors/utilities/juce_PluginHostType.cpp b/modules/juce_audio_processors/utilities/juce_PluginHostType.cpp
+index 6651bddf8..d03d4f792 100644
+--- a/modules/juce_audio_processors/utilities/juce_PluginHostType.cpp
++++ b/modules/juce_audio_processors/utilities/juce_PluginHostType.cpp
+@@ -70,6 +70,7 @@ bool PluginHostType::isInAAXAudioSuite (AudioProcessor& processor)
+     return false;
+ }
+ 
++#if ! JUCE_AUDIOPROCESSOR_NO_GUI
+ Image PluginHostType::getHostIcon (int size) const
+ {
+     ignoreUnused (size);
+@@ -86,6 +87,7 @@ Image PluginHostType::getHostIcon (int size) const
+ 
+     return Image();
+ }
++#endif
+ 
+ const char* PluginHostType::getHostDescription() const noexcept
+ {
+diff --git a/modules/juce_audio_processors/utilities/juce_PluginHostType.h b/modules/juce_audio_processors/utilities/juce_PluginHostType.h
+index c222899fd..e5ec0a33a 100644
+--- a/modules/juce_audio_processors/utilities/juce_PluginHostType.h
++++ b/modules/juce_audio_processors/utilities/juce_PluginHostType.h
+@@ -207,8 +207,10 @@ public:
+     bool isInterAppAudioConnected() const;
+     /** Switches to the host application when Inter-App Audio is used on iOS. */
+     void switchToHostApplication() const;
++   #if ! JUCE_AUDIOPROCESSOR_NO_GUI
+     /** Gets the host app's icon when Inter-App Audio is used on iOS. */
+     Image getHostIcon (int size) const;
++   #endif
+ 
+     //==============================================================================
+     /** Returns the complete absolute path of the host application executable. */

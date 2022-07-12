@@ -1,0 +1,13 @@
+diff --git a/modules/juce_audio_processors/format_types/juce_LADSPAPluginFormat.cpp b/modules/juce_audio_processors/format_types/juce_LADSPAPluginFormat.cpp
+index cec1528a4..2ad49260d 100644
+--- a/modules/juce_audio_processors/format_types/juce_LADSPAPluginFormat.cpp
++++ b/modules/juce_audio_processors/format_types/juce_LADSPAPluginFormat.cpp
+@@ -25,7 +25,7 @@
+ 
+ #if JUCE_PLUGINHOST_LADSPA && (JUCE_LINUX || JUCE_BSD)
+ 
+-#include <ladspa.h>
++#include "ladspa.h"
+ 
+ namespace juce
+ {

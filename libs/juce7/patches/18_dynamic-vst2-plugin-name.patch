@@ -1,0 +1,13 @@
+diff --git a/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp b/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
+index 4da23cdf5..914fd6b44 100644
+--- a/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
++++ b/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
+@@ -1824,7 +1824,7 @@ private:
+ 
+     pointer_sized_int handleGetPlugInName (VstOpCodeArguments args)
+     {
+-        String (JucePlugin_Name).copyToUTF8 ((char*) args.ptr, 64 + 1);
++        String (processor->getName()).copyToUTF8 ((char*) args.ptr, 64 + 1);
+         return 1;
+     }
+ 

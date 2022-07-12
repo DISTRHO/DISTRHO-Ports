@@ -1,0 +1,13 @@
+diff --git a/modules/juce_audio_basics/midi/juce_MidiMessage.h b/modules/juce_audio_basics/midi/juce_MidiMessage.h
+index 5241d7948..c63b965bc 100644
+--- a/modules/juce_audio_basics/midi/juce_MidiMessage.h
++++ b/modules/juce_audio_basics/midi/juce_MidiMessage.h
+@@ -979,7 +979,7 @@ private:
+    #endif
+ 
+     inline bool isHeapAllocated() const noexcept  { return size > (int) sizeof (packedData); }
+-    inline uint8* getData() const noexcept        { return isHeapAllocated() ? packedData.allocatedData : (uint8*) packedData.asBytes; }
++    inline uint8* getData() const noexcept        { return isHeapAllocated() ? packedData.allocatedData : const_cast<uint8*>(packedData.asBytes); }
+     uint8* allocateSpace (int);
+ };
+ 

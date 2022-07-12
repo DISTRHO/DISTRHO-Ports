@@ -1,0 +1,14 @@
+diff --git a/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp b/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
+index dd044d108..4da23cdf5 100644
+--- a/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
++++ b/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
+@@ -252,9 +252,6 @@ public:
+         // You must at least have some channels
+         jassert (processor->isMidiEffect() || (maxNumInChannels > 0 || maxNumOutChannels > 0));
+ 
+-        if (processor->isMidiEffect())
+-            maxNumInChannels = maxNumOutChannels = 2;
+-
+        #ifdef JucePlugin_PreferredChannelConfigurations
+         processor->setPlayConfigDetails (maxNumInChannels, maxNumOutChannels, 44100.0, 1024);
+        #endif

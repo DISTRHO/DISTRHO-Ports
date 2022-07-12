@@ -1,0 +1,109 @@
+diff --git a/extras/AudioPluginHost/Source/UI/MainHostWindow.cpp b/extras/AudioPluginHost/Source/UI/MainHostWindow.cpp
+index 2f5338f1c..789e6dc20 100644
+--- a/extras/AudioPluginHost/Source/UI/MainHostWindow.cpp
++++ b/extras/AudioPluginHost/Source/UI/MainHostWindow.cpp
+@@ -921,7 +921,7 @@ void MainHostWindow::showAudioSettings()
+     o.componentToCentreAround       = this;
+     o.dialogBackgroundColour        = getLookAndFeel().findColour (ResizableWindow::backgroundColourId);
+     o.escapeKeyTriggersCloseButton  = true;
+-    o.useNativeTitleBar             = false;
++    o.useNativeTitleBar             = true;
+     o.resizable                     = false;
+ 
+      auto* w = o.create();
+diff --git a/modules/juce_gui_basics/windows/juce_DialogWindow.cpp b/modules/juce_gui_basics/windows/juce_DialogWindow.cpp
+index b024f9dde..c866ff208 100644
+--- a/modules/juce_gui_basics/windows/juce_DialogWindow.cpp
++++ b/modules/juce_gui_basics/windows/juce_DialogWindow.cpp
+@@ -134,7 +134,8 @@ void DialogWindow::showDialog (const String& dialogTitle,
+                                Colour backgroundColour,
+                                const bool escapeKeyTriggersCloseButton,
+                                const bool resizable,
+-                               const bool useBottomRightCornerResizer)
++                               const bool useBottomRightCornerResizer,
++                               const bool useNativeTitleBar)
+ {
+     LaunchOptions o;
+     o.dialogTitle = dialogTitle;
+@@ -142,9 +143,9 @@ void DialogWindow::showDialog (const String& dialogTitle,
+     o.componentToCentreAround = componentToCentreAround;
+     o.dialogBackgroundColour = backgroundColour;
+     o.escapeKeyTriggersCloseButton = escapeKeyTriggersCloseButton;
+-    o.useNativeTitleBar = false;
+     o.resizable = resizable;
+     o.useBottomRightCornerResizer = useBottomRightCornerResizer;
++    o.useNativeTitleBar = useNativeTitleBar;
+ 
+     o.launchAsync();
+ }
+@@ -156,7 +157,8 @@ int DialogWindow::showModalDialog (const String& dialogTitle,
+                                    Colour backgroundColour,
+                                    const bool escapeKeyTriggersCloseButton,
+                                    const bool resizable,
+-                                   const bool useBottomRightCornerResizer)
++                                   const bool useBottomRightCornerResizer,
++                                   const bool useNativeTitleBar)
+ {
+     LaunchOptions o;
+     o.dialogTitle = dialogTitle;
+@@ -164,9 +166,9 @@ int DialogWindow::showModalDialog (const String& dialogTitle,
+     o.componentToCentreAround = componentToCentreAround;
+     o.dialogBackgroundColour = backgroundColour;
+     o.escapeKeyTriggersCloseButton = escapeKeyTriggersCloseButton;
+-    o.useNativeTitleBar = false;
+     o.resizable = resizable;
+     o.useBottomRightCornerResizer = useBottomRightCornerResizer;
++    o.useNativeTitleBar = useNativeTitleBar;
+ 
+     return o.runModal();
+ }
+diff --git a/modules/juce_gui_basics/windows/juce_DialogWindow.h b/modules/juce_gui_basics/windows/juce_DialogWindow.h
+index 484a08384..ad94a08ee 100644
+--- a/modules/juce_gui_basics/windows/juce_DialogWindow.h
++++ b/modules/juce_gui_basics/windows/juce_DialogWindow.h
+@@ -199,7 +199,8 @@ public:
+                             Colour backgroundColour,
+                             bool escapeKeyTriggersCloseButton,
+                             bool shouldBeResizable = false,
+-                            bool useBottomRightCornerResizer = false);
++                            bool useBottomRightCornerResizer = false,
++                            bool useNativeTitleBar = true);
+ 
+    #if JUCE_MODAL_LOOPS_PERMITTED
+     /** Easy way of quickly showing a dialog box containing a given component.
+@@ -245,7 +246,8 @@ public:
+                                 Colour backgroundColour,
+                                 bool escapeKeyTriggersCloseButton,
+                                 bool shouldBeResizable = false,
+-                                bool useBottomRightCornerResizer = false);
++                                bool useBottomRightCornerResizer = false,
++                                bool useNativeTitleBar = true);
+    #endif
+ 
+ 
+diff --git a/modules/juce_gui_basics/windows/juce_TopLevelWindow.h b/modules/juce_gui_basics/windows/juce_TopLevelWindow.h
+index 2eb400a70..4cd5aefe0 100644
+--- a/modules/juce_gui_basics/windows/juce_TopLevelWindow.h
++++ b/modules/juce_gui_basics/windows/juce_TopLevelWindow.h
+@@ -154,7 +154,7 @@ protected:
+ private:
+     friend class TopLevelWindowManager;
+     friend class ResizableWindow;
+-    bool useDropShadow = true, useNativeTitleBar = false, isCurrentlyActive = false;
++    bool useDropShadow = true, useNativeTitleBar = true, isCurrentlyActive = false;
+     std::unique_ptr<DropShadower> shadower;
+ 
+     std::unique_ptr<AccessibilityHandler> createAccessibilityHandler() override;
+diff --git a/modules/juce_gui_extra/misc/juce_PreferencesPanel.cpp b/modules/juce_gui_extra/misc/juce_PreferencesPanel.cpp
+index b90412cf2..b6c92e9fd 100644
+--- a/modules/juce_gui_extra/misc/juce_PreferencesPanel.cpp
++++ b/modules/juce_gui_extra/misc/juce_PreferencesPanel.cpp
+@@ -92,7 +92,7 @@ void PreferencesPanel::showInDialogBox (const String& dialogTitle, int dialogWid
+     o.dialogTitle                   = dialogTitle;
+     o.dialogBackgroundColour        = backgroundColour;
+     o.escapeKeyTriggersCloseButton  = false;
+-    o.useNativeTitleBar             = false;
++    o.useNativeTitleBar             = true;
+     o.resizable                     = false;
+ 
+     o.launchAsync();
