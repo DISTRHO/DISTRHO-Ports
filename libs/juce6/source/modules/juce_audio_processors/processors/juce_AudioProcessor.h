@@ -1228,7 +1228,9 @@ public:
     struct TrackProperties
     {
         String name;    // The name of the track - this will be empty if the track name is not known
+       #if ! JUCE_AUDIOPROCESSOR_NO_GUI
         Colour colour;  // The colour of the track - this will be transparentBlack if the colour is not known
+       #endif
 
         // other properties may be added in the future
     };

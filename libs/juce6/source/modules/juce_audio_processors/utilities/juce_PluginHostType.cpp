@@ -70,6 +70,7 @@ bool PluginHostType::isInAAXAudioSuite (AudioProcessor& processor)
     return false;
 }
 
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
 Image PluginHostType::getHostIcon (int size) const
 {
     ignoreUnused (size);
@@ -86,6 +87,7 @@ Image PluginHostType::getHostIcon (int size) const
 
     return Image();
 }
+#endif
 
 const char* PluginHostType::getHostDescription() const noexcept
 {

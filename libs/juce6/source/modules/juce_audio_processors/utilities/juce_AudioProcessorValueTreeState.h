@@ -429,6 +429,7 @@ public:
         friend class AudioProcessorValueTreeState::ParameterAdapter;
     };
 
+   #if ! JUCE_AUDIOPROCESSOR_NO_GUI
     //==============================================================================
     /** An object of this class maintains a connection between a Slider and a parameter
         in an AudioProcessorValueTreeState.
@@ -496,6 +497,7 @@ public:
         std::unique_ptr<ButtonParameterAttachment> attachment;
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ButtonAttachment)
     };
+   #endif
 
 private:
     //==============================================================================

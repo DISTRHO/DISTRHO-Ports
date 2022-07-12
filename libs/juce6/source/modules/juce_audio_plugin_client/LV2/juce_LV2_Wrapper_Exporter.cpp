@@ -174,7 +174,7 @@ static const String makePluginFile (AudioProcessor* const filter, const int maxN
 
     // Plugin
     text += "<" + pluginURI + ">\n";
-    text += "    a " + getPluginType() + " ;\n";
+    text += "    a " + getPluginType() + " , doap:Project ;\n";
     text += "    lv2:requiredFeature <" LV2_BUF_SIZE__boundedBlockLength "> ,\n";
 #if JucePlugin_WantsLV2FixedBlockSize
     text += "                        <" LV2_BUF_SIZE__fixedBlockLength "> ,\n";
@@ -193,8 +193,8 @@ static const String makePluginFile (AudioProcessor* const filter, const int maxN
         const uint32_t version = JucePlugin_VersionCode;
 
         const uint32_t majorVersion = (version & 0xFF0000) >> 16;
-        const uint32_t microVersion = (version & 0x00FF00) >> 8;
-        /* */ uint32_t minorVersion = (version & 0x0000FF) >> 0;
+        /* */ uint32_t minorVersion = (version & 0x00FF00) >> 8;
+        const uint32_t microVersion = (version & 0x0000FF) >> 0;
 
         // NOTE: LV2 ignores 'major' version and says 0 for minor is pre-release/unstable.
         if (majorVersion > 0)

@@ -84,7 +84,7 @@
     the availability of Xinerama is queried during runtime.
 */
 #ifndef JUCE_USE_XINERAMA
- #define JUCE_USE_XINERAMA 1
+ #define JUCE_USE_XINERAMA 0
 #endif
 
 /** Config: JUCE_USE_XSHM

@@ -71,7 +71,9 @@
 #define JUCE_LV2_STATE_STRING_URI "urn:juce:stateString"
 #define JUCE_LV2_STATE_BINARY_URI "urn:juce:stateBinary"
 
-#define JUCE_GUI_BASICS_INCLUDE_XHEADERS 1
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
+ #define JUCE_GUI_BASICS_INCLUDE_XHEADERS 1
+#endif
 
 #include "../utility/juce_IncludeModuleHeaders.h"
 

@@ -484,6 +484,7 @@ void AudioProcessorValueTreeState::timerCallback()
 }
 
 //==============================================================================
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
 template <typename Attachment, typename Control>
 std::unique_ptr<Attachment> makeAttachment (const AudioProcessorValueTreeState& stateToUse,
                                             const String& parameterID,
@@ -516,6 +517,7 @@ AudioProcessorValueTreeState::ButtonAttachment::ButtonAttachment (AudioProcessor
     : attachment (makeAttachment<ButtonParameterAttachment> (stateToUse, parameterID, button))
 {
 }
+#endif
 
 //==============================================================================
 //==============================================================================
