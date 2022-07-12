@@ -12,4 +12,8 @@ if not (build_juce5_only or build_juce7_only)
     subdir('juce6')
 endif
 
+if not (build_juce5_only or build_juce6_only)
+    subdir('juce7')
+endif
+
 ###############################################################################

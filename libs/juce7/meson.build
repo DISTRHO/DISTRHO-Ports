@@ -1,7 +1,7 @@
 ###############################################################################
 
 if linux_embed
-    juce6_srcs = [
+    juce7_srcs = [
         'source/modules/juce_audio_basics/juce_audio_basics.cpp',
         'source/modules/juce_audio_formats/juce_audio_formats.cpp',
         'source/modules/juce_audio_processors/juce_audio_processors.cpp',
@@ -13,7 +13,7 @@ if linux_embed
         'source/modules/juce_events/juce_events.cpp',
     ]
 else
-    juce6_srcs = [
+    juce7_srcs = [
         'source/modules/juce_audio_basics/juce_audio_basics.cpp',
         'source/modules/juce_audio_formats/juce_audio_formats.cpp',
         'source/modules/juce_audio_processors/juce_audio_processors.cpp',
@@ -30,45 +30,45 @@ else
     ]
 endif
 
-juce6_devices_srcs = [
+juce7_devices_srcs = [
     'source/modules/juce_audio_devices/juce_audio_devices.cpp',
 ]
 
-juce6_extra_cpp_args = [
+juce7_extra_cpp_args = [
     '-std=gnu++14',
     '-Wno-non-virtual-dtor',
 ]
 
 if os_windows
     if host_machine.cpu() == 'x86'
-        juce6_extra_cpp_args += [
+        juce7_extra_cpp_args += [
             '-mpreferred-stack-boundary=2',
         ]
     endif
 endif
 
-lib_juce6 = static_library('juce6',
-    sources: juce6_srcs,
+lib_juce7 = static_library('juce7',
+    sources: juce7_srcs,
     include_directories: [
         include_directories('.'),
         include_directories('source'),
         include_directories('source/modules'),
-        include_directories('..' / 'juced' / 'source' / 'dependancies' / 'ladspa_sdk' / 'src'),
+        include_directories('../juced/source/dependancies/ladspa_sdk/src'),
     ],
-    cpp_args: build_flags_cpp + juce6_extra_cpp_args,
+    cpp_args: build_flags_cpp + juce7_extra_cpp_args,
     dependencies: dependencies,
     pic: true,
     install: false,
 )
 
-lib_juce6_device = static_library('juce6-devices',
-    sources: juce6_devices_srcs,
+lib_juce7_device = static_library('juce7-devices',
+    sources: juce7_devices_srcs,
     include_directories: [
         include_directories('.'),
         include_directories('source'),
         include_directories('source/modules'),
     ],
-    cpp_args: build_flags_cpp + juce6_extra_cpp_args + ['-DJUCE_MODULE_AVAILABLE_juce_audio_devices=1'],
+    cpp_args: build_flags_cpp + juce7_extra_cpp_args + ['-DJUCE_MODULE_AVAILABLE_juce_audio_devices=1'],
     dependencies: dependencies_devices,
     pic: true,
     install: false,
