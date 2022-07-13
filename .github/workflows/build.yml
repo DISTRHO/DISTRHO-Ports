@@ -11,149 +11,149 @@ env:
   LIBGL_ALWAYS_SOFTWARE: 'true'
 
 jobs:
-  linux-arm64:
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: actions/checkout@v2
-      #- name: Set up cache
-        #id: cache
-        #uses: actions/cache@v2
+  #linux-arm64:
+    #runs-on: ubuntu-20.04
+    #steps:
+      #- uses: actions/checkout@v2
+      ##- name: Set up cache
+        ##id: cache
+        ##uses: actions/cache@v2
+        ##with:
+          ##path: |
+            ##build
+          ##key: linux-arm64-v${{ env.CACHE_VERSION }}
+      #- name: Fix GitHub's mess
+        #run: |
+          #sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list
+          #sudo apt-get update -qq
+          #sudo apt-get install -yqq --allow-downgrades libpcre2-8-0/focal libpcre2-16-0/focal libpcre2-32-0/focal libpcre2-posix2/focal
+      #- name: Set up dependencies
+        #run: |
+          #sudo dpkg --add-architecture arm64
+          #sudo sed -i "s/deb http/deb [arch=amd64] http/" /etc/apt/sources.list
+          #echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports focal main restricted universe multiverse" | sudo tee /etc/apt/sources.list.d/ports-arm64.list
+          #echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports focal-updates main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list.d/ports-arm64.list
+          #echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports focal-backports main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list.d/ports-arm64.list
+          #sudo apt-get update -qq
+          #sudo apt-get install -yqq build-essential meson
+          #sudo apt-get install -yqq g++-aarch64-linux-gnu libasound2-dev:arm64 libfftw3-dev:arm64 libfreetype6-dev:arm64 libgl1-mesa-dev:arm64 libx11-dev:arm64 libxcomposite-dev:arm64 libxcursor-dev:arm64 libxrender-dev:arm64 qemu-user-static
+      #- name: Build linux arm64 cross-compiled
+        #env:
+          #AR: aarch64-linux-gnu-ar
+          #CC: aarch64-linux-gnu-gcc
+          #CXX: aarch64-linux-gnu-g++
+          #LD: aarch64-linux-gnu-ld
+          #NM: aarch64-linux-gnu-nm
+          #STRIP: aarch64-linux-gnu-strip
+          #LDFLAGS: -static-libgcc -static-libstdc++
+          #PKG_CONFIG_PATH: /usr/lib/aarch64-linux-gnu/pkgconfig
+        #run: |
+          #meson build --buildtype=release --prefix=/usr -Dsse-optimizations=false
+          #ninja -C build
+      #- name: Install linux armhf
+        #run: |
+          #ninja -C build install
+      #- name: Set sha8 (non-release)
+        #if: startsWith(github.ref, 'refs/tags/') != true
+        #id: slug1
+        #run: echo "::set-output name=sha8::$(echo ${{ github.sha }} | cut -c1-8)"
+      #- name: Set sha8 (release)
+        #if: startsWith(github.ref, 'refs/tags/')
+        #id: slug2
+        #run: echo "::set-output name=sha8::$(echo ${{ github.ref_name }})"
+      #- name: Set sha8
+        #id: slug
+        #run: echo "::set-output name=sha8::$(echo ${{ steps.slug1.outputs.sha8 || steps.slug2.outputs.sha8 }})"
+      #- name: Pack binaries
+        #run: |
+          #tar czf ${{ github.event.repository.name }}-linux-arm64-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}.tar.gz -C ${{ env.DESTDIR }}/usr/lib lv2 vst vst3
+      #- uses: actions/upload-artifact@v2
         #with:
+          #name: ${{ github.event.repository.name }}-linux-arm64-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}
           #path: |
-            #build
-          #key: linux-arm64-v${{ env.CACHE_VERSION }}
-      - name: Fix GitHub's mess
-        run: |
-          sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list
-          sudo apt-get update -qq
-          sudo apt-get install -yqq --allow-downgrades libpcre2-8-0/focal libpcre2-16-0/focal libpcre2-32-0/focal libpcre2-posix2/focal
-      - name: Set up dependencies
-        run: |
-          sudo dpkg --add-architecture arm64
-          sudo sed -i "s/deb http/deb [arch=amd64] http/" /etc/apt/sources.list
-          echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports focal main restricted universe multiverse" | sudo tee /etc/apt/sources.list.d/ports-arm64.list
-          echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports focal-updates main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list.d/ports-arm64.list
-          echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports focal-backports main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list.d/ports-arm64.list
-          sudo apt-get update -qq
-          sudo apt-get install -yqq build-essential meson
-          sudo apt-get install -yqq g++-aarch64-linux-gnu libasound2-dev:arm64 libfftw3-dev:arm64 libfreetype6-dev:arm64 libgl1-mesa-dev:arm64 libx11-dev:arm64 libxcomposite-dev:arm64 libxcursor-dev:arm64 libxrender-dev:arm64 qemu-user-static
-      - name: Build linux arm64 cross-compiled
-        env:
-          AR: aarch64-linux-gnu-ar
-          CC: aarch64-linux-gnu-gcc
-          CXX: aarch64-linux-gnu-g++
-          LD: aarch64-linux-gnu-ld
-          NM: aarch64-linux-gnu-nm
-          STRIP: aarch64-linux-gnu-strip
-          LDFLAGS: -static-libgcc -static-libstdc++
-          PKG_CONFIG_PATH: /usr/lib/aarch64-linux-gnu/pkgconfig
-        run: |
-          meson build --buildtype=release --prefix=/usr -Dsse-optimizations=false
-          ninja -C build
-      - name: Install linux armhf
-        run: |
-          ninja -C build install
-      - name: Set sha8 (non-release)
-        if: startsWith(github.ref, 'refs/tags/') != true
-        id: slug1
-        run: echo "::set-output name=sha8::$(echo ${{ github.sha }} | cut -c1-8)"
-      - name: Set sha8 (release)
-        if: startsWith(github.ref, 'refs/tags/')
-        id: slug2
-        run: echo "::set-output name=sha8::$(echo ${{ github.ref_name }})"
-      - name: Set sha8
-        id: slug
-        run: echo "::set-output name=sha8::$(echo ${{ steps.slug1.outputs.sha8 || steps.slug2.outputs.sha8 }})"
-      - name: Pack binaries
-        run: |
-          tar czf ${{ github.event.repository.name }}-linux-arm64-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}.tar.gz -C ${{ env.DESTDIR }}/usr/lib lv2 vst vst3
-      - uses: actions/upload-artifact@v2
-        with:
-          name: ${{ github.event.repository.name }}-linux-arm64-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}
-          path: |
-            *.tar.gz
-      - uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          tag_name: ${{ github.ref_name }}
-          name: ${{ github.ref_name }}
-          draft: false
-          prerelease: false
-          files: |
-            *.tar.gz
+            #*.tar.gz
+      #- uses: softprops/action-gh-release@v1
+        #if: startsWith(github.ref, 'refs/tags/')
+        #with:
+          #tag_name: ${{ github.ref_name }}
+          #name: ${{ github.ref_name }}
+          #draft: false
+          #prerelease: false
+          #files: |
+            #*.tar.gz
 
-  linux-armhf:
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: actions/checkout@v2
-      #- name: Set up cache
-        #id: cache
-        #uses: actions/cache@v2
+  #linux-armhf:
+    #runs-on: ubuntu-20.04
+    #steps:
+      #- uses: actions/checkout@v2
+      ##- name: Set up cache
+        ##id: cache
+        ##uses: actions/cache@v2
+        ##with:
+          ##path: |
+            ##build
+          ##key: linux-armhf-v${{ env.CACHE_VERSION }}
+      #- name: Fix GitHub's mess
+        #run: |
+          #sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list
+          #sudo apt-get update -qq
+          #sudo apt-get install -yqq --allow-downgrades libpcre2-8-0/focal libpcre2-16-0/focal libpcre2-32-0/focal libpcre2-posix2/focal
+      #- name: Set up dependencies
+        #run: |
+          #sudo dpkg --add-architecture armhf
+          #sudo sed -i "s/deb http/deb [arch=amd64] http/" /etc/apt/sources.list
+          #echo "deb [arch=armhf] http://ports.ubuntu.com/ubuntu-ports focal main restricted universe multiverse" | sudo tee /etc/apt/sources.list.d/ports-armhf.list
+          #echo "deb [arch=armhf] http://ports.ubuntu.com/ubuntu-ports focal-updates main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list.d/ports-armhf.list
+          #echo "deb [arch=armhf] http://ports.ubuntu.com/ubuntu-ports focal-backports main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list.d/ports-armhf.list
+          #sudo apt-get update -qq
+          #sudo apt-get install -yqq build-essential meson
+          #sudo apt-get install -yqq g++-arm-linux-gnueabihf libasound2-dev:armhf libfftw3-dev:armhf libfreetype6-dev:armhf libgl1-mesa-dev:armhf libx11-dev:armhf libxcomposite-dev:armhf libxcursor-dev:armhf libxrender-dev:armhf qemu-user-static
+      #- name: Build linux armhf cross-compiled
+        #env:
+          #AR: arm-linux-gnueabihf-ar
+          #CC: arm-linux-gnueabihf-gcc
+          #CXX: arm-linux-gnueabihf-g++
+          #LD: arm-linux-gnueabihf-ld
+          #NM: arm-linux-gnueabihf-nm
+          #STRIP: arm-linux-gnueabihf-strip
+          #CFLAGS: -mfpu=neon-vfpv4 -mfloat-abi=hard
+          #CXXFLAGS: -mfpu=neon-vfpv4 -mfloat-abi=hard
+          #LDFLAGS: -static-libgcc -static-libstdc++
+          #PKG_CONFIG_PATH: /usr/lib/arm-linux-gnueabihf/pkgconfig
+        #run: |
+          #meson build --buildtype=release --prefix=/usr -Dsse-optimizations=false
+          #ninja -C build
+      #- name: Install linux armhf
+        #run: |
+          #ninja -C build install
+      #- name: Set sha8 (non-release)
+        #if: startsWith(github.ref, 'refs/tags/') != true
+        #id: slug1
+        #run: echo "::set-output name=sha8::$(echo ${{ github.sha }} | cut -c1-8)"
+      #- name: Set sha8 (release)
+        #if: startsWith(github.ref, 'refs/tags/')
+        #id: slug2
+        #run: echo "::set-output name=sha8::$(echo ${{ github.ref_name }})"
+      #- name: Set sha8
+        #id: slug
+        #run: echo "::set-output name=sha8::$(echo ${{ steps.slug1.outputs.sha8 || steps.slug2.outputs.sha8 }})"
+      #- name: Pack binaries
+        #run: |
+          #tar czf ${{ github.event.repository.name }}-linux-armhf-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}.tar.gz -C ${{ env.DESTDIR }}/usr/lib lv2 vst vst3
+      #- uses: actions/upload-artifact@v2
         #with:
+          #name: ${{ github.event.repository.name }}-linux-armhf-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}
           #path: |
-            #build
-          #key: linux-armhf-v${{ env.CACHE_VERSION }}
-      - name: Fix GitHub's mess
-        run: |
-          sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list
-          sudo apt-get update -qq
-          sudo apt-get install -yqq --allow-downgrades libpcre2-8-0/focal libpcre2-16-0/focal libpcre2-32-0/focal libpcre2-posix2/focal
-      - name: Set up dependencies
-        run: |
-          sudo dpkg --add-architecture armhf
-          sudo sed -i "s/deb http/deb [arch=amd64] http/" /etc/apt/sources.list
-          echo "deb [arch=armhf] http://ports.ubuntu.com/ubuntu-ports focal main restricted universe multiverse" | sudo tee /etc/apt/sources.list.d/ports-armhf.list
-          echo "deb [arch=armhf] http://ports.ubuntu.com/ubuntu-ports focal-updates main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list.d/ports-armhf.list
-          echo "deb [arch=armhf] http://ports.ubuntu.com/ubuntu-ports focal-backports main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list.d/ports-armhf.list
-          sudo apt-get update -qq
-          sudo apt-get install -yqq build-essential meson
-          sudo apt-get install -yqq g++-arm-linux-gnueabihf libasound2-dev:armhf libfftw3-dev:armhf libfreetype6-dev:armhf libgl1-mesa-dev:armhf libx11-dev:armhf libxcomposite-dev:armhf libxcursor-dev:armhf libxrender-dev:armhf qemu-user-static
-      - name: Build linux armhf cross-compiled
-        env:
-          AR: arm-linux-gnueabihf-ar
-          CC: arm-linux-gnueabihf-gcc
-          CXX: arm-linux-gnueabihf-g++
-          LD: arm-linux-gnueabihf-ld
-          NM: arm-linux-gnueabihf-nm
-          STRIP: arm-linux-gnueabihf-strip
-          CFLAGS: -mfpu=neon-vfpv4 -mfloat-abi=hard
-          CXXFLAGS: -mfpu=neon-vfpv4 -mfloat-abi=hard
-          LDFLAGS: -static-libgcc -static-libstdc++
-          PKG_CONFIG_PATH: /usr/lib/arm-linux-gnueabihf/pkgconfig
-        run: |
-          meson build --buildtype=release --prefix=/usr -Dsse-optimizations=false
-          ninja -C build
-      - name: Install linux armhf
-        run: |
-          ninja -C build install
-      - name: Set sha8 (non-release)
-        if: startsWith(github.ref, 'refs/tags/') != true
-        id: slug1
-        run: echo "::set-output name=sha8::$(echo ${{ github.sha }} | cut -c1-8)"
-      - name: Set sha8 (release)
-        if: startsWith(github.ref, 'refs/tags/')
-        id: slug2
-        run: echo "::set-output name=sha8::$(echo ${{ github.ref_name }})"
-      - name: Set sha8
-        id: slug
-        run: echo "::set-output name=sha8::$(echo ${{ steps.slug1.outputs.sha8 || steps.slug2.outputs.sha8 }})"
-      - name: Pack binaries
-        run: |
-          tar czf ${{ github.event.repository.name }}-linux-armhf-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}.tar.gz -C ${{ env.DESTDIR }}/usr/lib lv2 vst vst3
-      - uses: actions/upload-artifact@v2
-        with:
-          name: ${{ github.event.repository.name }}-linux-armhf-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}
-          path: |
-            *.tar.gz
-      - uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          tag_name: ${{ github.ref_name }}
-          name: ${{ github.ref_name }}
-          draft: false
-          prerelease: false
-          files: |
-            *.tar.gz
+            #*.tar.gz
+      #- uses: softprops/action-gh-release@v1
+        #if: startsWith(github.ref, 'refs/tags/')
+        #with:
+          #tag_name: ${{ github.ref_name }}
+          #name: ${{ github.ref_name }}
+          #draft: false
+          #prerelease: false
+          #files: |
+            #*.tar.gz
 
   linux-i686:
     runs-on: ubuntu-20.04
