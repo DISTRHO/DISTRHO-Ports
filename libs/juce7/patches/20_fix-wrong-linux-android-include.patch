@@ -1,0 +1,20 @@
+diff --git a/modules/juce_core/juce_core.cpp b/modules/juce_core/juce_core.cpp
+index 067a189ab..f6fbfce2f 100644
+--- a/modules/juce_core/juce_core.cpp
++++ b/modules/juce_core/juce_core.cpp
+@@ -236,6 +236,7 @@
+ //==============================================================================
+ #elif JUCE_ANDROID
+  #include "native/juce_linux_CommonFile.cpp"
++ #include "native/juce_android_AndroidDocument.cpp"
+  #include "native/juce_android_JNIHelpers.cpp"
+  #include "native/juce_android_Files.cpp"
+  #include "native/juce_android_Misc.cpp"
+@@ -251,7 +252,6 @@
+ 
+ #include "files/juce_common_MimeTypes.h"
+ #include "files/juce_common_MimeTypes.cpp"
+-#include "native/juce_android_AndroidDocument.cpp"
+ #include "threads/juce_HighResolutionTimer.cpp"
+ #include "threads/juce_WaitableEvent.cpp"
+ #include "network/juce_URL.cpp"
