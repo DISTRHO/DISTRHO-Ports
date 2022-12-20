@@ -24,7 +24,8 @@
 #pragma once
 #include "SynthEngine.h"
 #include "ParamsEnum.h"
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "JuceHeader.h"
+#include <map>
 class MidiMap
 {
 public:

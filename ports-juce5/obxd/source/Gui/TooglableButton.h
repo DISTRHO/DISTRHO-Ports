@@ -22,7 +22,7 @@
 	==============================================================================
  */
 #pragma once
-#include "../Source/Engine/SynthEngine.h"
+#include "Engine/SynthEngine.h"
 #include "../Components/ScaleComponent.h"
 class ObxdAudioProcessor;
 
