@@ -41,7 +41,7 @@ public:
 		{
 			values[k] = 0.0f;
 		}
-		values[VOICE_COUNT] = 1.0f;
+		values[VOICE_COUNT] = 0.2f;
 		values[BRIGHTNESS]=1.0f;
 		values[OCTAVE]=0.5;
 		values[TUNE] = 0.5f;

@@ -27,6 +27,7 @@
 #include "Filter.h"
 #include "Decimator.h"
 #include "APInterpolator.h"
+#include "Tuning.h"
 
 class ObxdVoice
 {
@@ -41,6 +42,8 @@ private:
 	float c1,c2;
 
 	bool hq;
+    
+	Tuning* tuning;
 
 	//JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ObxdVoice)
 public:
@@ -168,11 +171,17 @@ public:
 	//	delete lenvd;
 	//	delete fenvd;
 	}
+	void initTuning(Tuning* t)
+	{
+		tuning = t;
+	}
 	inline float ProcessSample()
 	{
+		double tunedMidiNote = tuning->tunedMidiNote(midiIndx);
+        
 		//portamento on osc input voltage
 		//implements rc circuit
-		float ptNote  =tptlpupw(prtst, midiIndx-81, porta * (1+PortaDetune*PortaDetuneAmt),sampleRateInv);
+		float ptNote = tptlpupw(prtst, tunedMidiNote - 81, porta * (1+PortaDetune*PortaDetuneAmt),sampleRateInv);
 		osc.notePlaying = ptNote;
 		//both envelopes and filter cv need a delay equal to osc internal delay
 		float lfoDelayed = lfod.feedReturn(lfoIn);

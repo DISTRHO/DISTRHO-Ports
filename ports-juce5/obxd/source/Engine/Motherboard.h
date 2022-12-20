@@ -26,6 +26,7 @@
 #include "VoiceQueue.h"
 #include "SynthEngine.h"
 #include "Lfo.h"
+#include "Tuning.h"
 
 class Motherboard
 {
@@ -42,14 +43,16 @@ private:
 	float sampleRate,sampleRateInv;
 	//JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Motherboard)
 public:
+	Tuning tuning;
 	bool asPlayedMode;
 	Lfo mlfo,vibratoLfo;
 	float vibratoAmount;
 	bool vibratoEnabled;
 
 	float Volume;
-	const static int MAX_VOICES=8;
-	float pannings[MAX_VOICES];
+	const static int MAX_VOICES = 32;
+    const static int MAX_PANNINGS = 8;
+	float pannings[MAX_PANNINGS];
 	ObxdVoice voices[MAX_VOICES];
 	bool uni;
 	bool Oversample;
@@ -79,7 +82,7 @@ public:
 	//	pannings = new float[MAX_VOICES];
 		totalvc = MAX_VOICES;
 		vq = VoiceQueue(MAX_VOICES,voices);
-		for(int i = 0 ; i < MAX_VOICES;++i)
+		for(int i = 0 ; i < MAX_PANNINGS;++i)
 		{
 			pannings[i]= 0.5;
 		}
@@ -342,13 +345,14 @@ public:
 	}
 	void processSample(float* sm1,float* sm2)
 	{
+		tuning.updateMTSESPStatus();
 		mlfo.update();
 		vibratoLfo.update();
 		float vl=0,vr=0;
 		float vlo = 0 , vro = 0 ;
 		float lfovalue = mlfo.getVal();
 		float viblfo = vibratoEnabled?(vibratoLfo.getVal() * vibratoAmount):0;
-		float lfovalue2=0,viblfo2=0;
+		float lfovalue2=0,viblfo2;
 		if(Oversample)
 		{		
 			mlfo.update();
@@ -359,15 +363,16 @@ public:
 
 		for(int i = 0 ; i < totalvc;i++)
 		{
+				voices[i].initTuning(&tuning);
 				float x1 = processSynthVoice(voices[i],lfovalue,viblfo);
 				if(Oversample)
 				{
 					float x2 =  processSynthVoice(voices[i],lfovalue2,viblfo2);
-					vlo+=x2*(1-pannings[i]);
-					vro+=x2*(pannings[i]);
+					vlo+=x2*(1-pannings[i % MAX_PANNINGS]);
+					vro+=x2*(pannings[i % MAX_PANNINGS]);
 				}
-				vl+=x1*(1-pannings[i]);
-				vr+=x1*(pannings[i]);
+				vl+=x1*(1-pannings[i % MAX_PANNINGS]);
+				vr+=x1*(pannings[i % MAX_PANNINGS]);
 		}
 		if(Oversample)
 		{

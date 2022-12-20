@@ -25,7 +25,7 @@
 #ifndef PLUGINPROCESSOR_H_INCLUDED
 #define PLUGINPROCESSOR_H_INCLUDED
 
-#include "JuceHeader.h"
+#include "../JuceLibraryCode/JuceHeader.h"
 #include "Engine/SynthEngine.h"
 //#include <stack>
 #include "Engine/midiMap.h"
@@ -110,13 +110,18 @@ static inline float fxbSwapFloat (const float x) noexcept
 #endif
 }
 
+enum class Tooltip
+{
+	Disable = 0,
+	StandardDisplay,
+	FullDisplay
+};
 //==============================================================================
 /**
 */
-class ObxdAudioProcessor :
-	public AudioProcessor,
-	// public AudioProcessorListener,
-	public ChangeBroadcaster
+class ObxdAudioProcessor  : public AudioProcessor,
+	                        public AudioProcessorValueTreeState::Listener,
+	                        public ChangeBroadcaster
 {
 public:
     //==============================================================================
@@ -124,77 +129,113 @@ public:
     ~ObxdAudioProcessor();
 
     //==============================================================================
-    void prepareToPlay (double sampleRate, int samplesPerBlock);
-    void releaseResources();
+    void prepareToPlay (double sampleRate, int samplesPerBlock) override;
+    void releaseResources() override;
 
-    void processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages);
+    void processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages) override;
 
     //==============================================================================
-    AudioProcessorEditor* createEditor();
-    bool hasEditor() const;
+    AudioProcessorEditor* createEditor() override;
+    bool hasEditor() const override;
 	
 	//==============================================================================
-	void processMidiPerSample(MidiBuffer::Iterator* iter,const int samplePos);
-	bool getNextEvent(MidiBuffer::Iterator* iter,const int samplePos);
+	void processMidiPerSample (MidiBuffer::Iterator* iter, const int samplePos);
+	bool getNextEvent (MidiBuffer::Iterator* iter, const int samplePos);
 
 	//==============================================================================
-	void initAllParams();
+    void initAllParams();
+    void initMidi();
+    const String getInputChannelName (int channelIndex) const override;  // WATCH OUT!
+    const String getOutputChannelName (int channelIndex) const override;  // WATCH OUT!
+    bool isInputChannelStereoPair (int index) const override;  // WATCH OUT!
+    bool isOutputChannelStereoPair (int index) const override;  // WATCH OUT!
 
-	int getNumParameters();
-
-    float getParameter (int index);
-    void setParameter (int index, float newValue);
-
-    const String getParameterName (int index);
-    const String getParameterText (int index);
-
-    const String getInputChannelName (int channelIndex) const;
-    const String getOutputChannelName (int channelIndex) const;
-    bool isInputChannelStereoPair (int index) const;
-    bool isOutputChannelStereoPair (int index) const;
-
-    bool acceptsMidi() const;
-    bool producesMidi() const;
-    bool silenceInProducesSilenceOut() const;
-    double getTailLengthSeconds() const;
-	const String getName() const;
+    bool acceptsMidi() const override;
+    bool producesMidi() const override;
+    double getTailLengthSeconds() const override;
+	const String getName() const override;
 
     //==============================================================================
-    int getNumPrograms();
-    int getCurrentProgram();
-    void setCurrentProgram (int index);
-    const String getProgramName (int index);
-    void changeProgramName (int index, const String& newName);
+    int getNumPrograms() override;
+    int getCurrentProgram() override;
+    void setCurrentProgram (int index) override;
+    void setCurrentProgram (int index, bool updateHost);
+    const String getProgramName (int index) override;
+    void changeProgramName (int index, const String& newName) override;
 
     //==============================================================================
-    void getStateInformation (MemoryBlock& destData);
-    void setStateInformation (const void* data, int sizeInBytes);
-	void setCurrentProgramStateInformation(const void* data,int sizeInBytes);
-	void getCurrentProgramStateInformation(MemoryBlock& destData);
+    void getStateInformation (MemoryBlock& destData) override;
+    void setStateInformation (const void* data, int sizeInBytes) override;
+	void setCurrentProgramStateInformation (const void* data,int sizeInBytes) override;
+	void getCurrentProgramStateInformation (MemoryBlock& destData) override;
 
 	//==============================================================================
 	void scanAndUpdateBanks();
+    void scanAndUpdateSkins();
 	const Array<File>& getBankFiles() const;
+    const Array<File>& getSkinFiles() const;
+    bool deleteBank();
+    bool loadPreset(const File& fxpFile);
+    bool savePreset(const File& fxpFile);
+	void serializePreset(MemoryBlock& memoryBlock);		// Copy the current Preset into a MemoryBlock
+    void changePresetName(const String &name);
+    void newPreset(const String &name);
+    void deletePreset();
+    
+	bool loadFromFXPFile(const File& fxbFile);
 	bool loadFromFXBFile(const File& fxbFile);
+	bool isMemoryBlockAPreset(const MemoryBlock& memoryBlock);
+	bool loadFromMemoryBlock(MemoryBlock& memoryBlock);
+    bool saveFXBFile(const File& fxbFile);
+    bool saveFXPFile(const File& fxpFile);
+    bool saveBank(const File& fxbFile);
 	bool restoreProgramSettings(const fxProgram* const prog);
 	File getCurrentBankFile() const;
 
+    MidiMap &getMidiMap(){ return bindings; }
 	//==============================================================================
 	const ObxdBank& getPrograms() const { return programs; }
 
 	//==============================================================================
 	File getDocumentFolder() const;
 	File getSkinFolder() const;
+    File getPresetsFolder() const;
 	File getBanksFolder() const;
-
+    File getMidiFolder() const;
+    
 	File getCurrentSkinFolder() const;
 	void setCurrentSkinFolder(const String& folderName);
+    void setGuiSize(const int gui_size);
+	Tooltip getTooltipBehavior() const;
+	void setTooltipBehavior(const Tooltip tooltip);
+    //==============================================================================
+    static String getEngineParameterId (size_t);
+	static String getTrueParameterValueFromNormalizedRange(size_t, float normalizedValue);
 
+    int getParameterIndexFromId (String);
+    void setEngineParameterValue (int, float, bool notifyToHost= false);
+    void parameterChanged (const String&, float) override;
+    AudioProcessorValueTreeState& getPluginState();
+    
+    bool getShowPresetBar(){
+        return this->showPresetBar;
+    }
+    
+    void setShowPresetBar(bool val){
+        this->showPresetBar = val;
+        config->setValue("presetnavigation", this->showPresetBar);
+    }
 private:
 	//==============================================================================
 	bool isHostAutomatedChange;
 
-        MidiMessage nextMidi, midiMsg;
+	int lastMovedController;
+	int lastUsedParameter;
+
+	MidiMessage* nextMidi;
+	MidiMessage* midiMsg;
+	
+	bool midiControlledParamSet;
 
 	bool hasMidiMessage;
 	int midiEventPos;
@@ -202,12 +243,34 @@ private:
 	SynthEngine synth;
 	ObxdBank programs;
 
-	String currentSkin;
+	
+public:
+    float physicalPixelScaleFactor;
+    int gui_size;
+    String currentSkin;
 	String currentBank;
+    File currentBankFile;
+    void saveBank();
+    
+    String currentMidiPath;
+    String currentPreset;
+    File currentPresetFile;
+    void savePreset();
+    MidiMap bindings;
+    bool showPresetBar = false;
+    
+    void updateConfig();
+private:
 	Array<File> bankFiles;
+    Array<File> skinFiles;
+	Tooltip tooltipBehavior;
 
-	ScopedPointer<PropertiesFile> config;
+    std::unique_ptr<PropertiesFile> config;
 	InterProcessLock configLock;
+    
+    //==============================================================================
+    AudioProcessorValueTreeState apvtState;
+    UndoManager                  undoManager;
 
 	//==============================================================================
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ObxdAudioProcessor)

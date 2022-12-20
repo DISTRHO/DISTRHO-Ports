@@ -166,7 +166,7 @@ public:
 	}
 	void setVoiceCount(float param)
 	{
-		synth.setVoiceCount(roundToInt((param*7) +1));
+		synth.setVoiceCount(roundToInt((param*(synth.MAX_VOICES-1)) +1));
 	}
 	void procPitchWheelAmount(float param)
 	{
@@ -184,7 +184,7 @@ public:
 	}
 	void processPan(float param,int idx)
 	{
-		synth.pannings[idx-1] = param;
+		synth.pannings[(idx-1) % synth.MAX_PANNINGS] = param;
 	}
 	void processTune(float param)
 	{
