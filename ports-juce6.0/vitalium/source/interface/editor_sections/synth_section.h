@@ -112,16 +112,30 @@ class LoadingWheel : public OpenGlQuad {
 class AppLogo : public OpenGlImageComponent {
   public:
     AppLogo(String name) : OpenGlImageComponent(std::move(name)) {
-      logo_ = Paths::vitaliumLogo();
+      logo_letter_ = Paths::unfaLogoFg();
+      logo_ring_ = Paths::unfaLogoBg();
     }
 
     void paint(Graphics& g) override {
-      logo_->setTransformToFit(getLocalBounds().toFloat(), RectanglePlacement::stretchToFit);
-      logo_->draw(g, 1.0f);
+      logo_letter_.applyTransform(logo_letter_.getTransformToScaleToFit(getLocalBounds().toFloat(), true));
+      logo_ring_.applyTransform(logo_ring_.getTransformToScaleToFit(getLocalBounds().toFloat(), true));
+
+      Colour letter_top_color = findColour(Skin::kWidgetSecondary1, true);
+      Colour letter_bottom_color = findColour(Skin::kWidgetSecondary2, true);
+      Colour ring_top_color = findColour(Skin::kWidgetPrimary1, true);
+      Colour ring_bottom_color = findColour(Skin::kWidgetPrimary2, true);
+      ColourGradient letter_gradient(letter_top_color, 0.0f, 12.0f, letter_bottom_color, 0.0f, 96.0f, false);
+      ColourGradient ring_gradient(ring_top_color, 0.0f, 12.0f, ring_bottom_color, 0.0f, 96.0f, false);
+      g.setGradientFill(letter_gradient);
+      g.fillPath(logo_letter_);
+
+      g.setGradientFill(ring_gradient);
+      g.fillPath(logo_ring_);
     }
 
   private:
-    std::unique_ptr<Drawable> logo_;
+    Path logo_letter_;
+    Path logo_ring_;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AppLogo)
 };

@@ -24,7 +24,7 @@
 
 class Paths {
   public:
-    static constexpr int kLogoWidth = 1701;
+    static constexpr int kLogoWidth = 467;
 
     Paths() = delete;
 
@@ -33,9 +33,18 @@ class Paths {
       return drawable->getOutlineAsPath();
     }
 
-    static std::unique_ptr<Drawable> vitaliumLogo() {
-      return Drawable::createFromImageData((const void*)BinaryData::vitaliumunfa_png,
-                                           BinaryData::vitaliumunfa_pngSize);
+    static Path unfaLogoBg() {
+      Path path = fromSvgData((const void*)BinaryData::vitaliumunfabg_svg, BinaryData::vitaliumunfabg_svgSize);
+      path.addLineSegment(Line<float>(0.0f, 0.0f, 0.0f, 0.0f), 0.2f);
+      path.addLineSegment(Line<float>(kLogoWidth, kLogoWidth, kLogoWidth, kLogoWidth), 0.2f);
+      return path;
+    }
+
+    static Path unfaLogoFg() {
+      Path path = fromSvgData((const void*)BinaryData::vitaliumunfafg_svg, BinaryData::vitaliumunfafg_svgSize);
+      path.addLineSegment(Line<float>(0.0f, 0.0f, 0.0f, 0.0f), 0.2f);
+      path.addLineSegment(Line<float>(kLogoWidth, kLogoWidth, kLogoWidth, kLogoWidth), 0.2f);
+      return path;
     }
 
     static Path chorus() {
