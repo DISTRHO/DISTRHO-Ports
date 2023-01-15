@@ -29,24 +29,6 @@ namespace BinaryData
     const int           MontserratRegular_ttfSize = 245708;
 
   #endif
-    extern const char*  default_vitalskin;
-    const int           default_vitalskinSize = 12912;
-
-  #ifdef TUNINGS
-    extern const char*  _5_Limit_scl;
-    const int           _5_Limit_sclSize = 87;
-
-  #endif
-  #ifdef TUNINGS
-    extern const char*  _7_Limit_scl;
-    const int           _7_Limit_sclSize = 85;
-
-  #endif
-  #ifdef TUNINGS
-    extern const char*  Pythagorean_scl;
-    const int           Pythagorean_sclSize = 108;
-
-  #endif
   #ifdef ICONS
     extern const char*  chorus_svg;
     const int           chorus_svgSize = 12842;
@@ -117,10 +99,28 @@ namespace BinaryData
     const int           shuffle_svgSize = 382;
 
   #endif
-    extern const char*  vitaliumunfa_png;
-    const int           vitaliumunfa_pngSize = 36106;
+  #ifdef TUNINGS
+    extern const char*  _5_Limit_scl;
+    const int           _5_Limit_sclSize = 87;
 
-    extern const char*  BinaryData_cpp;
-    const int           BinaryData_cppSize = 2555792;
+  #endif
+  #ifdef TUNINGS
+    extern const char*  _7_Limit_scl;
+    const int           _7_Limit_sclSize = 85;
+
+  #endif
+  #ifdef TUNINGS
+    extern const char*  Pythagorean_scl;
+    const int           Pythagorean_sclSize = 108;
+
+  #endif
+    extern const char*  default_vitalskin;
+    const int           default_vitalskinSize = 12912;
+
+    extern const char*  vitaliumunfabg_svg;
+    const int           vitaliumunfabg_svgSize = 1051;
+
+    extern const char*  vitaliumunfafg_svg;
+    const int           vitaliumunfafg_svgSize = 540;
 
 }
