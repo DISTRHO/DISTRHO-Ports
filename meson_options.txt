@@ -102,6 +102,7 @@ option('plugins',
         'vex',
         'wolpertinger',
         # juce6
+        'roth-air',
         'swankyamp',
         'vitalium',
     ],

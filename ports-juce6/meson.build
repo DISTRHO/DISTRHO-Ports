@@ -8,6 +8,7 @@ if linux_embed
 else
     plugins = [
         'chow',
+        'roth-air',
         'vitalium',
         'swankyamp',
     ]
