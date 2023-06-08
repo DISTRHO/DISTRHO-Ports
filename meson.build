@@ -144,7 +144,7 @@ if not os_darwin
     ]
 endif
 
-if not (os_darwin or os_windows)
+if cc.get_id() == 'gcc'
     build_flags += [
         '-fno-gnu-unique'
     ]
