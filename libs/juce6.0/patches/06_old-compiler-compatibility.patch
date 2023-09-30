@@ -1,0 +1,307 @@
+diff --git a/modules/juce_audio_basics/buffers/juce_AudioSampleBuffer.h b/modules/juce_audio_basics/buffers/juce_AudioSampleBuffer.h
+index acd165ff0..bdc0bf58f 100644
+--- a/modules/juce_audio_basics/buffers/juce_AudioSampleBuffer.h
++++ b/modules/juce_audio_basics/buffers/juce_AudioSampleBuffer.h
+@@ -20,6 +20,11 @@
+   ==============================================================================
+ */
+ 
++#ifndef __clang__
++// GCC4 compatibility
++namespace std { using ::max_align_t; }
++#endif
++
+ namespace juce
+ {
+ 
+diff --git a/modules/juce_audio_basics/native/juce_mac_CoreAudioLayouts.h b/modules/juce_audio_basics/native/juce_mac_CoreAudioLayouts.h
+index ac5ce32da..f0cd938ae 100644
+--- a/modules/juce_audio_basics/native/juce_mac_CoreAudioLayouts.h
++++ b/modules/juce_audio_basics/native/juce_mac_CoreAudioLayouts.h
+@@ -236,8 +236,10 @@ private:
+                 { kAudioChannelLayoutTag_AAC_6_0, { centre, left, right, leftSurround, rightSurround, centreSurround } },
+                 { kAudioChannelLayoutTag_AAC_6_1, { centre, left, right, leftSurround, rightSurround, centreSurround, LFE } },
+                 { kAudioChannelLayoutTag_AAC_7_0, { centre, left, right, leftSurround, rightSurround, leftSurroundRear, rightSurroundRear } },
++#if MAC_OS_X_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_8
+                 { kAudioChannelLayoutTag_AAC_7_1_B, { centre, left, right, leftSurround, rightSurround, leftSurroundRear, rightSurroundRear, LFE } },
+                 { kAudioChannelLayoutTag_AAC_7_1_C, { centre, left, right, leftSurround, rightSurround, LFE, topFrontLeft, topFrontRight } },
++#endif
+                 { kAudioChannelLayoutTag_AAC_Octagonal, { centre, left, right, leftSurround, rightSurround, leftSurroundRear, rightSurroundRear, centreSurround } },
+                 { kAudioChannelLayoutTag_TMH_10_2_std, { left, right, centre, topFrontCentre, leftSurroundSide, rightSurroundSide, leftSurround, rightSurround, topFrontLeft, topFrontRight, wideLeft, wideRight, topRearCentre, centreSurround, LFE, LFE2 } },
+                 { kAudioChannelLayoutTag_AC3_1_0_1, { centre, LFE } },
+diff --git a/modules/juce_audio_processors/format_types/juce_AudioUnitPluginFormat.mm b/modules/juce_audio_processors/format_types/juce_AudioUnitPluginFormat.mm
+index 9aa4a338e..7cad3e7c1 100644
+--- a/modules/juce_audio_processors/format_types/juce_AudioUnitPluginFormat.mm
++++ b/modules/juce_audio_processors/format_types/juce_AudioUnitPluginFormat.mm
+@@ -59,6 +59,10 @@ JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE ("-Wdeprecated-declarations")
+ namespace juce
+ {
+ 
++#if MAC_OS_X_VERSION_MIN_REQUIRED <= MAC_OS_X_VERSION_10_8
++static const uint32 kAudioUnitType_MIDIProcessor = 'aumi';
++#endif
++
+ // Change this to disable logging of various activities
+ #ifndef AU_LOGGING
+  #define AU_LOGGING 1
+@@ -276,7 +280,7 @@ namespace AudioUnitFormatHelpers
+                     NSBundle* bundle = [[NSBundle alloc] initWithPath: (NSString*) fileOrIdentifier.toCFString()];
+ 
+                     NSArray* audioComponents = [bundle objectForInfoDictionaryKey: @"AudioComponents"];
+-                    NSDictionary* dict = audioComponents[0];
++                    NSDictionary* dict = [audioComponents objectAtIndex: 0];
+ 
+                     desc.componentManufacturer = stringToOSType (nsStringToJuce ((NSString*) [dict valueForKey: @"manufacturer"]));
+                     desc.componentType         = stringToOSType (nsStringToJuce ((NSString*) [dict valueForKey: @"type"]));
+diff --git a/modules/juce_audio_processors/processors/juce_AudioProcessor.h b/modules/juce_audio_processors/processors/juce_AudioProcessor.h
+index 39eac8211..f556f12b3 100644
+--- a/modules/juce_audio_processors/processors/juce_AudioProcessor.h
++++ b/modules/juce_audio_processors/processors/juce_AudioProcessor.h
+@@ -1184,7 +1184,7 @@ public:
+         String xMeterID, yMeterID;
+     };
+ 
+-    virtual CurveData getResponseCurve (CurveData::Type /*curveType*/) const      { return {}; }
++    virtual CurveData getResponseCurve (CurveData::Type /*curveType*/) const      { return CurveData(); }
+ 
+     //==============================================================================
+     /** Not for public use - this is called before deleting an editor component. */
+diff --git a/modules/juce_core/native/juce_osx_ObjCHelpers.h b/modules/juce_core/native/juce_osx_ObjCHelpers.h
+index a9a7c8eb7..aa068eaa0 100644
+--- a/modules/juce_core/native/juce_osx_ObjCHelpers.h
++++ b/modules/juce_core/native/juce_osx_ObjCHelpers.h
+@@ -71,7 +71,7 @@ inline NSArray* varArrayToNSArray (const var& varToParse);
+ 
+ inline NSDictionary* varObjectToNSDictionary (const var& varToParse)
+ {
+-    auto dictionary = [NSMutableDictionary dictionary];
++    NSDictionary* dictionary = [NSMutableDictionary dictionary];
+ 
+     if (varToParse.isObject())
+     {
+@@ -118,7 +118,7 @@ inline NSArray* varArrayToNSArray (const var& varToParse)
+ 
+     const auto* varArray = varToParse.getArray();
+ 
+-    auto array = [NSMutableArray arrayWithCapacity: (NSUInteger) varArray->size()];
++    NSArray* array = [NSMutableArray arrayWithCapacity: (NSUInteger) varArray->size()];
+ 
+     for (const auto& aVar : *varArray)
+     {
+@@ -152,7 +152,8 @@ inline var nsDictionaryToVar (NSDictionary* dictionary)
+     DynamicObject::Ptr dynamicObject (new DynamicObject());
+ 
+     for (NSString* key in dictionary)
+-        dynamicObject->setProperty (nsStringToJuce (key), nsObjectToVar (dictionary[key]));
++        dynamicObject->setProperty (nsStringToJuce (key),
++                                    nsObjectToVar ([dictionary objectForKey: key]));
+ 
+     return var (dynamicObject.get());
+ }
+diff --git a/modules/juce_core/system/juce_CompilerSupport.h b/modules/juce_core/system/juce_CompilerSupport.h
+index 4d96d7cb0..d76d92d49 100644
+--- a/modules/juce_core/system/juce_CompilerSupport.h
++++ b/modules/juce_core/system/juce_CompilerSupport.h
+@@ -92,7 +92,7 @@
+ 
+ //==============================================================================
+ // C++ library
+-#if (defined (__GLIBCXX__) && __GLIBCXX__ < 20130322) || (defined(_LIBCPP_VERSION) && (_LIBCPP_VERSION < 3700))
++#if (defined (__GLIBCXX__) && __GLIBCXX__ < 20130322)
+  #error "JUCE requires a C++ library containing std::atomic"
+ #endif
+ 
+diff --git a/modules/juce_core/system/juce_PlatformDefs.h b/modules/juce_core/system/juce_PlatformDefs.h
+index 43000cab6..0a1798ba2 100644
+--- a/modules/juce_core/system/juce_PlatformDefs.h
++++ b/modules/juce_core/system/juce_PlatformDefs.h
+@@ -99,11 +99,7 @@ namespace juce
+     deliberately and want to ignore the warning.
+ */
+ #if JUCE_CLANG
+- #if __has_cpp_attribute(clang::fallthrough)
+-  #define JUCE_FALLTHROUGH [[clang::fallthrough]];
+- #else
+-  #define JUCE_FALLTHROUGH
+- #endif
++ #define JUCE_FALLTHROUGH [[clang::fallthrough]];
+ #elif JUCE_GCC
+  #if __GNUC__ >= 7
+   #define JUCE_FALLTHROUGH [[gnu::fallthrough]];
+diff --git a/modules/juce_core/system/juce_TargetPlatform.h b/modules/juce_core/system/juce_TargetPlatform.h
+index 5b4d293bb..6b41688b2 100644
+--- a/modules/juce_core/system/juce_TargetPlatform.h
++++ b/modules/juce_core/system/juce_TargetPlatform.h
+@@ -145,8 +145,8 @@
+   #endif
+ 
+   #if JUCE_MAC
+-    #if ! defined (MAC_OS_X_VERSION_10_11)
+-      #error "The 10.11 SDK (Xcode 7.3.1+) is required to build JUCE apps. You can create apps that run on macOS 10.7+ by changing the deployment target."
++    #if ! defined (MAC_OS_X_VERSION_10_8)
++      #error "The 10.8 SDK is required to build JUCE apps. You can create apps that run on macOS 10.7+ by changing the deployment target."
+     #elif MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_7
+       #error "Building for OSX 10.6 is no longer supported!"
+     #endif
+diff --git a/modules/juce_graphics/native/juce_mac_CoreGraphicsContext.mm b/modules/juce_graphics/native/juce_mac_CoreGraphicsContext.mm
+index de6ffecfc..2a85d25f5 100644
+--- a/modules/juce_graphics/native/juce_mac_CoreGraphicsContext.mm
++++ b/modules/juce_graphics/native/juce_mac_CoreGraphicsContext.mm
+@@ -26,6 +26,10 @@
+ namespace juce
+ {
+ 
++#if MAC_OS_X_VERSION_MIN_REQUIRED <= MAC_OS_X_VERSION_10_8
++ #define __nullable
++#endif
++
+ //==============================================================================
+ // This class has been renamed from CoreGraphicsImage to avoid a symbol
+ // collision in Pro Tools 2019.12 and possibly 2020 depending on the Pro Tools
+diff --git a/modules/juce_graphics/native/juce_mac_Fonts.mm b/modules/juce_graphics/native/juce_mac_Fonts.mm
+index ff0a23a9f..88142091d 100644
+--- a/modules/juce_graphics/native/juce_mac_Fonts.mm
++++ b/modules/juce_graphics/native/juce_mac_Fonts.mm
+@@ -359,20 +359,20 @@ namespace CoreTextTypeLayout
+ 
+         auto verticalJustification = text.getJustification().getOnlyVerticalFlags();
+ 
+-        auto ctFrameArea = [area, minCTFrameHeight, verticalJustification]
++        const Rectangle<float> ctFrameArea = [area, minCTFrameHeight, verticalJustification]
+         {
+             if (minCTFrameHeight < area.getHeight())
+-                return area;
++                return Rectangle<float> (area);
+ 
+             if (verticalJustification == Justification::verticallyCentred)
+                 return area.withSizeKeepingCentre (area.getWidth(), minCTFrameHeight);
+ 
+-            auto frameArea = area.withHeight (minCTFrameHeight);
++            const Rectangle<float> frameArea = area.withHeight (minCTFrameHeight);
+ 
+             if (verticalJustification == Justification::bottom)
+                 return frameArea.withBottomY (area.getBottom());
+ 
+-            return frameArea;
++            return Rectangle<float> (frameArea);
+         }();
+ 
+         auto frame = createCTFrame (framesetter, CGRectMake ((CGFloat) ctFrameArea.getX(), flipHeight - (CGFloat) ctFrameArea.getBottom(),
+diff --git a/modules/juce_gui_basics/native/juce_mac_NSViewComponentPeer.mm b/modules/juce_gui_basics/native/juce_mac_NSViewComponentPeer.mm
+index 26ca40630..bd5e69ab0 100644
+--- a/modules/juce_gui_basics/native/juce_mac_NSViewComponentPeer.mm
++++ b/modules/juce_gui_basics/native/juce_mac_NSViewComponentPeer.mm
+@@ -1583,17 +1583,21 @@ private:
+             case NSEventTypeSystemDefined:
+             case NSEventTypeApplicationDefined:
+             case NSEventTypePeriodic:
++           #if MAC_OS_X_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_8
+             case NSEventTypeGesture:
++           #endif
+             case NSEventTypeMagnify:
+             case NSEventTypeSwipe:
+             case NSEventTypeRotate:
+             case NSEventTypeBeginGesture:
+             case NSEventTypeEndGesture:
+             case NSEventTypeQuickLook:
+-           #if JUCE_64BIT
++          #if JUCE_64BIT
+             case NSEventTypeSmartMagnify:
++           #if MAC_OS_X_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_8
+             case NSEventTypePressure:
+            #endif
++          #endif
+           #if defined (MAC_OS_X_VERSION_10_12) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_12
+            #if JUCE_64BIT
+             case NSEventTypeDirectTouch:
+diff --git a/modules/juce_gui_basics/native/juce_mac_Windowing.mm b/modules/juce_gui_basics/native/juce_mac_Windowing.mm
+index 918f0b4a6..63e15d07b 100644
+--- a/modules/juce_gui_basics/native/juce_mac_Windowing.mm
++++ b/modules/juce_gui_basics/native/juce_mac_Windowing.mm
+@@ -309,7 +309,7 @@ bool DragAndDropContainer::performExternalDragDropOfFiles (const StringArray& fi
+                 for (auto& filename : files)
+                 {
+                     auto* nsFilename = juceStringToNS (filename);
+-                    auto fileURL = [NSURL fileURLWithPath: nsFilename];
++                    NSURL* fileURL = [NSURL fileURLWithPath: nsFilename];
+                     auto dragItem = [[NSDraggingItem alloc] initWithPasteboardWriter: fileURL];
+ 
+                     auto eventPos = [event locationInWindow];
+diff --git a/modules/juce_gui_basics/native/x11/juce_linux_XWindowSystem.cpp b/modules/juce_gui_basics/native/x11/juce_linux_XWindowSystem.cpp
+index b8e6e0c7e..6ad01c68a 100644
+--- a/modules/juce_gui_basics/native/x11/juce_linux_XWindowSystem.cpp
++++ b/modules/juce_gui_basics/native/x11/juce_linux_XWindowSystem.cpp
+@@ -3329,7 +3329,7 @@ void XWindowSystem::handleButtonPressEvent (LinuxComponentPeer* peer, const XBut
+     peer->toFront (true);
+     peer->handleMouseEvent (MouseInputSource::InputSourceType::mouse, getLogicalMousePos (buttonPressEvent, peer->getPlatformScaleFactor()),
+                             ModifierKeys::currentModifiers, MouseInputSource::invalidPressure,
+-                            MouseInputSource::invalidOrientation, getEventTime (buttonPressEvent), {});
++                            MouseInputSource::invalidOrientation, getEventTime (buttonPressEvent));
+ }
+ 
+ void XWindowSystem::handleButtonPressEvent (LinuxComponentPeer* peer, const XButtonPressedEvent& buttonPressEvent) const
+diff --git a/modules/juce_gui_basics/windows/juce_ComponentPeer.h b/modules/juce_gui_basics/windows/juce_ComponentPeer.h
+index 691e5679b..ed4f3c199 100644
+--- a/modules/juce_gui_basics/windows/juce_ComponentPeer.h
++++ b/modules/juce_gui_basics/windows/juce_ComponentPeer.h
+@@ -321,7 +321,7 @@ public:
+ 
+     //==============================================================================
+     void handleMouseEvent (MouseInputSource::InputSourceType type, Point<float> positionWithinPeer, ModifierKeys newMods, float pressure,
+-                           float orientation, int64 time, PenDetails pen = {}, int touchIndex = 0);
++                           float orientation, int64 time, PenDetails pen = PenDetails(), int touchIndex = 0);
+ 
+     void handleMouseWheel (MouseInputSource::InputSourceType type, Point<float> positionWithinPeer,
+                            int64 time, const MouseWheelDetails&, int touchIndex = 0);
+diff --git a/modules/juce_gui_extra/juce_gui_extra.cpp b/modules/juce_gui_extra/juce_gui_extra.cpp
+index 9cf367411..d42555e13 100644
+--- a/modules/juce_gui_extra/juce_gui_extra.cpp
++++ b/modules/juce_gui_extra/juce_gui_extra.cpp
+@@ -136,7 +136,9 @@
+ #include "misc/juce_PushNotifications.cpp"
+ #include "misc/juce_RecentlyOpenedFilesList.cpp"
+ #include "misc/juce_SplashScreen.cpp"
++#if !JUCE_MAC || MAC_OS_X_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_8
+ #include "misc/juce_SystemTrayIconComponent.cpp"
++#endif
+ #include "misc/juce_LiveConstantEditor.cpp"
+ #include "misc/juce_AnimatedAppComponent.cpp"
+ 
+@@ -146,7 +148,9 @@
+  #if JUCE_MAC
+   #include "native/juce_mac_NSViewComponent.mm"
+   #include "native/juce_mac_AppleRemote.mm"
+-  #include "native/juce_mac_SystemTrayIcon.cpp"
++  #if MAC_OS_X_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_8
++   #include "native/juce_mac_SystemTrayIcon.cpp"
++  #endif
+  #endif
+ 
+  #if JUCE_IOS
+diff --git a/modules/juce_gui_extra/juce_gui_extra.h b/modules/juce_gui_extra/juce_gui_extra.h
+index bcec491c9..062bde636 100644
+--- a/modules/juce_gui_extra/juce_gui_extra.h
++++ b/modules/juce_gui_extra/juce_gui_extra.h
+@@ -115,7 +115,9 @@
+ #include "misc/juce_PushNotifications.h"
+ #include "misc/juce_RecentlyOpenedFilesList.h"
+ #include "misc/juce_SplashScreen.h"
++#if !JUCE_MAC || MAC_OS_X_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_8
+ #include "misc/juce_SystemTrayIconComponent.h"
++#endif
+ #include "misc/juce_WebBrowserComponent.h"
+ #include "misc/juce_LiveConstantEditor.h"
+ #include "misc/juce_AnimatedAppComponent.h"
+diff --git a/modules/juce_gui_extra/misc/juce_RecentlyOpenedFilesList.cpp b/modules/juce_gui_extra/misc/juce_RecentlyOpenedFilesList.cpp
+index 9786c0875..34695b5e1 100644
+--- a/modules/juce_gui_extra/misc/juce_RecentlyOpenedFilesList.cpp
++++ b/modules/juce_gui_extra/misc/juce_RecentlyOpenedFilesList.cpp
+@@ -157,7 +157,7 @@ void RecentlyOpenedFilesList::forgetRecentFileNatively (const File& file)
+         // from the recent list, so we clear them all and add them back excluding
+         // the specified file
+ 
+-        auto sharedDocController = [NSDocumentController sharedDocumentController];
++        NSDocumentController* sharedDocController = [NSDocumentController sharedDocumentController];
+         auto recentDocumentURLs  = [sharedDocController recentDocumentURLs];
+ 
+         [sharedDocController clearRecentDocuments: nil];

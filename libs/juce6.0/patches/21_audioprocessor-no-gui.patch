@@ -1,0 +1,145 @@
+diff --git a/modules/juce_audio_processors/juce_audio_processors.cpp b/modules/juce_audio_processors/juce_audio_processors.cpp
+index 43ad88e1b..149154804 100644
+--- a/modules/juce_audio_processors/juce_audio_processors.cpp
++++ b/modules/juce_audio_processors/juce_audio_processors.cpp
+@@ -47,7 +47,7 @@
+  #endif
+ #endif
+ 
+-#if (JUCE_PLUGINHOST_VST || JUCE_PLUGINHOST_VST3) && JUCE_LINUX
++#if (JUCE_PLUGINHOST_VST || JUCE_PLUGINHOST_VST3) && JUCE_LINUX && ! JUCE_AUDIOPROCESSOR_NO_GUI
+  #include <X11/Xlib.h>
+  #include <X11/Xutil.h>
+  #include <sys/utsname.h>
+@@ -230,9 +230,11 @@ struct AutoResizingNSViewComponentWithParent  : public AutoResizingNSViewCompone
+ #include "format_types/juce_LegacyAudioParameter.cpp"
+ #include "processors/juce_AudioProcessor.cpp"
+ #include "processors/juce_AudioPluginInstance.cpp"
+-#include "processors/juce_AudioProcessorEditor.cpp"
+ #include "processors/juce_AudioProcessorGraph.cpp"
+-#include "processors/juce_GenericAudioProcessorEditor.cpp"
++#if ! JUCE_AUDIOPROCESSOR_NO_GUI
++ #include "processors/juce_AudioProcessorEditor.cpp"
++ #include "processors/juce_GenericAudioProcessorEditor.cpp"
++#endif
+ #include "processors/juce_PluginDescription.cpp"
+ #include "format_types/juce_LADSPAPluginFormat.cpp"
+ #include "format_types/juce_VSTPluginFormat.cpp"
+diff --git a/modules/juce_audio_processors/processors/juce_AudioProcessor.cpp b/modules/juce_audio_processors/processors/juce_AudioProcessor.cpp
+index 040accf2e..df0b6c67b 100644
+--- a/modules/juce_audio_processors/processors/juce_AudioProcessor.cpp
++++ b/modules/juce_audio_processors/processors/juce_AudioProcessor.cpp
+@@ -51,12 +51,14 @@ AudioProcessor::AudioProcessor (const BusesProperties& ioConfig)
+ 
+ AudioProcessor::~AudioProcessor()
+ {
++   #if ! JUCE_AUDIOPROCESSOR_NO_GUI
+     {
+         const ScopedLock sl (activeEditorLock);
+ 
+         // ooh, nasty - the editor should have been deleted before its AudioProcessor.
+         jassert (activeEditor == nullptr);
+     }
++   #endif
+ 
+    #if JUCE_DEBUG && ! JUCE_DISABLE_AUDIOPROCESSOR_BEGIN_END_GESTURE_CHECKING
+     // This will fail if you've called beginParameterChangeGesture() for one
+@@ -826,6 +828,7 @@ void AudioProcessor::audioIOChanged (bool busNumberChanged, bool channelNumChang
+     processorLayoutsChanged();
+ }
+ 
++#if ! JUCE_AUDIOPROCESSOR_NO_GUI
+ //==============================================================================
+ void AudioProcessor::editorBeingDeleted (AudioProcessorEditor* const editor) noexcept
+ {
+@@ -862,6 +865,7 @@ AudioProcessorEditor* AudioProcessor::createEditorIfNeeded()
+ 
+     return ed;
+ }
++#endif
+ 
+ //==============================================================================
+ void AudioProcessor::getCurrentProgramStateInformation (juce::MemoryBlock& destData)
+diff --git a/modules/juce_audio_processors/processors/juce_AudioProcessor.h b/modules/juce_audio_processors/processors/juce_AudioProcessor.h
+index f72a4ed3f..849b77d3c 100644
+--- a/modules/juce_audio_processors/processors/juce_AudioProcessor.h
++++ b/modules/juce_audio_processors/processors/juce_AudioProcessor.h
+@@ -926,6 +926,7 @@ public:
+     */
+     virtual void setNonRealtime (bool isNonRealtime) noexcept;
+ 
++   #if ! JUCE_AUDIOPROCESSOR_NO_GUI
+     //==============================================================================
+     /** Creates the processor's GUI.
+ 
+@@ -975,6 +976,7 @@ public:
+         This may call createEditor() internally to create the component.
+     */
+     AudioProcessorEditor* createEditorIfNeeded();
++   #endif
+ 
+     //==============================================================================
+     /** Returns the default number of steps for a parameter.
+@@ -1191,9 +1193,11 @@ public:
+ 
+     virtual CurveData getResponseCurve (CurveData::Type /*curveType*/) const      { return CurveData(); }
+ 
++   #if ! JUCE_AUDIOPROCESSOR_NO_GUI
+     //==============================================================================
+     /** Not for public use - this is called before deleting an editor component. */
+     void editorBeingDeleted (AudioProcessorEditor*) noexcept;
++   #endif
+ 
+     /** Flags to indicate the type of plugin context in which a processor is being used. */
+     enum WrapperType
+@@ -1468,7 +1472,9 @@ private:
+ 
+     //==============================================================================
+     Array<AudioProcessorListener*> listeners;
++   #if ! JUCE_AUDIOPROCESSOR_NO_GUI
+     Component::SafePointer<AudioProcessorEditor> activeEditor;
++   #endif
+     double currentSampleRate = 0;
+     int blockSize = 0, latencySamples = 0;
+     bool suspended = false;
+diff --git a/modules/juce_audio_processors/processors/juce_AudioProcessorGraph.cpp b/modules/juce_audio_processors/processors/juce_AudioProcessorGraph.cpp
+index 17c5af30c..3d4a0d428 100644
+--- a/modules/juce_audio_processors/processors/juce_AudioProcessorGraph.cpp
++++ b/modules/juce_audio_processors/processors/juce_AudioProcessorGraph.cpp
+@@ -1519,8 +1519,10 @@ bool AudioProcessorGraph::AudioGraphIOProcessor::producesMidi() const
+ bool AudioProcessorGraph::AudioGraphIOProcessor::isInput() const noexcept           { return type == audioInputNode  || type == midiInputNode; }
+ bool AudioProcessorGraph::AudioGraphIOProcessor::isOutput() const noexcept          { return type == audioOutputNode || type == midiOutputNode; }
+ 
++#if ! JUCE_AUDIOPROCESSOR_NO_GUI
+ bool AudioProcessorGraph::AudioGraphIOProcessor::hasEditor() const                  { return false; }
+ AudioProcessorEditor* AudioProcessorGraph::AudioGraphIOProcessor::createEditor()    { return nullptr; }
++#endif
+ 
+ int AudioProcessorGraph::AudioGraphIOProcessor::getNumPrograms()                    { return 0; }
+ int AudioProcessorGraph::AudioGraphIOProcessor::getCurrentProgram()                 { return 0; }
+diff --git a/modules/juce_audio_processors/processors/juce_AudioProcessorGraph.h b/modules/juce_audio_processors/processors/juce_AudioProcessorGraph.h
+index a60e67d84..17a121893 100644
+--- a/modules/juce_audio_processors/processors/juce_AudioProcessorGraph.h
++++ b/modules/juce_audio_processors/processors/juce_AudioProcessorGraph.h
+@@ -355,8 +355,10 @@ public:
+         bool acceptsMidi() const override;
+         bool producesMidi() const override;
+ 
++       #if ! JUCE_AUDIOPROCESSOR_NO_GUI
+         bool hasEditor() const override;
+         AudioProcessorEditor* createEditor() override;
++       #endif
+ 
+         int getNumPrograms() override;
+         int getCurrentProgram() override;
+@@ -392,8 +394,10 @@ public:
+     bool acceptsMidi() const override;
+     bool producesMidi() const override;
+ 
++   #if ! JUCE_AUDIOPROCESSOR_NO_GUI
+     bool hasEditor() const override                         { return false; }
+     AudioProcessorEditor* createEditor() override           { return nullptr; }
++   #endif
+     int getNumPrograms() override                           { return 0; }
+     int getCurrentProgram() override                        { return 0; }
+     void setCurrentProgram (int) override                   { }

@@ -1,0 +1,18 @@
+diff --git a/modules/juce_audio_processors/format_types/VST3_SDK/pluginterfaces/base/funknown.cpp b/modules/juce_audio_processors/format_types/VST3_SDK/pluginterfaces/base/funknown.cpp
+index 206a64afc..aa6196934 100644
+--- a/modules/juce_audio_processors/format_types/VST3_SDK/pluginterfaces/base/funknown.cpp
++++ b/modules/juce_audio_processors/format_types/VST3_SDK/pluginterfaces/base/funknown.cpp
+@@ -67,11 +67,11 @@ namespace FUnknownPrivate {
+ //------------------------------------------------------------------------
+ int32 PLUGIN_API atomicAdd (int32& var, int32 d)
+ {
+-#if SMTG_OS_WINDOWS
++#if SMTG_OS_WINDOWS && !defined(__MINGW32__)
+ 	return InterlockedExchangeAdd (&var, d) + d;
+ #elif SMTG_OS_MACOS
+ 	return OSAtomicAdd32Barrier (d, (int32_t*)&var);
+-#elif SMTG_OS_LINUX
++#elif SMTG_OS_LINUX || defined(__MINGW32__)
+ 	__gnu_cxx::__atomic_add (&var, d);
+ 	return var;
+ #else

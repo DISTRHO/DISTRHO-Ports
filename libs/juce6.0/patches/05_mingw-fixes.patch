@@ -1,0 +1,58 @@
+diff --git a/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp b/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
+index 8683dc728..94f6bf569 100644
+--- a/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
++++ b/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
+@@ -61,7 +61,7 @@ JUCE_BEGIN_IGNORE_WARNINGS_MSVC (4996 4100)
+  #define PRAGMA_ALIGN_SUPPORTED 1
+ #endif
+ 
+-#if ! JUCE_MSVC
++#if ! JUCE_WINDOWS
+  #define __cdecl
+ #endif
+ 
+diff --git a/modules/juce_audio_plugin_client/utility/juce_CheckSettingMacros.h b/modules/juce_audio_plugin_client/utility/juce_CheckSettingMacros.h
+index 6bea84307..baaa59f06 100644
+--- a/modules/juce_audio_plugin_client/utility/juce_CheckSettingMacros.h
++++ b/modules/juce_audio_plugin_client/utility/juce_CheckSettingMacros.h
+@@ -73,11 +73,6 @@
+  #define JucePlugin_Build_RTAS 0
+ #endif
+ 
+-#if ! (defined (_MSC_VER) || defined (__APPLE_CPP__) || defined (__APPLE_CC__) || defined (LINUX) || defined (__linux__))
+- #undef JucePlugin_Build_VST3
+- #define JucePlugin_Build_VST3 0
+-#endif
+-
+ //==============================================================================
+ #if JucePlugin_Build_LV2 && ! defined (JucePlugin_LV2URI)
+  #error "You need to define the JucePlugin_LV2URI value!"
+diff --git a/modules/juce_audio_processors/format_types/juce_VSTPluginFormat.cpp b/modules/juce_audio_processors/format_types/juce_VSTPluginFormat.cpp
+index 620ba9874..d9359b736 100644
+--- a/modules/juce_audio_processors/format_types/juce_VSTPluginFormat.cpp
++++ b/modules/juce_audio_processors/format_types/juce_VSTPluginFormat.cpp
+@@ -62,9 +62,6 @@ JUCE_BEGIN_IGNORE_WARNINGS_MSVC (4355)
+  #ifndef WM_APPCOMMAND
+   #define WM_APPCOMMAND 0x0319
+  #endif
+-
+- extern "C" void _fpreset();
+- extern "C" void _clearfp();
+ #elif ! JUCE_WINDOWS
+  static void _fpreset() {}
+  static void _clearfp() {}
+diff --git a/modules/juce_core/threads/juce_WaitableEvent.h b/modules/juce_core/threads/juce_WaitableEvent.h
+index 52269f706..670903653 100644
+--- a/modules/juce_core/threads/juce_WaitableEvent.h
++++ b/modules/juce_core/threads/juce_WaitableEvent.h
+@@ -20,6 +20,10 @@
+   ==============================================================================
+ */
+ 
++#if JUCE_MINGW && !defined(_GLIBCXX_HAS_GTHREADS)
++#include "mingw-std-threads/mingw.condition_variable.h"
++#endif
++
+ namespace juce
+ {
+ 

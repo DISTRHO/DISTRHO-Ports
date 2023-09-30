@@ -1,0 +1,34 @@
+diff --git a/modules/juce_gui_basics/native/juce_win32_FileChooser.cpp b/modules/juce_gui_basics/native/juce_win32_FileChooser.cpp
+index 7f7d766f8..c84c10d0b 100755
+--- a/modules/juce_gui_basics/native/juce_win32_FileChooser.cpp
++++ b/modules/juce_gui_basics/native/juce_win32_FileChooser.cpp
+@@ -162,6 +162,7 @@ private:
+         void operator() (LPWSTR ptr) const noexcept { CoTaskMemFree (ptr); }
+     };
+ 
++   #if JUCE_MSVC
+     bool showDialog (IFileDialog& dialog, bool async)
+     {
+         FILEOPENDIALOGOPTIONS flags = {};
+@@ -371,6 +372,7 @@ private:
+ 
+         return result;
+     }
++   #endif
+ 
+     Array<URL> openDialogPreVista (bool async)
+     {
+@@ -480,11 +482,13 @@ private:
+ 
+         const Remover remover (*this);
+ 
++       #if JUCE_MSVC
+         if (SystemStats::getOperatingSystemType() >= SystemStats::WinVista
+             && customComponent == nullptr)
+         {
+             return openDialogVistaAndUp (async);
+         }
++       #endif
+ 
+         return openDialogPreVista (async);
+     }

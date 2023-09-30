@@ -1,0 +1,26 @@
+diff --git a/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp b/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
+index cabbbcf13..f722ab36c 100644
+--- a/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
++++ b/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
+@@ -488,7 +488,7 @@ public:
+ 
+                 {
+                     const int numChannels = jmax (numIn, numOut);
+-                    AudioBuffer<FloatType> chans (tmpBuffers.channels, isMidiEffect ? 0 : numChannels, numSamples);
++                    juce::AudioBuffer<FloatType> chans (tmpBuffers.channels, isMidiEffect ? 0 : numChannels, numSamples);
+ 
+                     if (isBypassed)
+                         processor->processBlockBypassed (chans, midiEvents);
+diff --git a/modules/juce_audio_plugin_client/utility/juce_IncludeModuleHeaders.h b/modules/juce_audio_plugin_client/utility/juce_IncludeModuleHeaders.h
+index 4b36f6d64..61dbdeede 100644
+--- a/modules/juce_audio_plugin_client/utility/juce_IncludeModuleHeaders.h
++++ b/modules/juce_audio_plugin_client/utility/juce_IncludeModuleHeaders.h
+@@ -23,6 +23,8 @@
+   ==============================================================================
+ */
+ 
++#pragma once
++
+ #include <juce_audio_plugin_client/juce_audio_plugin_client.h>
+ #include "juce_CreatePluginFilter.h"
+ 
