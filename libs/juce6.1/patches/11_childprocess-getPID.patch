@@ -1,0 +1,61 @@
+diff --git a/modules/juce_core/native/juce_posix_SharedCode.h b/modules/juce_core/native/juce_posix_SharedCode.h
+index 2e96f3b04..f4bb0b84f 100644
+--- a/modules/juce_core/native/juce_posix_SharedCode.h
++++ b/modules/juce_core/native/juce_posix_SharedCode.h
+@@ -1260,6 +1260,11 @@ public:
+         return 0;
+     }
+ 
++    int getPID() const noexcept
++    {
++        return childPID;
++    }
++
+     int childPID = 0;
+     int pipeHandle = 0;
+     int exitCode = -1;
+diff --git a/modules/juce_core/native/juce_win32_Threads.cpp b/modules/juce_core/native/juce_win32_Threads.cpp
+index 1a4004353..5f64b9e72 100644
+--- a/modules/juce_core/native/juce_win32_Threads.cpp
++++ b/modules/juce_core/native/juce_win32_Threads.cpp
+@@ -487,6 +487,11 @@ public:
+         return (uint32) exitCode;
+     }
+ 
++    int getPID() const noexcept
++    {
++        return 0;
++    }
++
+     bool ok;
+ 
+ private:
+diff --git a/modules/juce_core/threads/juce_ChildProcess.cpp b/modules/juce_core/threads/juce_ChildProcess.cpp
+index 2e5f14330..ab36fbace 100644
+--- a/modules/juce_core/threads/juce_ChildProcess.cpp
++++ b/modules/juce_core/threads/juce_ChildProcess.cpp
+@@ -81,6 +81,11 @@ String ChildProcess::readAllProcessOutput()
+ }
+ 
+ 
++uint32 ChildProcess::getPID() const noexcept
++{
++    return activeProcess != nullptr ? activeProcess->getPID() : 0;
++}
++
+ //==============================================================================
+ //==============================================================================
+ #if JUCE_UNIT_TESTS
+diff --git a/modules/juce_core/threads/juce_ChildProcess.h b/modules/juce_core/threads/juce_ChildProcess.h
+index 47a26281b..74dbb11ab 100644
+--- a/modules/juce_core/threads/juce_ChildProcess.h
++++ b/modules/juce_core/threads/juce_ChildProcess.h
+@@ -101,6 +101,8 @@ public:
+     */
+     bool kill();
+ 
++    uint32 getPID() const noexcept;
++
+ private:
+     //==============================================================================
+     class ActiveProcess;

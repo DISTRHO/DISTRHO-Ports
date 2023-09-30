@@ -22,7 +22,8 @@ build_lv2 = get_option('build-lv2')
 build_vst2 = get_option('build-vst2') and not linux_embed
 build_vst3 = get_option('build-vst3') and not linux_embed
 build_juce5_only = get_option('build-juce5-only')
-build_juce6_only = get_option('build-juce6-only')
+build_juce60_only = get_option('build-juce60-only')
+build_juce61_only = get_option('build-juce61-only')
 build_juce7_only = get_option('build-juce7-only')
 build_universal = get_option('build-universal')
 optimizations = get_option('optimizations') and buildtype != 'debug'
@@ -313,15 +314,19 @@ endif
 
 subdir('libs')
 
-if not (build_juce6_only or build_juce7_only)
+if not (build_juce60_only or build_juce61_only or build_juce7_only)
     subdir('ports-juce5')
 endif
 
-if not (build_juce5_only or build_juce7_only)
-    subdir('ports-juce6')
+if not (build_juce5_only or build_juce61_only or build_juce7_only)
+    subdir('ports-juce6.0')
 endif
 
-if not (build_juce5_only or build_juce6_only)
+if not (build_juce5_only or build_juce60_only or build_juce7_only)
+    subdir('ports-juce6.1')
+endif
+
+if not (build_juce5_only or build_juce60_only or build_juce61_only)
     subdir('ports-juce7')
 endif
 

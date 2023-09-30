@@ -46,10 +46,16 @@ option('build-juce5-only',
     description: 'Build only juce5 libraries and plugins',
 )
 
-option('build-juce6-only',
+option('build-juce60-only',
     type: 'boolean',
     value: false,
-    description: 'Build only juce6 libraries and plugins',
+    description: 'Build only juce6.0 libraries and plugins',
+)
+
+option('build-juce61-only',
+    type: 'boolean',
+    value: false,
+    description: 'Build only juce6.1 libraries and plugins',
 )
 
 option('build-juce7-only',
@@ -101,8 +107,9 @@ option('plugins',
         'temper',
         'vex',
         'wolpertinger',
-        # juce6
-        'swankyamp',
+        # juce6.0
         'vitalium',
+        # juce6.1
+        'swankyamp',
     ],
 )
