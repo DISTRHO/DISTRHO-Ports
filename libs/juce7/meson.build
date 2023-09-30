@@ -38,8 +38,12 @@ juce7_extra_cpp_args = [
     '-std=gnu++14',
     '-Wno-non-virtual-dtor',
 ]
+juce7_extra_include_dirs = []
 
 if os_windows
+    juce7_extra_include_dirs += [
+        include_directories('../mingw-std-threads'),
+    ]
     if host_machine.cpu() == 'x86'
         juce7_extra_cpp_args += [
             '-mpreferred-stack-boundary=2',
@@ -54,6 +58,7 @@ lib_juce7 = static_library('juce7',
         include_directories('source'),
         include_directories('source/modules'),
         include_directories('../juced/source/dependancies/ladspa_sdk/src'),
+        juce7_extra_include_dirs
     ],
     cpp_args: build_flags_cpp + juce7_extra_cpp_args,
     dependencies: dependencies,
@@ -67,6 +72,7 @@ lib_juce7_device = static_library('juce7-devices',
         include_directories('.'),
         include_directories('source'),
         include_directories('source/modules'),
+        juce7_extra_include_dirs
     ],
     cpp_args: build_flags_cpp + juce7_extra_cpp_args + ['-DJUCE_MODULE_AVAILABLE_juce_audio_devices=1'],
     dependencies: dependencies_devices,

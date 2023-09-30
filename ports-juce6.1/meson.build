@@ -17,6 +17,7 @@ plugin_include_dirs = [
     include_directories('../libs/juce6.1/source/modules'),
     include_directories('../libs/juce6.1/source/modules/juce_audio_processors/format_types/VST3_SDK'),
     include_directories('../libs/juce-plugin'),
+    juce61_extra_include_dirs
 ]
 
 ###############################################################################

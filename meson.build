@@ -6,6 +6,23 @@ project('DISTRHO-Ports',
 )
 
 ###############################################################################
+# set target OS
+
+os_darwin = false
+os_linux = false
+os_windows = false
+
+if host_machine.system() == 'darwin'
+    os_darwin = true
+elif host_machine.system() == 'windows'
+    os_windows = true
+elif host_machine.system() == 'linux'
+    os_linux = true
+else
+    error('unsupported system')
+endif
+
+###############################################################################
 # get options
 
 buildtype = get_option('buildtype')
@@ -27,7 +44,7 @@ build_juce61_only = get_option('build-juce61-only')
 build_juce7_only = get_option('build-juce7-only')
 build_universal = get_option('build-universal')
 optimizations = get_option('optimizations') and buildtype != 'debug'
-lto_optimizations = get_option('lto-optimizations') and buildtype != 'debug'
+lto_optimizations = get_option('lto-optimizations') and buildtype != 'debug' and not os_windows
 sse_optimizations = get_option('sse-optimizations') and buildtype != 'debug'
 
 ###############################################################################
@@ -36,23 +53,6 @@ sse_optimizations = get_option('sse-optimizations') and buildtype != 'debug'
 lv2dir = prefix / libdir / 'lv2'
 vst2dir = prefix / libdir / 'vst'
 vst3dir = prefix / libdir / 'vst3'
-
-###############################################################################
-# set target OS
-
-os_darwin = false
-os_linux = false
-os_windows = false
-
-if host_machine.system() == 'darwin'
-    os_darwin = true
-elif host_machine.system() == 'windows'
-    os_windows = true
-elif host_machine.system() == 'linux'
-    os_linux = true
-else
-    error('unsupported system')
-endif
 
 ###############################################################################
 # set OS-specific details
@@ -326,9 +326,10 @@ if not (build_juce5_only or build_juce60_only or build_juce7_only)
     subdir('ports-juce6.1')
 endif
 
-if not (build_juce5_only or build_juce60_only or build_juce61_only)
-    subdir('ports-juce7')
-endif
+# no plugins imported that use juce7 yet
+# if not (build_juce5_only or build_juce60_only or build_juce61_only)
+#     subdir('ports-juce7')
+# endif
 
 ###############################################################################
 # extra files to install

@@ -1,0 +1,6 @@
+// Copyright 2023 Filipe Coelho <falktx@falktx.com>
+// SPDX-License-Identifier: 0BSD OR ISC
+
+#pragma once
+#include_next <thread>
+#include "mingw.thread.h"
