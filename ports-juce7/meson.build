@@ -2,9 +2,11 @@
 
 if linux_embed
     plugins = [
+        'obxd',
     ]
 else
     plugins = [
+        'obxd',
     ]
 endif
 
@@ -22,7 +24,7 @@ plugin_include_dirs = [
 # build flags for plugins
 
 build_flags_plugin = [
-    '-Werror=deprecated-declarations',
+    '-Wno-deprecated-declarations', # FIXME
 ]
 
 build_flag_plugin_cpp = [

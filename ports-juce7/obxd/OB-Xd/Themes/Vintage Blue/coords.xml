@@ -1,0 +1,116 @@
+<?xml version="1.0"?>
+<PROPERTIES>
+	<VALUE NAME="guisize" x="1800" y="562"/>
+	<VALUE NAME="menu" x="5" y="5" d="20"/>
+
+	<!------- MANUAL ----->
+
+	<VALUE NAME="volumeKnob" x="70" y="95" d="60"/>
+
+	<VALUE NAME="asPlayedAllocButton" x="28" y="218" w="34" h="60"/>
+	<VALUE NAME="midiLearnButton" x="87" y="218" w="34" h="60"/>
+	<VALUE NAME="midiUnlearnButton" x="151" y="218" w="34" h="60"/>
+
+	<VALUE NAME="tuneKnob" x="16" y="333" d="60"/>
+	<VALUE NAME="transposeKnob" x="124" y="333" d="60"/>
+
+	<VALUE NAME="voiceSwitch" x="156" y="477" w="17" h="24"/>
+	<VALUE NAME="legatoSwitch" x="39" y="477" w="65" h="24"/>
+
+	<!------- CONTROL ----->
+
+	<VALUE NAME="portamentoKnob" x="233" y="95" d="60"/>
+	<VALUE NAME="unisonButton" x="251" y="218" w="34" h="60"/>
+	<VALUE NAME="voiceDetuneKnob" x="233" y="333" d="60"/>
+
+	<VALUE NAME="bendRangeButton" x="227" y="452" w="34" h="60"/>
+	<VALUE NAME="bendOsc2OnlyButton" x="283" y="452" w="34" h="60"/>
+
+	<!------- MODULATION ----->
+	
+	<VALUE NAME="lfoFrequencyKnob" x="366" y="94" d="60"/>
+	<VALUE NAME="lfoAmt1Knob" x="488" y="94" d="60"/>
+	<VALUE NAME="lfoAmt2Knob" x="610" y="94" d="60"/>
+	
+	<VALUE NAME="lfoSinButton" x="385" y="218" w="34" h="60"/>
+	<VALUE NAME="lfoSquareButton" x="385" y="340" w="34" h="60"/>
+	<VALUE NAME="lfoSHButton" x="385" y="452" w="34" h="60"/>
+	
+	<VALUE NAME="lfoOsc1Button" x="504" y="218" w="34" h="60"/>
+	<VALUE NAME="lfoOsc2Button" x="504" y="340" w="34" h="60"/>
+	<VALUE NAME="lfoFilterButton" x="504" y="452" w="34" h="60"/>
+	
+	<VALUE NAME="lfoPwm1Button" x="629" y="218" w="34" h="60"/>
+	<VALUE NAME="lfoPwm2Button" x="629" y="340" w="34" h="60"/>
+
+	<!------- OSCILLATORS ----->
+
+	<VALUE NAME="osc1PitchKnob" x="741" y="94" d="60"/>
+	<VALUE NAME="pulseWidthKnob" x="864" y="94" d="60"/>
+	<VALUE NAME="osc2PitchKnob" x="985" y="94" d="60"/>
+
+	<VALUE NAME="osc1SawButton" x="734" y="218" w="34" h="60"/>
+	<VALUE NAME="osc1PulButton" x="790" y="218" w="34" h="60"/>
+
+	<VALUE NAME="pitchQuantButton" x="855" y="218" w="34" h="60"/>	
+	<VALUE NAME="hardSyncButton" x="913" y="218" w="34" h="60"/>
+
+	<VALUE NAME="osc2SawButton" x="978" y="218" w="34" h="60"/>
+	<VALUE NAME="osc2PulButton" x="1034" y="218" w="34" h="60"/>
+	
+	<VALUE NAME="osc1MixKnob" x="741" y="333" d="60"/>
+	<VALUE NAME="noiseMixKnob" x="864" y="333" d="60"/>
+	<VALUE NAME="osc2MixKnob" x="985" y="333" d="60"/>
+
+	<VALUE NAME="brightnessKnob" x="726" y="449" d="60"/>	
+	<VALUE NAME="xmodKnob" x="820" y="449" d="60"/>
+	
+	<VALUE NAME="envPitchModKnob" x="904" y="449" d="60"/>
+	<VALUE NAME="osc2DetuneKnob" x="994" y="449" d="60"/>
+
+	<!------- FILTER ----->
+
+	<VALUE NAME="cutoffKnob" x="1116" y="94" d="60"/>
+	<VALUE NAME="resonanceKnob" x="1238" y="94" d="60"/>
+	<VALUE NAME="filterEnvelopeAmtKnob" x="1360" y="98" d="60"/>
+	<VALUE NAME="multimodeKnob" x="1238" y="210" d="60"/>
+
+	<VALUE NAME="filterKeyFollowButton" x="1109" y="218" w="34" h="60"/>
+	<VALUE NAME="filterHQButton" x="1165" y="218" w="34" h="60"/>
+	<VALUE NAME="filterBPBlendButton" x="1353" y="218" w="34" h="60"/>
+	<VALUE NAME="fourPoleButton" x="1409" y="218" w="34" h="60"/>
+
+	<!------- FILTER ENVELOPE ----->
+	
+	<VALUE NAME="fattackKnob" x="1478" y="94" d="60"/>
+	<VALUE NAME="fdecayKnob" x="1558" y="94" d="60"/>
+	<VALUE NAME="fsustainKnob" x="1636" y="94" d="60"/>
+	<VALUE NAME="freleaseKnob" x="1716" y="94" d="60"/>
+
+	<!------- LOUDNESS ENVELOPE ----->
+	
+	<VALUE NAME="attackKnob" x="1478" y="210" d="60"/>
+	<VALUE NAME="decayKnob" x="1558" y="210" d="60"/>
+	<VALUE NAME="sustainKnob" x="1636" y="210" d="60"/>
+	<VALUE NAME="releaseKnob" x="1716" y="210" d="60"/>
+
+	<!------- VOICE VARIATION ----->
+
+	<VALUE NAME="bendLfoRateKnob" x="1140" y="390" d="45"/>
+	<VALUE NAME="veloFltEnvKnob" x="1250" y="390" d="45"/>
+	<VALUE NAME="veloAmpEnvKnob" x="1360" y="390" d="45"/>
+
+	<VALUE NAME="filterDetuneKnob" x="1470" y="390" d="45"/>
+	<VALUE NAME="portamentoDetuneKnob" x="1580" y="390" d="45"/>
+	<VALUE NAME="envelopeDetuneKnob" x="1690" y="390" d="45"/>
+	
+	<VALUE NAME="pan1Knob" x="1140" y="472" d="45"/>
+	<VALUE NAME="pan2Knob" x="1218" y="472" d="45"/>
+	<VALUE NAME="pan3Knob" x="1297" y="472" d="45"/>
+	<VALUE NAME="pan4Knob" x="1375" y="472" d="45"/>
+	<VALUE NAME="pan5Knob" x="1454" y="472" d="45"/>
+	<VALUE NAME="pan6Knob" x="1532" y="472" d="45"/>
+	<VALUE NAME="pan7Knob" x="1611" y="472" d="45"/>
+	<VALUE NAME="pan8Knob" x="1690" y="472" d="45"/>
+	
+</PROPERTIES>
