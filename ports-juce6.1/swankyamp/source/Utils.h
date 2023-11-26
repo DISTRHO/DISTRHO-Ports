@@ -76,7 +76,9 @@ std::vector<String> buildParameterIds(const SerializedState& state);
 
 float angleModulo(float angle);
 
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
 Image buildImageNoise(int width, int height, Random& rng, float alpha);
+#endif
 
 /**
  * @brief Remap a float value to a positive and negative range.

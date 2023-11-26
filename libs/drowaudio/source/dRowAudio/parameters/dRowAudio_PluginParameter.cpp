@@ -169,6 +169,7 @@ void PluginParameter::readXml (const XmlElement* xmlState)
 	setValue (xmlState->getDoubleAttribute (getXmlName(name), getValue()));
 }
 
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
 void PluginParameter::setupSlider (Slider &slider)
 {
     slider.setRange             (min, max, step);
@@ -176,6 +177,7 @@ void PluginParameter::setupSlider (Slider &slider)
     slider.setValue             (getValue(), dontSendNotification);
     slider.setTextValueSuffix   (unitSuffix);
 }
+#endif
 
 double PluginParameter::normaliseValue (double scaledValue)
 {

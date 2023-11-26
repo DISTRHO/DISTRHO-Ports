@@ -134,8 +134,10 @@ public:
 	void readXml (const XmlElement* xmlState);
 	
 	/** Sets up a given slider with the parmeters properties.
-     */
+	 */
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
 	void setupSlider (Slider& slider);
+#endif
 	double normaliseValue (double scaledValue);
 	
 private:

@@ -130,8 +130,10 @@ public:
     void processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages);
 
     //==============================================================================
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
     AudioProcessorEditor* createEditor();
     bool hasEditor() const;
+#endif
 	
 	//==============================================================================
 	void processMidiPerSample(MidiBuffer::Iterator* iter,const int samplePos);

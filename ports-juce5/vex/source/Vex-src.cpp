@@ -41,6 +41,8 @@
 #include "vex/VexVoice.cpp"
 #include "vex/VexWaveRenderer.cpp"
 
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
 #include "vex/lookandfeel/MyLookAndFeel.cpp"
+#endif
 
 #include "vex/resources/Resources.cpp"

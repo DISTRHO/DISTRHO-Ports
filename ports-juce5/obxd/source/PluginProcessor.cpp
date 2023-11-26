@@ -661,6 +661,7 @@ void ObxdAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& mi
 	}
 }
 
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
 //==============================================================================
 bool ObxdAudioProcessor::hasEditor() const
 {
@@ -671,6 +672,7 @@ AudioProcessorEditor* ObxdAudioProcessor::createEditor()
 {
 	return new ObxdAudioProcessorEditor (this);
 }
+#endif
 
 //==============================================================================
 void ObxdAudioProcessor::getStateInformation (MemoryBlock& destData)

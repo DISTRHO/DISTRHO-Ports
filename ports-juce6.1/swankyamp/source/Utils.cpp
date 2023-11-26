@@ -29,6 +29,7 @@ float angleModulo(float angle)
     return modulo;
 }
 
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
 void fillImageNoise(Image& image, Random& rng, float alpha)
 {
   if (image.getFormat() != Image::PixelFormat::ARGB)
@@ -45,6 +46,7 @@ Image buildImageNoise(int width, int height, Random& rng, float alpha)
   fillImageNoise(noise, rng, alpha);
   return noise;
 }
+#endif
 
 VersionNumber parseVersionString(const String& versionString)
 {
