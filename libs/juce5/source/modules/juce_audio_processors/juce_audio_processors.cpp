@@ -178,8 +178,10 @@ void AutoResizingNSViewComponentWithParent::timerCallback()
 #include "format_types/juce_VSTPluginFormat.cpp"
 #include "format_types/juce_VST3PluginFormat.cpp"
 #include "format_types/juce_AudioUnitPluginFormat.mm"
-#include "scanning/juce_KnownPluginList.cpp"
-#include "scanning/juce_PluginDirectoryScanner.cpp"
-#include "scanning/juce_PluginListComponent.cpp"
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
+ #include "scanning/juce_KnownPluginList.cpp"
+ #include "scanning/juce_PluginDirectoryScanner.cpp"
+ #include "scanning/juce_PluginListComponent.cpp"
+#endif
 #include "utilities/juce_AudioProcessorParameters.cpp"
 #include "utilities/juce_AudioProcessorValueTreeState.cpp"

@@ -334,6 +334,7 @@ void AudioProcessorValueTreeState::timerCallback()
 AudioProcessorValueTreeState::Listener::Listener() {}
 AudioProcessorValueTreeState::Listener::~Listener() {}
 
+#if ! JUCE_AUDIOPROCESSOR_NO_GUI
 //==============================================================================
 struct AttachedControlBase  : public AudioProcessorValueTreeState::Listener,
                               public AsyncUpdater
@@ -572,5 +573,6 @@ AudioProcessorValueTreeState::ButtonAttachment::ButtonAttachment (AudioProcessor
 }
 
 AudioProcessorValueTreeState::ButtonAttachment::~ButtonAttachment() {}
+#endif
 
 } // namespace juce
