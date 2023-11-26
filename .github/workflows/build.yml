@@ -10,207 +10,91 @@ env:
   LIBGL_ALWAYS_SOFTWARE: 'true'
 
 jobs:
-  #linux-arm64:
-    #runs-on: ubuntu-20.04
-    #steps:
-      #- uses: actions/checkout@v3
-        #with:
-          #submodules: recursive
-      ##- name: Set up cache
-        ##id: cache
-        ##uses: actions/cache@v3
-        ##with:
-          ##path: |
-            ##build
-          ##key: linux-arm64-v${{ env.CACHE_VERSION }}
-      #- name: Fix GitHub's mess
-        #run: |
-          #sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list
-          #sudo apt-get update -qq
-          #sudo apt-get install -yqq --allow-downgrades libpcre2-8-0/focal libpcre2-16-0/focal libpcre2-32-0/focal libpcre2-posix2/focal
-      #- name: Set up dependencies
-        #run: |
-          #sudo dpkg --add-architecture arm64
-          #sudo sed -i "s/deb http/deb [arch=amd64] http/" /etc/apt/sources.list
-          #echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports focal main restricted universe multiverse" | sudo tee /etc/apt/sources.list.d/ports-arm64.list
-          #echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports focal-updates main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list.d/ports-arm64.list
-          #echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports focal-backports main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list.d/ports-arm64.list
-          #sudo apt-get update -qq
-          #sudo apt-get install -yqq build-essential meson
-          #sudo apt-get install -yqq g++-aarch64-linux-gnu libasound2-dev:arm64 libfftw3-dev:arm64 libfreetype6-dev:arm64 libgl1-mesa-dev:arm64 libx11-dev:arm64 libxcomposite-dev:arm64 libxcursor-dev:arm64 libxrender-dev:arm64 qemu-user-static
-      #- name: Build linux arm64 cross-compiled
-        #env:
-          #AR: aarch64-linux-gnu-ar
-          #CC: aarch64-linux-gnu-gcc
-          #CXX: aarch64-linux-gnu-g++
-          #LD: aarch64-linux-gnu-ld
-          #NM: aarch64-linux-gnu-nm
-          #STRIP: aarch64-linux-gnu-strip
-          #LDFLAGS: -static-libgcc -static-libstdc++
-          #PKG_CONFIG_PATH: /usr/lib/aarch64-linux-gnu/pkgconfig
-        #run: |
-          #meson build --buildtype=release --prefix=/usr -Dsse-optimizations=false
-          #ninja -C build
-      #- name: Install linux armhf
-        #run: |
-          #ninja -C build install
-      #- name: Set sha8 (non-release)
-        #if: startsWith(github.ref, 'refs/tags/') != true
-        #id: slug1
-        #run: echo "::set-output name=sha8::$(echo ${{ github.sha }} | cut -c1-8)"
-      #- name: Set sha8 (release)
-        #if: startsWith(github.ref, 'refs/tags/')
-        #id: slug2
-        #run: echo "::set-output name=sha8::$(echo ${{ github.ref_name }})"
-      #- name: Set sha8
-        #id: slug
-        #run: echo "::set-output name=sha8::$(echo ${{ steps.slug1.outputs.sha8 || steps.slug2.outputs.sha8 }})"
-      #- name: Pack binaries
-        #run: |
-          #tar czf ${{ github.event.repository.name }}-linux-arm64-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}.tar.gz -C ${{ env.DESTDIR }}/usr/lib lv2 vst vst3
-      #- uses: actions/upload-artifact@v3
-        #with:
-          #name: ${{ github.event.repository.name }}-linux-arm64-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}
-          #path: |
-            #*.tar.gz
-      #- uses: softprops/action-gh-release@v1
-        #if: startsWith(github.ref, 'refs/tags/')
-        #with:
-          #tag_name: ${{ github.ref_name }}
-          #name: ${{ github.ref_name }}
-          #draft: false
-          #prerelease: false
-          #files: |
-            #*.tar.gz
-
-  #linux-armhf:
-    #runs-on: ubuntu-20.04
-    #steps:
-      #- uses: actions/checkout@v3
-        #with:
-          #submodules: recursive
-      ##- name: Set up cache
-        ##id: cache
-        ##uses: actions/cache@v3
-        ##with:
-          ##path: |
-            ##build
-          ##key: linux-armhf-v${{ env.CACHE_VERSION }}
-      #- name: Fix GitHub's mess
-        #run: |
-          #sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list
-          #sudo apt-get update -qq
-          #sudo apt-get install -yqq --allow-downgrades libpcre2-8-0/focal libpcre2-16-0/focal libpcre2-32-0/focal libpcre2-posix2/focal
-      #- name: Set up dependencies
-        #run: |
-          #sudo dpkg --add-architecture armhf
-          #sudo sed -i "s/deb http/deb [arch=amd64] http/" /etc/apt/sources.list
-          #echo "deb [arch=armhf] http://ports.ubuntu.com/ubuntu-ports focal main restricted universe multiverse" | sudo tee /etc/apt/sources.list.d/ports-armhf.list
-          #echo "deb [arch=armhf] http://ports.ubuntu.com/ubuntu-ports focal-updates main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list.d/ports-armhf.list
-          #echo "deb [arch=armhf] http://ports.ubuntu.com/ubuntu-ports focal-backports main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list.d/ports-armhf.list
-          #sudo apt-get update -qq
-          #sudo apt-get install -yqq build-essential meson
-          #sudo apt-get install -yqq g++-arm-linux-gnueabihf libasound2-dev:armhf libfftw3-dev:armhf libfreetype6-dev:armhf libgl1-mesa-dev:armhf libx11-dev:armhf libxcomposite-dev:armhf libxcursor-dev:armhf libxrender-dev:armhf qemu-user-static
-      #- name: Build linux armhf cross-compiled
-        #env:
-          #AR: arm-linux-gnueabihf-ar
-          #CC: arm-linux-gnueabihf-gcc
-          #CXX: arm-linux-gnueabihf-g++
-          #LD: arm-linux-gnueabihf-ld
-          #NM: arm-linux-gnueabihf-nm
-          #STRIP: arm-linux-gnueabihf-strip
-          #CFLAGS: -mfpu=neon-vfpv4 -mfloat-abi=hard
-          #CXXFLAGS: -mfpu=neon-vfpv4 -mfloat-abi=hard
-          #LDFLAGS: -static-libgcc -static-libstdc++
-          #PKG_CONFIG_PATH: /usr/lib/arm-linux-gnueabihf/pkgconfig
-        #run: |
-          #meson build --buildtype=release --prefix=/usr -Dsse-optimizations=false
-          #ninja -C build
-      #- name: Install linux armhf
-        #run: |
-          #ninja -C build install
-      #- name: Set sha8 (non-release)
-        #if: startsWith(github.ref, 'refs/tags/') != true
-        #id: slug1
-        #run: echo "::set-output name=sha8::$(echo ${{ github.sha }} | cut -c1-8)"
-      #- name: Set sha8 (release)
-        #if: startsWith(github.ref, 'refs/tags/')
-        #id: slug2
-        #run: echo "::set-output name=sha8::$(echo ${{ github.ref_name }})"
-      #- name: Set sha8
-        #id: slug
-        #run: echo "::set-output name=sha8::$(echo ${{ steps.slug1.outputs.sha8 || steps.slug2.outputs.sha8 }})"
-      #- name: Pack binaries
-        #run: |
-          #tar czf ${{ github.event.repository.name }}-linux-armhf-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}.tar.gz -C ${{ env.DESTDIR }}/usr/lib lv2 vst vst3
-      #- uses: actions/upload-artifact@v3
-        #with:
-          #name: ${{ github.event.repository.name }}-linux-armhf-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}
-          #path: |
-            #*.tar.gz
-      #- uses: softprops/action-gh-release@v1
-        #if: startsWith(github.ref, 'refs/tags/')
-        #with:
-          #tag_name: ${{ github.ref_name }}
-          #name: ${{ github.ref_name }}
-          #draft: false
-          #prerelease: false
-          #files: |
-            #*.tar.gz
-
-  linux-i686:
-    runs-on: ubuntu-20.04
+  linux:
+    strategy:
+      matrix:
+        include:
+        - name: amd64
+          cflags:
+          ldflags:
+          prefix: x86_64-linux-gnu
+        #- name: arm64
+          #cflags:
+          #ldflags:
+          #prefix: aarch64-linux-gnu
+        #- name: armhf
+          #cflags: -mfpu=neon-vfpv4 -mfloat-abi=hard
+          #ldflags:
+          #prefix: arm-linux-gnueabihf
+        #- name: i386
+          #cflags:
+          #ldflags:
+          #prefix: i686-linux-gnu
+    runs-on: ubuntu-latest
+    container:
+        image: ubuntu:20.04
     steps:
+      - name: Set up dependencies
+        run: |
+          dpkg --add-architecture ${{ matrix.name }}
+          if [ "${{ matrix.name }}" != "amd64" ] && [ "${{ matrix.name }}" != "i386" ]; then
+            sed -i "s/deb http/deb [arch=amd64] http/" /etc/apt/sources.list
+            echo "deb [arch=${{ matrix.name }}] http://ports.ubuntu.com/ubuntu-ports focal main restricted universe multiverse" | tee -a /etc/apt/sources.list
+            echo "deb [arch=${{ matrix.name }}] http://ports.ubuntu.com/ubuntu-ports focal-updates main restricted universe multiverse" | tee -a /etc/apt/sources.list
+            echo "deb [arch=${{ matrix.name }}] http://ports.ubuntu.com/ubuntu-ports focal-backports main restricted universe multiverse" | tee -a /etc/apt/sources.list
+          fi
+          apt-get update -qq
+          apt-get install -yqq \
+            binfmt-support \
+            build-essential \
+            git \
+            meson \
+            pkg-config \
+            qemu-user-static \
+            $(echo g++-${{ matrix.prefix }} | sed 's/_/-/g') \
+            libasound2-dev:${{ matrix.name }} \
+            libfftw3-dev:${{ matrix.name }} \
+            libfreetype6-dev:${{ matrix.name }} \
+            libgl1-mesa-dev:${{ matrix.name }} \
+            libx11-dev:${{ matrix.name }} \
+            libxcomposite-dev:${{ matrix.name }} \
+            libxcursor-dev:${{ matrix.name }} \
+            libxrender-dev:${{ matrix.name }}
       - uses: actions/checkout@v3
         with:
           submodules: recursive
-      #- name: Set up cache
-        #id: cache
-        #uses: actions/cache@v3
-        #with:
-          #path: |
-            #build
-          #key: linux-i686-v${{ env.CACHE_VERSION }}
-      - name: Fix GitHub's mess
-        run: |
-          sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list
-          sudo apt-get update -qq
-          sudo apt-get install -yqq --allow-downgrades libpcre2-8-0/focal libpcre2-16-0/focal libpcre2-32-0/focal libpcre2-posix2/focal
-      - name: Set up dependencies
-        run: |
-          sudo dpkg --add-architecture i386
-          sudo apt-get update -qq
-          sudo apt-get install -yqq build-essential meson
-          sudo apt-get install -yqq g++-multilib libasound2-dev:i386 libfftw3-dev:i386 libfreetype6-dev:i386 libgl1-mesa-dev:i386 libx11-dev:i386 libxcomposite-dev:i386 libxcursor-dev:i386 libxrender-dev:i386
-      - name: Build linux i686
+      - name: Build
         env:
-          CFLAGS: -m32
-          CXXFLAGS: -m32
-          LDFLAGS: -static-libgcc -static-libstdc++ -m32
-          PKG_CONFIG_PATH: /usr/lib/i386-linux-gnu/pkgconfig
+          AR: ${{ matrix.prefix }}-ar
+          CC: ${{ matrix.prefix }}-gcc
+          CXX: ${{ matrix.prefix }}-g++
+          LD: ${{ matrix.prefix }}-ld
+          NM: ${{ matrix.prefix }}-nm
+          STRIP: ${{ matrix.prefix }}-strip
+          CFLAGS: ${{ matrix.cflags }}
+          CXXFLAGS: ${{ matrix.cflags }}
+          LDFLAGS: ${{ matrix.ldflags }} -static-libgcc -static-libstdc++
+          PKG_CONFIG_PATH: /usr/lib/${{ matrix.prefix }}/pkgconfig
         run: |
           meson build --buildtype=release --prefix=/usr
           ninja -C build
-      - name: Install linux i686
+      - name: Install
         run: |
           ninja -C build install
-      - name: Set sha8 (non-release)
-        if: startsWith(github.ref, 'refs/tags/') != true
-        id: slug1
-        run: echo "::set-output name=sha8::$(echo ${{ github.sha }} | cut -c1-8)"
       - name: Set sha8 (release)
         if: startsWith(github.ref, 'refs/tags/')
-        id: slug2
-        run: echo "::set-output name=sha8::$(echo ${{ github.ref_name }})"
-      - name: Set sha8
-        id: slug
-        run: echo "::set-output name=sha8::$(echo ${{ steps.slug1.outputs.sha8 || steps.slug2.outputs.sha8 }})"
+        run: |
+          echo "SHA8=$(echo ${{ github.ref_name }})" >> $GITHUB_ENV
+      - name: Set sha8 (non-release)
+        if: startsWith(github.ref, 'refs/tags/') != true
+        run: |
+          echo "SHA8=$(echo ${{ github.sha }} | cut -c1-8)" >> $GITHUB_ENV
       - name: Pack binaries
         run: |
-          tar czf ${{ github.event.repository.name }}-linux-i686-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}.tar.gz -C ${{ env.DESTDIR }}/usr/lib lv2 vst vst3
+          tar czf ${{ github.event.repository.name }}-linux-${{ matrix.name }}-${{ github.event.pull_request.number || env.SHA8 }}.tar.gz -C ${{ env.DESTDIR }}/usr/lib lv2 vst vst3
       - uses: actions/upload-artifact@v3
         with:
-          name: ${{ github.event.repository.name }}-linux-i686-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}
+          name: ${{ github.event.repository.name }}-linux-${{ matrix.name }}-${{ github.event.pull_request.number || env.SHA8 }}
           path: |
             *.tar.gz
       - uses: softprops/action-gh-release@v1
@@ -223,50 +107,65 @@ jobs:
           files: |
             *.tar.gz
 
-  linux-x86_64:
-    runs-on: ubuntu-20.04
+  windows:
+    strategy:
+      matrix:
+        include:
+        #- name: win32
+          #prefix: i686
+        - name: win64
+          prefix: x86-64
+    runs-on: ubuntu-latest
+    container:
+        image: ubuntu:22.04
     steps:
+      - name: Set up dependencies
+        run: |
+          dpkg --add-architecture i386
+          apt-get update -qq
+          apt-get install -yqq \
+            binfmt-support \
+            build-essential \
+            git \
+            meson \
+            pkg-config \
+            wine-stable \
+            xvfb \
+            binutils-mingw-w64-${{ matrix.prefix }} \
+            g++-mingw-w64-${{ matrix.prefix }}
       - uses: actions/checkout@v3
         with:
           submodules: recursive
-      #- name: Set up cache
-        #id: cache
-        #uses: actions/cache@v3
-        #with:
-          #path: |
-            #build
-          #key: linux-x86_64-v${{ env.CACHE_VERSION }}
-      - name: Set up dependencies
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -yqq build-essential meson
-          sudo apt-get install -yqq libasound2-dev libfftw3-dev libfreetype6-dev libgl1-mesa-dev libx11-dev libxcomposite-dev libxcursor-dev libxrender-dev
-      - name: Build linux x86_64
+      - name: Build
         env:
-          LDFLAGS: -static-libgcc -static-libstdc++
+          WINEARCH: ${{ matrix.name }}
+          WINEDEBUG: -all
+          WINEDLLOVERRIDES: mscoree,mshtml=
+          WINEPREFIX: /tmp/wine
         run: |
-          meson build --buildtype=release --prefix=/usr
+          wineboot -u
+          meson build --buildtype=release --prefix=/usr --cross-file scripts/meson/${{ matrix.name }}.ini
           ninja -C build
-      - name: Install linux x86_64
+      - name: Install
+        env:
+          WINEDEBUG: -all
+          WINEPREFIX: /tmp/wine
         run: |
           ninja -C build install
-      - name: Set sha8 (non-release)
-        if: startsWith(github.ref, 'refs/tags/') != true
-        id: slug1
-        run: echo "::set-output name=sha8::$(echo ${{ github.sha }} | cut -c1-8)"
       - name: Set sha8 (release)
         if: startsWith(github.ref, 'refs/tags/')
-        id: slug2
-        run: echo "::set-output name=sha8::$(echo ${{ github.ref_name }})"
-      - name: Set sha8
-        id: slug
-        run: echo "::set-output name=sha8::$(echo ${{ steps.slug1.outputs.sha8 || steps.slug2.outputs.sha8 }})"
+        run: |
+          echo "SHA8=$(echo ${{ github.ref_name }})" >> $GITHUB_ENV
+      - name: Set sha8 (non-release)
+        if: startsWith(github.ref, 'refs/tags/') != true
+        run: |
+          echo "SHA8=$(echo ${{ github.sha }} | cut -c1-8)" >> $GITHUB_ENV
       - name: Pack binaries
         run: |
-          tar czf ${{ github.event.repository.name }}-linux-x86_64-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}.tar.gz -C ${{ env.DESTDIR }}/usr/lib lv2 vst vst3
+          tar czf ${{ github.event.repository.name }}-${{ matrix.name }}-${{ github.event.pull_request.number || env.SHA8 }}.tar.gz -C ${{ env.DESTDIR }}/usr/lib lv2 vst vst3
       - uses: actions/upload-artifact@v3
         with:
-          name: ${{ github.event.repository.name }}-linux-x86_64-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}
+          name: ${{ github.event.repository.name }}-${{ matrix.name }}-${{ github.event.pull_request.number || env.SHA8 }}
           path: |
             *.tar.gz
       - uses: softprops/action-gh-release@v1
@@ -279,205 +178,56 @@ jobs:
           files: |
             *.tar.gz
 
-  linux-x86_64-debug:
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          submodules: recursive
-      - name: Set up dependencies
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -yqq build-essential meson
-          sudo apt-get install -yqq libasound2-dev libfftw3-dev libfreetype6-dev libgl1-mesa-dev libx11-dev libxcomposite-dev libxcursor-dev libxrender-dev
-      - name: Build linux x86_64 (debug)
-        env:
-          LDFLAGS: -static-libgcc -static-libstdc++
-        run: |
-          meson build --buildtype=debug --prefix=/usr
-          ninja -C build
-      - name: Install linux x86_64 (debug)
-        run: |
-          ninja -C build install
-      - name: Set sha8
-        id: slug
-        run: echo "::set-output name=sha8::$(echo ${{ github.sha }} | cut -c1-8)"
-      - name: Pack binaries
-        run: |
-          tar czf ${{ github.event.repository.name }}-linux-x86_64-debug-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}.tar.gz -C ${{ env.DESTDIR }}/usr/lib lv2 vst vst3
-      - uses: actions/upload-artifact@v3
-        with:
-          name: ${{ github.event.repository.name }}-linux-x86_64-debug-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}
-          path: |
-            *.tar.gz
-
-  linux-x86_64-embed:
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          submodules: recursive
-      - name: Set up dependencies
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -yqq build-essential meson
-          sudo apt-get install -yqq libasound2-dev libfftw3-dev
-      - name: Build linux x86_64 (embed)
-        run: |
-          meson build --buildtype=release --prefix=/usr -Dlinux-embed=true
-          ninja -C build
-
-  macos-intel:
-    runs-on: macos-11
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          submodules: recursive
-      #- name: Set up cache
-        #id: cache
-        #uses: actions/cache@v3
-        #with:
-          #path: |
-            #build
-          #key: macos-intel-v${{ env.CACHE_VERSION }}
-      - name: Set up dependencies
-        run: |
-          brew install meson
-      - name: Build macOS intel
-        env:
-          CFLAGS: -arch x86_64 -mmacosx-version-min=10.8 -DMAC_OS_X_VERSION_MAX_ALLOWED=MAC_OS_X_VERSION_10_8 -DMAC_OS_X_VERSION_MIN_REQUIRED=MAC_OS_X_VERSION_10_8
-          CXXFLAGS: -arch x86_64 -mmacosx-version-min=10.8 -stdlib=libc++ -DMAC_OS_X_VERSION_MAX_ALLOWED=MAC_OS_X_VERSION_10_8 -DMAC_OS_X_VERSION_MIN_REQUIRED=MAC_OS_X_VERSION_10_8
-          LDFLAGS: -arch x86_64 -mmacosx-version-min=10.8 -stdlib=libc++
-        run: |
-          meson build --buildtype=release --prefix=/usr
-          ninja -C build
-      - name: Install macOS intel
-        run: |
-          ninja -C build install
-      - name: Set sha8 (non-release)
-        if: startsWith(github.ref, 'refs/tags/') != true
-        id: slug1
-        run: echo "::set-output name=sha8::$(echo ${{ github.sha }} | cut -c1-8)"
-      - name: Set sha8 (release)
-        if: startsWith(github.ref, 'refs/tags/')
-        id: slug2
-        run: echo "::set-output name=sha8::$(echo ${{ github.ref_name }})"
-      - name: Set sha8
-        id: slug
-        run: echo "::set-output name=sha8::$(echo ${{ steps.slug1.outputs.sha8 || steps.slug2.outputs.sha8 }})"
-      - name: Pack binaries
-        run: |
-          tar czf ${{ github.event.repository.name }}-macOS-intel-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}.tar.gz -C ${{ env.DESTDIR }}/usr/lib lv2 vst vst3
-      - uses: actions/upload-artifact@v3
-        with:
-          name: ${{ github.event.repository.name }}-macOS-intel-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}
-          path: |
-            *.tar.gz
-
-  macos-universal:
-    runs-on: macos-11
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          submodules: recursive
-      #- name: Set up cache
-        #id: cache
-        #uses: actions/cache@v3
-        #with:
-          #path: |
-            #build
-          #key: macos-universal-v${{ env.CACHE_VERSION }}
-      - name: Fix up Xcode
-        run: |
-          sudo rm -Rf /Library/Developer/CommandLineTools/SDKs/*
-          sudo xcode-select -s "/Applications/Xcode_12.3.app"
-      - name: Set up dependencies
-        run: |
-          brew install meson
-      - name: Build macOS universal
-        env:
-          CFLAGS: -mmacosx-version-min=10.12 -DMAC_OS_X_VERSION_MAX_ALLOWED=MAC_OS_X_VERSION_10_12 -DMAC_OS_X_VERSION_MIN_REQUIRED=MAC_OS_X_VERSION_10_12
-          CXXFLAGS: -mmacosx-version-min=10.12 -DMAC_OS_X_VERSION_MAX_ALLOWED=MAC_OS_X_VERSION_10_12 -DMAC_OS_X_VERSION_MIN_REQUIRED=MAC_OS_X_VERSION_10_12
-          LDFLAGS: -mmacosx-version-min=10.12
-        run: |
-          meson build --buildtype=release --prefix=/usr -Dbuild-universal=true
-          ninja -C build
-      - name: Install macOS universal
-        run: |
-          ninja -C build install
-      - name: Set sha8 (non-release)
-        if: startsWith(github.ref, 'refs/tags/') != true
-        id: slug1
-        run: echo "::set-output name=sha8::$(echo ${{ github.sha }} | cut -c1-8)"
-      - name: Set sha8 (release)
-        if: startsWith(github.ref, 'refs/tags/')
-        id: slug2
-        run: echo "::set-output name=sha8::$(echo ${{ github.ref_name }})"
-      - name: Set sha8
-        id: slug
-        run: echo "::set-output name=sha8::$(echo ${{ steps.slug1.outputs.sha8 || steps.slug2.outputs.sha8 }})"
-      - name: Pack binaries
-        run: |
-          tar czf ${{ github.event.repository.name }}-macOS-universal-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}.tar.gz -C ${{ env.DESTDIR }}/usr/lib lv2 vst vst3
-      - uses: actions/upload-artifact@v3
-        with:
-          name: ${{ github.event.repository.name }}-macOS-universal-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}
-          path: |
-            *.tar.gz
-
-  #win32:
+  #linux-x86_64-debug:
     #runs-on: ubuntu-20.04
     #steps:
       #- uses: actions/checkout@v3
         #with:
           #submodules: recursive
-      ##- name: Set up cache
-        ##id: cache
-        ##uses: actions/cache@v3
-        ##with:
-          ##path: |
-            ##build
-          ##key: win32-v${{ env.CACHE_VERSION }}
-      #- name: Fix GitHub's mess
-        #run: |
-          #sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list
-          #sudo apt-get update -qq
-          #sudo apt-get install -yqq --allow-downgrades libpcre2-8-0/focal libpcre2-16-0/focal libpcre2-32-0/focal libpcre2-posix2/focal
       #- name: Set up dependencies
         #run: |
-          #sudo dpkg --add-architecture i386
           #sudo apt-get update -qq
           #sudo apt-get install -yqq build-essential meson
-          #sudo apt-get install -yqq binutils-mingw-w64-i686 g++-mingw-w64-i686 mingw-w64 wine-stable:i386 qttools5-dev qttools5-dev-tools xvfb
-      #- name: Build win32 cross-compiled
+          #sudo apt-get install -yqq libasound2-dev libfftw3-dev libfreetype6-dev libgl1-mesa-dev libx11-dev libxcomposite-dev libxcursor-dev libxrender-dev
+      #- name: Build linux x86_64 (debug)
+        #env:
+          #LDFLAGS: -static-libgcc -static-libstdc++
         #run: |
-          #meson build --buildtype=release --prefix=/usr --cross-file scripts/meson/win32.ini
+          #meson build --buildtype=debug --prefix=/usr
           #ninja -C build
-      #- name: Install win32
+      #- name: Install linux x86_64 (debug)
         #run: |
           #ninja -C build install
-      #- name: Set sha8 (non-release)
-        #if: startsWith(github.ref, 'refs/tags/') != true
-        #id: slug1
-        #run: echo "::set-output name=sha8::$(echo ${{ github.sha }} | cut -c1-8)"
-      #- name: Set sha8 (release)
-        #if: startsWith(github.ref, 'refs/tags/')
-        #id: slug2
-        #run: echo "::set-output name=sha8::$(echo ${{ github.ref_name }})"
       #- name: Set sha8
         #id: slug
-        #run: echo "::set-output name=sha8::$(echo ${{ steps.slug1.outputs.sha8 || steps.slug2.outputs.sha8 }})"
+        #run: echo "::set-output name=sha8::$(echo ${{ github.sha }} | cut -c1-8)"
       #- name: Pack binaries
         #run: |
-          #tar czf ${{ github.event.repository.name }}-win32-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}.tar.gz -C ${{ env.DESTDIR }}/usr/lib lv2 vst vst3
+          #tar czf ${{ github.event.repository.name }}-linux-x86_64-debug-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}.tar.gz -C ${{ env.DESTDIR }}/usr/lib lv2 vst vst3
       #- uses: actions/upload-artifact@v3
         #with:
-          #name: ${{ github.event.repository.name }}-win32-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}
+          #name: ${{ github.event.repository.name }}-linux-x86_64-debug-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}
           #path: |
             #*.tar.gz
 
-  #win64:
+  #linux-x86_64-embed:
     #runs-on: ubuntu-20.04
+    #steps:
+      #- uses: actions/checkout@v3
+        #with:
+          #submodules: recursive
+      #- name: Set up dependencies
+        #run: |
+          #sudo apt-get update -qq
+          #sudo apt-get install -yqq build-essential meson
+          #sudo apt-get install -yqq libasound2-dev libfftw3-dev
+      #- name: Build linux x86_64 (embed)
+        #run: |
+          #meson build --buildtype=release --prefix=/usr -Dlinux-embed=true
+          #ninja -C build
+
+  #macos-intel:
+    #runs-on: macos-11
     #steps:
       #- uses: actions/checkout@v3
         #with:
@@ -488,23 +238,19 @@ jobs:
         ##with:
           ##path: |
             ##build
-          ##key: win64-v${{ env.CACHE_VERSION }}
-      #- name: Fix GitHub's mess
-        #run: |
-          #sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list
-          #sudo apt-get update -qq
-          #sudo apt-get install -yqq build-essential meson
-          #sudo apt-get install -yqq --allow-downgrades libpcre2-8-0/focal libpcre2-16-0/focal libpcre2-32-0/focal libpcre2-posix2/focal
+          ##key: macos-intel-v${{ env.CACHE_VERSION }}
       #- name: Set up dependencies
         #run: |
-          #sudo dpkg --add-architecture i386
-          #sudo apt-get update -qq
-          #sudo apt-get install -yqq binutils-mingw-w64-x86-64 g++-mingw-w64-x86-64 mingw-w64 wine-stable qttools5-dev qttools5-dev-tools xvfb
-      #- name: Build win64 cross-compiled
+          #brew install meson
+      #- name: Build macOS intel
+        #env:
+          #CFLAGS: -arch x86_64 -mmacosx-version-min=10.8 -DMAC_OS_X_VERSION_MAX_ALLOWED=MAC_OS_X_VERSION_10_8 -DMAC_OS_X_VERSION_MIN_REQUIRED=MAC_OS_X_VERSION_10_8
+          #CXXFLAGS: -arch x86_64 -mmacosx-version-min=10.8 -stdlib=libc++ -DMAC_OS_X_VERSION_MAX_ALLOWED=MAC_OS_X_VERSION_10_8 -DMAC_OS_X_VERSION_MIN_REQUIRED=MAC_OS_X_VERSION_10_8
+          #LDFLAGS: -arch x86_64 -mmacosx-version-min=10.8 -stdlib=libc++
         #run: |
-          #meson build --buildtype=release --prefix=/usr --cross-file scripts/meson/win64.ini
+          #meson build --buildtype=release --prefix=/usr
           #ninja -C build
-      #- name: Install win64
+      #- name: Install macOS intel
         #run: |
           #ninja -C build install
       #- name: Set sha8 (non-release)
@@ -520,9 +266,56 @@ jobs:
         #run: echo "::set-output name=sha8::$(echo ${{ steps.slug1.outputs.sha8 || steps.slug2.outputs.sha8 }})"
       #- name: Pack binaries
         #run: |
-          #tar czf ${{ github.event.repository.name }}-win64-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}.tar.gz -C ${{ env.DESTDIR }}/usr/lib lv2 vst vst3
+          #tar czf ${{ github.event.repository.name }}-macOS-intel-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}.tar.gz -C ${{ env.DESTDIR }}/usr/lib lv2 vst vst3
       #- uses: actions/upload-artifact@v3
         #with:
-          #name: ${{ github.event.repository.name }}-win64-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}
+          #name: ${{ github.event.repository.name }}-macOS-intel-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}
+          #path: |
+            #*.tar.gz
+
+  #macos-universal:
+    #runs-on: macos-11
+    #steps:
+      #- uses: actions/checkout@v3
+        #with:
+          #submodules: recursive
+      ##- name: Set up cache
+        ##id: cache
+        ##uses: actions/cache@v3
+        ##with:
+          ##path: |
+            ##build
+          ##key: macos-universal-v${{ env.CACHE_VERSION }}
+      #- name: Set up dependencies
+        #run: |
+          #brew install meson
+      #- name: Build macOS universal
+        #env:
+          #CFLAGS: -mmacosx-version-min=10.12 -DMAC_OS_X_VERSION_MAX_ALLOWED=MAC_OS_X_VERSION_10_12 -DMAC_OS_X_VERSION_MIN_REQUIRED=MAC_OS_X_VERSION_10_12
+          #CXXFLAGS: -mmacosx-version-min=10.12 -DMAC_OS_X_VERSION_MAX_ALLOWED=MAC_OS_X_VERSION_10_12 -DMAC_OS_X_VERSION_MIN_REQUIRED=MAC_OS_X_VERSION_10_12
+          #LDFLAGS: -mmacosx-version-min=10.12
+        #run: |
+          #meson build --buildtype=release --prefix=/usr -Dbuild-universal=true
+          #ninja -C build
+      #- name: Install macOS universal
+        #run: |
+          #ninja -C build install
+      #- name: Set sha8 (non-release)
+        #if: startsWith(github.ref, 'refs/tags/') != true
+        #id: slug1
+        #run: echo "::set-output name=sha8::$(echo ${{ github.sha }} | cut -c1-8)"
+      #- name: Set sha8 (release)
+        #if: startsWith(github.ref, 'refs/tags/')
+        #id: slug2
+        #run: echo "::set-output name=sha8::$(echo ${{ github.ref_name }})"
+      #- name: Set sha8
+        #id: slug
+        #run: echo "::set-output name=sha8::$(echo ${{ steps.slug1.outputs.sha8 || steps.slug2.outputs.sha8 }})"
+      #- name: Pack binaries
+        #run: |
+          #tar czf ${{ github.event.repository.name }}-macOS-universal-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}.tar.gz -C ${{ env.DESTDIR }}/usr/lib lv2 vst vst3
+      #- uses: actions/upload-artifact@v3
+        #with:
+          #name: ${{ github.event.repository.name }}-macOS-universal-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}
           #path: |
             #*.tar.gz
