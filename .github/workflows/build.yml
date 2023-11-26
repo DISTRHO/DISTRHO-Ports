@@ -7,14 +7,15 @@ env:
   CACHE_VERSION: 1
   DEBIAN_FRONTEND: noninteractive
   DESTDIR: /tmp/destdir
-  HOMEBREW_NO_AUTO_UPDATE: 1
   LIBGL_ALWAYS_SOFTWARE: 'true'
 
 jobs:
   #linux-arm64:
     #runs-on: ubuntu-20.04
     #steps:
-      #- uses: actions/checkout@v2
+      #- uses: actions/checkout@v3
+        #with:
+          #submodules: recursive
       ##- name: Set up cache
         ##id: cache
         ##uses: actions/cache@v2
@@ -85,7 +86,9 @@ jobs:
   #linux-armhf:
     #runs-on: ubuntu-20.04
     #steps:
-      #- uses: actions/checkout@v2
+      #- uses: actions/checkout@v3
+        #with:
+          #submodules: recursive
       ##- name: Set up cache
         ##id: cache
         ##uses: actions/cache@v2
@@ -158,7 +161,9 @@ jobs:
   linux-i686:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
       #- name: Set up cache
         #id: cache
         #uses: actions/cache@v2
@@ -221,7 +226,9 @@ jobs:
   linux-x86_64:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
       #- name: Set up cache
         #id: cache
         #uses: actions/cache@v2
@@ -275,7 +282,9 @@ jobs:
   linux-x86_64-debug:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
       - name: Set up dependencies
         run: |
           sudo apt-get update -qq
@@ -305,7 +314,9 @@ jobs:
   linux-x86_64-embed:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
       - name: Set up dependencies
         run: |
           sudo apt-get update -qq
@@ -319,7 +330,9 @@ jobs:
   macos-intel:
     runs-on: macos-10.15
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
       #- name: Set up cache
         #id: cache
         #uses: actions/cache@v2
@@ -364,7 +377,9 @@ jobs:
   macos-universal:
     runs-on: macos-10.15
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
       #- name: Set up cache
         #id: cache
         #uses: actions/cache@v2
@@ -413,7 +428,9 @@ jobs:
   #win32:
     #runs-on: ubuntu-20.04
     #steps:
-      #- uses: actions/checkout@v2
+      #- uses: actions/checkout@v3
+        #with:
+          #submodules: recursive
       ##- name: Set up cache
         ##id: cache
         ##uses: actions/cache@v2
@@ -462,7 +479,9 @@ jobs:
   #win64:
     #runs-on: ubuntu-20.04
     #steps:
-      #- uses: actions/checkout@v2
+      #- uses: actions/checkout@v3
+        #with:
+          #submodules: recursive
       ##- name: Set up cache
         ##id: cache
         ##uses: actions/cache@v2
