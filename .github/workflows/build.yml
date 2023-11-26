@@ -18,7 +18,7 @@ jobs:
           #submodules: recursive
       ##- name: Set up cache
         ##id: cache
-        ##uses: actions/cache@v2
+        ##uses: actions/cache@v3
         ##with:
           ##path: |
             ##build
@@ -68,7 +68,7 @@ jobs:
       #- name: Pack binaries
         #run: |
           #tar czf ${{ github.event.repository.name }}-linux-arm64-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}.tar.gz -C ${{ env.DESTDIR }}/usr/lib lv2 vst vst3
-      #- uses: actions/upload-artifact@v2
+      #- uses: actions/upload-artifact@v3
         #with:
           #name: ${{ github.event.repository.name }}-linux-arm64-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}
           #path: |
@@ -91,7 +91,7 @@ jobs:
           #submodules: recursive
       ##- name: Set up cache
         ##id: cache
-        ##uses: actions/cache@v2
+        ##uses: actions/cache@v3
         ##with:
           ##path: |
             ##build
@@ -143,7 +143,7 @@ jobs:
       #- name: Pack binaries
         #run: |
           #tar czf ${{ github.event.repository.name }}-linux-armhf-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}.tar.gz -C ${{ env.DESTDIR }}/usr/lib lv2 vst vst3
-      #- uses: actions/upload-artifact@v2
+      #- uses: actions/upload-artifact@v3
         #with:
           #name: ${{ github.event.repository.name }}-linux-armhf-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}
           #path: |
@@ -166,7 +166,7 @@ jobs:
           submodules: recursive
       #- name: Set up cache
         #id: cache
-        #uses: actions/cache@v2
+        #uses: actions/cache@v3
         #with:
           #path: |
             #build
@@ -208,7 +208,7 @@ jobs:
       - name: Pack binaries
         run: |
           tar czf ${{ github.event.repository.name }}-linux-i686-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}.tar.gz -C ${{ env.DESTDIR }}/usr/lib lv2 vst vst3
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: ${{ github.event.repository.name }}-linux-i686-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}
           path: |
@@ -231,7 +231,7 @@ jobs:
           submodules: recursive
       #- name: Set up cache
         #id: cache
-        #uses: actions/cache@v2
+        #uses: actions/cache@v3
         #with:
           #path: |
             #build
@@ -264,7 +264,7 @@ jobs:
       - name: Pack binaries
         run: |
           tar czf ${{ github.event.repository.name }}-linux-x86_64-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}.tar.gz -C ${{ env.DESTDIR }}/usr/lib lv2 vst vst3
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: ${{ github.event.repository.name }}-linux-x86_64-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}
           path: |
@@ -305,7 +305,7 @@ jobs:
       - name: Pack binaries
         run: |
           tar czf ${{ github.event.repository.name }}-linux-x86_64-debug-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}.tar.gz -C ${{ env.DESTDIR }}/usr/lib lv2 vst vst3
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: ${{ github.event.repository.name }}-linux-x86_64-debug-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}
           path: |
@@ -328,14 +328,14 @@ jobs:
           ninja -C build
 
   macos-intel:
-    runs-on: macos-10.15
+    runs-on: macos-11
     steps:
       - uses: actions/checkout@v3
         with:
           submodules: recursive
       #- name: Set up cache
         #id: cache
-        #uses: actions/cache@v2
+        #uses: actions/cache@v3
         #with:
           #path: |
             #build
@@ -368,21 +368,21 @@ jobs:
       - name: Pack binaries
         run: |
           tar czf ${{ github.event.repository.name }}-macOS-intel-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}.tar.gz -C ${{ env.DESTDIR }}/usr/lib lv2 vst vst3
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: ${{ github.event.repository.name }}-macOS-intel-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}
           path: |
             *.tar.gz
 
   macos-universal:
-    runs-on: macos-10.15
+    runs-on: macos-11
     steps:
       - uses: actions/checkout@v3
         with:
           submodules: recursive
       #- name: Set up cache
         #id: cache
-        #uses: actions/cache@v2
+        #uses: actions/cache@v3
         #with:
           #path: |
             #build
@@ -419,7 +419,7 @@ jobs:
       - name: Pack binaries
         run: |
           tar czf ${{ github.event.repository.name }}-macOS-universal-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}.tar.gz -C ${{ env.DESTDIR }}/usr/lib lv2 vst vst3
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: ${{ github.event.repository.name }}-macOS-universal-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}
           path: |
@@ -433,7 +433,7 @@ jobs:
           #submodules: recursive
       ##- name: Set up cache
         ##id: cache
-        ##uses: actions/cache@v2
+        ##uses: actions/cache@v3
         ##with:
           ##path: |
             ##build
@@ -470,7 +470,7 @@ jobs:
       #- name: Pack binaries
         #run: |
           #tar czf ${{ github.event.repository.name }}-win32-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}.tar.gz -C ${{ env.DESTDIR }}/usr/lib lv2 vst vst3
-      #- uses: actions/upload-artifact@v2
+      #- uses: actions/upload-artifact@v3
         #with:
           #name: ${{ github.event.repository.name }}-win32-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}
           #path: |
@@ -484,7 +484,7 @@ jobs:
           #submodules: recursive
       ##- name: Set up cache
         ##id: cache
-        ##uses: actions/cache@v2
+        ##uses: actions/cache@v3
         ##with:
           ##path: |
             ##build
@@ -521,7 +521,7 @@ jobs:
       #- name: Pack binaries
         #run: |
           #tar czf ${{ github.event.repository.name }}-win64-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}.tar.gz -C ${{ env.DESTDIR }}/usr/lib lv2 vst vst3
-      #- uses: actions/upload-artifact@v2
+      #- uses: actions/upload-artifact@v3
         #with:
           #name: ${{ github.event.repository.name }}-win64-${{ github.event.pull_request.number || steps.slug.outputs.sha8 }}
           #path: |
