@@ -259,7 +259,7 @@ if build_lv2 or build_vst2
                         'mkdir', '-p', plugin_lv2_dir, '&&',
                         'cd', plugin_lv2_dir, '&&',
                         'cp', plugin_lv2_lib.full_path(), plugin_lv2_dir / plugin_name + lib_suffix, '&&',
-                        (meson.is_cross_build() ? 'wine' : 'env'), lv2_ttl_generator, '.' / plugin_name + lib_suffix,
+                        (os_windows ? 'wine' : 'env'), lv2_ttl_generator, '.' / plugin_name + lib_suffix,
                     ],
                     install: true,
                     install_dir: lv2dir,
