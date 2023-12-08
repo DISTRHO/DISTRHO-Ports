@@ -43,10 +43,10 @@ jobs:
           ./.github/workflows/bootstrap-deps.sh ${{ matrix.target }}
       - name: Build
         env:
-          LDFLAGS: -static-libgcc -static-libstdc++
+          #LDFLAGS: -static-libgcc -static-libstdc++
           PKG_CONFIG_PATH: /usr/lib/${{ matrix.pkgprefix }}/pkgconfig
         run: |
-          meson build --buildtype=release --prefix=/usr --cross-file scripts/meson/${{ matrix.target }}.ini
+          meson setup build --buildtype=release --prefix=/usr --cross-file scripts/meson/${{ matrix.target }}.ini
           ninja -C build
       - name: Install
         run: |
@@ -96,6 +96,7 @@ jobs:
           apt-get install -yqq \
             binfmt-support \
             build-essential \
+            file \
             git \
             meson \
             pkg-config \

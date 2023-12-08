@@ -180,15 +180,10 @@ foreach plugin : plugins
 
             plugin_lv2_dir = meson.current_build_dir() / plugin_name + '.lv2'
 
-            plugin_lv2_ttl = custom_target(plugin_name + '_lv2-ttl',
+            custom_target(plugin_name + '_lv2-dir',
                 output: plugin_name + '.lv2',
                 input: plugin_lv2_lib,
-                command: [
-                    'mkdir', '-p', plugin_lv2_dir, '&&',
-                    'cd', plugin_lv2_dir, '&&',
-                    'mv', plugin_lv2_lib.full_path(), plugin_lv2_dir / plugin_name + lib_suffix, '&&',
-                    (os_windows ? 'wine' : 'env'), lv2_ttl_generator, '.' / plugin_name + lib_suffix,
-                ],
+                command: [ '../scripts/generate-ttl.sh', lv2_ttl_generator, '@OUTPUT@', plugin_lv2_lib.full_path() ],
                 install: true,
                 install_dir: lv2dir,
             )
@@ -235,7 +230,7 @@ foreach plugin : plugins
                 command: [
                     'mkdir', '-p', plugin_vst3_dir, '&&',
                     'cd', plugin_vst3_dir, '&&',
-                    'mv', plugin_vst3_lib.full_path(), plugin_vst3_dir / plugin_name + lib_suffix,
+                    'cp', plugin_vst3_lib.full_path(), plugin_vst3_dir / plugin_name + lib_suffix,
                 ],
                 install: true,
                 install_dir: vst3dir,
