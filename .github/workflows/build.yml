@@ -15,20 +15,16 @@ jobs:
       matrix:
         include:
           #- target: linux-aarch64
-            #prefix: aarch64-linux-gnu
+            #pkgprefix: aarch64-linux-gnu
             #deb_arch: arm64
           #- target: linux-armhf
-            #prefix: arm-linux-gnueabihf
-            #deb_arch: armhf
-          #- target: linux-i686
-            #prefix: i686-linux-gnu
-            #deb_arch: i386
+            #pkgprefix: arm-linux-gnueabihf
+          - target: linux-i686
+            pkgprefix: i386-linux-gnu
           #- target: linux-riscv64
-            #prefix: riscv64-linux-gnu
-            #deb_arch: riscv64
+            #pkgprefix: riscv64-linux-gnu
           - target: linux-x86_64
-            prefix: x86_64-linux-gnu
-            deb_arch: amd64
+            pkgprefix: x86_64-linux-gnu
     runs-on: ubuntu-latest
     container:
       image: ubuntu:20.04
@@ -46,11 +42,10 @@ jobs:
       - name: Set up dependencies
         run: |
           ./.github/workflows/bootstrap-deps.sh ${{ matrix.target }}
-          apt-get install -yqq libfftw3-dev:${{ matrix.deb_arch }} libfreetype6-dev:${{ matrix.deb_arch }}
       - name: Build
         env:
           LDFLAGS: -static-libgcc -static-libstdc++
-          PKG_CONFIG_PATH: /usr/lib/${{ matrix.prefix }}/pkgconfig
+          PKG_CONFIG_PATH: /usr/lib/${{ matrix.pkgprefix }}/pkgconfig
         run: |
           meson build --buildtype=release --prefix=/usr --cross-file scripts/meson/${{ matrix.target }}.ini
           ninja -C build

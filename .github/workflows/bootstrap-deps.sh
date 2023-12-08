@@ -106,6 +106,8 @@ case "${1}" in
                 qtbase5-dev-tools \
                 libasound2-dev:${linux_arch} \
                 libdbus-1-dev:${linux_arch} \
+                libfftw3-dev:${linux_arch} \
+                libfreetype6-dev:${linux_arch} \
                 libgl1-mesa-dev:${linux_arch} \
                 libglib2.0-dev:${linux_arch} \
                 libpcre2-dev:${linux_arch} \
