@@ -45,7 +45,9 @@ build_juce7_only = get_option('build-juce7-only')
 build_universal = get_option('build-universal')
 optimizations = get_option('optimizations') and buildtype != 'debug'
 lto_optimizations = get_option('lto-optimizations') and buildtype != 'debug' and not os_windows
-sse_optimizations = get_option('sse-optimizations') and buildtype != 'debug'
+sse_optimizations = get_option('sse-optimizations') and buildtype != 'debug' and (
+    host_machine.cpu_family() == 'x86' or host_machine.cpu_family() == 'x86_64'
+)
 
 ###############################################################################
 # set paths

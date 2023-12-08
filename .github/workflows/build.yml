@@ -14,11 +14,10 @@ jobs:
     strategy:
       matrix:
         include:
-          #- target: linux-aarch64
-            #pkgprefix: aarch64-linux-gnu
-            #deb_arch: arm64
-          #- target: linux-armhf
-            #pkgprefix: arm-linux-gnueabihf
+          - target: linux-aarch64
+            pkgprefix: aarch64-linux-gnu
+          - target: linux-armhf
+            pkgprefix: arm-linux-gnueabihf
           - target: linux-i686
             pkgprefix: i386-linux-gnu
           #- target: linux-riscv64
