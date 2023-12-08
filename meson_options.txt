@@ -6,7 +6,7 @@ option('optimizations',
 
 option('lto-optimizations',
     type: 'boolean',
-    value: true,
+    value: false,
     description: 'Enable LTO optimizations',
 )
 
