@@ -43,10 +43,11 @@ jobs:
           ./.github/workflows/bootstrap-deps.sh ${{ matrix.target }}
       - name: Build
         env:
-          #LDFLAGS: -static-libgcc -static-libstdc++
+          LDFLAGS: -static-libgcc -static-libstdc++
           PKG_CONFIG_PATH: /usr/lib/${{ matrix.pkgprefix }}/pkgconfig
         run: |
-          meson setup build --buildtype=release --prefix=/usr --cross-file scripts/meson/${{ matrix.target }}.ini
+          meson setup build --buildtype=release --prefix=/usr --cross-file scripts/meson/${{ matrix.target }}.ini \
+            -Dbuild-lv2=true -Dbuild-vst2=false -Dbuild-vst3=false -Dbuild-juce61-only=true -Doptimizations=false
           ninja -C build
       - name: Install
         run: |
@@ -59,95 +60,95 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/') != true
         run: |
           echo "SHA8=$(echo ${{ github.sha }} | cut -c1-8)" >> $GITHUB_ENV
-      - name: Pack binaries
-        run: |
-          tar czf ${{ github.event.repository.target }}-linux-${{ matrix.target }}-${{ github.event.pull_request.number || env.SHA8 }}.tar.gz -C ${{ env.DESTDIR }}/usr/lib lv2 vst vst3
-      - uses: actions/upload-artifact@v3
-        with:
-          name: ${{ github.event.repository.target }}-linux-${{ matrix.target }}-${{ github.event.pull_request.number || env.SHA8 }}
-          path: |
-            *.tar.gz
-      - uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          tag_name: ${{ github.ref_name }}
-          name: ${{ github.ref_name }}
-          draft: false
-          prerelease: false
-          files: |
-            *.tar.gz
+      #- name: Pack binaries
+        #run: |
+          #tar czf ${{ github.event.repository.target }}-linux-${{ matrix.target }}-${{ github.event.pull_request.number || env.SHA8 }}.tar.gz -C ${{ env.DESTDIR }}/usr/lib lv2 vst vst3
+      #- uses: actions/upload-artifact@v3
+        #with:
+          #name: ${{ github.event.repository.target }}-linux-${{ matrix.target }}-${{ github.event.pull_request.number || env.SHA8 }}
+          #path: |
+            #*.tar.gz
+      #- uses: softprops/action-gh-release@v1
+        #if: startsWith(github.ref, 'refs/tags/')
+        #with:
+          #tag_name: ${{ github.ref_name }}
+          #name: ${{ github.ref_name }}
+          #draft: false
+          #prerelease: false
+          #files: |
+            #*.tar.gz
 
-  windows:
-    strategy:
-      matrix:
-        include:
-        #- name: win32
-          #prefix: i686
-        - name: win64
-          prefix: x86-64
-    runs-on: ubuntu-latest
-    container:
-        image: ubuntu:22.04
-    steps:
-      - name: Set up dependencies
-        run: |
-          dpkg --add-architecture i386
-          apt-get update -qq
-          apt-get install -yqq \
-            binfmt-support \
-            build-essential \
-            file \
-            git \
-            meson \
-            pkg-config \
-            wine-stable \
-            xvfb \
-            binutils-mingw-w64-${{ matrix.prefix }} \
-            g++-mingw-w64-${{ matrix.prefix }}
-      - uses: actions/checkout@v3
-        with:
-          submodules: recursive
-      - name: Build
-        env:
-          WINEARCH: ${{ matrix.name }}
-          WINEDEBUG: -all
-          WINEDLLOVERRIDES: mscoree,mshtml=
-          WINEPREFIX: /tmp/wine
-        run: |
-          wineboot -u
-          meson build --buildtype=release --prefix=/usr --cross-file scripts/meson/${{ matrix.name }}.ini
-          ninja -C build
-      - name: Install
-        env:
-          WINEDEBUG: -all
-          WINEPREFIX: /tmp/wine
-        run: |
-          ninja -C build install
-      - name: Set sha8 (release)
-        if: startsWith(github.ref, 'refs/tags/')
-        run: |
-          echo "SHA8=$(echo ${{ github.ref_name }})" >> $GITHUB_ENV
-      - name: Set sha8 (non-release)
-        if: startsWith(github.ref, 'refs/tags/') != true
-        run: |
-          echo "SHA8=$(echo ${{ github.sha }} | cut -c1-8)" >> $GITHUB_ENV
-      - name: Pack binaries
-        run: |
-          tar czf ${{ github.event.repository.name }}-${{ matrix.name }}-${{ github.event.pull_request.number || env.SHA8 }}.tar.gz -C ${{ env.DESTDIR }}/usr/lib lv2 vst vst3
-      - uses: actions/upload-artifact@v3
-        with:
-          name: ${{ github.event.repository.name }}-${{ matrix.name }}-${{ github.event.pull_request.number || env.SHA8 }}
-          path: |
-            *.tar.gz
-      - uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          tag_name: ${{ github.ref_name }}
-          name: ${{ github.ref_name }}
-          draft: false
-          prerelease: false
-          files: |
-            *.tar.gz
+  #windows:
+    #strategy:
+      #matrix:
+        #include:
+        ##- name: win32
+          ##prefix: i686
+        #- name: win64
+          #prefix: x86-64
+    #runs-on: ubuntu-latest
+    #container:
+        #image: ubuntu:22.04
+    #steps:
+      #- name: Set up dependencies
+        #run: |
+          #dpkg --add-architecture i386
+          #apt-get update -qq
+          #apt-get install -yqq \
+            #binfmt-support \
+            #build-essential \
+            #file \
+            #git \
+            #meson \
+            #pkg-config \
+            #wine-stable \
+            #xvfb \
+            #binutils-mingw-w64-${{ matrix.prefix }} \
+            #g++-mingw-w64-${{ matrix.prefix }}
+      #- uses: actions/checkout@v3
+        #with:
+          #submodules: recursive
+      #- name: Build
+        #env:
+          #WINEARCH: ${{ matrix.name }}
+          #WINEDEBUG: -all
+          #WINEDLLOVERRIDES: mscoree,mshtml=
+          #WINEPREFIX: /tmp/wine
+        #run: |
+          #wineboot -u
+          #meson build --buildtype=release --prefix=/usr --cross-file scripts/meson/${{ matrix.name }}.ini
+          #ninja -C build
+      #- name: Install
+        #env:
+          #WINEDEBUG: -all
+          #WINEPREFIX: /tmp/wine
+        #run: |
+          #ninja -C build install
+      #- name: Set sha8 (release)
+        #if: startsWith(github.ref, 'refs/tags/')
+        #run: |
+          #echo "SHA8=$(echo ${{ github.ref_name }})" >> $GITHUB_ENV
+      #- name: Set sha8 (non-release)
+        #if: startsWith(github.ref, 'refs/tags/') != true
+        #run: |
+          #echo "SHA8=$(echo ${{ github.sha }} | cut -c1-8)" >> $GITHUB_ENV
+      #- name: Pack binaries
+        #run: |
+          #tar czf ${{ github.event.repository.name }}-${{ matrix.name }}-${{ github.event.pull_request.number || env.SHA8 }}.tar.gz -C ${{ env.DESTDIR }}/usr/lib lv2 vst vst3
+      #- uses: actions/upload-artifact@v3
+        #with:
+          #name: ${{ github.event.repository.name }}-${{ matrix.name }}-${{ github.event.pull_request.number || env.SHA8 }}
+          #path: |
+            #*.tar.gz
+      #- uses: softprops/action-gh-release@v1
+        #if: startsWith(github.ref, 'refs/tags/')
+        #with:
+          #tag_name: ${{ github.ref_name }}
+          #name: ${{ github.ref_name }}
+          #draft: false
+          #prerelease: false
+          #files: |
+            #*.tar.gz
 
   #linux-x86_64-debug:
     #runs-on: ubuntu-20.04

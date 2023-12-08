@@ -18,27 +18,27 @@ if [ -z "${MESON_EXE_WRAPPER}" ]; then
 
     elif echo "${fileout}" | grep -q "ARM aarch64"; then
         if [ "$(uname -m)" != "aarch64" ]; then
-            MESON_EXE_WRAPPER="qemu-aarch64-static"
+            MESON_EXE_WRAPPER="qemu-aarch64-static -L /usr/lib/aarch64-linux-gnu"
         fi
 
     elif echo "${fileout}" | grep -q "ARM"; then
         if [ "$(uname -m)" != "arm" ] && [ "$(uname -m)" != "armv7l" ]; then
-            MESON_EXE_WRAPPER="qemu-arm-static"
+            MESON_EXE_WRAPPER="qemu-arm-static -L /usr/lib/arm-linux-gnueabihf"
         fi
 
     elif echo "${fileout}" | grep -q "Intel 80386"; then
-        if [ "$(uname -m)" != "i386" ] && [ "$(uname -m)" != "i686" ]; then
-            MESON_EXE_WRAPPER="qemu-i386-static"
+        if [ "$(uname -m)" != "i386" ] && [ "$(uname -m)" != "i686" ] && [ "$(uname -m)" != "x86_64" ]; then
+            MESON_EXE_WRAPPER="qemu-i386-static -L /usr/lib/i386-linux-gnu"
         fi
 
     elif echo "${fileout}" | grep -q "RISC-V"; then
         if [ "$(uname -m)" != "riscv64" ]; then
-            MESON_EXE_WRAPPER="qemu-riscv64-static"
+            MESON_EXE_WRAPPER="qemu-riscv64-static -L /usr/lib/riscv64-linux-gnu"
         fi
 
     elif echo "${fileout}" | grep -q "x86-64"; then
         if [ "$(uname -m)" != "x86_64" ]; then
-            MESON_EXE_WRAPPER="qemu-x86_64-static"
+            MESON_EXE_WRAPPER="qemu-x86_64-static -L /usr/lib/x86_64-linux-gnu"
         fi
 
     else
