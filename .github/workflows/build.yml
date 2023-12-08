@@ -14,69 +14,45 @@ jobs:
     strategy:
       matrix:
         include:
-        - name: amd64
-          cflags:
-          ldflags:
-          prefix: x86_64-linux-gnu
-        #- name: arm64
-          #cflags:
-          #ldflags:
-          #prefix: aarch64-linux-gnu
-        #- name: armhf
-          #cflags: -mfpu=neon-vfpv4 -mfloat-abi=hard
-          #ldflags:
-          #prefix: arm-linux-gnueabihf
-        #- name: i386
-          #cflags:
-          #ldflags:
-          #prefix: i686-linux-gnu
+          #- target: linux-aarch64
+            #prefix: aarch64-linux-gnu
+            #deb_arch: arm64
+          #- target: linux-armhf
+            #prefix: arm-linux-gnueabihf
+            #deb_arch: armhf
+          #- target: linux-i686
+            #prefix: i686-linux-gnu
+            #deb_arch: i386
+          #- target: linux-riscv64
+            #prefix: riscv64-linux-gnu
+            #deb_arch: riscv64
+          - target: linux-x86_64
+            prefix: x86_64-linux-gnu
+            deb_arch: amd64
     runs-on: ubuntu-latest
     container:
-        image: ubuntu:20.04
+      image: ubuntu:20.04
     steps:
-      - name: Set up dependencies
+      - name: Install git
         run: |
-          dpkg --add-architecture ${{ matrix.name }}
-          if [ "${{ matrix.name }}" != "amd64" ] && [ "${{ matrix.name }}" != "i386" ]; then
-            sed -i "s/deb http/deb [arch=amd64] http/" /etc/apt/sources.list
-            echo "deb [arch=${{ matrix.name }}] http://ports.ubuntu.com/ubuntu-ports focal main restricted universe multiverse" | tee -a /etc/apt/sources.list
-            echo "deb [arch=${{ matrix.name }}] http://ports.ubuntu.com/ubuntu-ports focal-updates main restricted universe multiverse" | tee -a /etc/apt/sources.list
-            echo "deb [arch=${{ matrix.name }}] http://ports.ubuntu.com/ubuntu-ports focal-backports main restricted universe multiverse" | tee -a /etc/apt/sources.list
-          fi
-          apt-get update -qq
-          apt-get install -yqq \
-            binfmt-support \
-            build-essential \
-            git \
-            meson \
-            pkg-config \
-            qemu-user-static \
-            $(echo g++-${{ matrix.prefix }} | sed 's/_/-/g') \
-            libasound2-dev:${{ matrix.name }} \
-            libfftw3-dev:${{ matrix.name }} \
-            libfreetype6-dev:${{ matrix.name }} \
-            libgl1-mesa-dev:${{ matrix.name }} \
-            libx11-dev:${{ matrix.name }} \
-            libxcomposite-dev:${{ matrix.name }} \
-            libxcursor-dev:${{ matrix.name }} \
-            libxrender-dev:${{ matrix.name }}
+          apt-get update -qq && apt-get install -yqq --no-install-recommends ca-certificates curl git openssl
+          curl -sLO https://launchpad.net/~kxstudio-debian/+archive/ubuntu/toolchain/+files/git_2.34.1-1ubuntu1~bpo20.04.1~ppa1_amd64.deb
+          curl -sLO https://launchpad.net/~kxstudio-debian/+archive/ubuntu/toolchain/+files/git-man_2.34.1-1ubuntu1~bpo20.04.1~ppa1_all.deb
+          dpkg -i *.deb
+          rm *.deb
       - uses: actions/checkout@v3
         with:
           submodules: recursive
+      - name: Set up dependencies
+        run: |
+          ./.github/workflows/bootstrap-deps.sh ${{ matrix.target }}
+          apt-get install -yqq libfftw3-dev:${{ matrix.deb_arch }} libfreetype6-dev:${{ matrix.deb_arch }}
       - name: Build
         env:
-          AR: ${{ matrix.prefix }}-ar
-          CC: ${{ matrix.prefix }}-gcc
-          CXX: ${{ matrix.prefix }}-g++
-          LD: ${{ matrix.prefix }}-ld
-          NM: ${{ matrix.prefix }}-nm
-          STRIP: ${{ matrix.prefix }}-strip
-          CFLAGS: ${{ matrix.cflags }}
-          CXXFLAGS: ${{ matrix.cflags }}
-          LDFLAGS: ${{ matrix.ldflags }} -static-libgcc -static-libstdc++
+          LDFLAGS: -static-libgcc -static-libstdc++
           PKG_CONFIG_PATH: /usr/lib/${{ matrix.prefix }}/pkgconfig
         run: |
-          meson build --buildtype=release --prefix=/usr
+          meson build --buildtype=release --prefix=/usr --cross-file scripts/meson/${{ matrix.target }}.ini
           ninja -C build
       - name: Install
         run: |
@@ -91,10 +67,10 @@ jobs:
           echo "SHA8=$(echo ${{ github.sha }} | cut -c1-8)" >> $GITHUB_ENV
       - name: Pack binaries
         run: |
-          tar czf ${{ github.event.repository.name }}-linux-${{ matrix.name }}-${{ github.event.pull_request.number || env.SHA8 }}.tar.gz -C ${{ env.DESTDIR }}/usr/lib lv2 vst vst3
+          tar czf ${{ github.event.repository.target }}-linux-${{ matrix.target }}-${{ github.event.pull_request.number || env.SHA8 }}.tar.gz -C ${{ env.DESTDIR }}/usr/lib lv2 vst vst3
       - uses: actions/upload-artifact@v3
         with:
-          name: ${{ github.event.repository.name }}-linux-${{ matrix.name }}-${{ github.event.pull_request.number || env.SHA8 }}
+          name: ${{ github.event.repository.target }}-linux-${{ matrix.target }}-${{ github.event.pull_request.number || env.SHA8 }}
           path: |
             *.tar.gz
       - uses: softprops/action-gh-release@v1
