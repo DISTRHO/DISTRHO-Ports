@@ -48,7 +48,7 @@ WaitableEvent::WaitableEvent (const bool useManualReset) noexcept
 
     pthread_mutexattr_t atts;
     pthread_mutexattr_init (&atts);
-   #if ! JUCE_ANDROID
+   #if ! JUCE_ANDROID && ! JUCE_ARM
     pthread_mutexattr_setprotocol (&atts, PTHREAD_PRIO_INHERIT);
    #endif
     pthread_mutex_init (&mutex, &atts);
