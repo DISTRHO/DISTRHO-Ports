@@ -28,7 +28,7 @@ CriticalSection::CriticalSection() noexcept
     pthread_mutexattr_t atts;
     pthread_mutexattr_init (&atts);
     pthread_mutexattr_settype (&atts, PTHREAD_MUTEX_RECURSIVE);
-   #if ! JUCE_ANDROID
+   #if ! JUCE_ANDROID && ! JUCE_ARM
     pthread_mutexattr_setprotocol (&atts, PTHREAD_PRIO_INHERIT);
    #endif
     pthread_mutex_init (&lock, &atts);
