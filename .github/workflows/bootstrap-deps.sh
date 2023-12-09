@@ -79,7 +79,7 @@ case "${1}" in
     ;;
     *)
         apt-get update -qq
-        apt-get install -yqq autoconf automake build-essential curl cmake file git jq libglib2.0-dev-bin libtool lsb-release make meson gperf patchelf uuid-dev zlib1g-dev
+        apt-get install -yqq autoconf automake build-essential curl cmake file git jq libglib2.0-dev-bin libtool lsb-release make meson gperf patchelf pkg-config uuid-dev zlib1g-dev
 
         linux_arch=$(get_linux_deb_arch "${1}")
         release=$(lsb_release -cs 2>/dev/null)
