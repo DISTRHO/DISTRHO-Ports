@@ -16,23 +16,39 @@ jobs:
         include:
           - target: linux-aarch64
             pkgprefix: aarch64-linux-gnu
+            container: ubuntu:18.04
           - target: linux-armhf
             pkgprefix: arm-linux-gnueabihf
+            container: ubuntu:18.04
           - target: linux-i686
             pkgprefix: i386-linux-gnu
+            container: ubuntu:18.04
           - target: linux-x86_64
             pkgprefix: x86_64-linux-gnu
+            container: ubuntu:18.04
     runs-on: ubuntu-latest
     container:
-      image: ubuntu:20.04
+      image: ${{ matrix.container }}
     steps:
       - name: Install git
         run: |
-          apt-get update -qq && apt-get install -yqq --no-install-recommends ca-certificates curl git openssl
-          curl -sLO https://launchpad.net/~kxstudio-debian/+archive/ubuntu/toolchain/+files/git_2.34.1-1ubuntu1~bpo20.04.1~ppa1_amd64.deb
-          curl -sLO https://launchpad.net/~kxstudio-debian/+archive/ubuntu/toolchain/+files/git-man_2.34.1-1ubuntu1~bpo20.04.1~ppa1_all.deb
-          dpkg -i *.deb
-          rm *.deb
+          apt-get update -qq && apt-get install -yqq --no-install-recommends ca-certificates git openssl
+          case "${{ matrix.container }}" in
+            "ubuntu:18.04")
+              apt-get install -yqq --no-install-recommends curl libpcre2-8-0
+              curl -sLO https://launchpad.net/~kxstudio-debian/+archive/ubuntu/toolchain/+files/git_2.34.1-1ubuntu1~bpo18.04.1~ppa1_amd64.deb
+              curl -sLO https://launchpad.net/~kxstudio-debian/+archive/ubuntu/toolchain/+files/git-man_2.34.1-1ubuntu1~bpo18.04.1~ppa1_all.deb
+              dpkg -i *.deb
+              rm *.deb
+            ;;
+            "ubuntu:20.04")
+              apt-get install -yqq --no-install-recommends curl
+              curl -sLO https://launchpad.net/~kxstudio-debian/+archive/ubuntu/toolchain/+files/git_2.34.1-1ubuntu1~bpo20.04.1~ppa1_amd64.deb
+              curl -sLO https://launchpad.net/~kxstudio-debian/+archive/ubuntu/toolchain/+files/git-man_2.34.1-1ubuntu1~bpo20.04.1~ppa1_all.deb
+              dpkg -i *.deb
+              rm *.deb
+            ;;
+          esac
       - uses: actions/checkout@v3
         with:
           submodules: recursive

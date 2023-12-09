@@ -21,7 +21,7 @@ if [ -z "${MESON_EXE_WRAPPER}" ]; then
 
     elif echo "${fileout}" | grep -q "ARM aarch64"; then
         if [ "$(uname -m)" != "aarch64" ]; then
-            MESON_EXE_WRAPPER="qemu-aarch64-static -L /usr/lib/aarch64-linux-gnu"
+            MESON_EXE_WRAPPER="qemu-aarch64-static"
         fi
 
     elif echo "${fileout}" | grep -q "ARM"; then
