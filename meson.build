@@ -36,10 +36,10 @@ if libdir.contains('/')
     libdir = 'lib'
 endif
 
-linux_embed = get_option('linux-embed')
+linux_headless = get_option('linux-headless')
 build_lv2 = get_option('build-lv2')
-build_vst2 = get_option('build-vst2') and not linux_embed
-build_vst3 = get_option('build-vst3') and not linux_embed
+build_vst2 = get_option('build-vst2') and not linux_headless
+build_vst3 = get_option('build-vst3') and not linux_headless
 build_juce5_only = get_option('build-juce5-only')
 build_juce60_only = get_option('build-juce60-only')
 build_juce61_only = get_option('build-juce61-only')
@@ -96,7 +96,7 @@ if os_linux
     dependencies_devices = [
         dependency('alsa'),
     ]
-    if not linux_embed
+    if not linux_headless
         dependencies += [
             dependency('freetype2'),
             dependency('x11').partial_dependency(link_args: false, links: false),
@@ -251,7 +251,7 @@ elif os_windows
     build_flags_cpp += [
         '-fpermissive',
     ]
-elif linux_embed
+elif linux_headless
     build_flags += [
         '-DLINUX=1',
     ]

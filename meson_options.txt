@@ -22,7 +22,7 @@ option('sse-optimizations',
     description: 'Enable SSE optimizations',
 )
 
-option('linux-embed',
+option('linux-headless',
     type: 'boolean',
     value: false,
     description: 'DSP-only plugin builds, without editor/GUI',

@@ -75,7 +75,7 @@ jobs:
           files: |
             *.tar.gz
 
-  linux-embed:
+  linux-headless:
     runs-on: ubuntu-latest
     container:
       image: ubuntu:20.04
@@ -92,11 +92,11 @@ jobs:
           submodules: recursive
       - name: Set up dependencies
         run: |
-          ./.github/workflows/bootstrap-deps.sh linux-embed
+          ./.github/workflows/bootstrap-deps.sh linux-headless
           apt-get install -yqq libasound2-dev libfftw3-dev libfreetype6-dev pkg-config
       - name: Build
         run: |
-          meson setup build --buildtype=release --prefix=/usr -Dlinux-embed=true
+          meson setup build --buildtype=release --prefix=/usr -Dlinux-headless=true
           ninja -C build
 
   macos:

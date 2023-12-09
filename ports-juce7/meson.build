@@ -1,6 +1,6 @@
 ###############################################################################
 
-if linux_embed
+if linux_headless
     plugins = [
     ]
 else
@@ -141,7 +141,7 @@ foreach plugin : plugins
                 plugin_extra_dependencies += [
                     cc.find_library('opengl32'),
                 ]
-            elif not linux_embed
+            elif not linux_headless
                 plugin_extra_dependencies += [
                     dependency('gl')
                 ]

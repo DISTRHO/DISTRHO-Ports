@@ -5,7 +5,7 @@ plugin_extra_include_dirs = include_directories([
     'thirdparty/optional-lite/include',
 ])
 
-if linux_embed
+if linux_headless
     plugin_srcs = files([
         'source/PluginProcessor.cpp',
         'source/Utils.cpp',

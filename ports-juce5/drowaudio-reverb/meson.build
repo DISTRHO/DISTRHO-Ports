@@ -1,6 +1,6 @@
 ###############################################################################
 
-if linux_embed
+if linux_headless
     plugin_srcs = files([
         'source/DRowAudioFilter.cpp',
         '../drowaudio-common/dRowAudio_AllpassFilter.cpp',

@@ -1,6 +1,6 @@
 ###############################################################################
 
-if linux_embed
+if linux_headless
     juce61_srcs = [
         'source/modules/juce_audio_basics/juce_audio_basics.cpp',
         'source/modules/juce_audio_formats/juce_audio_formats.cpp',

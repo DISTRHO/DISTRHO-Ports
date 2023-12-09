@@ -1,6 +1,6 @@
 ###############################################################################
 
-if linux_embed
+if linux_headless
     plugins = [
         'arctican-function',
         'arctican-pilgrim',
@@ -72,7 +72,7 @@ plugin_include_dirs = [
 ###############################################################################
 # dependencies
 
-if os_linux and not linux_embed
+if os_linux and not linux_headless
     dependencies_plugin = [
         dependency('x11'),
         dependency('xext'),
@@ -211,7 +211,7 @@ if build_lv2 or build_vst2
                     plugin_extra_dependencies += [
                         cc.find_library('opengl32'),
                     ]
-                elif not linux_embed
+                elif not linux_headless
                     plugin_extra_dependencies += [
                         dependency('gl')
                     ]

@@ -46,7 +46,7 @@ plugin_extra_include_dirs = include_directories([
     'third_party',
 ])
 
-if linux_embed
+if linux_headless
     plugin_srcs = files([
         'BinaryData.cpp',
         'source/unity_build/common.cpp',
