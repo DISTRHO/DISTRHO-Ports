@@ -434,7 +434,7 @@ public:
 
                 {
                     const int numChannels = jmax (numIn, numOut);
-                    AudioBuffer<FloatType> chans (tmpBuffers.channels, isMidiEffect ? 0 : numChannels, numSamples);
+                    juce::AudioBuffer<FloatType> chans (tmpBuffers.channels, isMidiEffect ? 0 : numChannels, numSamples);
 
                     if (isBypassed && processor->getBypassParameter() == nullptr)
                         processor->processBlockBypassed (chans, midiEvents);

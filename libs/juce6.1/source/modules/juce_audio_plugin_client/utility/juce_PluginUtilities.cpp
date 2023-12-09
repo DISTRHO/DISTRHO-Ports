@@ -54,9 +54,9 @@ namespace juce
       const auto juce_strcat  = [] (auto&& head, auto&&... tail) { strcat_s  (head, numElementsInArray (head), tail...); };
       const auto juce_sscanf  = [] (auto&&... args)              { sscanf_s  (args...); };
      #else
-      const auto juce_sprintf = [] (auto&&... args)              { sprintf   (args...); };
-      const auto juce_strcpy  = [] (auto&&... args)              { strcpy    (args...); };
-      const auto juce_strcat  = [] (auto&&... args)              { strcat    (args...); };
+      const auto juce_sprintf = [] (auto&& head, auto&&... args) { snprintf  (head, numElementsInArray (head), args...); };
+      const auto juce_strcpy  = [] (auto&& head, auto&& tail)    { strncpy   (head, tail, numElementsInArray (head)); };
+      const auto juce_strcat  = [] (auto&& head, auto&& tail)    { strncat   (head, tail, numElementsInArray (head)); };
       const auto juce_sscanf  = [] (auto&&... args)              { sscanf    (args...); };
      #endif
 
