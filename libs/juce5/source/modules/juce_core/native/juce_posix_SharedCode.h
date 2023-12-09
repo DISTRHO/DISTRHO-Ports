@@ -48,6 +48,7 @@ WaitableEvent::WaitableEvent (const bool useManualReset) noexcept
 
     pthread_mutexattr_t atts;
     pthread_mutexattr_init (&atts);
+    pthread_mutexattr_settype (&atts, PTHREAD_MUTEX_ERRORCHECK);
    #if ! JUCE_ANDROID && ! JUCE_ARM
     pthread_mutexattr_setprotocol (&atts, PTHREAD_PRIO_INHERIT);
    #endif
