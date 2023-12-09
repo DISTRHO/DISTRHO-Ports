@@ -24,7 +24,7 @@
 #define JUCE_MODULE_AVAILABLE_juce_graphics              1
 #define JUCE_MODULE_AVAILABLE_juce_gui_basics            1
 #define JUCE_MODULE_AVAILABLE_juce_gui_extra             1
-#define JUCE_MODULE_AVAILABLE_juce_opengl                1
+#define JUCE_MODULE_AVAILABLE_juce_opengl                0
 #define JUCE_MODULE_AVAILABLE_juce_osc                   0
 #define JUCE_MODULE_AVAILABLE_juce_product_unlocking     0
 #define JUCE_MODULE_AVAILABLE_juce_video                 0
