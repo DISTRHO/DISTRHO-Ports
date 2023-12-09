@@ -10,6 +10,12 @@ option('lto-optimizations',
     description: 'Enable LTO optimizations',
 )
 
+option('neon-optimizations',
+    type: 'boolean',
+    value: true,
+    description: 'Enable NEON optimizations',
+)
+
 option('sse-optimizations',
     type: 'boolean',
     value: true,

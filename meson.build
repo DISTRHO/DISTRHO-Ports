@@ -47,6 +47,9 @@ build_juce7_only = get_option('build-juce7-only')
 build_universal = get_option('build-universal')
 optimizations = get_option('optimizations') and buildtype != 'debug'
 lto_optimizations = get_option('lto-optimizations') and buildtype != 'debug' and not os_windows
+neon_optimizations = get_option('neon-optimizations') and buildtype != 'debug' and (
+    host_machine.cpu_family() == 'arm'
+)
 sse_optimizations = get_option('sse-optimizations') and buildtype != 'debug' and (
     host_machine.cpu_family() == 'x86' or host_machine.cpu_family() == 'x86_64'
 )
@@ -183,7 +186,7 @@ build_flags_release_cpp = [
     '-fvisibility-inlines-hidden',
 ]
 
-if optimizations or sse_optimizations
+if optimizations or neon_optimizations or sse_optimizations
     build_flags_release += [
         '-ffast-math',
     ]
@@ -215,6 +218,12 @@ if sse_optimizations or build_universal
             '-mfpmath=sse',
         ]
     endif
+endif
+
+if neon_optimizations
+    build_flags_release += [
+        '-mfpu=neon-vfpv4', '-mfloat-abi=hard',
+    ]
 endif
 
 ###############################################################################

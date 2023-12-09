@@ -10,7 +10,10 @@ lib="${3}"
 # do a whole dance to try to replicate expected behaviour
 if [ -z "${MESON_EXE_WRAPPER}" ]; then
     fileout="$(file "${gen}")"
-    if echo "${fileout}" | grep -q "PE32 executable.*Intel 80386"; then
+    if echo "${fileout}" | grep -q "Mach-O"; then
+        MESON_EXE_WRAPPER=""
+
+    elif echo "${fileout}" | grep -q "PE32 executable.*Intel 80386"; then
         MESON_EXE_WRAPPER="wine"
 
     elif echo "${fileout}" | grep -q "PE32+ executable.*x86-64"; then
