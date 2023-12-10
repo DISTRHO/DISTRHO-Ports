@@ -253,7 +253,7 @@ if build_lv2 or build_vst2
                 custom_target(plugin_name + '-lv2-bundle',
                     output: plugin_name + '.lv2',
                     input: plugin_lv2_lib,
-                    command: [ '../scripts/generate-ttl.sh', lv2_ttl_generator, '@OUTPUT@', plugin_lv2_lib.full_path() ],
+                    command: [ '../scripts/generate-lv2.sh', lv2_ttl_generator, '@OUTPUT@', plugin_lv2_lib.full_path() ],
                     install: true,
                     install_dir: lv2dir,
                 )
