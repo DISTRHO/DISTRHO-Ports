@@ -17,15 +17,36 @@ jobs:
           - target: linux-aarch64
             pkgprefix: aarch64-linux-gnu
             container: ubuntu:18.04
+          - target: linux-aarch64
+            pkgprefix: aarch64-linux-gnu
+            container: ubuntu:20.04
+          - target: linux-aarch64
+            pkgprefix: aarch64-linux-gnu
+            container: ubuntu:22.04
           - target: linux-armhf
             pkgprefix: arm-linux-gnueabihf
             container: ubuntu:18.04
+          - target: linux-armhf
+            pkgprefix: arm-linux-gnueabihf
+            container: ubuntu:20.04
+          - target: linux-armhf
+            pkgprefix: arm-linux-gnueabihf
+            container: ubuntu:22.04
           - target: linux-i686
             pkgprefix: i386-linux-gnu
             container: ubuntu:18.04
+          - target: linux-i686
+            pkgprefix: i386-linux-gnu
+            container: ubuntu:20.04
           - target: linux-x86_64
             pkgprefix: x86_64-linux-gnu
             container: ubuntu:18.04
+          - target: linux-x86_64
+            pkgprefix: x86_64-linux-gnu
+            container: ubuntu:20.04
+          - target: linux-x86_64
+            pkgprefix: x86_64-linux-gnu
+            container: ubuntu:22.04
     runs-on: ubuntu-latest
     container:
       image: ${{ matrix.container }}
@@ -75,14 +96,14 @@ jobs:
           echo "SHA8=$(echo ${{ github.sha }} | cut -c1-8)" >> $GITHUB_ENV
       - name: Pack binaries
         run: |
-          tar czf ${{ github.event.repository.name }}-${{ matrix.target }}-${{ github.event.pull_request.number || env.SHA8 }}.tar.gz -C ${{ env.DESTDIR }}/usr/lib lv2 vst vst3
+          tar czf ${{ github.event.repository.name }}-${{ env.PAWPAW_PACK_NAME }}-${{ github.event.pull_request.number || env.SHA8 }}.tar.gz -C ${{ env.DESTDIR }}/usr/lib lv2 vst vst3
       - uses: actions/upload-artifact@v3
         with:
-          name: ${{ github.event.repository.name }}-${{ matrix.target }}-${{ github.event.pull_request.number || env.SHA8 }}
+          name: ${{ github.event.repository.name }}-${{ env.PAWPAW_PACK_NAME }}-${{ github.event.pull_request.number || env.SHA8 }}
           path: |
             *.tar.gz
       - uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
+        if: ${{ matrix.container == 'ubuntu:18.04' && startsWith(github.ref, 'refs/tags/') }}
         with:
           tag_name: ${{ github.ref_name }}
           name: ${{ github.ref_name }}
@@ -128,7 +149,7 @@ jobs:
           submodules: recursive
       - name: Set up dependencies
         run: |
-          brew install meson
+          ./.github/workflows/bootstrap-deps.sh macos
       - name: Build
         run: |
           meson build --buildtype=release --prefix=/usr -Dbuild-universal=true
@@ -146,10 +167,10 @@ jobs:
           echo "SHA8=$(echo ${{ github.sha }} | cut -c1-8)" >> $GITHUB_ENV
       - name: Pack binaries
         run: |
-          tar czf ${{ github.event.repository.name }}-macos-${{ github.event.pull_request.number || env.SHA8 }}.tar.gz -C ${{ env.DESTDIR }}/usr/lib lv2 vst vst3
+          tar czf ${{ github.event.repository.name }}-${{ env.PAWPAW_PACK_NAME }}-${{ github.event.pull_request.number || env.SHA8 }}.tar.gz -C ${{ env.DESTDIR }}/usr/lib lv2 vst vst3
       - uses: actions/upload-artifact@v3
         with:
-          name: ${{ github.event.repository.name }}-${{ matrix.os }}-${{ github.event.pull_request.number || env.SHA8 }}
+          name: ${{ github.event.repository.name }}-${{ env.PAWPAW_PACK_NAME }}-${{ github.event.pull_request.number || env.SHA8 }}
           path: |
             *.tar.gz
       - uses: softprops/action-gh-release@v1
