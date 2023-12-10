@@ -26,22 +26,22 @@ if [ -z "${MESON_EXE_WRAPPER}" ]; then
 
     elif echo "${fileout}" | grep -q "ARM"; then
         if [ "$(uname -m)" != "arm" ] && [ "$(uname -m)" != "armv7l" ]; then
-            MESON_EXE_WRAPPER="qemu-arm-static -L /usr/lib/arm-linux-gnueabihf"
+            MESON_EXE_WRAPPER="qemu-arm-static"
         fi
 
     elif echo "${fileout}" | grep -q "Intel 80386"; then
         if [ "$(uname -m)" != "i386" ] && [ "$(uname -m)" != "i686" ] && [ "$(uname -m)" != "x86_64" ]; then
-            MESON_EXE_WRAPPER="qemu-i386-static -L /usr/lib/i386-linux-gnu"
+            MESON_EXE_WRAPPER="qemu-i386-static"
         fi
 
     elif echo "${fileout}" | grep -q "RISC-V"; then
         if [ "$(uname -m)" != "riscv64" ]; then
-            MESON_EXE_WRAPPER="qemu-riscv64-static -L /usr/lib/riscv64-linux-gnu"
+            MESON_EXE_WRAPPER="qemu-riscv64-static"
         fi
 
     elif echo "${fileout}" | grep -q "x86-64"; then
         if [ "$(uname -m)" != "x86_64" ]; then
-            MESON_EXE_WRAPPER="qemu-x86_64-static -L /usr/lib/x86_64-linux-gnu"
+            MESON_EXE_WRAPPER="qemu-x86_64-static"
         fi
 
     else
