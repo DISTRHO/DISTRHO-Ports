@@ -1,7 +1,6 @@
 name: build
 
-on:
-  push:
+on: [push, pull_request]
 
 env:
   CACHE_VERSION: 1
