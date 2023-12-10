@@ -152,6 +152,7 @@ if not os_darwin
     ]
 endif
 
+# FIXME check for clang instead
 if not (os_darwin or os_windows)
     build_flags += [
         '-fno-gnu-unique'
@@ -233,6 +234,9 @@ if os_darwin
     build_flags += [
         '-DMAC=1',
         '-DGL_SILENCE_DEPRECATION=1',
+        '-DMAC_OS_X_VERSION_MAX_ALLOWED=MAC_OS_X_VERSION_10_15',
+        '-DMAC_OS_X_VERSION_MIN_REQUIRED=MAC_OS_X_VERSION_10_15',
+        '-mmacosx-version-min=10.15',
     ]
     build_flags_cpp += [
         '-ObjC++',
@@ -251,17 +255,15 @@ elif os_windows
     build_flags_cpp += [
         '-fpermissive',
     ]
-elif linux_headless
-    build_flags += [
-        '-DLINUX=1',
-    ]
-    build_flags_cpp += [
-        '-DJUCE_AUDIOPROCESSOR_NO_GUI=1',
-    ]
 else
     build_flags += [
         '-DLINUX=1',
     ]
+    if linux_headless
+        build_flags_cpp += [
+            '-DJUCE_AUDIOPROCESSOR_NO_GUI=1',
+        ]
+    endif
 endif
 
 ###############################################################################
@@ -287,18 +289,25 @@ if lto_optimizations
 endif
 
 if os_darwin
+    link_flags += [
+        '-mmacosx-version-min=10.15',
+    ]
+    link_flags_release += [
+        '-Wl,-dead_strip,-dead_strip_dylibs,-x',
+    ]
     if build_universal
         link_flags += [
             '-arch', 'x86_64',
             '-arch', 'arm64',
         ]
     endif
-    link_flags_release += [
-        '-Wl,-dead_strip,-dead_strip_dylibs,-x',
-    ]
 elif os_windows
     link_flags += [
         '-static',
+        '-Wl,--as-needed,--no-undefined',
+    ]
+    link_flags_release += [
+        '-Wl,-O1,--gc-sections,--strip-all',
     ]
 else
     link_flags += [

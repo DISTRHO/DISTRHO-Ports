@@ -116,7 +116,12 @@ jobs:
           ninja -C build
 
   macos:
-    runs-on: macos-11
+    strategy:
+      matrix:
+        include:
+        - os: macos-11
+        - os: macos-12
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -124,15 +129,11 @@ jobs:
       - name: Set up dependencies
         run: |
           brew install meson
-      - name: Build macOS universal
-        env:
-          CFLAGS: -mmacosx-version-min=10.12 -DMAC_OS_X_VERSION_MAX_ALLOWED=MAC_OS_X_VERSION_10_12 -DMAC_OS_X_VERSION_MIN_REQUIRED=MAC_OS_X_VERSION_10_12
-          CXXFLAGS: -mmacosx-version-min=10.12 -DMAC_OS_X_VERSION_MAX_ALLOWED=MAC_OS_X_VERSION_10_12 -DMAC_OS_X_VERSION_MIN_REQUIRED=MAC_OS_X_VERSION_10_12
-          LDFLAGS: -mmacosx-version-min=10.12
+      - name: Build
         run: |
           meson build --buildtype=release --prefix=/usr -Dbuild-universal=true
           ninja -C build
-      - name: Install macOS universal
+      - name: Install
         run: |
           ninja -C build install
       - name: Set sha8 (release)
@@ -148,8 +149,17 @@ jobs:
           tar czf ${{ github.event.repository.name }}-macos-${{ github.event.pull_request.number || env.SHA8 }}.tar.gz -C ${{ env.DESTDIR }}/usr/lib lv2 vst vst3
       - uses: actions/upload-artifact@v3
         with:
-          name: ${{ github.event.repository.name }}-macos-${{ github.event.pull_request.number || env.SHA8 }}
+          name: ${{ github.event.repository.name }}-${{ matrix.os }}-${{ github.event.pull_request.number || env.SHA8 }}
           path: |
+            *.tar.gz
+      - uses: softprops/action-gh-release@v1
+        if: ${{ matrix.os == 'macos-11' && startsWith(github.ref, 'refs/tags/') }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          files: |
             *.tar.gz
 
   windows:
