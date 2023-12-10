@@ -236,7 +236,7 @@ if build_lv2 or build_vst2
             link_with_plugin += plugin_lib
 
             if build_lv2
-                plugin_lv2_lib = shared_library(plugin_name + '_lv2',
+                plugin_lv2_lib = shared_library(plugin_name + '-lv2',
                     name_prefix: '',
                     sources: plugin_extra_format_specific_srcs,
                     include_directories: [
@@ -250,7 +250,7 @@ if build_lv2 or build_vst2
                     link_with: link_with_plugin,
                 )
 
-                custom_target(plugin_name + '_lv2-dir',
+                custom_target(plugin_name + '-lv2-bundle',
                     output: plugin_name + '.lv2',
                     input: plugin_lv2_lib,
                     command: [ '../scripts/generate-ttl.sh', lv2_ttl_generator, '@OUTPUT@', plugin_lv2_lib.full_path() ],

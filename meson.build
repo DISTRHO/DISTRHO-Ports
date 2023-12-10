@@ -332,6 +332,17 @@ else
 endif
 
 ###############################################################################
+# set vst3 architecture bundle name
+
+if os_darwin
+    vst3_bundle_name = 'MacOS'
+elif os_windows
+    vst3_bundle_name = host_machine.cpu_family() + '-win'
+else
+    vst3_bundle_name = host_machine.cpu_family() + '-' + host_machine.system()
+endif
+
+###############################################################################
 # go into subdir to build libraries and plugins
 
 subdir('libs')

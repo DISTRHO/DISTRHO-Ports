@@ -180,7 +180,7 @@ foreach plugin : plugins
         )
 
         if build_lv2
-            plugin_lv2_lib = shared_library(plugin_name + '_lv2',
+            plugin_lv2_lib = shared_library(plugin_name + '-lv2',
                 name_prefix: '',
                 sources: plugin_extra_format_specific_srcs,
                 include_directories: [
@@ -191,10 +191,10 @@ foreach plugin : plugins
                 c_args: build_flags + build_flags_plugin + build_flags_plugin_lv2 + plugin_extra_build_flags,
                 cpp_args: build_flags_cpp + build_flags_plugin + build_flags_plugin_lv2 + build_flag_plugin_cpp + plugin_extra_build_flags,
                 link_args: link_flags + link_flags_plugin_common + link_flags_plugin_lv2 + plugin_extra_link_flags,
-                link_with: [ lib_juce6, plugin_lib ],
+                link_with: [ lib_juce61, plugin_lib ],
             )
 
-            custom_target(plugin_name + '_lv2-dir',
+            custom_target(plugin_name + '-lv2-bundle',
                 output: plugin_name + '.lv2',
                 input: plugin_lv2_lib,
                 command: [ '../scripts/generate-ttl.sh', lv2_ttl_generator, '@OUTPUT@', plugin_lv2_lib.full_path() ],
@@ -215,7 +215,7 @@ foreach plugin : plugins
                 c_args: build_flags + build_flags_plugin + build_flags_plugin_vst2 + plugin_extra_build_flags,
                 cpp_args: build_flags_cpp + build_flags_plugin + build_flags_plugin_vst2 + build_flag_plugin_cpp + plugin_extra_build_flags,
                 link_args: link_flags + link_flags_plugin_common + link_flags_plugin_vst2 + plugin_extra_link_flags,
-                link_with: [ lib_juce6, plugin_lib ],
+                link_with: [ lib_juce61, plugin_lib ],
                 install: true,
                 install_dir: vst2dir,
             )
@@ -233,12 +233,12 @@ foreach plugin : plugins
                 c_args: build_flags + build_flags_plugin + build_flags_plugin_vst3 + plugin_extra_build_flags,
                 cpp_args: build_flags_cpp + build_flags_plugin + build_flags_plugin_vst3 + build_flag_plugin_cpp + plugin_extra_build_flags,
                 link_args: link_flags + link_flags_plugin_common + link_flags_plugin_vst3 + plugin_extra_link_flags,
-                link_with: [ lib_juce6, plugin_lib ],
+                link_with: [ lib_juce61, plugin_lib ],
             )
 
-            plugin_vst3_dir = meson.current_build_dir() / plugin_name + '.vst3' / 'Contents' / host_machine.cpu_family() + '-' + host_machine.system()
+            plugin_vst3_dir = meson.current_build_dir() / plugin_name + '.vst3' / 'Contents' / vst3_bundle_name
 
-            plugin_vst3 = custom_target(plugin_name + '_vst3-bundle',
+            plugin_vst3 = custom_target(plugin_name + '-vst3-bundle',
                 output: plugin_name + '.vst3',
                 input: plugin_vst3_lib,
                 command: [

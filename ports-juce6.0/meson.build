@@ -173,7 +173,7 @@ foreach plugin : plugins
         )
 
         if build_lv2
-            plugin_lv2_lib = shared_library(plugin_name + '_lv2',
+            plugin_lv2_lib = shared_library(plugin_name + '-lv2',
                 name_prefix: '',
                 sources: plugin_extra_format_specific_srcs,
                 include_directories: [
@@ -187,7 +187,7 @@ foreach plugin : plugins
                 link_with: [ lib_juce60, plugin_lib ],
             )
 
-            custom_target(plugin_name + '_lv2-dir',
+            custom_target(plugin_name + '-lv2-bundle',
                 output: plugin_name + '.lv2',
                 input: plugin_lv2_lib,
                 command: [ '../scripts/generate-ttl.sh', lv2_ttl_generator, '@OUTPUT@', plugin_lv2_lib.full_path() ],
@@ -229,9 +229,9 @@ foreach plugin : plugins
                 link_with: [ lib_juce60, plugin_lib ],
             )
 
-            plugin_vst3_dir = meson.current_build_dir() / plugin_name + '.vst3' / 'Contents' / host_machine.cpu_family() + '-' + host_machine.system()
+            plugin_vst3_dir = meson.current_build_dir() / plugin_name + '.vst3' / 'Contents' / vst3_bundle_name
 
-            plugin_vst3 = custom_target(plugin_name + '_vst3-bundle',
+            plugin_vst3 = custom_target(plugin_name + '-vst3-bundle',
                 output: plugin_name + '.vst3',
                 input: plugin_vst3_lib,
                 command: [

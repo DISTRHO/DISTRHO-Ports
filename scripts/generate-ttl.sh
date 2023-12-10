@@ -52,4 +52,5 @@ fi
 
 mkdir -p "${dir}"
 cd "${dir}"
+cp -v "${lib}" .
 exec ${MESON_EXE_WRAPPER} "${gen}" "${lib}"

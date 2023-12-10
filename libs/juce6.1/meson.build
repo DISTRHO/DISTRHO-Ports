@@ -55,7 +55,7 @@ if os_windows
     endif
 endif
 
-lib_juce6 = static_library('juce61',
+lib_juce61 = static_library('juce61',
     sources: juce61_srcs,
     include_directories: [
         include_directories('.'),
