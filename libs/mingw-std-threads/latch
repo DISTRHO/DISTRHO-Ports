@@ -1,0 +1,9 @@
+// Copyright 2023 Filipe Coelho <falktx@falktx.com>
+// SPDX-License-Identifier: 0BSD OR ISC
+
+#pragma once
+#include_next <latch>
+
+#if __GNUC__ < 12
+#include "mingw.latch.h"
+#endif
