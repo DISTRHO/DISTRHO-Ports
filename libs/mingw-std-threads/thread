@@ -3,4 +3,7 @@
 
 #pragma once
 #include_next <thread>
+
+#if __GNUC__ < 12
 #include "mingw.thread.h"
+#endif

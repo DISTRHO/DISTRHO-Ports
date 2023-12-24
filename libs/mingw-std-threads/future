@@ -3,4 +3,7 @@
 
 #pragma once
 #include_next <future>
+
+#if __GNUC__ < 12
 #include "mingw.future.h"
+#endif

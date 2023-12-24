@@ -3,4 +3,7 @@
 
 #pragma once
 #include_next <invoke>
+
+#if __GNUC__ < 12
 #include "mingw.invoke.h"
+#endif

@@ -3,4 +3,7 @@
 
 #pragma once
 #include_next <shared_mutex>
+
+#if __GNUC__ < 12
 #include "mingw.shared_mutex.h"
+#endif

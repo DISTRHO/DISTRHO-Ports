@@ -3,4 +3,7 @@
 
 #pragma once
 #include_next <condition_variable>
+
+#if __GNUC__ < 12
 #include "mingw.condition_variable.h"
+#endif
