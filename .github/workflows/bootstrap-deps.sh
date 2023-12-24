@@ -78,6 +78,10 @@ case "${1}" in
         [ -n "${GITHUB_ENV}" ] && echo "PAWPAW_PACK_NAME=${1}-$(sw_vers -productVersion | cut -d '.' -f 1)" >> "${GITHUB_ENV}"
     ;;
     *)
+        if [ "$(id -u)" -ne 0 ] && [ -e /usr/bin/sudo ]; then
+            exec /usr/bin/sudo $0 "$@"
+        fi
+
         apt-get update -qq
         apt-get install -yqq autoconf automake build-essential curl cmake file git jq libglib2.0-dev-bin libtool lsb-release make meson gperf patchelf pkg-config uuid-dev zlib1g-dev
 
@@ -100,10 +104,10 @@ case "${1}" in
             fi
             dpkg --add-architecture ${linux_arch}
             apt-get update -qq
-            apt-get install -yqq \
+            apt-get install -yqq --allow-downgrades \
                 binfmt-support \
                 qemu-user-static \
-                qtbase5-dev-tools \
+                x11proto-dev x11proto-render-dev \
                 libasound2-dev:${linux_arch} \
                 libdbus-1-dev:${linux_arch} \
                 libfftw3-dev:${linux_arch} \
@@ -112,7 +116,7 @@ case "${1}" in
                 libglib2.0-dev:${linux_arch} \
                 libpcre2-dev:${linux_arch} \
                 libpcre3-dev:${linux_arch} \
-                libqt5svg5-dev:${linux_arch} \
+                libvulkan-dev:${linux_arch} \
                 libx11-dev:${linux_arch} \
                 libxcb1-dev:${linux_arch} \
                 libxcursor-dev:${linux_arch} \
@@ -120,8 +124,11 @@ case "${1}" in
                 libxfixes-dev:${linux_arch} \
                 libxrandr-dev:${linux_arch} \
                 libxrender-dev:${linux_arch} \
-                qtbase5-dev:${linux_arch} \
                 uuid-dev:${linux_arch}
+            apt-get install -yqq --allow-downgrades \
+                qtbase5-dev-tools \
+                libqt5svg5-dev:${linux_arch} \
+                qtbase5-dev:${linux_arch}
         elif [ "${1}" = "win32" ] || [ "${1}" = "win64" ]; then
             dpkg --add-architecture i386
             apt-get update -qq
@@ -146,3 +153,6 @@ case "${1}" in
         [ -n "${GITHUB_ENV}" ] && echo "PAWPAW_PACK_NAME=${1}-${release}" >> "${GITHUB_ENV}"
     ;;
 esac
+
+# if we reach this point in the script, make sure to return/exit 0
+exit 0
