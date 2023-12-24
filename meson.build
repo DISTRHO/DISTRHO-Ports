@@ -359,10 +359,10 @@ if not (build_juce5_only or build_juce60_only or build_juce7_only)
     subdir('ports-juce6.1')
 endif
 
-# no plugins imported that use juce7 yet
-# if not (build_juce5_only or build_juce60_only or build_juce61_only)
-#     subdir('ports-juce7')
-# endif
+# NOTICE no plugins imported that use juce7 yet
+if not (build_juce5_only or build_juce60_only or build_juce61_only)
+    subdir('ports-juce7')
+endif
 
 ###############################################################################
 # extra files to install

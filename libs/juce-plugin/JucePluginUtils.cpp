@@ -23,7 +23,7 @@
  #error Invalid configuration
 #endif
 
-#if ! JucePlugin_Build_Standalone
+#if ! JucePlugin_Build_Standalone && JUCE_MAJOR_VERSION < 7
  #include "modules/juce_audio_plugin_client/utility/juce_PluginUtilities.cpp"
 #endif
 

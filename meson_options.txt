@@ -117,5 +117,6 @@ option('plugins',
         'vitalium',
         # juce6.1
         'swankyamp',
+        # juce7
     ],
 )

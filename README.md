@@ -27,7 +27,7 @@ GNU/Linux: (development versions of these)
 In order to build and install the plugins, just run the usual steps for a meson project:
 
 ```
-meson build --buildtype release
+meson setup build --buildtype release
 ninja -C build
 ninja -C build install
 ```

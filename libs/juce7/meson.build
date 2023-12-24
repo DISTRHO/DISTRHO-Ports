@@ -35,9 +35,10 @@ juce7_devices_srcs = [
 ]
 
 juce7_extra_cpp_args = [
-    '-std=gnu++14',
+    '-std=gnu++17',
     '-Wno-non-virtual-dtor',
 ]
+juce7_extra_dependencies = []
 juce7_extra_include_dirs = []
 
 if os_windows
@@ -49,6 +50,9 @@ if os_windows
             '-mpreferred-stack-boundary=2',
         ]
     endif
+    juce7_extra_dependencies += [
+        cc.find_library('dxgi'),
+    ]
 endif
 
 lib_juce7 = static_library('juce7',
@@ -61,7 +65,7 @@ lib_juce7 = static_library('juce7',
         juce7_extra_include_dirs
     ],
     cpp_args: build_flags_cpp + juce7_extra_cpp_args,
-    dependencies: dependencies,
+    dependencies: dependencies + juce7_extra_dependencies,
     pic: true,
     install: false,
 )
@@ -75,7 +79,7 @@ lib_juce7_device = static_library('juce7-devices',
         juce7_extra_include_dirs
     ],
     cpp_args: build_flags_cpp + juce7_extra_cpp_args + ['-DJUCE_MODULE_AVAILABLE_juce_audio_devices=1'],
-    dependencies: dependencies_devices,
+    dependencies: dependencies_devices + juce7_extra_dependencies,
     pic: true,
     install: false,
 )
