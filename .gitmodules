@@ -7,3 +7,6 @@
 [submodule "libs/juce7/source"]
 	path = libs/juce7/source
 	url = https://github.com/DISTRHO/JUCE.git
+[submodule "libs/juce5/source"]
+	path = libs/juce5/source
+	url = https://github.com/DISTRHO/JUCE.git
