@@ -35,6 +35,7 @@ juce61_devices_srcs = [
 
 juce61_extra_cpp_args = [
     '-std=gnu++14',
+    '-Wno-free-nonheap-object',
     '-Wno-non-virtual-dtor',
 ]
 juce61_extra_include_dirs = []

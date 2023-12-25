@@ -116,6 +116,7 @@ option('plugins',
         # juce6.0
         'vitalium',
         # juce6.1
+        'roth-air',
         'swankyamp',
         # juce7
     ],

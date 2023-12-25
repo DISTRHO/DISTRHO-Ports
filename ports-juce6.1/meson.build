@@ -7,6 +7,7 @@ if linux_headless
 else
     plugins = [
         'chow',
+        'roth-air',
         'swankyamp',
     ]
 endif
