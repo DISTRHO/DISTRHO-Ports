@@ -152,8 +152,7 @@ if not os_darwin
     ]
 endif
 
-# FIXME check for clang instead
-if not (os_darwin or os_windows)
+if cc.get_id() == 'gcc'
     build_flags += [
         '-fno-gnu-unique'
     ]
