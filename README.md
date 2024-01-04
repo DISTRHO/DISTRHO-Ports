@@ -6,15 +6,20 @@ DISTRHO is an open source project with the goal of making cross-platform audio p
 
 <b>This repository contains the GNU/Linux and LV2 ports, specifically those made with [JUCE](https://travis-ci.org/DISTRHO/JUCE)</b>
 
-## BUILD DEPENDENCIES
+## Install dependencies
 
 To build plugins, you first need to install the following dependencies:
 
-All OSes:
+- [meson](https://mesonbuild.com)
+- [ninja](https://ninja-build.org)
 
-- meson
+If you are using Homebrew (for Mac) you can install both using:
 
-GNU/Linux: (development versions of these)
+```
+brew install meson ninja
+```
+
+GNU/Linux OS will also need (development versions of these):
 
 - ALSA
 - freetype2
@@ -22,7 +27,7 @@ GNU/Linux: (development versions of these)
 - OpenGL/Mesa
 - X11 core and extensions (XShm, XRender and XCursor)
 
-## BUILD and INSTALL
+## Build and install plugins
 
 In order to build and install the plugins, just run the usual steps for a meson project:
 
