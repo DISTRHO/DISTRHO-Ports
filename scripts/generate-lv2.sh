@@ -44,6 +44,21 @@ if [ -z "${MESON_EXE_WRAPPER}" ]; then
             MESON_EXE_WRAPPER="qemu-x86_64-static"
         fi
 
+    elif echo "${fileout}" | grep -q "64-bit LSB.*PowerPC"; then
+        if [ "$(uname -m)" != "ppc64le" ]; then
+            MESON_EXE_WRAPPER="qemu-ppc64le-static"
+        fi
+
+    elif echo "${fileout}" | grep -q "64-bit MSB.*PowerPC"; then
+        if [ "$(uname -m)" != "ppc64" ]; then
+            MESON_EXE_WRAPPER="qemu-ppc64-static"
+        fi
+
+    elif echo "${fileout}" | grep -q "32-bit MSB.*PowerPC"; then
+        if [ "$(uname -m)" != "ppc" ] && [ "$(uname -m)" != "ppc64" ]; then
+            MESON_EXE_WRAPPER="qemu-ppc-static"
+        fi
+
     else
         echo "unrecognized file output: ${fileout}"
         exit 1
