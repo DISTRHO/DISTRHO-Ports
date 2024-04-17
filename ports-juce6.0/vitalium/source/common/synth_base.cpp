@@ -339,17 +339,45 @@ void SynthBase::loadTuningFile(const File& file) {
 
 void SynthBase::loadInitPreset() {
   pauseProcessing(true);
+
+  std::map<std::string, float> old_values;
+  for (const auto &i: controls_) {
+    old_values.insert(std::pair<std::string, float>(i.first, i.second->value()));
+  }
+  
   engine_->allSoundsOff();
   initEngine();
   LoadSave::initSaveInfo(save_info_);
+
+  for (auto i = controls_.begin(); i != controls_.end(); i++) {
+    if (old_values.count(i->first) && old_values[i->first] != i->second->value()
+        && i->first != "bypass") {
+      setValueNotifyHost(i->first, i->second->value());
+    }
+  }
+
   pauseProcessing(false);
 }
 
 bool SynthBase::loadFromJson(const json& data) {
   pauseProcessing(true);
+
+  std::map<std::string, float> old_values;
+  for (const auto &i: controls_) {
+    old_values.insert(std::pair<std::string, float>(i.first, i.second->value()));
+  }
+
   engine_->allSoundsOff();
   try {
     bool result = LoadSave::jsonToState(this, save_info_, data);
+
+    for (auto i = controls_.begin(); i != controls_.end(); i++) {
+      if (old_values.count(i->first) && old_values[i->first] != i->second->value()
+          && i->first != "bypass") {
+        setValueNotifyHost(i->first, i->second->value());
+      }
+    }
+
     pauseProcessing(false);
     return result;
   }
