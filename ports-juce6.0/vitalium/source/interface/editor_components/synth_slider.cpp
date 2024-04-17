@@ -241,7 +241,7 @@ PopupItems SynthSlider::createPopupMenu() {
 void SynthSlider::mouseDown(const MouseEvent& e) {
   SynthBase* synth = synth_interface_->getSynth();
 
-  if (e.mods.isCtrlDown()) {
+  if (e.mods.isAltDown()) {
     showTextEntry();
     return;
   }
@@ -269,7 +269,7 @@ void SynthSlider::mouseDown(const MouseEvent& e) {
 }
 
 void SynthSlider::mouseDrag(const MouseEvent& e) {
-  if (e.mods.isCtrlDown())
+  if (e.mods.isAltDown())
     return;
   
   float multiply = 1.0f;
@@ -307,7 +307,7 @@ void SynthSlider::mouseDrag(const MouseEvent& e) {
 }
 
 void SynthSlider::mouseUp(const MouseEvent& e) {
-  if (e.mods.isPopupMenu() || e.mods.isCtrlDown())
+  if (e.mods.isPopupMenu() || e.mods.isAltDown())
     return;
 
   setDefaultRange();

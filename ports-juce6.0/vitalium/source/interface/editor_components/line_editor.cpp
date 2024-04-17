@@ -385,7 +385,7 @@ void LineEditor::paintLine(const MouseEvent& e) {
   float from_x = (1.0f * active_grid_section_) / grid_size_x_;
   float to_x = (active_grid_section_ + 1.0f) / grid_size_x_;
 
-  if (!e.mods.isCtrlDown() && grid_size_y_ > 0) {
+  if (!e.mods.isAltDown() && grid_size_y_ > 0) {
     float snap_radius = getSnapRadiusY();
     float snapped_y = getSnappedY(percent_y);
     if (fabsf(snapped_y - percent_y) < snap_radius)
@@ -609,9 +609,9 @@ void LineEditor::drawDrag(const MouseEvent& e) {
     return;
 
   if (active_point_ >= 0)
-    movePoint(active_point_, e.position, !e.mods.isCtrlDown());
+    movePoint(active_point_, e.position, !e.mods.isAltDown());
   else if (active_power_ >= 0)
-    movePower(active_power_, e.position, e.mods.isShiftDown(), e.mods.isCtrlDown());
+    movePower(active_power_, e.position, e.mods.isShiftDown(), e.mods.isAltDown());
 
   resetPositions();
 }
