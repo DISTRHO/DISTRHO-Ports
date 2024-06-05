@@ -31,3 +31,17 @@ meson setup build --buildtype release
 ninja -C build
 ninja -C build install
 ```
+
+## TROUBLESHOOTING
+
+If upon running `meson setup build --buildtype release` you get the following error
+
+```
+libs/drowaudio/meson.build:3:0: ERROR: Include dir ../juce5/source/modules does not exist.
+```
+
+you may need to pull submodules as follows
+
+```
+git submodule update --init --recursive
+```
