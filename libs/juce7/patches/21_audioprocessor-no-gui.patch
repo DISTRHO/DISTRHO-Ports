@@ -418,3 +418,17 @@ index c222899fd..e5ec0a33a 100644
  
      //==============================================================================
      /** Returns the complete absolute path of the host application executable. */
+diff --git a/modules/juce_audio_plugin_client/juce_audio_plugin_client_LV2.cpp b/modules/juce_audio_plugin_client/juce_audio_plugin_client_LV2.cpp
+index 1d3e3e1a5..4dfabfce5 100644
+--- a/modules/juce_audio_plugin_client/juce_audio_plugin_client_LV2.cpp
++++ b/modules/juce_audio_plugin_client/juce_audio_plugin_client_LV2.cpp
+@@ -35,7 +35,9 @@
+ 
+ #define JUCE_CORE_INCLUDE_NATIVE_HEADERS 1
+ #define JUCE_CORE_INCLUDE_OBJC_HELPERS 1
++#if ! JUCE_AUDIOPROCESSOR_NO_GUI
+ #define JUCE_GUI_BASICS_INCLUDE_XHEADERS 1
++#endif
+ 
+ #include <juce_audio_plugin_client/juce_audio_plugin_client.h>
+ #include <juce_audio_plugin_client/detail/juce_CheckSettingMacros.h>
