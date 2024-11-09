@@ -9,9 +9,9 @@ fi
 
 function get_linux_deb_arch() {
     case "${1}" in
-        "linux-aarch64") echo "arm64" ;;
+        "linux-arm64"|"linux-aarch64") echo "arm64" ;;
         "linux-armhf") echo "armhf" ;;
-        "linux-i686") echo "i386" ;;
+        "linux-i386"|"linux-i686") echo "i386" ;;
         "linux-riscv64") echo "riscv64" ;;
         "linux-x86_64") echo "amd64" ;;
     esac
@@ -72,8 +72,9 @@ function install_compiler() {
 }
 
 case "${1}" in
-    "macos"|"macos-universal"|"macos-universal-10.15")
-        brew install autoconf automake cmake coreutils gawk git gnu-sed jq make meson
+    "macos"|"macos-intel"|"macos-10.15"|"macos-universal"|"macos-universal-10.15")
+        brew install autoconf automake cmake coreutils gawk git gnu-sed jq libtool make meson
+        brew uninstall --ignore-dependencies cairo freetype
 
         [ -n "${GITHUB_ENV}" ] && echo "PAWPAW_PACK_NAME=${1}-$(sw_vers -productVersion | cut -d '.' -f 1)" >> "${GITHUB_ENV}"
     ;;
@@ -90,8 +91,12 @@ case "${1}" in
 
         if [ -n "${linux_arch}" ]; then
             if [ "$(lsb_release -si 2>/dev/null)" = "Ubuntu" ]; then
-                sed -i "s/deb http/deb [arch=i386,amd64] http/" /etc/apt/sources.list
-                sed -i "s/deb mirror/deb [arch=i386,amd64] mirror/" /etc/apt/sources.list
+                if [ -e /etc/apt/sources.list.d/ubuntu.sources ]; then
+                    sed -i 's|Types: deb|Types: deb\nArchitectures: amd64 i386|g' /etc/apt/sources.list.d/ubuntu.sources
+                else
+                    sed -i "s/deb http/deb [arch=i386,amd64] http/" /etc/apt/sources.list
+                    sed -i "s/deb mirror/deb [arch=i386,amd64] mirror/" /etc/apt/sources.list
+                fi
                 if [ "${linux_arch}" != "amd64" ] && [ "${linux_arch}" != "i386" ]; then
                     echo "deb [arch=${linux_arch}] http://ports.ubuntu.com/ubuntu-ports ${release} main restricted universe multiverse" | tee -a /etc/apt/sources.list
                     echo "deb [arch=${linux_arch}] http://ports.ubuntu.com/ubuntu-ports ${release}-updates main restricted universe multiverse" | tee -a /etc/apt/sources.list
@@ -107,7 +112,7 @@ case "${1}" in
             apt-get install -yqq --allow-downgrades \
                 binfmt-support \
                 qemu-user-static \
-                x11proto-dev x11proto-render-dev \
+                x11proto-dev x11proto-render-dev x11proto-xf86vidmode-dev \
                 libasound2-dev:${linux_arch} \
                 libdbus-1-dev:${linux_arch} \
                 libfftw3-dev:${linux_arch} \
@@ -119,11 +124,14 @@ case "${1}" in
                 libvulkan-dev:${linux_arch} \
                 libx11-dev:${linux_arch} \
                 libxcb1-dev:${linux_arch} \
+                libxcb-dri2-0-dev:${linux_arch} \
                 libxcursor-dev:${linux_arch} \
+                libxdamage-dev:${linux_arch} \
                 libxext-dev:${linux_arch} \
                 libxfixes-dev:${linux_arch} \
                 libxrandr-dev:${linux_arch} \
                 libxrender-dev:${linux_arch} \
+                libxxf86vm-dev:${linux_arch} \
                 uuid-dev:${linux_arch}
             apt-get install -yqq --allow-downgrades \
                 qtbase5-dev-tools \

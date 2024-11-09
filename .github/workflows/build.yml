@@ -15,37 +15,31 @@ jobs:
         include:
           - target: linux-aarch64
             pkgprefix: aarch64-linux-gnu
-            container: ubuntu:18.04
-          - target: linux-aarch64
-            pkgprefix: aarch64-linux-gnu
             container: ubuntu:20.04
           - target: linux-aarch64
             pkgprefix: aarch64-linux-gnu
             container: ubuntu:22.04
-          - target: linux-armhf
-            pkgprefix: arm-linux-gnueabihf
-            container: ubuntu:18.04
+          - target: linux-aarch64
+            pkgprefix: aarch64-linux-gnu
+            container: ubuntu:24.04
           - target: linux-armhf
             pkgprefix: arm-linux-gnueabihf
             container: ubuntu:20.04
           - target: linux-armhf
             pkgprefix: arm-linux-gnueabihf
             container: ubuntu:22.04
-          - target: linux-i686
-            pkgprefix: i386-linux-gnu
-            container: ubuntu:18.04
-          - target: linux-i686
-            pkgprefix: i386-linux-gnu
-            container: ubuntu:20.04
-          - target: linux-x86_64
-            pkgprefix: x86_64-linux-gnu
-            container: ubuntu:18.04
+          - target: linux-armhf
+            pkgprefix: arm-linux-gnueabihf
+            container: ubuntu:24.04
           - target: linux-x86_64
             pkgprefix: x86_64-linux-gnu
             container: ubuntu:20.04
           - target: linux-x86_64
             pkgprefix: x86_64-linux-gnu
             container: ubuntu:22.04
+          - target: linux-x86_64
+            pkgprefix: x86_64-linux-gnu
+            container: ubuntu:24.04
     runs-on: ubuntu-latest
     container:
       image: ${{ matrix.container }}
@@ -69,7 +63,7 @@ jobs:
               rm *.deb
             ;;
           esac
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
       - name: Set up dependencies
@@ -96,7 +90,7 @@ jobs:
       - name: Pack binaries
         run: |
           tar czf ${{ github.event.repository.name }}-${{ env.PAWPAW_PACK_NAME }}-${{ github.event.pull_request.number || env.SHA8 }}.tar.gz -C ${{ env.DESTDIR }}/usr/lib lv2 vst vst3
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: ${{ github.event.repository.name }}-${{ env.PAWPAW_PACK_NAME }}-${{ github.event.pull_request.number || env.SHA8 }}
           path: |
@@ -123,7 +117,7 @@ jobs:
           curl -sLO https://launchpad.net/~kxstudio-debian/+archive/ubuntu/toolchain/+files/git-man_2.34.1-1ubuntu1~bpo20.04.1~ppa1_all.deb
           dpkg -i *.deb
           rm *.deb
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
       - name: Set up dependencies
@@ -139,11 +133,12 @@ jobs:
     strategy:
       matrix:
         include:
-        - os: macos-11
-        - os: macos-12
+        - os: macos-13
+        - os: macos-14
+        - os: macos-15
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
       - name: Set up dependencies
@@ -167,7 +162,7 @@ jobs:
       - name: Pack binaries
         run: |
           tar czf ${{ github.event.repository.name }}-${{ env.PAWPAW_PACK_NAME }}-${{ github.event.pull_request.number || env.SHA8 }}.tar.gz -C ${{ env.DESTDIR }}/usr/lib lv2 vst vst3
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: ${{ github.event.repository.name }}-${{ env.PAWPAW_PACK_NAME }}-${{ github.event.pull_request.number || env.SHA8 }}
           path: |
@@ -195,7 +190,7 @@ jobs:
       - name: Install git
         run: |
           apt-get update -qq && apt-get install -yqq --no-install-recommends ca-certificates git
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
       - name: Set up dependencies
@@ -227,7 +222,7 @@ jobs:
       - name: Pack binaries
         run: |
           tar czf ${{ github.event.repository.name }}-${{ matrix.target }}-${{ github.event.pull_request.number || env.SHA8 }}.tar.gz -C ${{ env.DESTDIR }}/usr/lib lv2 vst vst3
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: ${{ github.event.repository.name }}-${{ matrix.target }}-${{ github.event.pull_request.number || env.SHA8 }}
           path: |
