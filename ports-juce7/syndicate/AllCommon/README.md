@@ -1,0 +1,1 @@
+Contains code common to both plugins and the plugin scanning server.

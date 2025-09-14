@@ -5,6 +5,7 @@ if linux_headless
     ]
 else
     plugins = [
+        'syndicate'
     ]
 endif
 

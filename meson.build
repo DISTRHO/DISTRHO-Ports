@@ -366,6 +366,10 @@ endif
 ###############################################################################
 # extra files to install
 
+if 'syndicate' in get_option('plugins')
+    meson.add_install_script('scripts/install-syndicate-scanner.sh')
+endif
+
 if 'tal-noisemaker' in get_option('plugins')
     extra_lv2_preset_files = [
         'TAL-NoiseMaker-Noise4U.lv2/manifest.ttl',

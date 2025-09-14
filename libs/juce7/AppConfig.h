@@ -165,11 +165,7 @@
 
     @see VSTPluginFormat, VST3PluginFormat, AudioPluginFormat, AudioPluginFormatManager, JUCE_PLUGINHOST_VST, JUCE_PLUGINHOST_AU
 */
-#if 0 //MAC || WINDOWS
- #define JUCE_PLUGINHOST_VST3 1
-#else
- #define JUCE_PLUGINHOST_VST3 0
-#endif
+#define JUCE_PLUGINHOST_VST3 1
 
 /** Config: JUCE_PLUGINHOST_AU
     Enables the AudioUnit plugin hosting classes. This is Mac-only, of course.
@@ -186,6 +182,13 @@
  #define JUCE_PLUGINHOST_LADSPA 1
 #else
  #define JUCE_PLUGINHOST_LADSPA 0
+#endif
+
+/** Config: JUCE_PLUGINHOST_LV2
+ *    Enables the LV2 plugin hosting classes.
+ */
+#ifndef JUCE_PLUGINHOST_LV2
+#define JUCE_PLUGINHOST_LV2 0
 #endif
 
 //=============================================================================

@@ -1,0 +1,185 @@
+diff -U3 -r a/AllCommon/AllUtils.h b/AllCommon/AllUtils.h
+--- a/AllCommon/AllUtils.h	2025-09-15 00:11:06.845287312 +0200
++++ b/AllCommon/AllUtils.h	2025-09-15 00:03:25.552521917 +0200
+@@ -10,23 +10,41 @@
+     inline const char* SCAN_CONFIGURATION_FILE_NAME = "ScanConfiguration.txt";
+     inline const char* CONFIG_FILE_NAME = "Config.json";
+ 
++    static inline juce::File getPluginScanServerBinary(juce::AudioProcessor::WrapperType wrapperType)
++    {
++        juce::File bin(juce::File::getSpecialLocation(juce::File::currentExecutableFile).getParentDirectory());
++        switch (wrapperType)
++        {
++        case juce::AudioProcessor::wrapperType_LV2:
++            break;
++        case juce::AudioProcessor::wrapperType_VST:
++            bin = bin.getChildFile("Resources");
++            break;
++        default:
++            bin = bin.getSiblingFile("Resources");
++            break;
++        }
++#if _WIN32
++        return bin.getChildFile("PluginScanServer.exe");
++#else
++        return bin.getChildFile("PluginScanServer");
++#endif
++    }
++
+ #ifdef __APPLE__
+     const juce::File DataDirectory(juce::File::getSpecialLocation(juce::File::userApplicationDataDirectory).getChildFile("WhiteElephantAudio/Syndicate"));
+     const juce::File PluginLogDirectory(juce::File::getSpecialLocation(juce::File::userHomeDirectory).getChildFile("Library/Logs/WhiteElephantAudio/Syndicate/Syndicate"));
+     const juce::File PluginScanServerLogDirectory(juce::File::getSpecialLocation(juce::File::userHomeDirectory).getChildFile("Library/Logs/WhiteElephantAudio/Syndicate/PluginScanServer"));
+-    const juce::File PluginScanServerBinary(juce::File::getSpecialLocation(juce::File::currentExecutableFile).getParentDirectory().getSiblingFile("Resources").getChildFile("PluginScanServer"));
+ #elif _WIN32
+     const juce::File ApplicationDirectory(juce::File::getSpecialLocation(juce::File::userDocumentsDirectory).getChildFile("WhiteElephantAudio/Syndicate"));
+     const juce::File DataDirectory(ApplicationDirectory.getChildFile("Data"));
+     const juce::File PluginLogDirectory(ApplicationDirectory.getChildFile("Logs/Syndicate"));
+     const juce::File PluginScanServerLogDirectory(ApplicationDirectory.getChildFile("Logs/PluginScanServer"));
+-    const juce::File PluginScanServerBinary(juce::File::getSpecialLocation(juce::File::currentExecutableFile).getParentDirectory().getSiblingFile("Resources").getChildFile("PluginScanServer.exe"));
+ #elif __linux__
+     const juce::File ApplicationDirectory(juce::File::getSpecialLocation(juce::File::userApplicationDataDirectory).getChildFile("WhiteElephantAudio/Syndicate"));
+     const juce::File DataDirectory(ApplicationDirectory.getChildFile("Data"));
+     const juce::File PluginLogDirectory(ApplicationDirectory.getChildFile("Logs/Syndicate"));
+     const juce::File PluginScanServerLogDirectory(ApplicationDirectory.getChildFile("Logs/PluginScanServer"));
+-    const juce::File PluginScanServerBinary(juce::File::getSpecialLocation(juce::File::currentExecutableFile).getParentDirectory().getSiblingFile("Resources").getChildFile("PluginScanServer"));
+ #else
+     #error Unsupported OS
+ #endif
+diff -U3 -r a/PluginCommon/PluginScanning/CustomScanner.hpp b/PluginCommon/PluginScanning/CustomScanner.hpp
+--- a/PluginCommon/PluginScanning/CustomScanner.hpp	2025-09-15 00:11:06.845287312 +0200
++++ b/PluginCommon/PluginScanning/CustomScanner.hpp	2025-09-15 00:07:31.353453853 +0200
+@@ -5,9 +5,9 @@
+ 
+ class Superprocess : private juce::ChildProcessCoordinator {
+ public:
+-    Superprocess() {
++    Superprocess(juce::AudioProcessor::WrapperType wrapperType) {
+         juce::Logger::writeToLog("Launching scan");
+-        launchWorkerProcess(Utils::PluginScanServerBinary, Utils::PLUGIN_SCAN_SERVER_UID, 0, 0);
++        launchWorkerProcess(Utils::getPluginScanServerBinary(wrapperType), Utils::PLUGIN_SCAN_SERVER_UID, 0, 0);
+     }
+ 
+     enum class State {
+@@ -64,7 +64,8 @@
+ 
+ class CustomPluginScanner : public juce::KnownPluginList::CustomScanner {
+ public:
+-    CustomPluginScanner() { }
++    CustomPluginScanner(juce::AudioProcessor::WrapperType wrapperType)
++        : _wrapperType(wrapperType) { }
+ 
+     ~CustomPluginScanner() override { }
+ 
+@@ -95,7 +96,7 @@
+                                const juce::String& fileOrIdentifier,
+                                juce::OwnedArray<juce::PluginDescription>& result) {
+         if (superprocess == nullptr) {
+-            superprocess = std::make_unique<Superprocess>();
++            superprocess = std::make_unique<Superprocess>(_wrapperType);
+         }
+ 
+         juce::MemoryBlock block;
+@@ -132,6 +133,7 @@
+         }
+     }
+ 
++    const juce::AudioProcessor::WrapperType _wrapperType;
+     std::unique_ptr<Superprocess> superprocess;
+ 
+     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CustomPluginScanner)
+diff -U3 -r a/PluginCommon/PluginScanning/PluginScanClient.cpp b/PluginCommon/PluginScanning/PluginScanClient.cpp
+--- a/PluginCommon/PluginScanning/PluginScanClient.cpp	2025-09-15 00:11:06.845287312 +0200
++++ b/PluginCommon/PluginScanning/PluginScanClient.cpp	2025-09-15 00:08:49.852307156 +0200
+@@ -1,7 +1,8 @@
+ #include "PluginScanClient.h"
+ #include "CustomScanner.hpp"
+ 
+-PluginScanClient::PluginScanClient() : juce::Thread("Scan Client"),
++PluginScanClient::PluginScanClient(juce::AudioProcessor::WrapperType wrapperType) : juce::Thread("Scan Client"),
++                                       _wrapperType(wrapperType),
+                                        _hasAttemptedRestore(false),
+                                        _shouldRestart(false),
+                                        _shouldExit(false),
+@@ -18,7 +19,7 @@
+     _hasAttemptedRestore = true;
+ 
+     _pluginList = std::make_unique<juce::KnownPluginList>();
+-    _pluginList->setCustomScanner(std::make_unique<CustomPluginScanner>());
++    _pluginList->setCustomScanner(std::make_unique<CustomPluginScanner>(_wrapperType));
+ 
+     const juce::File scannedPluginsFile(Utils::DataDirectory.getChildFile(Utils::SCANNED_PLUGINS_FILE_NAME));
+ 
+@@ -61,7 +62,7 @@
+     }
+ 
+     // Check the scanner binary exists
+-    if (Utils::PluginScanServerBinary.existsAsFile()) {
++    if (Utils::getPluginScanServerBinary(_wrapperType).existsAsFile()) {
+         _errorMessage = "";
+     } else {
+         juce::Logger::writeToLog("PluginScanServer binary is missing");
+diff -U3 -r a/PluginCommon/PluginScanning/PluginScanClient.h b/PluginCommon/PluginScanning/PluginScanClient.h
+--- a/PluginCommon/PluginScanning/PluginScanClient.h	2025-09-15 00:11:06.845287312 +0200
++++ b/PluginCommon/PluginScanning/PluginScanClient.h	2025-09-15 00:08:24.611389656 +0200
+@@ -17,7 +17,7 @@
+ public:
+     ScanConfiguration config;
+ 
+-    PluginScanClient();
++    PluginScanClient(juce::AudioProcessor::WrapperType wrapperType);
+ 
+     juce::Array<juce::PluginDescription> getPluginTypes() const;
+ 
+@@ -64,6 +64,7 @@
+     void changeListenerCallback(juce::ChangeBroadcaster* changed) override;
+ 
+ private:
++    const juce::AudioProcessor::WrapperType _wrapperType;
+     std::unique_ptr<juce::KnownPluginList> _pluginList;
+     juce::File _scannedPluginsFile;
+     std::vector<juce::MessageListener*> _listeners;
+diff -U3 -r a/Syndicate/PluginProcessor.cpp b/Syndicate/PluginProcessor.cpp
+--- a/Syndicate/PluginProcessor.cpp	2025-09-15 00:11:06.849287455 +0200
++++ b/Syndicate/PluginProcessor.cpp	2025-09-15 00:10:12.475310687 +0200
+@@ -57,6 +57,7 @@
+         WECore::JUCEPlugin::CoreAudioProcessor(BusesProperties().withInput("Input", juce::AudioChannelSet::stereo(), true)
+                                                                 .withOutput("Output", juce::AudioChannelSet::stereo(), true)
+                                                                 .withInput("Sidechain", juce::AudioChannelSet::stereo(), true)),
++        pluginScanClient(wrapperType),
+         manager({getBusesLayout(), getSampleRate(), getBlockSize()},
+                 [&](int id, MODULATION_TYPE type) { return getModulationValueForSource(id, type); },
+                 [&](int newLatencySamples) { onLatencyChange(newLatencySamples); }),
+@@ -231,7 +232,7 @@
+         buffer.clear (i, 0, buffer.getNumSamples());
+ 
+     // Send tempo and playhead information to the LFOs
+-    juce::AudioPlayHead::CurrentPositionInfo mTempoInfo;
++    juce::AudioPlayHead::CurrentPositionInfo mTempoInfo{};
+     getPlayHead()->getCurrentPosition(mTempoInfo);
+ 
+     // Pass the audio through the splitter (this is also the only safe place to pass the playhead through)
+diff -U3 -r a/Syndicate/UI/ModulationBar/ModulationBar.cpp b/Syndicate/UI/ModulationBar/ModulationBar.cpp
+--- a/Syndicate/UI/ModulationBar/ModulationBar.cpp	2025-09-15 00:11:06.849287455 +0200
++++ b/Syndicate/UI/ModulationBar/ModulationBar.cpp	2025-09-14 23:21:28.077252227 +0200
+@@ -355,6 +355,8 @@
+             return _rndButtons[buttonIndex]->definition;
+         }
+     }
++
++    return selectedDefinition;
+ }
+ 
+ void ModulationBar::_attemptToSelectByDefinition(ModulationSourceDefinition definition) {
+diff -U3 -r a/Syndicate/UI/UIUtils.cpp b/Syndicate/UI/UIUtils.cpp
+--- a/Syndicate/UI/UIUtils.cpp	2025-09-15 00:11:06.853287603 +0200
++++ b/Syndicate/UI/UIUtils.cpp	2025-09-14 23:15:42.904133494 +0200
+@@ -189,7 +189,7 @@
+                 return lfoColour;
+             case MODULATION_TYPE::ENVELOPE:
+                 return envelopeColour;
+-            case MODULATION_TYPE::RANDOM:
++            default:
+                 return randomColour;
+         }
+     }

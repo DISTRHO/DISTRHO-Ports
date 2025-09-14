@@ -5,6 +5,7 @@ if linux_headless
         'source/modules/juce_audio_basics/juce_audio_basics.cpp',
         'source/modules/juce_audio_formats/juce_audio_formats.cpp',
         'source/modules/juce_audio_processors/juce_audio_processors.cpp',
+#         'source/modules/juce_audio_processors/juce_audio_processors_lv2_libs.cpp',
         'source/modules/juce_audio_utils/juce_audio_utils.cpp',
         'source/modules/juce_core/juce_core.cpp',
         'source/modules/juce_cryptography/juce_cryptography.cpp',
@@ -17,6 +18,7 @@ else
         'source/modules/juce_audio_basics/juce_audio_basics.cpp',
         'source/modules/juce_audio_formats/juce_audio_formats.cpp',
         'source/modules/juce_audio_processors/juce_audio_processors.cpp',
+#         'source/modules/juce_audio_processors/juce_audio_processors_lv2_libs.cpp',
         'source/modules/juce_audio_utils/juce_audio_utils.cpp',
         'source/modules/juce_core/juce_core.cpp',
         'source/modules/juce_cryptography/juce_cryptography.cpp',
@@ -35,6 +37,7 @@ juce7_devices_srcs = [
 ]
 
 juce7_extra_cpp_args = [
+#     '-DJUCE_PLUGINHOST_LV2=1',
     '-std=gnu++17',
     '-Wno-non-virtual-dtor',
 ]
@@ -61,6 +64,14 @@ lib_juce7 = static_library('juce7',
         include_directories('.'),
         include_directories('source'),
         include_directories('source/modules'),
+#         include_directories('source/modules/juce_audio_processors/format_types/LV2_SDK'),
+#         include_directories('source/modules/juce_audio_processors/format_types/LV2_SDK/serd'),
+#         include_directories('source/modules/juce_audio_processors/format_types/LV2_SDK/sord'),
+#         include_directories('source/modules/juce_audio_processors/format_types/LV2_SDK/sord/src'),
+#         include_directories('source/modules/juce_audio_processors/format_types/LV2_SDK/sratom'),
+#         include_directories('source/modules/juce_audio_processors/format_types/LV2_SDK/lilv'),
+#         include_directories('source/modules/juce_audio_processors/format_types/LV2_SDK/lilv/src'),
+        include_directories('source/modules/juce_audio_processors/format_types/VST3_SDK'),
         include_directories('../juced/source/dependancies/ladspa_sdk/src'),
         juce7_extra_include_dirs
     ],

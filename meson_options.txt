@@ -119,5 +119,6 @@ option('plugins',
         'roth-air',
         'swankyamp',
         # juce7
+        'syndicate',
     ],
 )
