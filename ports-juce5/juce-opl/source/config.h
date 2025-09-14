@@ -63,7 +63,7 @@
 #pragma warning(disable : 4996) 
 #endif
 
-#ifdef _WIN32
+#ifdef _MSC_VER
 	typedef         double		Real64;
 	/* The internal types */
 	typedef  unsigned char      BYTE;
@@ -77,9 +77,7 @@
 	typedef   signed __int64	Bit64s;
 	typedef unsigned int		Bitu;
 	typedef signed int			Bits;
-#endif
-
-#if __APPLE__ || __linux__
+#else
 	/// Jeff-Russ modified to be uniform across C++ implementations:
 	// The internal types:
 	#include <stdint.h>
