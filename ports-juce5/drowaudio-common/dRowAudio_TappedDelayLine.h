@@ -32,9 +32,9 @@ class TappedDelayLine
 {
 public:
 	/** Creates a TappedDelayline with a given size in samples.
-		If no size is specified a default of 9600 is used.
+		If no size is specified a default of 640000 is used.
 	 */
-	TappedDelayLine(int initialBufferSize =96000);
+	TappedDelayLine(int initialBufferSize=640000);
 	TappedDelayLine(float bufferLengthMs, double sampleRate);
 	
 	/// Destructor
