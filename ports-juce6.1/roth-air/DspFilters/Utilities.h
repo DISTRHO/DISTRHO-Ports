@@ -64,7 +64,7 @@ void add (int samples,
     ++destSkip;
     while (--samples >= 0)
     {
-      *dest = static_cast<Td>(*src);
+      *dest += static_cast<Td>(*src);
       dest += destSkip;
       src += srcSkip;
     }
@@ -274,7 +274,8 @@ void fade (int samples,
 
   while (--samples >= 0)
   {
-    *dest++ = static_cast<Td>(*dest + t * (*src++ - *dest));
+    *dest = static_cast<Td>(*dest + t * (*src++ - *dest));
+    dest++;
     t += dt;
   }
 }
@@ -384,8 +385,10 @@ void multiply (int samples,
   }
   else
   {
-    while (--samples >= 0)
-      *dest++ = static_cast<Td>(*dest * factor);
+    while (--samples >= 0) {
+      *dest = static_cast<Td>(*dest * factor);
+      dest++;
+    }
   }
 }
 
@@ -708,7 +711,7 @@ public:
       double e = m_env[i];
       for (int n = samples; n; n--)
       {
-        double v = ::fabs(*cur++);
+        double v = std::abs(*cur++);
         if (v > e)
           e = m_a * (e - v) + v;
         else

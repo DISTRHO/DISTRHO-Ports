@@ -148,7 +148,7 @@ private:
 
 	Image threshLabel = ImageCache::getFromMemory(BinaryData::label_thresh_png, BinaryData::label_thresh_pngSize);
 	Image freqLabel = ImageCache::getFromMemory(BinaryData::label_freq_png, BinaryData::label_freq_pngSize);
-	Image gainLabel = ImageCache::getFromMemory(BinaryData::label_gain_png, BinaryData::label_freq_pngSize);
+	Image gainLabel = ImageCache::getFromMemory(BinaryData::label_gain_png, BinaryData::label_gain_pngSize);
 	Image mixLabel = ImageCache::getFromMemory(BinaryData::label_mix_png, BinaryData::label_mix_pngSize);
 
 	Image redLight = ImageCache::getFromMemory(BinaryData::bigKnob_red_png, BinaryData::bigKnob_red_pngSize);

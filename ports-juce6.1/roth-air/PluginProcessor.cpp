@@ -214,9 +214,11 @@ void AirAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& mid
     }
 
 	// Set filter crossover param every block
-	filterParams[2] = *crossFreq; // Set center freq
-	lp->setParams(filterParams);
-	hp->setParams(filterParams);
+	if (filterParams[2] != *crossFreq) {
+		filterParams[2] = *crossFreq; // Set center freq
+		lp->setParams(filterParams);
+		hp->setParams(filterParams);
+	}
 
 	// Apply the filters to respective buffers
 	hp->process(numSamples, hpBuffer.getArrayOfWritePointers());

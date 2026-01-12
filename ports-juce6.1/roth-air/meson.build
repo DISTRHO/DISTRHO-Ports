@@ -18,4 +18,7 @@ plugin_srcs = files([
 
 plugin_name = 'Roth-Air'
 
+# DSP code uses direct comparison with infinity
+plugin_extra_build_flags = '-fno-finite-math-only'
+
 ###############################################################################
