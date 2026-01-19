@@ -34,6 +34,11 @@ if [ -z "${MESON_EXE_WRAPPER}" ]; then
             MESON_EXE_WRAPPER="qemu-i386-static"
         fi
 
+    elif echo "${fileout}" | grep -q "LoongArch"; then
+        if [ "$(uname -m)" != "loongarch64" ]; then
+            MESON_EXE_WRAPPER="qemu-loongarch64-static"
+        fi
+
     elif echo "${fileout}" | grep -q "RISC-V"; then
         if [ "$(uname -m)" != "riscv64" ]; then
             MESON_EXE_WRAPPER="qemu-riscv64-static"
