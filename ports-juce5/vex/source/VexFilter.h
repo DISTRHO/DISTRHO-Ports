@@ -105,6 +105,8 @@ private:
     float fParameters[kParamCount];
     bool  fParamsChanged[92];
 
+    int maximumBlockSize;
+
     AudioSampleBuffer obf;
     AudioSampleBuffer dbf1; // delay
     AudioSampleBuffer dbf2; // chorus

@@ -168,6 +168,7 @@ private:
   IRAgentContainer _agents;
   double _stretch;
   bool _reverse;
+  size_t _maximumBlockSize;
   size_t _convolverHeadBlockSize;
   size_t _convolverTailBlockSize;
   double _irBegin;

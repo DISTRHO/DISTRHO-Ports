@@ -47,6 +47,7 @@ VexFilter::VexFilter()
           fArp2(&fArpSet2),
           fArp3(&fArpSet3),
 #endif
+          maximumBlockSize(0),
           fChorus(fParameters),
           fDelay(fParameters),
           fReverb(fParameters),
@@ -379,12 +380,16 @@ const String VexFilter::getParameterText (int index)
     return String(fParameters[index], 2);
 }
 
-void VexFilter::prepareToPlay (double sampleRate, int bufferSize)
+void VexFilter::prepareToPlay (double sampleRate, int /*bufferSize*/)
 {
-    obf.setSize(2, bufferSize);
-    dbf1.setSize(2, bufferSize);
-    dbf2.setSize(2, bufferSize);
-    dbf3.setSize(2, bufferSize);
+    maximumBlockSize = getLV2MaximumBlockSize();
+    if (maximumBlockSize <= 0)
+        maximumBlockSize = getBlockSize();
+
+    obf.setSize(2, maximumBlockSize);
+    dbf1.setSize(2, maximumBlockSize);
+    dbf2.setSize(2, maximumBlockSize);
+    dbf3.setSize(2, maximumBlockSize);
 
 #if ! JUCE_AUDIOPROCESSOR_NO_GUI
     fArp1.setSampleRate(sampleRate);
@@ -394,7 +399,7 @@ void VexFilter::prepareToPlay (double sampleRate, int bufferSize)
     fChorus.setSampleRate(sampleRate);
     fDelay.setSampleRate(sampleRate);
 
-    fSynth.setBufferSize(bufferSize);
+    fSynth.setBufferSize(maximumBlockSize);
     fSynth.setSampleRate(sampleRate);
 
     // some params depend on sample rate
@@ -460,6 +465,12 @@ void VexFilter::processBlock(AudioSampleBuffer& output, MidiBuffer& midiInBuffer
     }
 
     midiInBuffer.clear();
+
+    if (frames > maximumBlockSize)
+    {
+        output.clear();
+        return;
+    }
 
     if (obf.getNumSamples() != frames)
     {

@@ -1,0 +1,183 @@
+From 67550c50ab0197852adb2d400074d514e19f528e Mon Sep 17 00:00:00 2001
+From: jee-mj <28581723+jee-mj@users.noreply.github.com>
+Date: Thu, 23 Jul 2026 05:38:35 +1000
+Subject: [PATCH] JUCE5 LV2: add setLV2BlockSizeDetails, track maxBlockLength
+ independently
+
+- Add setLV2BlockSizeDetails/getLV2NominalBlockSize/getLV2MaximumBlockSize
+  to AudioProcessor base class
+- Rewrite LV2 options parsing to be order-independent
+- Store nominalBufferSize and maxBufferSize separately
+- lv2Activate: call setLV2BlockSizeDetails before prepareToPlay,
+  pass maximumBlockSize to setPlayConfigDetails and prepareToPlay
+- lv2SetOptions: defer changes to next activate cycle
+---
+ .../LV2/juce_LV2_Wrapper.cpp                  | 47 ++++++++++++++-----
+ .../processors/juce_AudioProcessor.h          | 35 ++++++++++++++
+ 2 files changed, 69 insertions(+), 13 deletions(-)
+
+diff --git a/modules/juce_audio_plugin_client/LV2/juce_LV2_Wrapper.cpp b/modules/juce_audio_plugin_client/LV2/juce_LV2_Wrapper.cpp
+index c09583361..5f4075e66 100644
+--- a/modules/juce_audio_plugin_client/LV2/juce_LV2_Wrapper.cpp
++++ b/modules/juce_audio_plugin_client/LV2/juce_LV2_Wrapper.cpp
+@@ -811,6 +811,8 @@ public:
+         : numInChans (0),
+           numOutChans (0),
+           bufferSize (2048),
++          nominalBufferSize (0),
++          maxBufferSize (0),
+           sampleRate (sampleRate_),
+           uridMap (nullptr),
+           uridAtomBlank (0),
+@@ -905,32 +907,41 @@ public:
+                 {
+                     const LV2_Options_Option* options = (const LV2_Options_Option*)features[i]->data;
+ 
++                    int parsedNominal = 0;
++                    bool haveNominal = false;
++                    int parsedMax = 0;
++                    bool haveMax = false;
++
+                     for (int j=0; options[j].key != 0; ++j)
+                     {
+                         if (options[j].key == uridMap->map(uridMap->handle, LV2_BUF_SIZE__nominalBlockLength))
+                         {
+                             if (options[j].type == uridAtomInt)
+                             {
+-                                bufferSize = *(int*)options[j].value;
+-                                usingNominalBlockLength = true;
++                                parsedNominal = *(int*)options[j].value;
++                                haveNominal = true;
+                             }
+                             else
+-                            {
+                                 std::cerr << "Host provides nominalBlockLength but has wrong value type" << std::endl;
+-                            }
+-                            break;
+                         }
+ 
+                         if (options[j].key == uridMap->map(uridMap->handle, LV2_BUF_SIZE__maxBlockLength))
+                         {
+                             if (options[j].type == uridAtomInt)
+-                                bufferSize = *(int*)options[j].value;
++                            {
++                                parsedMax = *(int*)options[j].value;
++                                haveMax = true;
++                            }
+                             else
+                                 std::cerr << "Host provides maxBlockLength but has wrong value type" << std::endl;
+-
+-                            // no break, continue in case host supports nominalBlockLength
+                         }
+                     }
++
++                    nominalBufferSize = haveNominal ? parsedNominal : 0;
++                    maxBufferSize     = haveMax     ? parsedMax     : 0;
++                    bufferSize        = haveNominal ? parsedNominal :
++                                        haveMax     ? parsedMax     : 2048;
++                    usingNominalBlockLength = haveNominal;
+                     break;
+                 }
+             }
+@@ -1026,8 +1037,13 @@ public:
+     {
+         jassert (filter != nullptr);
+ 
+-        filter->prepareToPlay (sampleRate, bufferSize);
+-        filter->setPlayConfigDetails (numInChans, numOutChans, sampleRate, bufferSize);
++        const uint32 effectiveMax = (maxBufferSize != 0) ? maxBufferSize : bufferSize;
++        const uint32 effectiveNominal = (nominalBufferSize != 0) ? nominalBufferSize : 0;
++
++        filter->setLV2BlockSizeDetails (static_cast<int>(effectiveNominal),
++                                        static_cast<int>(effectiveMax));
++        filter->setPlayConfigDetails (numInChans, numOutChans, sampleRate, effectiveMax);
++        filter->prepareToPlay (sampleRate, effectiveMax);
+ 
+         channels.calloc (numInChans + numOutChans);
+ 
+@@ -1397,14 +1413,17 @@ public:
+             if (options[i].key == uridMap->map(uridMap->handle, LV2_BUF_SIZE__nominalBlockLength))
+             {
+                 if (options[i].type == uridAtomInt)
+-                    bufferSize = *(const int32_t*)options[i].value;
++                {
++                    nominalBufferSize = *(const int32_t*)options[i].value;
++                    usingNominalBlockLength = true;
++                }
+                 else
+                     std::cerr << "Host changed nominalBlockLength but with wrong value type" << std::endl;
+             }
+-            else if (options[i].key == uridMap->map(uridMap->handle, LV2_BUF_SIZE__maxBlockLength) && ! usingNominalBlockLength)
++            else if (options[i].key == uridMap->map(uridMap->handle, LV2_BUF_SIZE__maxBlockLength))
+             {
+                 if (options[i].type == uridAtomInt)
+-                    bufferSize = *(const int32_t*)options[i].value;
++                    maxBufferSize = *(const int32_t*)options[i].value;
+                 else
+                     std::cerr << "Host changed maxBlockLength but with wrong value type" << std::endl;
+             }
+@@ -1604,6 +1623,8 @@ private:
+     Array<float*> portControls;
+ 
+     uint32 bufferSize;
++    uint32 nominalBufferSize;
++    uint32 maxBufferSize;
+     double sampleRate;
+     Array<float> lastControlValues;
+     AudioPlayHead::CurrentPositionInfo curPosInfo;
+diff --git a/modules/juce_audio_processors/processors/juce_AudioProcessor.h b/modules/juce_audio_processors/processors/juce_AudioProcessor.h
+index 3a9bdd1fe..607829d86 100644
+--- a/modules/juce_audio_processors/processors/juce_AudioProcessor.h
++++ b/modules/juce_audio_processors/processors/juce_AudioProcessor.h
+@@ -1293,6 +1293,39 @@ public:
+     */
+     virtual void setPlayHead (AudioPlayHead* newPlayHead);
+ 
++    //==============================================================================
++    /** DISTRHO LV2 extension: communicates the host's nominal and maximum block
++        sizes to the processor before prepareToPlay().
++
++        The LV2 wrapper calls this once per activate cycle, after connectPort and
++        before prepareToPlay().  Both values are read from the host's buf-size
++        LV2 options (nominalBlockLength and maxBlockLength).
++
++        nominalBlockSize  The typical processing quantum.  May be zero when the
++                           host does not provide nominalBlockLength; the plugin
++                           should fall back to maximumBlockSize in that case.
++
++        maximumBlockSize  The host-declared upper bound for every run() call.
++                           Must be positive.  The plugin must never allocate
++                           scratch-buffer capacity above this value during
++                           realtime processing.
++
++        The default implementation stores both values for retrieval via
++        getLV2BlockSizeDetails().  Plugins that are not LV2-specific may
++        ignore this call.
++    */
++    virtual void setLV2BlockSizeDetails (int nominalBlockSize, int maximumBlockSize)
++    {
++        lv2NominalBlockSize = nominalBlockSize;
++        lv2MaximumBlockSize = maximumBlockSize;
++    }
++
++    /** Returns the nominal and maximum block sizes previously set by
++        setLV2BlockSizeDetails().  See that method for semantics.
++    */
++    int getLV2NominalBlockSize()  const noexcept  { return lv2NominalBlockSize; }
++    int getLV2MaximumBlockSize()  const noexcept  { return lv2MaximumBlockSize; }
++
+     //==============================================================================
+     /** This is called by the processor to specify its details before being played. Use this
+         version of the function if you are not interested in any sidechain and/or aux buses
+@@ -1601,6 +1634,8 @@ private:
+    #endif
+     double currentSampleRate;
+     int blockSize, latencySamples;
++    int lv2NominalBlockSize = 0;
++    int lv2MaximumBlockSize = 0;
+    #if JUCE_DEBUG
+     bool textRecursionCheck;
+    #endif
+-- 
+2.54.0
+

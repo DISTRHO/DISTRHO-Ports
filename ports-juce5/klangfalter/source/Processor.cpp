@@ -42,6 +42,7 @@ Processor::Processor() :
   _agents(),
   _stretch(1.0),
   _reverse(false),
+  _maximumBlockSize(0),
   _convolverHeadBlockSize(0),
   _convolverTailBlockSize(0),
   _irBegin(0.0),
@@ -214,25 +215,39 @@ void Processor::changeProgramName (int /*index*/, const String& /*newName*/)
 
 
 //==============================================================================
-void Processor::prepareToPlay(double /*sampleRate*/, int samplesPerBlock)
+void Processor::prepareToPlay(double /*sampleRate*/, int /*samplesPerBlock*/)
 {
   // Play safe to be clean
   releaseResources();
 
-  // Prepare convolvers
+  // LV2 block-size contract (set by wrapper before prepareToPlay):
+  //   maximumBlockSize: host-declared upper bound → capacity + bounds
+  //   nominalBlockSize: typical quantum → head partition size
+  // When nominal is unknown (zero), fall back to maximum.
+  _maximumBlockSize = static_cast<size_t>(getLV2MaximumBlockSize());
+  if (_maximumBlockSize == 0)
+    _maximumBlockSize = static_cast<size_t>(getBlockSize());
+
+  const size_t nominalBlockSize =
+    (getLV2NominalBlockSize() > 0)
+      ? static_cast<size_t>(getLV2NominalBlockSize())
+      : _maximumBlockSize;
+
+  // Prepare convolvers — partition sizes from nominal
   {
     juce::ScopedLock convolverLock(_convolverMutex);
     _convolverHeadBlockSize = 1;
-    while (_convolverHeadBlockSize < static_cast<size_t>(samplesPerBlock))
+    while (_convolverHeadBlockSize < nominalBlockSize)
     {
       _convolverHeadBlockSize *= 2;
     }
     _convolverTailBlockSize = std::max(size_t(8192), 2 * _convolverHeadBlockSize);
   }
 
-  // Prepare convolution buffers
-  _wetBuffer.setSize(2, samplesPerBlock);
-  _convolutionBuffer.resize(samplesPerBlock);
+  // Prepare convolution buffers for the maximum block size.
+  // The FFT convolver handles arbitrary lengths up to this capacity.
+  _wetBuffer.setSize(2, static_cast<int>(_maximumBlockSize));
+  _convolutionBuffer.resize(_maximumBlockSize);
 
   // Initialize parameters
   _stereoWidth.initializeWidth(getParameter(Parameters::StereoWidth));
@@ -262,6 +277,19 @@ void Processor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& /*midiMessag
   const int numInputChannels = getTotalNumInputChannels();
   const int numOutputChannels = getTotalNumOutputChannels();
   const size_t samplesToProcess = buffer.getNumSamples();
+
+  // Defensive: a host violating its declared maxBlockLength contract
+  // should not cause memory corruption.
+  if (samplesToProcess > _maximumBlockSize && _maximumBlockSize > 0)
+  {
+    buffer.clear();
+    return;
+  }
+  if (samplesToProcess > _convolutionBuffer.size())
+  {
+    buffer.clear();
+    return;
+  }
 
   // Determine channel data
   float* channelData0 = nullptr;
