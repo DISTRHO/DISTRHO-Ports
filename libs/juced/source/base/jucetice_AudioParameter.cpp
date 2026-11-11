@@ -32,6 +32,22 @@ BEGIN_JUCE_NAMESPACE
 #include "jucetice_MathConstants.h"
 
 //==============================================================================
+// The parameters alive in this process. The parameter thread holds raw pointers in its queue, and a plugin freed with
+// changes still queued would have them updated after it is gone: the thread only updates a parameter still in this
+// set, under its lock, and a parameter leaves it under the same lock before it is destroyed.
+static CriticalSection& liveParametersLock()
+{
+    static CriticalSection lock;
+    return lock;
+}
+
+static SortedSet<AudioParameter*>& liveParameters()
+{
+    static SortedSet<AudioParameter*> live;
+    return live;
+}
+
+//==============================================================================
 AudioParameter::AudioParameter ()
 : index (0),
 partNumber (0),
@@ -51,10 +67,17 @@ plugin (0)
     getValueFunction = MakeDelegate (this, &AudioParameter::defaultGetFunction);
     setValueFunction = MakeDelegate (this, &AudioParameter::defaultSetFunction);
     getTextFunction = MakeDelegate (this, &AudioParameter::defaultGetTextFunction);
+
+    const ScopedLock sl (liveParametersLock());
+    liveParameters().add (this);
 }
 
 AudioParameter::~AudioParameter ()
 {
+    {
+        const ScopedLock sl (liveParametersLock());
+        liveParameters().removeValue (this);
+    }
     removeAllListeners ();
 }
 
@@ -346,7 +369,11 @@ void AudioParameterThread::run()
         {
             parameter = (AudioParameter*) parameterChanges.get ();
             if (parameter)
-                parameter->triggerAsyncUpdate ();
+            {
+                const ScopedLock sl (liveParametersLock());
+                if (liveParameters().contains (parameter))
+                    parameter->triggerAsyncUpdate ();
+            }
         }
 
         currentWaitTime = 1000 / changeChecksPerSecond
